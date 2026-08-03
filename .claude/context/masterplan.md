@@ -341,16 +341,16 @@
 **What:** Live state inspection, docking and replay while developing, with zero devtools bytes reaching production users.
 **How:** Dynamically import spektrum/devtools, spektrum/inspect and spektrum/dock gated on import.meta.env.DEV.
 
-- [ ] **T2.8.1 - Cut devtools feature branch** - What: Tooling merges only after the prod exclusion is proven. How: Run git checkout -b feature/devtools from main.
-- [ ] **T2.8.2 - Implement mountDevtools** - What: The panel appears automatically in every dev session. How: Write mountDevtools() in src/app/devtools.js awaiting import('spektrum/devtools') only when import.meta.env.DEV.
-- [ ] **T2.8.3 - Dock the panel** - What: Devtools stay out of the trading grid's way. How: Use spektrum/dock to pin the panel to the bottom edge, collapsed by default with a toggle handle.
-- [ ] **T2.8.4 - Enable click-to-inspect** - What: Any bound DOM node reveals its state path on click. How: Wire spektrum/inspect activation behind an ?inspect=1 query parameter check in mountDevtools.
-- [ ] **T2.8.5 - Expose replay controls** - What: One click reruns the mutation log from the boot checkpoint. How: Add dock panel buttons invoking replay() and checkpoint('boot') from the engine shim.
-- [ ] **T2.8.6 - Implement devDumpState** - What: Full state snapshots pasteable into bug reports. How: Write devDumpState() calling serialize() and copying the JSON to the clipboard via navigator.clipboard.
-- [ ] **T2.8.7 - Wire into bootstrap** - What: Zero manual steps to get tooling in dev. How: Call mountDevtools() at the end of bootstrap() so the DEV gate decides everything.
-- [ ] **T2.8.8 - Write the two single unit tests** - What: mountDevtools and devDumpState each locked by one test. How: Add targeted tests stubbing import.meta.env.DEV and the dynamic import, run via vitest run -t.
-- [ ] **T2.8.9 - Verify prod exclusion** - What: Hard proof users never download devtools. How: Run npm run build and npm run preview, confirming no spektrum/devtools network request and no chunk reference in dist.
-- [ ] **T2.8.10 - Merge devtools branch** - What: Every developer gets instant state visibility from main. How: Merge feature/devtools into main after the preview exclusion check.
+- [x] **T2.8.1 - Cut devtools feature branch** - What: Tooling merges only after the prod exclusion is proven. How: Run git checkout -b feature/devtools from main.
+- [x] **T2.8.2 - Implement mountDevtools** - What: The panel appears automatically in every dev session. How: Write mountDevtools() in src/app/devtools.js awaiting import('spektrum/devtools') only when import.meta.env.DEV.
+- [x] **T2.8.3 - Dock the panel** - What: Devtools stay out of the trading grid's way. How: Use spektrum/dock to pin the panel to the bottom edge, collapsed by default with a toggle handle.
+- [x] **T2.8.4 - Enable click-to-inspect** - What: Any bound DOM node reveals its state path on click. How: Wire spektrum/inspect activation behind an ?inspect=1 query parameter check in mountDevtools.
+- [x] **T2.8.5 - Expose replay controls** - What: One click reruns the mutation log from the boot checkpoint. How: Add dock panel buttons invoking replay() and checkpoint('boot') from the engine shim.
+- [x] **T2.8.6 - Implement devDumpState** - What: Full state snapshots pasteable into bug reports. How: Write devDumpState() calling serialize() and copying the JSON to the clipboard via navigator.clipboard.
+- [x] **T2.8.7 - Wire into bootstrap** - What: Zero manual steps to get tooling in dev. How: Call mountDevtools() at the end of bootstrap() so the DEV gate decides everything.
+- [x] **T2.8.8 - Write the two single unit tests** - What: mountDevtools and devDumpState each locked by one test. How: Add targeted tests stubbing import.meta.env.DEV and the dynamic import, run via vitest run -t.
+- [x] **T2.8.9 - Verify prod exclusion** - What: Hard proof users never download devtools. How: Run npm run build and npm run preview, confirming no spektrum/devtools network request and no chunk reference in dist.
+- [x] **T2.8.10 - Merge devtools branch** - What: Every developer gets instant state visibility from main. How: Merge feature/devtools into main after the preview exclusion check.
 
 ### F2.9 - Engine Errors Mapped to Toasts
 

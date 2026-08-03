@@ -48,6 +48,10 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
   stale-data bug that is very hard to spot), retries back off exponentially to a ceiling,
   and a failing source degrades only its own block while the rest of the desk keeps
   trading. (F2.7)
+- **Devtools in dev only** — a state scrubber and time-travel over the same history the
+  trade journal will use, plus `devDumpState()` for bug reports. Production loads none
+  of it: the gate is an explicit flag, not a build-time mystery, and a companion that
+  fails to load can never stop the desk booting. (F2.8)
 
 ## [0.1.0] — 2026-08-03 — Phase 1: Foundation & Tooling
 
