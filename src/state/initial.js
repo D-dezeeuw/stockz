@@ -52,6 +52,7 @@ export function initialState(overrides = {}) {
     [PATHS.settings.blocks]: [],
 
     // live venue data
+    [PATHS.market.venues]: { okx: { state: 'dead' }, etoro: { state: 'dead' } },
     [PATHS.market.instruments]: [],
     [PATHS.market.focus]: '',
     [PATHS.market.ticks]: 0,

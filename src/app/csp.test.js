@@ -57,7 +57,8 @@ describe('collectExpressions', () => {
     // The real page must not contain an expression the extractor cannot see.
     const page = readFileSync(new URL('../../index.html', import.meta.url), 'utf8')
     const fromPage = collectExpressions(page)
-    expect(fromPage).toContain('app.version')
+    expect(fromPage).toContain('app.name')
+    expect(fromPage).toContain('ui.statusLine')
     expect(fromPage.every((e) => typeof e === 'string' && e.length > 0)).toBe(true)
   })
 })

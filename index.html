@@ -39,13 +39,61 @@
 <body>
   <div id="app" class="app-shell" data-cloak>
 
-    <!-- Header. Full contents land in phase 5; the shell and status ticker exist now. -->
+    <!-- Header: orientation without looking away from the prices. Fixed positions so
+         the eye finds each answer by muscle memory. -->
     <header class="app-header">
-      <span class="status-word t-green">{{app.name}}</span>
-      <span class="label">v{{app.version}}</span>
+      <a class="brand" href="./" aria-label="STOCKZ">
+        <svg class="brand__mark" width="18" height="18" viewBox="0 0 16 16" aria-hidden="true">
+          <path d="M1 12 L5 7 L8 9 L12 3 L15 5" fill="none" stroke="currentColor"
+                stroke-width="2.2" stroke-linecap="square"/>
+          <circle cx="15" cy="5" r="1.6" fill="var(--orange)"/>
+        </svg>
+        <span class="brand__word status-word">{{app.name}}</span>
+      </a>
+
+      <nav class="nav" aria-label="Sections">
+        <button type="button" class="nav__item" data-action="click" data-fn="ui.setSection"
+                data-section="dashboard"
+                :class="ui.section === 'dashboard' ? 'nav__item is-active' : 'nav__item'">desk</button>
+        <button type="button" class="nav__item" data-action="click" data-fn="ui.setSection"
+                data-section="trade"
+                :class="ui.section === 'trade' ? 'nav__item is-active' : 'nav__item'">trade</button>
+        <button type="button" class="nav__item" data-action="click" data-fn="ui.setSection"
+                data-section="journal"
+                :class="ui.section === 'journal' ? 'nav__item is-active' : 'nav__item'">journal</button>
+        <button type="button" class="nav__item" data-action="click" data-fn="ui.setSection"
+                data-section="analytics"
+                :class="ui.section === 'analytics' ? 'nav__item is-active' : 'nav__item'">stats</button>
+      </nav>
+
       <span class="grow status-line num truncate">{{ui.statusLine}}</span>
+
+      <!-- Venue LEDs: is the desk actually connected to anything? -->
+      <span class="venues label" title="venue connections">
+        <span :class="'led ' + (market.venues.okx.state === 'live' ? 'led--live' : 'led--dead')"></span>
+        okx
+        <span :class="'led ' + (market.venues.etoro.state === 'live' ? 'led--live' : 'led--dead')"></span>
+        etoro
+      </span>
+
       <span class="price tnum" :class="fmt.cls(trade.dayPnl)">{{fmt.signed(trade.dayPnl)}}</span>
-      <span class="label num">{{app.clock}}</span>
+      <span class="label num nowrap">{{app.clock}} UTC</span>
+
+      <button type="button" class="icon-btn" data-action="click" data-fn="ui.toggleOverlay"
+              data-modal="hotkeys" aria-label="Keyboard shortcuts">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M1 3 H15 V13 H1 Z M2.6 4.6 V11.4 H13.4 V4.6 Z M4 6 H6 V7.4 H4 Z M7 6 H9 V7.4 H7 Z M10 6 H12 V7.4 H10 Z M4 8.6 H12 V10 H4 Z"/></svg>
+      </button>
+      <button type="button" class="icon-btn" data-action="click" data-fn="ui.toggleOverlay"
+              data-modal="settings" aria-label="Settings">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M7 1 H9 L9.4 3 L11 3.8 L12.8 2.9 L14 4.6 L12.7 6 L12.7 7.8 L14 9.2 L12.8 10.9 L11 10 L9.4 10.8 L9 13 H7 L6.6 10.8 L5 10 L3.2 10.9 L2 9.2 L3.3 7.8 L3.3 6 L2 4.6 L3.2 2.9 L5 3.8 L6.6 3 Z M8 5.4 A2.4 2.4 0 1 0 8 10.2 A2.4 2.4 0 1 0 8 5.4 Z"/></svg>
+      </button>
+      <button type="button" class="icon-btn" data-action="click" data-fn="ui.setTheme"
+              aria-label="Toggle day or night theme">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"
+             data-if="ui.theme === 'night'"><path d="M13 10.2 A6 6 0 1 1 6.2 2.4 A5 5 0 0 0 13 10.2 Z"/></svg>
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"
+             data-if="ui.theme === 'day'"><path d="M8 4.5 A3.5 3.5 0 1 1 8 11.5 A3.5 3.5 0 1 1 8 4.5 Z M7.25 0 H8.75 V2.5 H7.25 Z M7.25 13.5 H8.75 V16 H7.25 Z M0 7.25 H2.5 V8.75 H0 Z M13.5 7.25 H16 V8.75 H13.5 Z"/></svg>
+      </button>
     </header>
 
     <!-- The grid: every cell identical in size, driven entirely by the block registry.
@@ -86,7 +134,7 @@
     </ul>
 
     <footer class="app-footer">
-      <span class="footer__brand">© <strong>Neko Media</strong></span>
+      <span class="footer__brand">© <strong>Neko Media</strong> · v{{app.version}}</span>
       <nav class="footer__links">
         <a class="footer__link" href="https://www.linkedin.com/in/dannydezeeuw/"
            target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">

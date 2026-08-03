@@ -8,6 +8,8 @@ import { wireEngineErrors } from '../ui/toast.js'
 import { registerFormatters } from '../ui/format-bindings.js'
 import { seedBlocks } from '../blocks/seed.js'
 import { registerLayoutActions, observeLayout } from '../blocks/layout.js'
+import { registerHeaderActions } from '../ui/header.js'
+import { registerThemeActions, applyTheme, preferredTheme } from '../ui/theme.js'
 import { appVersion } from './version.js'
 
 /**
@@ -43,6 +45,9 @@ export function bootstrap(options = {}) {
   registerFormatters()
   registerCoreActions()
   registerLayoutActions()
+  registerHeaderActions()
+  registerThemeActions()
+  applyTheme(doc?.documentElement?.getAttribute?.('data-theme') || preferredTheme(), doc)
   const derived = registerDerived()
   wireEngineErrors()
 

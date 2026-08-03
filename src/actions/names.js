@@ -12,6 +12,9 @@ export const ACTIONS = Object.freeze({
   ui: Object.freeze({
     setStatus: 'ui.setStatus',
     toggleBlock: 'ui.toggleBlock',
+    setSection: 'ui.setSection',
+    toggleOverlay: 'ui.toggleOverlay',
+    setTheme: 'ui.setTheme',
   }),
   app: Object.freeze({
     reset: 'app.reset',
