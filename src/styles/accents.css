@@ -1,0 +1,135 @@
+/*
+ * Glow, scanline and pulse — the terminal's tells.
+ *
+ * These are *signal*, not decoration. Every accent here means something specific
+ * (armed, live, tripped, ticked), and each one is used at exactly one intensity so a
+ * trader learns it once. Ambient effects that fire constantly train the eye to ignore
+ * them, which is the opposite of what a scalping desk needs.
+ *
+ * All of it is opt-in per element, GPU-cheap (opacity/transform/box-shadow only), and
+ * fully disabled under `prefers-reduced-motion`.
+ */
+
+:root {
+  --glow-green: 0 0 8px rgb(0 230 118 / 45%);
+  --glow-green-strong: 0 0 14px rgb(0 230 118 / 70%);
+  --glow-orange: 0 0 8px rgb(255 145 0 / 45%);
+  --glow-orange-strong: 0 0 14px rgb(255 145 0 / 70%);
+  --glow-kill: 0 0 12px rgb(255 61 0 / 65%);
+
+  --pulse-ms: 220ms;
+  --scanline-opacity: 0.045;
+}
+
+/* Day theme: glows read as smudges on a light surface, so they are switched off. */
+:root[data-theme='day'] {
+  --glow-green: none;
+  --glow-green-strong: none;
+  --glow-orange: none;
+  --glow-orange-strong: none;
+  --glow-kill: 0 0 0 1px var(--orange-hot);
+  --scanline-opacity: 0;
+}
+
+.glow-green {
+  box-shadow: var(--glow-green);
+}
+
+.glow-orange {
+  box-shadow: var(--glow-orange);
+}
+
+/* Armed state: the desk is hot. The strongest ambient signal on the page. */
+.is-armed {
+  box-shadow: var(--glow-green-strong);
+  border-color: var(--green);
+}
+
+/* A tripped breaker outranks everything else on screen. */
+.is-tripped {
+  box-shadow: var(--glow-kill);
+  border-color: var(--orange-hot);
+}
+
+/*
+ * Tick pulse: one flash on price change, never a layout shift. Applied by toggling the
+ * class for one frame, so it cannot accumulate.
+ */
+@keyframes tick-up {
+  from {
+    background-color: rgb(0 230 118 / 26%);
+  }
+  to {
+    background-color: transparent;
+  }
+}
+
+@keyframes tick-down {
+  from {
+    background-color: rgb(255 145 0 / 26%);
+  }
+  to {
+    background-color: transparent;
+  }
+}
+
+.tick-up {
+  animation: tick-up var(--pulse-ms) ease-out;
+}
+
+.tick-down {
+  animation: tick-down var(--pulse-ms) ease-out;
+}
+
+/* Connection LEDs — the smallest possible status indicator. */
+.led {
+  display: inline-block;
+  inline-size: 0.5rem;
+  block-size: 0.5rem;
+  border-radius: 50%;
+  background: var(--ink-faint);
+}
+
+.led--live {
+  background: var(--green);
+  box-shadow: var(--glow-green);
+}
+
+.led--warn {
+  background: var(--orange);
+  box-shadow: var(--glow-orange);
+}
+
+.led--dead {
+  background: var(--orange-hot);
+}
+
+/*
+ * CRT scanlines over the page chrome. Purely atmospheric, so it is the first thing to
+ * go: zero opacity in day theme, none under reduced motion, and pointer-events: none so
+ * it can never intercept a click on the order path.
+ */
+.scanlines::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgb(0 0 0 / 0%) 0,
+    rgb(0 0 0 / 0%) 2px,
+    rgb(0 0 0 / 100%) 3px
+  );
+  opacity: var(--scanline-opacity);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tick-up,
+  .tick-down {
+    animation: none;
+  }
+
+  .scanlines::after {
+    display: none;
+  }
+}

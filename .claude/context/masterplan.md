@@ -444,48 +444,48 @@
 **What:** Sparing CRT-style glow and scanline effects that mark state changes without slowing the desk.
 **How:** Glow shadow tokens, a repeating-linear-gradient scanline overlay and a flicker keyframe, all compositor-friendly CSS.
 
-- [ ] **T3.4.1 - Cut terminal-accents branch** - What: Effects work stays off main until proven fast. How: git checkout -b feat/terminal-accents from main.
-- [ ] **T3.4.2 - Glow shadow tokens** - What: Reusable green and orange glow intensities. How: Add --sz-glow-green/--sz-glow-orange box-shadow and text-shadow values to tokens.css.
-- [ ] **T3.4.3 - Glow utility classes** - What: Any element can light up in one class. How: Add .sz-glow-green/.sz-glow-orange/.sz-glow-text utilities referencing the glow tokens.
-- [ ] **T3.4.4 - Scanline overlay class** - What: A subtle CRT texture on hero surfaces. How: Add .sz-scanlines using a ::after repeating-linear-gradient at 3px pitch and low opacity.
-- [ ] **T3.4.5 - Flicker keyframes** - What: A split-second flicker for dramatic state flips. How: Add @keyframes sz-flicker (opacity steps) plus a .sz-flicker one-shot class capped at 300ms.
-- [ ] **T3.4.6 - Reduced-motion guard** - What: Motion-sensitive users get a calm desk. How: Wrap flicker and scanline animation in @media (prefers-reduced-motion: no-preference).
-- [ ] **T3.4.7 - Usage guardrail comment** - What: Effects stay rare and meaningful. How: Header comment in the effects CSS: glow/flicker only on state changes, never idle, max one scanline surface per view.
-- [ ] **T3.4.8 - Compositor performance check** - What: Effects never cost a frame. How: Record the Chrome DevTools Performance panel while toggling effects; confirm opacity/shadow-only, no layout thrash.
-- [ ] **T3.4.9 - Lint and build verify** - What: Accents ship clean. How: Run npx eslint . and npm run build, then toggle each effect class on the Vite dev server.
-- [ ] **T3.4.10 - Merge accents to main** - What: State-change styling is available desk-wide. How: Merge feat/terminal-accents into main when checks pass.
+- [x] **T3.4.1 - Cut terminal-accents branch** - What: Effects work stays off main until proven fast. How: git checkout -b feat/terminal-accents from main.
+- [x] **T3.4.2 - Glow shadow tokens** - What: Reusable green and orange glow intensities. How: Add --sz-glow-green/--sz-glow-orange box-shadow and text-shadow values to tokens.css.
+- [x] **T3.4.3 - Glow utility classes** - What: Any element can light up in one class. How: Add .sz-glow-green/.sz-glow-orange/.sz-glow-text utilities referencing the glow tokens.
+- [x] **T3.4.4 - Scanline overlay class** - What: A subtle CRT texture on hero surfaces. How: Add .sz-scanlines using a ::after repeating-linear-gradient at 3px pitch and low opacity.
+- [x] **T3.4.5 - Flicker keyframes** - What: A split-second flicker for dramatic state flips. How: Add @keyframes sz-flicker (opacity steps) plus a .sz-flicker one-shot class capped at 300ms.
+- [x] **T3.4.6 - Reduced-motion guard** - What: Motion-sensitive users get a calm desk. How: Wrap flicker and scanline animation in @media (prefers-reduced-motion: no-preference).
+- [x] **T3.4.7 - Usage guardrail comment** - What: Effects stay rare and meaningful. How: Header comment in the effects CSS: glow/flicker only on state changes, never idle, max one scanline surface per view.
+- [x] **T3.4.8 - Compositor performance check** - What: Effects never cost a frame. How: Record the Chrome DevTools Performance panel while toggling effects; confirm opacity/shadow-only, no layout thrash.
+- [x] **T3.4.9 - Lint and build verify** - What: Accents ship clean. How: Run npx eslint . and npm run build, then toggle each effect class on the Vite dev server.
+- [x] **T3.4.10 - Merge accents to main** - What: State-change styling is available desk-wide. How: Merge feat/terminal-accents into main when checks pass.
 
 ### F3.5 - Semantic Status Colors
 
 **What:** Profit, loss, warning and neutral read instantly from color alone anywhere on the desk.
 **How:** Semantic --sz-status-* tokens aliasing the ramps, a statusFor helper registered via Spektrum defineFn, and utility classes.
 
-- [ ] **T3.5.1 - Cut status-colors branch** - What: Semantic mapping developed in isolation. How: git checkout -b feat/status-colors from main.
-- [ ] **T3.5.2 - Semantic status tokens** - What: Meaning-named colors decoupled from raw hues. How: Add --sz-status-profit/loss/warn/neutral aliasing green, orange and ink ramp values.
-- [ ] **T3.5.3 - Day and night variant values** - What: Statuses stay legible in both themes. How: Override status tokens under [data-theme="day"] and [data-theme="night"] scopes ready for the phase 6 engine.
-- [ ] **T3.5.4 - statusFor helper function** - What: One source of truth turning a delta into a status name. How: Write pure statusFor(delta) in src/lib/status.js returning 'profit', 'loss' or 'neutral'.
-- [ ] **T3.5.5 - Register statusFor with Spektrum** - What: Templates can classify values inline. How: Call defineFn('statusFor', statusFor) so {{ }} and data-fn bindings can use it.
-- [ ] **T3.5.6 - Single unit test for statusFor** - What: The classifier is locked by exactly one test. How: Write its one Vitest test and run npx vitest run tests/status.test.js -t statusFor.
-- [ ] **T3.5.7 - Status utility classes** - What: One class paints any element with its state. How: Add .sz-profit/.sz-loss/.sz-warn/.sz-neutral text and border utilities from the status tokens.
-- [ ] **T3.5.8 - Status-to-glow pairing** - What: Profit and loss states can flare with matching glow. How: Compose .sz-profit-glow/.sz-loss-glow combining status color with the F3.4 glow tokens.
-- [ ] **T3.5.9 - Status swatch verify** - What: All four statuses inspected in both themes. How: Extend the dev swatch block with a status row and flip data-theme manually on the Vite dev server.
-- [ ] **T3.5.10 - Merge status colors to main** - What: PnL and alert phases inherit consistent state colors. How: Merge feat/status-colors into main when the targeted test and lint are green.
+- [x] **T3.5.1 - Cut status-colors branch** - What: Semantic mapping developed in isolation. How: git checkout -b feat/status-colors from main.
+- [x] **T3.5.2 - Semantic status tokens** - What: Meaning-named colors decoupled from raw hues. How: Add --sz-status-profit/loss/warn/neutral aliasing green, orange and ink ramp values.
+- [x] **T3.5.3 - Day and night variant values** - What: Statuses stay legible in both themes. How: Override status tokens under [data-theme="day"] and [data-theme="night"] scopes ready for the phase 6 engine.
+- [x] **T3.5.4 - statusFor helper function** - What: One source of truth turning a delta into a status name. How: Write pure statusFor(delta) in src/lib/status.js returning 'profit', 'loss' or 'neutral'.
+- [x] **T3.5.5 - Register statusFor with Spektrum** - What: Templates can classify values inline. How: Call defineFn('statusFor', statusFor) so {{ }} and data-fn bindings can use it.
+- [x] **T3.5.6 - Single unit test for statusFor** - What: The classifier is locked by exactly one test. How: Write its one Vitest test and run npx vitest run tests/status.test.js -t statusFor.
+- [x] **T3.5.7 - Status utility classes** - What: One class paints any element with its state. How: Add .sz-profit/.sz-loss/.sz-warn/.sz-neutral text and border utilities from the status tokens.
+- [x] **T3.5.8 - Status-to-glow pairing** - What: Profit and loss states can flare with matching glow. How: Compose .sz-profit-glow/.sz-loss-glow combining status color with the F3.4 glow tokens.
+- [x] **T3.5.9 - Status swatch verify** - What: All four statuses inspected in both themes. How: Extend the dev swatch block with a status row and flip data-theme manually on the Vite dev server.
+- [x] **T3.5.10 - Merge status colors to main** - What: PnL and alert phases inherit consistent state colors. How: Merge feat/status-colors into main when the targeted test and lint are green.
 
 ### F3.6 - Motion and Tick-Pulse Rules
 
 **What:** Snappy 100-150ms transitions and pulse-on-tick flashes that make prices feel live, never sluggish.
 **How:** Duration/easing tokens, sz-pulse keyframes and a pulse(el, cls) retrigger helper tested with Vitest on happy-dom.
 
-- [ ] **T3.6.1 - Cut motion-rules branch** - What: Motion tuning isolated from main. How: git checkout -b feat/motion-rules from main.
-- [ ] **T3.6.2 - Duration and easing tokens** - What: One speed law for the whole desk. How: Add --sz-motion-fast: 100ms, --sz-motion-base: 150ms and --sz-ease: cubic-bezier(0.2,0,0,1) to tokens.css.
-- [ ] **T3.6.3 - Transition utility** - What: Consistent snappy transitions in one class. How: Add .sz-trans applying transition on color, background, box-shadow and transform using the tokens.
-- [ ] **T3.6.4 - Pulse keyframes** - What: Up-ticks flash green, down-ticks flash orange. How: Add @keyframes sz-pulse-up and sz-pulse-down fading a background tint over 150ms.
-- [ ] **T3.6.5 - Pulse one-shot classes** - What: A single class fires one tick flash. How: Add .sz-pulse-up/.sz-pulse-down running their keyframes once with var(--sz-motion-base).
-- [ ] **T3.6.6 - pulse retrigger helper** - What: Rapid consecutive ticks each visibly flash. How: Write pulse(el, cls) in src/lib/motion.js that removes the class, forces reflow via offsetWidth, then re-adds it.
-- [ ] **T3.6.7 - Single unit test for pulse** - What: The retrigger trick is locked by exactly one test. How: Write its one Vitest test on happy-dom and run npx vitest run tests/motion.test.js -t pulse.
-- [ ] **T3.6.8 - Reduced-motion fallback** - What: Pulses degrade to a gentle color change. How: Under prefers-reduced-motion: reduce, replace pulse animation with a plain 150ms background transition.
-- [ ] **T3.6.9 - Tick simulator verify** - What: Pulses proven under fast fake ticks. How: Dev-only interval calling Spektrum setValue on a fake price with a watch invoking pulse; observe on Vite dev.
-- [ ] **T3.6.10 - Merge motion rules to main** - What: Market-data phases get ready-made tick feedback. How: Merge feat/motion-rules into main when targeted test and lint pass.
+- [x] **T3.6.1 - Cut motion-rules branch** - What: Motion tuning isolated from main. How: git checkout -b feat/motion-rules from main.
+- [x] **T3.6.2 - Duration and easing tokens** - What: One speed law for the whole desk. How: Add --sz-motion-fast: 100ms, --sz-motion-base: 150ms and --sz-ease: cubic-bezier(0.2,0,0,1) to tokens.css.
+- [x] **T3.6.3 - Transition utility** - What: Consistent snappy transitions in one class. How: Add .sz-trans applying transition on color, background, box-shadow and transform using the tokens.
+- [x] **T3.6.4 - Pulse keyframes** - What: Up-ticks flash green, down-ticks flash orange. How: Add @keyframes sz-pulse-up and sz-pulse-down fading a background tint over 150ms.
+- [x] **T3.6.5 - Pulse one-shot classes** - What: A single class fires one tick flash. How: Add .sz-pulse-up/.sz-pulse-down running their keyframes once with var(--sz-motion-base).
+- [x] **T3.6.6 - pulse retrigger helper** - What: Rapid consecutive ticks each visibly flash. How: Write pulse(el, cls) in src/lib/motion.js that removes the class, forces reflow via offsetWidth, then re-adds it.
+- [x] **T3.6.7 - Single unit test for pulse** - What: The retrigger trick is locked by exactly one test. How: Write its one Vitest test on happy-dom and run npx vitest run tests/motion.test.js -t pulse.
+- [x] **T3.6.8 - Reduced-motion fallback** - What: Pulses degrade to a gentle color change. How: Under prefers-reduced-motion: reduce, replace pulse animation with a plain 150ms background transition.
+- [x] **T3.6.9 - Tick simulator verify** - What: Pulses proven under fast fake ticks. How: Dev-only interval calling Spektrum setValue on a fake price with a watch invoking pulse; observe on Vite dev.
+- [x] **T3.6.10 - Merge motion rules to main** - What: Market-data phases get ready-made tick feedback. How: Merge feat/motion-rules into main when targeted test and lint pass.
 
 ### F3.7 - Inline SVG Icon Set
 

@@ -24,6 +24,17 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 - **Density tokens** — a 4px spacing step, near-square corners and the grid metrics every
   block will share, tuned to fit the most instruments and fills on screen at once. The
   page never scrolls sideways; content scrolls inside its own block. (F3.3)
+- **Terminal accents** — glow for armed, a harder glow for a tripped breaker, connection
+  LEDs and a one-frame tick pulse. Each accent means exactly one thing and fires only on
+  a real event: ambient effects that run constantly train the eye to ignore them. Glows
+  switch off in the day theme, where they read as smudges. (F3.4)
+- **One colour language** — positive is green, negative is orange, zero is neutral, buy
+  matches profit and sell matches loss, in both themes. Zero is explicitly flat, never
+  green: colouring a flat position as profit tells a trader they are making money when
+  they are not. (F3.5)
+- **Motion budget** — 100–150ms, colour and opacity only, nothing on the order path waits
+  for an animation, and `prefers-reduced-motion` stops the movement while the numbers keep
+  updating at full speed. (F3.6)
 
 ## [0.2.0] — 2026-08-03 — Phase 2: Spektrum Core Integration
 
