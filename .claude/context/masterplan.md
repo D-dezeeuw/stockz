@@ -2066,16 +2066,16 @@
 **What:** Crisp chart canvases that stay pixel-sharp on any display and follow grid-block resizes instantly.
 **How:** Build src/charts/surface.js with devicePixelRatio-scaled 2D contexts and one shared ResizeObserver, mounted through Spektrum data-ref.
 
-- [ ] **T13.1.1 - Branch canvas surface work** - What: Isolated delivery line for the chart foundation. How: git checkout -b feature/13-1-canvas-surface from main per the feature-branch flow.
-- [ ] **T13.1.2 - Scaffold ChartSurface module** - What: One reusable canvas host for every chart type. How: Create src/charts/surface.js exporting createChartSurface(el) that appends a canvas and returns canvas, ctx, and dispose.
-- [ ] **T13.1.3 - Implement DPR backing-store sizing** - What: Razor-sharp lines on retina and 4K screens. How: Write computeBackingSize(cssW, cssH, dpr) and apply it to canvas.width/height while CSS size stays in layout px.
-- [ ] **T13.1.4 - Apply DPR context transform** - What: Renderers draw in CSS pixels without DPR bookkeeping. How: Write applyDprTransform(ctx, dpr) using ctx.setTransform(dpr,0,0,dpr,0,0) after every resize.
-- [ ] **T13.1.5 - Wire shared ResizeObserver** - What: Charts reflow the instant a grid block is resized. How: One module-level ResizeObserver dispatching per-surface callbacks, coalesced to the next animation frame.
-- [ ] **T13.1.6 - React to devicePixelRatio changes** - What: Charts stay sharp when dragged between monitors. How: Re-run the sizing routine on a matchMedia resolution change listener re-armed after each fire.
-- [ ] **T13.1.7 - Mount surfaces via data-ref** - What: Declarative chart hosting inside dashboard blocks. How: Add data-ref="chartHost" to the phase 4 block template and call createChartSurface from the block setup under Spektrum run.
-- [ ] **T13.1.8 - Style the canvas host** - What: Canvas fills its block edge-to-edge inside the money-hacker frame. How: Add .chart-surface with position absolute, inset 0, display block using phase 3 spacing tokens.
-- [ ] **T13.1.9 - Write single unit tests for surface fns** - What: Sizing math locked against regressions. How: One Vitest test each for computeBackingSize and applyDprTransform, run individually via vitest run -t.
-- [ ] **T13.1.10 - Verify and merge canvas surface** - What: A green foundation available to every later chart feature. How: Run ESLint plus the two targeted surface tests, then merge feature/13-1-canvas-surface into main.
+- [x] **T13.1.1 - Branch canvas surface work** - What: Isolated delivery line for the chart foundation. How: git checkout -b feature/13-1-canvas-surface from main per the feature-branch flow.
+- [x] **T13.1.2 - Scaffold ChartSurface module** - What: One reusable canvas host for every chart type. How: Create src/charts/surface.js exporting createChartSurface(el) that appends a canvas and returns canvas, ctx, and dispose.
+- [x] **T13.1.3 - Implement DPR backing-store sizing** - What: Razor-sharp lines on retina and 4K screens. How: Write computeBackingSize(cssW, cssH, dpr) and apply it to canvas.width/height while CSS size stays in layout px.
+- [x] **T13.1.4 - Apply DPR context transform** - What: Renderers draw in CSS pixels without DPR bookkeeping. How: Write applyDprTransform(ctx, dpr) using ctx.setTransform(dpr,0,0,dpr,0,0) after every resize.
+- [x] **T13.1.5 - Wire shared ResizeObserver** - What: Charts reflow the instant a grid block is resized. How: One module-level ResizeObserver dispatching per-surface callbacks, coalesced to the next animation frame.
+- [x] **T13.1.6 - React to devicePixelRatio changes** - What: Charts stay sharp when dragged between monitors. How: Re-run the sizing routine on a matchMedia resolution change listener re-armed after each fire.
+- [x] **T13.1.7 - Mount surfaces via data-ref** - What: Declarative chart hosting inside dashboard blocks. How: Add data-ref="chartHost" to the phase 4 block template and call createChartSurface from the block setup under Spektrum run.
+- [x] **T13.1.8 - Style the canvas host** - What: Canvas fills its block edge-to-edge inside the money-hacker frame. How: Add .chart-surface with position absolute, inset 0, display block using phase 3 spacing tokens.
+- [x] **T13.1.9 - Write single unit tests for surface fns** - What: Sizing math locked against regressions. How: One Vitest test each for computeBackingSize and applyDprTransform, run individually via vitest run -t.
+- [x] **T13.1.10 - Verify and merge canvas surface** - What: A green foundation available to every later chart feature. How: Run ESLint plus the two targeted surface tests, then merge feature/13-1-canvas-surface into main.
 
 ### F13.2 - Scale & Transform Math
 
@@ -2178,16 +2178,16 @@
 **What:** Charts flip day/night with the rest of the terminal instantly, with zero repaint glitches.
 **How:** Palette objects resolved from phase 3 CSS custom properties and swapped through a Spektrum watch on the phase 6 theme value.
 
-- [ ] **T13.8.1 - Branch palette work** - What: Theme plumbing separated from drawing logic. How: git checkout -b feature/13-8-chart-palettes from main.
-- [ ] **T13.8.2 - Define palette roles** - What: One semantic color contract for every renderer. How: Document the chartPalette shape (up, down, line, grid, axis, pulse, marker) in src/charts/palette.js.
-- [ ] **T13.8.3 - Implement readCssPalette** - What: Charts always match the live design tokens. How: Fn reading custom properties via getComputedStyle on documentElement into a palette object.
-- [ ] **T13.8.4 - Implement resolvePalette** - What: The correct palette per theme without duplication. How: Pure fn selecting role values by theme key with day defaults and night overrides.
-- [ ] **T13.8.5 - Watch theme for swaps** - What: Instant chart restyle on the day/night toggle. How: Spektrum watch on the theme value calling setValue chartPalette and marking all surfaces dirty.
-- [ ] **T13.8.6 - Thread palette into renderers** - What: No renderer ever hardcodes a color again. How: Refactor every draw fn to take the palette parameter and sweep src/charts for raw hex literals.
-- [ ] **T13.8.7 - Invalidate gradient caches** - What: No stale glows lingering after a swap. How: Rebuild cached canvas gradients and shadowBlur settings whenever the palette value changes.
-- [ ] **T13.8.8 - Tune night-theme contrast** - What: Green and orange legible day and night. How: Check role pairs against the phase 3 token contrast targets and adjust night alpha values.
-- [ ] **T13.8.9 - Write the single unit test for resolvePalette** - What: Theme selection logic locked. How: One Vitest test asserting day and night role resolution, run via vitest run -t resolvePalette.
-- [ ] **T13.8.10 - Verify and merge palettes** - What: Seamless theme flips across all charts. How: Toggle themes in Vite dev over live charts, targeted test green, then merge feature/13-8-chart-palettes into main.
+- [x] **T13.8.1 - Branch palette work** - What: Theme plumbing separated from drawing logic. How: git checkout -b feature/13-8-chart-palettes from main.
+- [x] **T13.8.2 - Define palette roles** - What: One semantic color contract for every renderer. How: Document the chartPalette shape (up, down, line, grid, axis, pulse, marker) in src/charts/palette.js.
+- [x] **T13.8.3 - Implement readCssPalette** - What: Charts always match the live design tokens. How: Fn reading custom properties via getComputedStyle on documentElement into a palette object.
+- [x] **T13.8.4 - Implement resolvePalette** - What: The correct palette per theme without duplication. How: Pure fn selecting role values by theme key with day defaults and night overrides.
+- [x] **T13.8.5 - Watch theme for swaps** - What: Instant chart restyle on the day/night toggle. How: Spektrum watch on the theme value calling setValue chartPalette and marking all surfaces dirty.
+- [x] **T13.8.6 - Thread palette into renderers** - What: No renderer ever hardcodes a color again. How: Refactor every draw fn to take the palette parameter and sweep src/charts for raw hex literals.
+- [x] **T13.8.7 - Invalidate gradient caches** - What: No stale glows lingering after a swap. How: Rebuild cached canvas gradients and shadowBlur settings whenever the palette value changes.
+- [x] **T13.8.8 - Tune night-theme contrast** - What: Green and orange legible day and night. How: Check role pairs against the phase 3 token contrast targets and adjust night alpha values.
+- [x] **T13.8.9 - Write the single unit test for resolvePalette** - What: Theme selection logic locked. How: One Vitest test asserting day and night role resolution, run via vitest run -t resolvePalette.
+- [x] **T13.8.10 - Verify and merge palettes** - What: Seamless theme flips across all charts. How: Toggle themes in Vite dev over live charts, targeted test green, then merge feature/13-8-chart-palettes into main.
 
 ### F13.9 - Dirty-Flag rAF Render Loop
 
@@ -2210,16 +2210,16 @@
 **What:** Tiny live trend lines inside watchlist rows and dashboard tiles - direction at a glance everywhere.
 **How:** A featherweight drawSparkline fn on pooled small canvases sharing ring-buffer slices and the render loop at low priority.
 
-- [ ] **T13.10.1 - Branch sparkline work** - What: The mini renderer ships independently of big charts. How: git checkout -b feature/13-10-sparklines from main.
-- [ ] **T13.10.2 - Implement drawSparkline** - What: A complete trend read in a 60x18 px box. How: Polyline plus gradient area fill from a value slice, no axes or labels, in src/charts/sparkline.js.
-- [ ] **T13.10.3 - Implement sparkPath** - What: Cheap geometry for hundreds of concurrent sparks. How: Pure fn reducing a slice to a step-decimated point path fitted to the mini canvas box.
-- [ ] **T13.10.4 - Implement tintForChange** - What: Green rising and orange falling sessions at a glance. How: Pure fn picking the palette role from the last-versus-sessionOpen sign.
-- [ ] **T13.10.5 - Build the list mount helper** - What: Sparks living inside phase 12 watchlist rows. How: mountSparkline helper wired from data-ref within data-each row templates.
-- [ ] **T13.10.6 - Pool spark canvases** - What: Smooth list scrolling with zero GC churn. How: acquire/release pool reusing detached canvases keyed by size for recycled rows.
-- [ ] **T13.10.7 - Register sparks at low priority** - What: Sparks never steal frames from the main chart. How: Register with the shared render loop under the low-priority tag throttled to 4Hz.
-- [ ] **T13.10.8 - Add tile sparklines** - What: Trend context on dashboard grid tiles too. How: Reuse mountSparkline in phase 4 tile templates behind a settings flag from the phase 7 store.
-- [ ] **T13.10.9 - Write single unit tests for spark fns** - What: Path decimation and tinting locked. How: One Vitest test each for sparkPath and tintForChange, run individually via vitest run -t.
-- [ ] **T13.10.10 - Verify and merge sparklines** - What: Live direction cues across lists and tiles. How: Scroll a 50-row watchlist at 60fps in Vite dev, targeted tests green, then merge feature/13-10-sparklines into main.
+- [x] **T13.10.1 - Branch sparkline work** - What: The mini renderer ships independently of big charts. How: git checkout -b feature/13-10-sparklines from main.
+- [x] **T13.10.2 - Implement drawSparkline** - What: A complete trend read in a 60x18 px box. How: Polyline plus gradient area fill from a value slice, no axes or labels, in src/charts/sparkline.js.
+- [x] **T13.10.3 - Implement sparkPath** - What: Cheap geometry for hundreds of concurrent sparks. How: Pure fn reducing a slice to a step-decimated point path fitted to the mini canvas box.
+- [x] **T13.10.4 - Implement tintForChange** - What: Green rising and orange falling sessions at a glance. How: Pure fn picking the palette role from the last-versus-sessionOpen sign.
+- [x] **T13.10.5 - Build the list mount helper** - What: Sparks living inside phase 12 watchlist rows. How: mountSparkline helper wired from data-ref within data-each row templates.
+- [x] **T13.10.6 - Pool spark canvases** - What: Smooth list scrolling with zero GC churn. How: acquire/release pool reusing detached canvases keyed by size for recycled rows.
+- [x] **T13.10.7 - Register sparks at low priority** - What: Sparks never steal frames from the main chart. How: Register with the shared render loop under the low-priority tag throttled to 4Hz.
+- [x] **T13.10.8 - Add tile sparklines** - What: Trend context on dashboard grid tiles too. How: Reuse mountSparkline in phase 4 tile templates behind a settings flag from the phase 7 store.
+- [x] **T13.10.9 - Write single unit tests for spark fns** - What: Path decimation and tinting locked. How: One Vitest test each for sparkPath and tintForChange, run individually via vitest run -t.
+- [x] **T13.10.10 - Verify and merge sparklines** - What: Live direction cues across lists and tiles. How: Scroll a 50-row watchlist at 60fps in Vite dev, targeted tests green, then merge feature/13-10-sparklines into main.
 
 ---
 
