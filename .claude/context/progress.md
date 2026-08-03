@@ -5,11 +5,25 @@ in `masterplan.md`, and knows where the project stands. Rewritten at every phase
 
 ---
 
-## Status: Phase 6 closed (v0.6.0) · Phase 7 next
+## Status: Phase 7 closed (v0.7.0) · Phase 8 next
 
 **Live:** https://d-dezeeuw.github.io/stockz/ (Pages serves `main` root — pushing is deploying)
-**Tests:** 135, one per function, all passing individually. Every gated file ≥85% branches.
+**Tests:** 149, one per function, all passing individually. Every gated file ≥85% branches.
 **Branch model:** everything merges to `main`; no feature branches outstanding.
+
+## Phase 7 — User Settings & Persistence (closed)
+
+| Feature | What now exists | Where |
+| --- | --- | --- |
+| F7.1–F7.3 | `SETTINGS_SCHEMA`, `defaultSettings`, `coerceSetting`, `normalizeSettings`, `parseList`, `fieldFor` | `src/state/settings-schema.js` |
+| F7.3 | settings drawer (`ui.modal === 'settings'`), `data-model` fields | `index.html`, `src/styles/states.css` |
+| F7.4 | `saveLayoutPreset`, `applyLayoutPreset` | `src/ui/settings.js` |
+| F7.7 | `exportSettings`, `importSettings` (normalised on the way in) | `src/ui/settings.js` |
+| F7.8 | `resetSettings` + `undoSettingsReset` via `checkpoint`/`replay` | `src/ui/settings.js` |
+
+`initialState()` now spreads `defaultSettings()`, so the schema is the single source of
+defaults. Adding a setting = add it to `SETTINGS_SCHEMA` (and to `PATHS.settings` so the
+paths test stays green).
 
 ## Phase 6 — Day/Night Theme Engine (closed)
 
@@ -91,19 +105,21 @@ go stale, and faults that reach the trader instead of the console.
 | F2.9 | `pushToast`, `dismissToast`, `expireToasts`, `describeEngineError`, `wireEngineErrors` | `src/ui/toast.js` |
 | F2.10 | `collectExpressions`, `renderPrecompileModule`, `cspMeta`, `npm run build:csp` | `src/app/csp.js`, `docs/csp.md` |
 
-## Next up: Phase 7 — User Settings & Persistence
+## Next up: Phase 8 — API Key Access Layer
 
-First feature **F7.1**. The persistence *layer* already exists (`src/state/persist.js`,
-wired into bootstrap; theme and blocks already round-trip). Phase 7 adds the settings
-the trader actually edits and the UI to edit them:
+First feature **F8.1**. Nothing reads keys yet. What phase 8 must build:
 
-- A settings **drawer** — `ui.modal === 'settings'` is already toggled by the header gear
-  via `ui.toggleOverlay`; nothing renders for it yet.
-- Schema: default order size, price step, hotkeys, sounds, favourite instruments.
-- Layout presets (save/load named block arrangements) on top of the block registry.
-- Export/import settings as JSON; reset-to-defaults with a `checkpoint()` undo.
-- `SETTINGS_VERSION`/`migrateSettings` already exist — extend the migration when the
-  schema grows, and remember the no-flash script in `index.html` reads the same key.
+- URL param parsing (`?okxKey=…&okxSecret=…&okxPass=…`, `?etoroKey=…&etoroUser=…`) plus
+  `history.replaceState` scrubbing so keys never linger in the address bar.
+- A key modal for when no params are present — `ui.modal` already drives overlays, so
+  reuse `ui.toggleOverlay` with a `'keys'` name.
+- **An in-memory vault module. Keys must never enter Spektrum state** — state flows into
+  history, `serialize()` and journal exports. This is the hard rule of the phase.
+- Optional "remember on this device" storing an obfuscated copy, behind an explicit
+  opt-in and a plain warning.
+- `venueKeyPresence()` / `keyPresenceBanner()` in `src/utils/env.js` already report
+  presence without exposing values — the vault should expose the same shape.
+- Dev fallback already reads `import.meta.env.STOCKZ_*`.
 
 ## Gotchas (learned the hard way — do not rediscover)
 
