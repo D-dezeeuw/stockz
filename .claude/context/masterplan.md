@@ -261,16 +261,16 @@
 **What:** Every module knows exactly where its state lives, preventing key collisions across all 30 phases.
 **How:** Define ui.*, market.*, trade.* and settings.* ownership in docs plus frozen path constants with a dev-time validator.
 
-- [ ] **T2.3.1 - Cut namespaces feature branch** - What: Naming rules land atomically with their enforcement. How: Run git checkout -b feature/state-namespaces from main.
-- [ ] **T2.3.2 - Write the state map doc** - What: A single reference answering "where does this value live". How: Author docs/state-map.md assigning ui, market, trade and settings roots to their owning phase groups.
-- [ ] **T2.3.3 - Implement path constants** - What: Typo-proof state keys shared by all modules. How: Write src/app/paths.js exporting Object.freeze'd UI, MARKET, TRADE and SETTINGS root constants.
-- [ ] **T2.3.4 - Implement buildPath helper** - What: Composable dotted paths without string concatenation bugs. How: Write buildPath(root, ...segments) in src/app/paths.js joining segments with dots after validating each.
-- [ ] **T2.3.5 - Implement assertKnownNamespace** - What: Unknown roots fail loudly in dev instead of silently corrupting state. How: Write assertKnownNamespace(path) throwing when the first segment is not one of the four roots, no-op in prod.
-- [ ] **T2.3.6 - Seed namespace branches** - What: Placeholder sub-trees later phases can rely on. How: Extend initialState() with ui.theme, market.instruments, trade.orders and settings.user defaults.
-- [ ] **T2.3.7 - Adopt constants in bootstrap** - What: The boot path itself follows the convention it preaches. How: Replace raw string keys in bootstrap.js and main.js with paths.js constants and buildPath calls.
-- [ ] **T2.3.8 - Add lint guard for raw paths** - What: The convention is enforced by tooling, not memory. How: Add an ESLint no-restricted-syntax rule flagging setValue string literals outside src/app/paths.js.
-- [ ] **T2.3.9 - Write the two single unit tests** - What: buildPath and assertKnownNamespace each locked by one test. How: Add targeted tests under tests/app/ and run each with vitest run -t by function name.
-- [ ] **T2.3.10 - Merge namespaces branch** - What: A collision-free state tree contract reaches main. How: Merge feature/state-namespaces into main after lint and targeted tests pass.
+- [x] **T2.3.1 - Cut namespaces feature branch** - What: Naming rules land atomically with their enforcement. How: Run git checkout -b feature/state-namespaces from main.
+- [x] **T2.3.2 - Write the state map doc** - What: A single reference answering "where does this value live". How: Author docs/state-map.md assigning ui, market, trade and settings roots to their owning phase groups.
+- [x] **T2.3.3 - Implement path constants** - What: Typo-proof state keys shared by all modules. How: Write src/app/paths.js exporting Object.freeze'd UI, MARKET, TRADE and SETTINGS root constants.
+- [x] **T2.3.4 - Implement buildPath helper** - What: Composable dotted paths without string concatenation bugs. How: Write buildPath(root, ...segments) in src/app/paths.js joining segments with dots after validating each.
+- [x] **T2.3.5 - Implement assertKnownNamespace** - What: Unknown roots fail loudly in dev instead of silently corrupting state. How: Write assertKnownNamespace(path) throwing when the first segment is not one of the four roots, no-op in prod.
+- [x] **T2.3.6 - Seed namespace branches** - What: Placeholder sub-trees later phases can rely on. How: Extend initialState() with ui.theme, market.instruments, trade.orders and settings.user defaults.
+- [x] **T2.3.7 - Adopt constants in bootstrap** - What: The boot path itself follows the convention it preaches. How: Replace raw string keys in bootstrap.js and main.js with paths.js constants and buildPath calls.
+- [x] **T2.3.8 - Add lint guard for raw paths** - What: The convention is enforced by tooling, not memory. How: Add an ESLint no-restricted-syntax rule flagging setValue string literals outside src/app/paths.js.
+- [x] **T2.3.9 - Write the two single unit tests** - What: buildPath and assertKnownNamespace each locked by one test. How: Add targeted tests under tests/app/ and run each with vitest run -t by function name.
+- [x] **T2.3.10 - Merge namespaces branch** - What: A collision-free state tree contract reaches main. How: Merge feature/state-namespaces into main after lint and targeted tests pass.
 
 ### F2.4 - Action Registry via defineFn
 

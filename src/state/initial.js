@@ -1,4 +1,5 @@
 import { APP_VERSION } from '../app/version.js'
+import { PATHS } from './paths.js'
 
 /**
  * The state tree the desk boots into.
@@ -10,13 +11,8 @@ import { APP_VERSION } from '../app/version.js'
  * A **factory**, not a shared constant: every call returns a fresh tree, so a reset or
  * a second boot in tests can never inherit a mutated object from the last one.
  *
- * Namespaces (see .claude/context/architecture.md):
- *   app.*      identity of the running build
- *   ui.*       what the trader is looking at
- *   settings.* the only branch that persists to localStorage
- *   market.*   live venue data — never persisted
- *   trade.*    orders, positions, PnL
- *   strategy.* registered strategies and their signals
+ * Paths come from the state map in ./paths.js rather than string literals, so a typo
+ * cannot invent a silent branch no binding reads.
  *
  * API keys are deliberately absent: state is serialized into history and journal
  * exports, so credentials live only in the in-memory vault.
@@ -30,36 +26,36 @@ export function initialState(overrides = {}) {
 
   return {
     // identity
-    'app.name': 'STOCKZ',
-    'app.version': version,
-    'app.engine': engine,
-    'app.bootedAt': ts,
+    [PATHS.app.name]: 'STOCKZ',
+    [PATHS.app.version]: version,
+    [PATHS.app.engine]: engine,
+    [PATHS.app.bootedAt]: ts,
 
     // what is on screen
-    'ui.status': 'ready',
-    'ui.theme': 'night',
-    'ui.section': 'dashboard',
-    'ui.modal': '',
-    'ui.toasts': [],
+    [PATHS.ui.status]: 'ready',
+    [PATHS.ui.theme]: 'night',
+    [PATHS.ui.section]: 'dashboard',
+    [PATHS.ui.modal]: '',
+    [PATHS.ui.toasts]: [],
 
-    // preferences (persisted branch)
-    'settings.theme': 'night',
-    'settings.blocks': [],
+    // preferences (the only persisted branch)
+    [PATHS.settings.theme]: 'night',
+    [PATHS.settings.blocks]: [],
 
     // live venue data
-    'market.instruments': [],
-    'market.focus': '',
-    'market.ticks': 0,
+    [PATHS.market.instruments]: [],
+    [PATHS.market.focus]: '',
+    [PATHS.market.ticks]: 0,
 
     // trading
-    'trade.armed': false,
-    'trade.mode': 'paper',
-    'trade.orders': [],
-    'trade.positions': [],
-    'trade.dayPnl': 0,
+    [PATHS.trade.armed]: false,
+    [PATHS.trade.mode]: 'paper',
+    [PATHS.trade.orders]: [],
+    [PATHS.trade.positions]: [],
+    [PATHS.trade.dayPnl]: 0,
 
     // strategies
-    'strategy.registered': [],
-    'strategy.signals': [],
+    [PATHS.strategy.registered]: [],
+    [PATHS.strategy.signals]: [],
   }
 }
