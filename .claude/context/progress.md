@@ -5,11 +5,22 @@ in `masterplan.md`, and knows where the project stands. Rewritten at every phase
 
 ---
 
-## Status: Phase 4 closed (v0.4.0) · Phase 5 next
+## Status: Phase 5 closed (v0.5.0) · Phase 6 next
 
 **Live:** https://d-dezeeuw.github.io/stockz/ (Pages serves `main` root — pushing is deploying)
-**Tests:** 116, one per function, all passing individually. Every gated file ≥85% branches.
+**Tests:** 126, one per function, all passing individually. Every gated file ≥85% branches.
 **Branch model:** everything merges to `main`; no feature branches outstanding.
+
+## Phase 5 — Header, Branding & Navigation (closed)
+
+| Feature | What now exists | Where |
+| --- | --- | --- |
+| F5.1–F5.9 | wordmark, nav, venue LEDs, PnL ticker, UTC clock, hotkey/settings buttons, theme toggle, sticky header | `index.html`, `src/styles/grid.css` |
+| F5.2 | `setSection`, `blockInSection`, `SECTION_BLOCKS` — sections switch block sets | `src/ui/header.js` |
+| F5.5, F5.7 | `venueLeds`, `sessionClock` (clock + uptime) | `src/ui/header.js` |
+| F5.4 | `preferredTheme`, `applyTheme`, `setTheme` — one attribute on `<html>` | `src/ui/theme.js` |
+| — | `toggleOverlay` — same panel twice closes it | `src/ui/header.js` |
+| F5.10 | condensed mobile header: labels drop, LEDs/PnL/clock stay | `src/styles/grid.css` |
 
 ## Phase 4 — Dashboard Grid Shell (closed)
 
@@ -66,17 +77,20 @@ go stale, and faults that reach the trader instead of the console.
 | F2.9 | `pushToast`, `dismissToast`, `expireToasts`, `describeEngineError`, `wireEngineErrors` | `src/ui/toast.js` |
 | F2.10 | `collectExpressions`, `renderPrecompileModule`, `cspMeta`, `npm run build:csp` | `src/app/csp.js`, `docs/csp.md` |
 
-## Next up: Phase 5 — Header, Branding & Navigation
+## Next up: Phase 6 — Day/Night Theme Engine
 
-First feature **F5.1**. The header exists as a bar (`.app-header`) showing the wordmark,
-version, status line, day PnL and clock. Still to come: the SVG logo, nav that switches
-block sets, venue LEDs, the settings gear and the theme toggle.
+First feature **F6.1**. The theme *mechanism* already exists (`src/ui/theme.js`:
+`applyTheme` stamps `data-theme` on `<html>` and writes both `ui.theme` and
+`settings.theme`; the toggle is wired in the header). Phase 6 adds what is missing:
 
-- `connectionClass()` (F3.5) already maps venue socket state to LED classes.
-- `icon()` ships gear, sun, moon, keyboard, chart and clock — the header needs no new art.
-- Nav should drive `ui.section`, which is already seeded and in `PATHS`.
-- Theme toggle writes `ui.theme` **and** `settings.theme`; phase 6 owns the persistence
-  and the no-flash boot script.
+- **Persistence** via `spektrum/persist` on the `settings.*` branch — nothing is stored
+  yet, so a reload loses the choice.
+- **No-flash boot**: an inline `<script>` in `<head>` must read the cached theme and stamp
+  `data-theme` *before* first paint, or a night-theme user sees a white flash.
+- Canvas charts re-palette on theme change — the seam is `onThemeChange` in
+  `src/state/systems.js`, currently a debug log.
+- `<meta name="theme-color">` is hard-coded to the night colour and should follow.
+- Contrast for both palettes is already asserted by `auditContrast` (F3.10).
 
 ## Gotchas (learned the hard way — do not rediscover)
 
