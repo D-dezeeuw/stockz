@@ -1,0 +1,87 @@
+/*
+ * Semantic status classes and motion rules.
+ *
+ * `src/ui/status-color.js` decides which of these a value gets; this file is only the
+ * appearance. Keeping the decision in JS (and unit-tested) means the meaning of a colour
+ * is asserted, not just styled.
+ *
+ * Motion budget: 100–150ms, transform/opacity/colour only, and nothing on the order path
+ * ever waits for an animation to finish.
+ */
+
+:root {
+  --dur-fast: 100ms;
+  --dur-normal: 150ms;
+  --ease-out: cubic-bezier(0.2, 0, 0, 1);
+  --transition-color: color var(--dur-fast) var(--ease-out),
+    background-color var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out);
+}
+
+.is-profit,
+.is-buy {
+  color: var(--green);
+}
+
+.is-loss,
+.is-sell {
+  color: var(--orange);
+}
+
+.is-flat {
+  color: var(--ink-muted);
+}
+
+.is-warn {
+  color: var(--orange-300);
+}
+
+.is-danger {
+  color: var(--orange-hot);
+}
+
+/* Filled variants, for buttons and badges rather than numbers. */
+.bg-profit,
+.bg-buy {
+  background: var(--green);
+  color: var(--ink-inverse);
+}
+
+.bg-loss,
+.bg-sell {
+  background: var(--orange);
+  color: var(--ink-inverse);
+}
+
+.bg-danger {
+  background: var(--orange-hot);
+  color: var(--ink-inverse);
+}
+
+/* Interactive elements transition colour only — never size or position. */
+button,
+a,
+.interactive {
+  transition: var(--transition-color);
+}
+
+button:focus-visible,
+a:focus-visible,
+.interactive:focus-visible {
+  outline: var(--border-2) solid var(--green);
+  outline-offset: 2px;
+}
+
+/*
+ * Reduced motion: the desk keeps updating at full speed, it just stops animating. The
+ * numbers are the information; the movement is only emphasis.
+ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
