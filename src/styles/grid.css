@@ -1,0 +1,116 @@
+/*
+ * The dashboard grid.
+ *
+ * The rule that defines the desk: **every block is exactly the same width and height.**
+ * Only the header and footer are exempt. A uniform grid is what makes the whole desk
+ * scannable — the eye learns one cell size and stops re-measuring, so finding the ladder
+ * or the PnL tile costs no thought during a fast move.
+ *
+ * Columns are auto-fitted from `--block-w`, so the count follows the viewport without a
+ * single media query, and every cell is exactly `--block-h` tall via `grid-auto-rows`.
+ */
+
+.app-shell {
+  display: grid;
+  grid-template-rows: var(--header-h) 1fr var(--footer-h);
+  min-block-size: 100dvh;
+  background: var(--bg);
+}
+
+.app-header {
+  grid-row: 1;
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  padding-inline: var(--sp-3);
+  border-block-end: var(--border);
+  background: var(--bg-block);
+  position: sticky;
+  inset-block-start: 0;
+  z-index: var(--z-header);
+}
+
+.app-footer {
+  grid-row: 3;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-3);
+  padding-inline: var(--sp-3);
+  border-block-start: var(--border);
+  background: var(--bg-block);
+  font-size: var(--fs-0);
+  color: var(--ink-muted);
+}
+
+.app-grid {
+  grid-row: 2;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(var(--block-w), 1fr));
+  grid-auto-rows: var(--block-h); /* identical height, every cell, always */
+  gap: var(--grid-gap);
+  padding: var(--grid-gap);
+  align-content: start;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+/* A block is a fixed-size window onto its own scrolling content. */
+.block {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  min-inline-size: 0; /* lets a grid child actually shrink instead of forcing overflow */
+  min-block-size: 0;
+  background: var(--bg-block);
+  border: var(--border);
+  border-radius: var(--radius-1);
+  overflow: hidden;
+  position: relative;
+}
+
+.block__bar {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: var(--sp-1) var(--sp-2);
+  border-block-end: var(--border);
+  background: var(--bg-raised);
+  font-size: var(--fs-0);
+  color: var(--ink-muted);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wide);
+}
+
+.block__title {
+  flex: 1 1 auto;
+  min-inline-size: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--ink);
+}
+
+.block__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-1);
+}
+
+/* The only place content is allowed to scroll: inside a block. */
+.block__body {
+  min-block-size: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: var(--sp-2);
+  scrollbar-width: thin;
+  scrollbar-color: var(--line-strong) transparent;
+}
+
+/* Armed and tripped states read at a glance, from across the room. */
+.block.is-armed {
+  border-color: var(--green);
+}
+
+.block.is-tripped {
+  border-color: var(--orange-hot);
+}

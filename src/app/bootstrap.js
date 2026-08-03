@@ -6,6 +6,7 @@ import { registerSystems } from '../state/systems.js'
 import { mountDevtools } from './devtools.js'
 import { wireEngineErrors } from '../ui/toast.js'
 import { registerFormatters } from '../ui/format-bindings.js'
+import { seedBlocks } from '../blocks/seed.js'
 import { appVersion } from './version.js'
 
 /**
@@ -44,6 +45,7 @@ export function bootstrap(options = {}) {
   wireEngineErrors()
 
   registerSystems({ now: makeBootClock(now) })
+  seedBlocks()
 
   const cleanup = bindDOM(doc)
   tick()

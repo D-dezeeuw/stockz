@@ -10,7 +10,23 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ## [Unreleased]
 
-_Nothing yet — next entries land with phase 4 (Dashboard Grid Shell)._
+### Added
+
+- **The dashboard grid** — a header, a uniform grid and a footer. Every block is exactly
+  the same width and height, auto-fitted into as many columns as the viewport allows with
+  no media queries, so the eye learns one cell size and stops re-measuring during a fast
+  move. (F4.1)
+- **Blocks are data, not markup** — the grid renders from a registry in state, so a
+  feature adds a block by registering it and settings can hide or reorder it without
+  touching HTML. Every registry function returns a new array; mutating in place would skip
+  change detection and the grid would silently stop matching state. (F4.2, F4.10)
+- **Block chrome with honest states** — a title bar plus loading, empty and error
+  renderings. A block waiting on data shimmers rather than sitting blank: a silent empty
+  cell looks exactly like a market that stopped moving, which is when someone decides the
+  price is stable and sizes up. (F4.3, F4.5, F4.6)
+- **Footer** — Neko Media with LinkedIn, npm and GitHub links as inline SVG. (F4.7)
+- **Scroll containment** — the page never scrolls sideways; a busy tape scrolls inside its
+  own block. (F4.9)
 
 ## [0.3.0] — 2026-08-03 — Phase 3: Money-Hacker Design System
 

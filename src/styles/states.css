@@ -1,0 +1,104 @@
+/*
+ * Block states: loading, empty, error.
+ *
+ * Every block answers "is this thing working?" without the trader clicking anything. A
+ * silent blank block is the dangerous case — it looks identical to a market that has
+ * stopped moving, which is exactly when someone would decide the price is stable and
+ * size up.
+ */
+
+/* Skeleton shimmer while data is on its way. */
+.skeleton {
+  display: grid;
+  gap: var(--sp-2);
+  padding: var(--sp-2);
+}
+
+.skeleton__bar {
+  block-size: 0.75rem;
+  border-radius: var(--radius-1);
+  background: linear-gradient(
+    90deg,
+    var(--bg-raised) 0%,
+    var(--green-ghost) 50%,
+    var(--bg-raised) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.1s linear infinite;
+}
+
+.skeleton__bar:nth-child(2) { inline-size: 82%; }
+.skeleton__bar:nth-child(3) { inline-size: 64%; }
+.skeleton__bar:nth-child(4) { inline-size: 90%; }
+
+@keyframes shimmer {
+  from { background-position: 200% 0; }
+  to { background-position: -200% 0; }
+}
+
+/* Empty and error share a centred, quiet layout — they are not the main event. */
+.block__state {
+  display: grid;
+  place-content: center;
+  gap: var(--sp-1);
+  block-size: 100%;
+  padding: var(--sp-3);
+  text-align: center;
+  font-size: var(--fs-0);
+  color: var(--ink-muted);
+}
+
+.block__state--error {
+  color: var(--orange);
+}
+
+.block__state-title {
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wide);
+  color: var(--ink);
+}
+
+.block__state--error .block__state-title {
+  color: var(--orange-hot);
+}
+
+/* A block in error gets a border too — visible from across the room, not just up close. */
+.block.has-error {
+  border-color: var(--orange);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton__bar {
+    animation: none;
+    background: var(--bg-raised);
+  }
+}
+
+/* Footer brand links */
+.footer__links {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+}
+
+.footer__link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-1);
+  color: var(--ink-muted);
+  text-decoration: none;
+}
+
+.footer__link:hover,
+.footer__link:focus-visible {
+  color: var(--green);
+}
+
+.footer__brand {
+  color: var(--ink-muted);
+}
+
+.footer__brand strong {
+  color: var(--green);
+  font-weight: var(--fw-bold);
+}
