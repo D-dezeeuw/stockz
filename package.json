@@ -23,7 +23,8 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d dist"
+    "deploy": "gh-pages -d dist",
+    "check:secrets": "git grep -nIE '[A-Za-z0-9+/_-]{32,}={0,2}' -- ':!package-lock.json' ':!*.md' ':!*.svg' ':!.claude/**' || echo 'no secret-shaped strings found'"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

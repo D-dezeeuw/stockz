@@ -8,6 +8,9 @@
  * with the Spektrum bootstrap.
  */
 
+import { appVersion } from './app/version.js'
+import { keyPresenceBanner } from './utils/env.js'
+
 export const APP_NAME = 'STOCKZ'
 
 /**
@@ -42,4 +45,5 @@ export function autoMount(doc = globalThis.document) {
   return mountApp(doc)
 }
 
+console.info(`${APP_NAME} v${appVersion()} | ${keyPresenceBanner()}`)
 autoMount()

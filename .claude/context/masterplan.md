@@ -158,16 +158,16 @@
 **What:** Local dev can use real STOCKZ_* venue keys with zero risk of committing them.
 **How:** Set Vite envPrefix STOCKZ_, ship a .env.example template, and add a tested import.meta.env read helper.
 
-- [ ] **T1.7.1 - Cut env-handling feature branch** - What: Secret plumbing merges only after leak checks pass. How: Run git checkout -b feature/env-handling from main.
-- [ ] **T1.7.2 - Set the env prefix** - What: Only intentional STOCKZ_ vars ever reach browser code. How: Add envPrefix 'STOCKZ_' to vite.config.js so import.meta.env exposes just those.
-- [ ] **T1.7.3 - Author .env.example** - What: New devs see exactly which keys exist without seeing values. How: List STOCKZ_OKX_API_KEY, STOCKZ_OKX_SECRET_KEY, STOCKZ_OKX_PASSPHRASE, STOCKZ_ETORO_API_KEY and STOCKZ_ETORO_USER_KEY empty.
-- [ ] **T1.7.4 - Prove .env.local is ignored** - What: A hard guarantee real keys stay out of git. How: Create a dummy .env.local and confirm git check-ignore .env.local succeeds and git status stays clean.
-- [ ] **T1.7.5 - Implement readEnv helper** - What: One safe accessor instead of scattered import.meta.env reads. How: Write readEnv(name) in src/utils/env.js returning import.meta.env[name] ?? '' and never logging values.
-- [ ] **T1.7.6 - Write the readEnv unit test** - What: The accessor is locked by its single test. How: Add tests/utils/env.readEnv.test.js stubbing import.meta.env via Vite define and run vitest run -t readEnv.
-- [ ] **T1.7.7 - Add secrets scan script** - What: A pre-deploy tripwire against pasted key values. How: Add "check:secrets" npm script running git grep -nE for long base64-like strings in tracked files.
-- [ ] **T1.7.8 - Log key presence at boot** - What: Devs instantly see which venue keys are configured, values hidden. How: In src/main.js log booleans like okx:true etoro:false derived from readEnv results.
-- [ ] **T1.7.9 - Verify build excludes unset keys** - What: Assurance the production bundle carries no secret material. How: Run npm run build without .env.local and grep dist/ for STOCKZ_ values expecting no hits.
-- [ ] **T1.7.10 - Merge env-handling branch** - What: Safe key handling is available before any venue phase starts. How: Merge feature/env-handling into main after the build grep verification.
+- [x] **T1.7.1 - Cut env-handling feature branch** - What: Secret plumbing merges only after leak checks pass. How: Run git checkout -b feature/env-handling from main.
+- [x] **T1.7.2 - Set the env prefix** - What: Only intentional STOCKZ_ vars ever reach browser code. How: Add envPrefix 'STOCKZ_' to vite.config.js so import.meta.env exposes just those.
+- [x] **T1.7.3 - Author .env.example** - What: New devs see exactly which keys exist without seeing values. How: List STOCKZ_OKX_API_KEY, STOCKZ_OKX_SECRET_KEY, STOCKZ_OKX_PASSPHRASE, STOCKZ_ETORO_API_KEY and STOCKZ_ETORO_USER_KEY empty.
+- [x] **T1.7.4 - Prove .env.local is ignored** - What: A hard guarantee real keys stay out of git. How: Create a dummy .env.local and confirm git check-ignore .env.local succeeds and git status stays clean.
+- [x] **T1.7.5 - Implement readEnv helper** - What: One safe accessor instead of scattered import.meta.env reads. How: Write readEnv(name) in src/utils/env.js returning import.meta.env[name] ?? '' and never logging values.
+- [x] **T1.7.6 - Write the readEnv unit test** - What: The accessor is locked by its single test. How: Add tests/utils/env.readEnv.test.js stubbing import.meta.env via Vite define and run vitest run -t readEnv.
+- [x] **T1.7.7 - Add secrets scan script** - What: A pre-deploy tripwire against pasted key values. How: Add "check:secrets" npm script running git grep -nE for long base64-like strings in tracked files.
+- [x] **T1.7.8 - Log key presence at boot** - What: Devs instantly see which venue keys are configured, values hidden. How: In src/main.js log booleans like okx:true etoro:false derived from readEnv results.
+- [x] **T1.7.9 - Verify build excludes unset keys** - What: Assurance the production bundle carries no secret material. How: Run npm run build without .env.local and grep dist/ for STOCKZ_ values expecting no hits.
+- [x] **T1.7.10 - Merge env-handling branch** - What: Safe key handling is available before any venue phase starts. How: Merge feature/env-handling into main after the build grep verification.
 
 ### F1.8 - Shared Utils: Formatting & Math
 
