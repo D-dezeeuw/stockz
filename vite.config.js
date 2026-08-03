@@ -1,0 +1,45 @@
+import { defineConfig } from 'vite'
+
+/**
+ * STOCKZ build configuration.
+ *
+ * - `base` is mode-aware: '/' in dev, '/stockz/' in production so assets resolve
+ *   under the GitHub Pages project path (see .claude/context/deployment.md).
+ * - Spektrum is loaded from the unpkg CDN through the importmap in index.html and is
+ *   therefore marked external — it must never be pulled into the bundle.
+ * - Vitest config lives here too; coverage powers the >80% (incl. branches) merge gate.
+ */
+export default defineConfig(({ mode }) => ({
+  base: mode === 'production' ? '/stockz/' : '/',
+
+  server: {
+    port: 5173,
+    strictPort: true,
+  },
+
+  resolve: {
+    alias: {
+      '@': new URL('./src', import.meta.url).pathname,
+    },
+  },
+
+  build: {
+    outDir: 'dist',
+    target: 'es2022',
+    sourcemap: true,
+    rollupOptions: {
+      // Bare specifiers resolved by the browser importmap, not by Rollup.
+      external: [/^spektrum(\/.*)?$/],
+    },
+  },
+
+  test: {
+    environment: 'node',
+    include: ['src/**/*.test.js'],
+    passWithNoTests: true,
+    coverage: {
+      provider: 'v8',
+      reporter: ['text-summary'],
+    },
+  },
+}))
