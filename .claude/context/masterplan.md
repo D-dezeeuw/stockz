@@ -94,16 +94,16 @@
 **What:** A dev server and production build that work locally and under the /stockz/ GitHub Pages subpath.
 **How:** Write vite.config.js with a mode-aware base path, es2022 build target, '@' alias and CDN-external Spektrum imports.
 
-- [ ] **T1.3.1 - Cut vite-config feature branch** - What: Build config changes cannot break main mid-edit. How: Run git checkout -b feature/vite-config from main.
-- [ ] **T1.3.2 - Scaffold vite.config.js** - What: A typed, documented single source of build truth. How: Create vite.config.js exporting defineConfig(({ mode }) => ({})) with JSDoc comments.
-- [ ] **T1.3.3 - Set Pages base path** - What: Assets resolve on GitHub Pages without broken URLs. How: Set base to '/stockz/' when mode is 'production' and '/' otherwise inside the defineConfig callback.
-- [ ] **T1.3.4 - Configure the dev server** - What: A stable localhost address hotkey docs can reference. How: Set server.port 5173 and server.strictPort true in vite.config.js.
-- [ ] **T1.3.5 - Configure build output** - What: Modern, debuggable bundles sized for fast Pages loads. How: Set build.outDir 'dist', build.target 'es2022' and build.sourcemap true.
-- [ ] **T1.3.6 - Add '@' source alias** - What: Clean absolute-style imports like '@/utils/format.js'. How: Add resolve.alias mapping '@' to the src directory via new URL('./src', import.meta.url).
-- [ ] **T1.3.7 - Externalize Spektrum imports** - What: The importmap CDN modules stay out of the bundle so phase 2 loading works. How: Add build.rollupOptions.external for 'spektrum' and 'spektrum/*' specifiers.
-- [ ] **T1.3.8 - Verify dev serving** - What: Confidence the day-to-day loop works. How: Run npm run dev and load http://localhost:5173/ confirming index.html serves with no 404s.
-- [ ] **T1.3.9 - Verify Pages-style build** - What: Proof the production bundle survives the subpath. How: Run npm run build then npm run preview and confirm all asset URLs start with /stockz/.
-- [ ] **T1.3.10 - Merge vite-config branch** - What: Reliable builds become available to every feature branch. How: Merge feature/vite-config into main after both serving verifications.
+- [x] **T1.3.1 - Cut vite-config feature branch** - What: Build config changes cannot break main mid-edit. How: Run git checkout -b feature/vite-config from main.
+- [x] **T1.3.2 - Scaffold vite.config.js** - What: A typed, documented single source of build truth. How: Create vite.config.js exporting defineConfig(({ mode }) => ({})) with JSDoc comments.
+- [x] **T1.3.3 - Set Pages base path** - What: Assets resolve on GitHub Pages without broken URLs. How: Set base to '/stockz/' when mode is 'production' and '/' otherwise inside the defineConfig callback.
+- [x] **T1.3.4 - Configure the dev server** - What: A stable localhost address hotkey docs can reference. How: Set server.port 5173 and server.strictPort true in vite.config.js.
+- [x] **T1.3.5 - Configure build output** - What: Modern, debuggable bundles sized for fast Pages loads. How: Set build.outDir 'dist', build.target 'es2022' and build.sourcemap true.
+- [x] **T1.3.6 - Add '@' source alias** - What: Clean absolute-style imports like '@/utils/format.js'. How: Add resolve.alias mapping '@' to the src directory via new URL('./src', import.meta.url).
+- [x] **T1.3.7 - Externalize Spektrum imports** - What: The importmap CDN modules stay out of the bundle so phase 2 loading works. How: Add build.rollupOptions.external for 'spektrum' and 'spektrum/*' specifiers.
+- [x] **T1.3.8 - Verify dev serving** - What: Confidence the day-to-day loop works. How: Run npm run dev and load http://localhost:5173/ confirming index.html serves with no 404s.
+- [x] **T1.3.9 - Verify Pages-style build** - What: Proof the production bundle survives the subpath. How: Run npm run build then npm run preview and confirm all asset URLs start with /stockz/.
+- [x] **T1.3.10 - Merge vite-config branch** - What: Reliable builds become available to every feature branch. How: Merge feature/vite-config into main after both serving verifications.
 
 ### F1.4 - index.html App Shell Entry
 
