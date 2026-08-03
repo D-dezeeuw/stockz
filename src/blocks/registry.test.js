@@ -179,3 +179,23 @@ describe('currentBlocks', () => {
     expect(ids(currentBlocks())).toEqual(['ladder'])
   })
 })
+
+describe('commitBlocks normalisation', () => {
+  it('normalises on the way in, so the grid can trust every entry', () => {
+    const written = commitBlocks([
+      { id: 'raw' }, // no status, no visible flag
+      { id: '' }, // unusable — must be dropped, not written as a hole
+      null,
+    ])
+    tick()
+
+    expect(written).toHaveLength(1)
+    expect(written[0]).toMatchObject({
+      id: 'raw',
+      status: BLOCK_STATUS.loading,
+      visible: true,
+      order: 0,
+    })
+    expect(appState.settings.blocks).toHaveLength(1)
+  })
+})

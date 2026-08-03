@@ -169,11 +169,18 @@ export function currentBlocks() {
  * Blocks live under `settings.*` because layout is a preference that should survive a
  * reload, and `settings` is the only persisted branch.
  *
+ * Everything is normalised through `makeBlock` on the way in, so nothing downstream has
+ * to defend against a half-built block: the grid can trust that every entry has a status
+ * it knows how to render and a visible flag it can filter on. Entries without a usable id
+ * are dropped rather than written as holes.
+ *
  * @param {object[]} blocks - the new registry.
- * @returns {object[]} what was written, sorted.
+ * @returns {object[]} what was written: normalised and sorted.
  */
 export function commitBlocks(blocks) {
-  const next = sortBlocks(blocks)
+  const list = Array.isArray(blocks) ? blocks : []
+  const next = sortBlocks(list.map(makeBlock).filter(Boolean))
+
   setValue(PATHS.settings.blocks, next)
   return next
 }

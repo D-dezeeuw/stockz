@@ -7,6 +7,7 @@ import { mountDevtools } from './devtools.js'
 import { wireEngineErrors } from '../ui/toast.js'
 import { registerFormatters } from '../ui/format-bindings.js'
 import { seedBlocks } from '../blocks/seed.js'
+import { registerLayoutActions, observeLayout } from '../blocks/layout.js'
 import { appVersion } from './version.js'
 
 /**
@@ -41,6 +42,7 @@ export function bootstrap(options = {}) {
   // throw on the first paint.
   registerFormatters()
   registerCoreActions()
+  registerLayoutActions()
   const derived = registerDerived()
   wireEngineErrors()
 
@@ -49,6 +51,7 @@ export function bootstrap(options = {}) {
 
   const cleanup = bindDOM(doc)
   tick()
+  observeLayout({ doc })
   revealApp(doc)
   checkpoint('boot', { version: appVersion() })
 
