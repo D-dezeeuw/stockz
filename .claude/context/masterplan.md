@@ -110,16 +110,16 @@
 **What:** The single HTML page the SPA boots from, with mount point and importmap placeholder ready for Spektrum.
 **How:** Author index.html with meta tags, an empty importmap script block, a #app mount div and a module script loading /src/main.js.
 
-- [ ] **T1.4.1 - Cut html-entry feature branch** - What: Shell edits stay off main until the page boots. How: Run git checkout -b feature/html-entry from main.
-- [ ] **T1.4.2 - Author HTML skeleton** - What: A valid standards-mode document as the app's foundation. How: Write index.html with doctype, html lang="en", charset utf-8 and viewport meta.
-- [ ] **T1.4.3 - Add head metadata** - What: Correct tab title and mobile chrome color for the terminal look. How: Add title STOCKZ, meta description and a dark theme-color meta tag.
-- [ ] **T1.4.4 - Add importmap placeholder** - What: A marked slot where phase 2 pins spektrum@1 from unpkg. How: Insert an empty script type="importmap" block with an HTML comment naming the phase 2 fill-in.
-- [ ] **T1.4.5 - Add app mount node** - What: The single root element all Spektrum bindings hang off. How: Add div id="app" with data-cloak between header and footer placeholder comments.
-- [ ] **T1.4.6 - Wire module entry** - What: The browser loads app code as native ES modules. How: Add script type="module" src="/src/main.js" before the closing body tag.
-- [ ] **T1.4.7 - Write mountApp boot stub** - What: Visible proof of life on first load. How: Implement mountApp() in src/main.js that writes "STOCKZ booting" into #app and call it on DOMContentLoaded.
-- [ ] **T1.4.8 - Write the mountApp unit test** - What: The boot function is locked by its one allowed test. How: Add tests/main.mountApp.test.js with a jsdom #app fixture and run vitest run -t mountApp only.
-- [ ] **T1.4.9 - Verify boot in browser** - What: Certainty the shell renders clean. How: Run npm run dev, load the page and confirm the boot text shows with zero console errors.
-- [ ] **T1.4.10 - Merge html-entry branch** - What: A booting shell becomes the canvas for every UI phase. How: Merge feature/html-entry into main after browser verification.
+- [x] **T1.4.1 - Cut html-entry feature branch** - What: Shell edits stay off main until the page boots. How: Run git checkout -b feature/html-entry from main.
+- [x] **T1.4.2 - Author HTML skeleton** - What: A valid standards-mode document as the app's foundation. How: Write index.html with doctype, html lang="en", charset utf-8 and viewport meta.
+- [x] **T1.4.3 - Add head metadata** - What: Correct tab title and mobile chrome color for the terminal look. How: Add title STOCKZ, meta description and a dark theme-color meta tag.
+- [x] **T1.4.4 - Add importmap placeholder** - What: A marked slot where phase 2 pins spektrum@1 from unpkg. How: Insert an empty script type="importmap" block with an HTML comment naming the phase 2 fill-in.
+- [x] **T1.4.5 - Add app mount node** - What: The single root element all Spektrum bindings hang off. How: Add div id="app" with data-cloak between header and footer placeholder comments.
+- [x] **T1.4.6 - Wire module entry** - What: The browser loads app code as native ES modules. How: Add script type="module" src="/src/main.js" before the closing body tag.
+- [x] **T1.4.7 - Write mountApp boot stub** - What: Visible proof of life on first load. How: Implement mountApp() in src/main.js that writes "STOCKZ booting" into #app and call it on DOMContentLoaded.
+- [x] **T1.4.8 - Write the mountApp unit test** - What: The boot function is locked by its one allowed test. How: Add tests/main.mountApp.test.js with a jsdom #app fixture and run vitest run -t mountApp only.
+- [x] **T1.4.9 - Verify boot in browser** - What: Certainty the shell renders clean. How: Run npm run dev, load the page and confirm the boot text shows with zero console errors.
+- [x] **T1.4.10 - Merge html-entry branch** - What: A booting shell becomes the canvas for every UI phase. How: Merge feature/html-entry into main after browser verification.
 
 ### F1.5 - ESLint Flat Config for Vanilla ESM
 
