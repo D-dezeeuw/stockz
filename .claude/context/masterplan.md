@@ -1931,32 +1931,32 @@
 **What:** A dense terminal-style watchlist block in the dashboard grid, rows tracking list edits live.
 **How:** Block template rendered with Spektrum data-each over the active list's symbols, mounted via bindDOM in the phase 4 grid shell.
 
-- [ ] **T12.3.1 - Block branch** - What: UI scaffolding kept off main until it renders clean. How: Create feature/f12-3-watchlist-block from main.
-- [ ] **T12.3.2 - Block template** - What: The watchlist occupies a uniform grid slot like every other block. How: Add block markup with header (list name) and row container to the phase 4 grid shell HTML.
-- [ ] **T12.3.3 - data-each rows** - What: Rows appear and vanish in sync with list edits. How: Row template bound with data-each over the active list symbols, data-ref="row" per instrument.
-- [ ] **T12.3.4 - buildRowModel fn** - What: One tidy view object per row instead of scattered lookups. How: Pure buildRowModel(canonId, mdState) assembling symbol, venue and metric paths in src/lists/rows.js.
-- [ ] **T12.3.5 - Empty state** - What: An empty list invites action instead of showing a void. How: data-if placeholder reading 'no symbols - hit search' with dim styling and a search-opening data-action.
-- [ ] **T12.3.6 - Scroll region** - What: Long lists scroll inside the fixed block without breaking the grid. How: Fixed block height with overflow-y auto and a thin themed scrollbar via CSS scrollbar-width.
-- [ ] **T12.3.7 - Terminal styling** - What: The money-hacker look - dense monospace rows, green data, orange accents. How: Apply phase 3 design tokens and phase 6 day/night variables to cells and hover states.
-- [ ] **T12.3.8 - Mount and verify** - What: Live proof the block tracks add/remove instantly. How: Wire the block through bindDOM, run npm run dev (Vite) and exercise add/remove from the console.
-- [ ] **T12.3.9 - Single unit test** - What: buildRowModel proven by one test. How: tests/rows.test.js asserting the assembled shape, run with npx vitest run -t buildRowModel.
-- [ ] **T12.3.10 - Merge block** - What: A visible, styled watchlist on main. How: ESLint the module, confirm the targeted test, merge feature/f12-3-watchlist-block into main.
+- [x] **T12.3.1 - Block branch** - What: UI scaffolding kept off main until it renders clean. How: Create feature/f12-3-watchlist-block from main.
+- [x] **T12.3.2 - Block template** - What: The watchlist occupies a uniform grid slot like every other block. How: Add block markup with header (list name) and row container to the phase 4 grid shell HTML.
+- [x] **T12.3.3 - data-each rows** - What: Rows appear and vanish in sync with list edits. How: Row template bound with data-each over the active list symbols, data-ref="row" per instrument.
+- [x] **T12.3.4 - buildRowModel fn** - What: One tidy view object per row instead of scattered lookups. How: Pure buildRowModel(canonId, mdState) assembling symbol, venue and metric paths in src/lists/rows.js.
+- [x] **T12.3.5 - Empty state** - What: An empty list invites action instead of showing a void. How: data-if placeholder reading 'no symbols - hit search' with dim styling and a search-opening data-action.
+- [x] **T12.3.6 - Scroll region** - What: Long lists scroll inside the fixed block without breaking the grid. How: Fixed block height with overflow-y auto and a thin themed scrollbar via CSS scrollbar-width.
+- [x] **T12.3.7 - Terminal styling** - What: The money-hacker look - dense monospace rows, green data, orange accents. How: Apply phase 3 design tokens and phase 6 day/night variables to cells and hover states.
+- [x] **T12.3.8 - Mount and verify** - What: Live proof the block tracks add/remove instantly. How: Wire the block through bindDOM, run npm run dev (Vite) and exercise add/remove from the console.
+- [x] **T12.3.9 - Single unit test** - What: buildRowModel proven by one test. How: tests/rows.test.js asserting the assembled shape, run with npx vitest run -t buildRowModel.
+- [x] **T12.3.10 - Merge block** - What: A visible, styled watchlist on main. How: ESLint the module, confirm the targeted test, merge feature/f12-3-watchlist-block into main.
 
 ### F12.4 - Fuzzy Symbol Search Modal
 
 **What:** Any instrument on either venue found and added in under a second with a few keystrokes.
 **How:** Catalog merged from OKX and EToro instrument endpoints, ranked by a hand-rolled subsequence scorer, rendered in a data-if modal.
 
-- [ ] **T12.4.1 - Search branch** - What: Search shipped independently of list UI. How: Branch feature/f12-4-fuzzy-search from main.
-- [ ] **T12.4.2 - Catalog build** - What: One searchable universe across both venues. How: buildCatalog merging OKX GET /api/v5/public/instruments and the EToro instrument list into an array cached in state.
-- [ ] **T12.4.3 - fuzzyScore fn** - What: Typo-tolerant matching that still ranks BTC above obscure pairs. How: Pure fuzzyScore(query, symbol) subsequence scorer rewarding prefix hits and contiguous runs.
-- [ ] **T12.4.4 - rankMatches fn** - What: The best 20 candidates, best first, every keystroke. How: rankMatches(query, catalog) scoring, filtering zeros and sorting descending in src/lists/search.js.
-- [ ] **T12.4.5 - Modal markup** - What: A keyboard-first overlay that never blocks the desk. How: data-if="ui.searchOpen" overlay with input bound data-model="ui.searchQuery" and results via data-each.
-- [ ] **T12.4.6 - Debounced ranking** - What: Smooth typing even against a 5000-entry catalog. How: 50ms debounce recomputing ranked results into state from the input's Spektrum action.
-- [ ] **T12.4.7 - Keyboard flow** - What: Add a symbol without touching the mouse. How: ArrowUp/Down move selection, Enter calls addSymbol on the active list and closes, Escape closes.
-- [ ] **T12.4.8 - Result presentation** - What: Matches readable at a glance with venue context. How: Wrap matched characters in b tags and show an okx/etoro badge plus instrument type per result row.
-- [ ] **T12.4.9 - Single unit tests** - What: fuzzyScore and rankMatches each proven by one test. How: tests/search.test.js with typo and prefix cases, run per function via npx vitest run -t.
-- [ ] **T12.4.10 - Merge search** - What: Instant instrument discovery on main. How: ESLint pass, targeted tests green, merge feature/f12-4-fuzzy-search into main.
+- [x] **T12.4.1 - Search branch** - What: Search shipped independently of list UI. How: Branch feature/f12-4-fuzzy-search from main.
+- [x] **T12.4.2 - Catalog build** - What: One searchable universe across both venues. How: buildCatalog merging OKX GET /api/v5/public/instruments and the EToro instrument list into an array cached in state.
+- [x] **T12.4.3 - fuzzyScore fn** - What: Typo-tolerant matching that still ranks BTC above obscure pairs. How: Pure fuzzyScore(query, symbol) subsequence scorer rewarding prefix hits and contiguous runs.
+- [x] **T12.4.4 - rankMatches fn** - What: The best 20 candidates, best first, every keystroke. How: rankMatches(query, catalog) scoring, filtering zeros and sorting descending in src/lists/search.js.
+- [x] **T12.4.5 - Modal markup** - What: A keyboard-first overlay that never blocks the desk. How: data-if="ui.searchOpen" overlay with input bound data-model="ui.searchQuery" and results via data-each.
+- [x] **T12.4.6 - Debounced ranking** - What: Smooth typing even against a 5000-entry catalog. How: 50ms debounce recomputing ranked results into state from the input's Spektrum action.
+- [x] **T12.4.7 - Keyboard flow** - What: Add a symbol without touching the mouse. How: ArrowUp/Down move selection, Enter calls addSymbol on the active list and closes, Escape closes.
+- [x] **T12.4.8 - Result presentation** - What: Matches readable at a glance with venue context. How: Wrap matched characters in b tags and show an okx/etoro badge plus instrument type per result row.
+- [x] **T12.4.9 - Single unit tests** - What: fuzzyScore and rankMatches each proven by one test. How: tests/search.test.js with typo and prefix cases, run per function via npx vitest run -t.
+- [x] **T12.4.10 - Merge search** - What: Instant instrument discovery on main. How: ESLint pass, targeted tests green, merge feature/f12-4-fuzzy-search into main.
 
 ### F12.5 - Active-Instrument Focus
 
@@ -1979,32 +1979,32 @@
 **What:** Last price, % change, spread and volume update live per row, flashing green/orange on every up/down tick.
 **How:** Cells bound to md.<id> paths fed by the phase 11 flusher, with a watch-driven flash class cleaned up on animationend.
 
-- [ ] **T12.6.1 - Cells branch** - What: Live-cell work merged only when it renders right. How: Branch feature/f12-6-live-cells from main.
-- [ ] **T12.6.2 - Cell bindings** - What: Four live numbers per row straight from pipeline state. How: Bind last, pct, spread and vol cells with {{md.<id>.*}} expressions inside the data-each row template.
-- [ ] **T12.6.3 - pctChange computed** - What: Percent move since session open, the scalper's context number. How: Spektrum computed per instrument from sessionOpen price captured at first tick of the day.
-- [ ] **T12.6.4 - formatPrice fn** - What: Prices shown at true instrument precision, no ragged decimals. How: Pure formatPrice(price, tickSize) deriving decimals from tickSize in src/lists/format.js.
-- [ ] **T12.6.5 - formatCompactVol fn** - What: Volume readable at a glance in tight cells. How: formatCompactVol producing 12.4K/1.2M/3.4B strings with one decimal.
-- [ ] **T12.6.6 - Tick pulse logic** - What: Direction of every tick visible as a flash. How: watch on the last-price path comparing values and toggling .up/.down classes, removed on animationend.
-- [ ] **T12.6.7 - Pulse styling** - What: A 120ms flash that reads clearly in both themes. How: Green/orange background keyframes using phase 6 theme variables, respecting prefers-reduced-motion.
-- [ ] **T12.6.8 - Spread cell wiring** - What: Entry cost in bps directly in the list. How: Bind the spread cell to the F11.6 calcSpreadBps computed with a 'bps' suffix and wide-spread orange tint.
-- [ ] **T12.6.9 - Single unit tests** - What: formatPrice and formatCompactVol each proven by one test. How: tests/format.test.js with edge precisions, run per function via npx vitest run -t.
-- [ ] **T12.6.10 - Merge cells** - What: A living, pulsing watchlist on main. How: ESLint pass, targeted tests green, merge feature/f12-6-live-cells into main.
+- [x] **T12.6.1 - Cells branch** - What: Live-cell work merged only when it renders right. How: Branch feature/f12-6-live-cells from main.
+- [x] **T12.6.2 - Cell bindings** - What: Four live numbers per row straight from pipeline state. How: Bind last, pct, spread and vol cells with {{md.<id>.*}} expressions inside the data-each row template.
+- [x] **T12.6.3 - pctChange computed** - What: Percent move since session open, the scalper's context number. How: Spektrum computed per instrument from sessionOpen price captured at first tick of the day.
+- [x] **T12.6.4 - formatPrice fn** - What: Prices shown at true instrument precision, no ragged decimals. How: Pure formatPrice(price, tickSize) deriving decimals from tickSize in src/lists/format.js.
+- [x] **T12.6.5 - formatCompactVol fn** - What: Volume readable at a glance in tight cells. How: formatCompactVol producing 12.4K/1.2M/3.4B strings with one decimal.
+- [x] **T12.6.6 - Tick pulse logic** - What: Direction of every tick visible as a flash. How: watch on the last-price path comparing values and toggling .up/.down classes, removed on animationend.
+- [x] **T12.6.7 - Pulse styling** - What: A 120ms flash that reads clearly in both themes. How: Green/orange background keyframes using phase 6 theme variables, respecting prefers-reduced-motion.
+- [x] **T12.6.8 - Spread cell wiring** - What: Entry cost in bps directly in the list. How: Bind the spread cell to the F11.6 calcSpreadBps computed with a 'bps' suffix and wide-spread orange tint.
+- [x] **T12.6.9 - Single unit tests** - What: formatPrice and formatCompactVol each proven by one test. How: tests/format.test.js with edge precisions, run per function via npx vitest run -t.
+- [x] **T12.6.10 - Merge cells** - What: A living, pulsing watchlist on main. How: ESLint pass, targeted tests green, merge feature/f12-6-live-cells into main.
 
 ### F12.7 - Inline Row Sparklines
 
 **What:** Each row carries a tiny price trace so trend direction is visible without opening a chart.
 **How:** A 64x18 canvas per row painted by a hand-rolled polyline renderer from the 5s candle ring, repainted on candle close.
 
-- [ ] **T12.7.1 - Sparkline branch** - What: Canvas work isolated from the row layout. How: Create feature/f12-7-row-sparklines from main.
-- [ ] **T12.7.2 - Canvas cell** - What: A dedicated drawing surface inside every row. How: Add a 64x18 canvas with data-ref="spark" to the row template between symbol and last-price cells.
-- [ ] **T12.7.3 - downsampleCloses fn** - What: Ring data reduced to at most 60 plot points. How: Pure downsampleCloses(ring, 60) striding over the F11.3 5s candle ring closes in src/charts/spark.js.
-- [ ] **T12.7.4 - drawSparkline fn** - What: A crisp min/max-scaled polyline in one pass. How: drawSparkline(ctx, values, color) clearing and stroking a single path with 1px lines on the 2d context.
-- [ ] **T12.7.5 - DPR sharpness** - What: No blurry lines on retina displays. How: Scale canvas backing store by devicePixelRatio and ctx.scale accordingly before drawing.
-- [ ] **T12.7.6 - Direction color** - What: Trend readable from color alone. How: Stroke green when last close >= first, orange otherwise, using phase 3 palette variables.
-- [ ] **T12.7.7 - Close-driven repaint** - What: Sparklines cost nothing between candles. How: Subscribe to 'candle:<id>:5s' bus topics and schedule repaints through the F11.4 rAF flusher.
-- [ ] **T12.7.8 - Offscreen skip** - What: Scrolled-out rows burn zero draw time. How: IntersectionObserver on rows pausing sparkline repaints while not intersecting the scroll region.
-- [ ] **T12.7.9 - Single unit tests** - What: downsampleCloses and drawSparkline each proven once. How: tests/spark.test.js with a stubbed 2d context recording calls, run per function via -t.
-- [ ] **T12.7.10 - Merge sparklines** - What: Trend-at-a-glance rows on main. How: ESLint pass, targeted tests green, merge feature/f12-7-row-sparklines into main.
+- [x] **T12.7.1 - Sparkline branch** - What: Canvas work isolated from the row layout. How: Create feature/f12-7-row-sparklines from main.
+- [x] **T12.7.2 - Canvas cell** - What: A dedicated drawing surface inside every row. How: Add a 64x18 canvas with data-ref="spark" to the row template between symbol and last-price cells.
+- [x] **T12.7.3 - downsampleCloses fn** - What: Ring data reduced to at most 60 plot points. How: Pure downsampleCloses(ring, 60) striding over the F11.3 5s candle ring closes in src/charts/spark.js.
+- [x] **T12.7.4 - drawSparkline fn** - What: A crisp min/max-scaled polyline in one pass. How: drawSparkline(ctx, values, color) clearing and stroking a single path with 1px lines on the 2d context.
+- [x] **T12.7.5 - DPR sharpness** - What: No blurry lines on retina displays. How: Scale canvas backing store by devicePixelRatio and ctx.scale accordingly before drawing.
+- [x] **T12.7.6 - Direction color** - What: Trend readable from color alone. How: Stroke green when last close >= first, orange otherwise, using phase 3 palette variables.
+- [x] **T12.7.7 - Close-driven repaint** - What: Sparklines cost nothing between candles. How: Subscribe to 'candle:<id>:5s' bus topics and schedule repaints through the F11.4 rAF flusher.
+- [x] **T12.7.8 - Offscreen skip** - What: Scrolled-out rows burn zero draw time. How: IntersectionObserver on rows pausing sparkline repaints while not intersecting the scroll region.
+- [x] **T12.7.9 - Single unit tests** - What: downsampleCloses and drawSparkline each proven once. How: tests/spark.test.js with a stubbed 2d context recording calls, run per function via -t.
+- [x] **T12.7.10 - Merge sparklines** - What: Trend-at-a-glance rows on main. How: ESLint pass, targeted tests green, merge feature/f12-7-row-sparklines into main.
 
 ### F12.8 - Drag-to-Reorder Rows
 
