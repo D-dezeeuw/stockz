@@ -95,6 +95,37 @@ fine; the merge commit message follows the convention below.
 - Types: `feat`, `fix`, `refactor`, `test`, `docs`, `chore`, `perf`, `style`.
 - The merge to main uses `--no-ff` so each feature is one visible bubble in history.
 
+## Keep a changelog
+
+`CHANGELOG.md` is maintained by hand in [Keep a Changelog](https://keepachangelog.com/)
+format — it is the human-readable record of what the desk gained, separate from the
+commit log.
+
+- **Every feature that reaches `main` adds a line under `## [Unreleased]`**, in the same
+  merge. Group it under `Added` / `Changed` / `Fixed` / `Removed`, write it from the
+  trader's point of view (what they can now do, not which file changed), and tag it with
+  the feature id: `- **Order ticket** — one-click buy/sell at bid, ask or market. (F15.1)`
+- Internal-only changes (a refactor nobody can perceive) do not need an entry; a
+  behavioural change always does.
+- **At phase close**, cut `[Unreleased]` into a released section:
+  `## [0.<phase>.0] — <date> — Phase <n>: <name>`, with a one-line summary of what the
+  phase delivered, and update the compare links at the bottom.
+
+## Versioning (semver)
+
+Pre-1.0 while the masterplan is in flight; **each closed phase is a minor release** —
+phase 1 → `0.1.0`, phase 2 → `0.2.0`, … phase 30 → `0.30.0`. **When phase 30 closes,
+the desk ships as `1.0.0`.** Fixes between phase closes are patch releases (`0.7.1`).
+
+A version bump touches three places and they must not drift:
+
+1. `package.json` → `version`
+2. `src/app/version.js` → `APP_VERSION` (the `appVersion` test fails if it disagrees
+   with `package.json`)
+3. `CHANGELOG.md` → the new released section
+
+Then tag: `git tag v0.<phase>.0 && git push --tags`.
+
 ## Git identity (commit authorship)
 
 All commits in this repository — including commits produced by Claude or any agent —

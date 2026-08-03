@@ -30,7 +30,18 @@ pgrep -c chrome                                       # no headless browsers
 Delete scratch clones and build output you no longer need. A cleared context cannot
 clean up processes it does not remember starting.
 
-## 3. Update `.claude/context/progress.md`
+## 3. Cut the release: changelog + version
+
+1. In `CHANGELOG.md`, turn `## [Unreleased]` into
+   `## [0.<phase>.0] — <YYYY-MM-DD> — Phase <n>: <name>` with a one-line summary of what
+   the phase delivered, then open a fresh empty `[Unreleased]` above it and fix the
+   compare links at the bottom.
+2. Bump the version in **both** `package.json` and `APP_VERSION` in
+   `src/app/version.js` — the `appVersion` test fails if they drift. Phase `n` → `0.n.0`;
+   **phase 30 → `1.0.0`** (feature-complete).
+3. Tag after pushing: `git tag v<version> && git push --tags`.
+
+## 4. Update `.claude/context/progress.md`
 
 This file *is* the handoff. Rewrite the top section so it states:
 
@@ -46,13 +57,13 @@ This file *is* the handoff. Rewrite the top section so it states:
 
 Commit it to `main` with `docs(f<N>): close phase <N>` and push.
 
-## 4. Deploy and share the live page
+## 5. Deploy and share the live page
 
 Every phase ends on a URL the user can click — the result has to be *seeable*, not just
 described:
 
 ```bash
-npm run deploy      # vite build && gh-pages -d dist  (local, no CI)
+npm run deploy      # git push origin main && verify:pages  (Pages serves main root)
 ```
 
 Then post the link in the reply, with one line on what is newly visible there:
@@ -65,11 +76,10 @@ Entry)** onward the live page is the real deliverable — the order ticket, hotk
 positions and PnL are things the user needs to click for themselves, so never close
 those phases without a working deploy and an explicit "try this" pointer.
 
-If Pages is not yet enabled for the repo, say so plainly and tell the user to switch it
-on (Settings → Pages → Branch: `gh-pages`, `/root`) rather than silently skipping the
-step.
+`verify:pages` must pass before you share the link — a push is not evidence the site
+loads. If it fails, fix it before closing the phase rather than sharing a broken URL.
 
-## 5. Clear the context
+## 6. Clear the context
 
 Tell the user the phase is closed, share the link, then `/clear`.
 

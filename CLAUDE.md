@@ -31,7 +31,9 @@ optimized for trades-per-hour.
    dev; in the browser keys come from URL params or the key modal.
 6. **Speed first.** Every interaction targets <100ms perceived latency; every hot path is O(1)
    or rAF-batched. If a change adds a confirmation step, it is wrong.
-7. **Clear the context after every phase.** When a phase's ten features are merged, close
+7. **Keep `CHANGELOG.md`.** Every feature adds a line under `[Unreleased]` in its merge;
+   each closed phase cuts `0.<phase>.0` (phase 30 ships **1.0.0**). See `way-of-working.md`.
+8. **Clear the context after every phase.** When a phase's ten features are merged, close
    it (`phase-close` skill): update `.claude/context/progress.md`, then `/clear` and start
    the next phase fresh. Never clear mid-feature. See `way-of-working.md`.
 
