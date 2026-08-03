@@ -15,7 +15,7 @@ everything else is optimized for trades-per-hour.
 | Tests | Vitest — exactly one unit test per function |
 | Charts | Hand-rolled canvas renderers (tick-level speed) |
 | Venues | OKX v5 (WebSocket + signed REST) and EToro (REST) |
-| Hosting | GitHub Pages, published locally with `gh-pages` — **no GitHub Actions** |
+| Hosting | GitHub Pages serving the `main` branch root — pushing is deploying, **no GitHub Actions**, no build step |
 
 ## Quickstart
 
@@ -38,7 +38,8 @@ The page boots with the on-screen dev log overlay in the bottom-right corner (de
 | `npm run test:fn <fn>` | Run exactly one function's test (the routine loop) |
 | `npm run lint` / `lint:fix` | ESLint flat config across the repo |
 | `npm run check:secrets` | Grep tracked files for secret-shaped strings |
-| `npm run deploy` | Build + publish `dist/` to the `gh-pages` branch (local, no CI) |
+| `npm run deploy` | Push `main` (the site) and verify the live page |
+| `npm run verify:pages` | Check the live site loads: page, entry module, relative paths |
 
 ## API keys
 
@@ -77,11 +78,15 @@ and must clear **>80% lines, statements, functions and branches**. Details in
 ## Deploying
 
 ```bash
-npm run deploy   # vite build && gh-pages -d dist
+npm run deploy   # git push origin main && npm run verify:pages
 ```
 
-Ships to `https://d-dezeeuw.github.io/stockz/`. There is no CI in this repository by
-design — see [`.claude/context/deployment.md`](.claude/context/deployment.md).
+GitHub Pages serves the **`main` branch root** at
+<https://d-dezeeuw.github.io/stockz/> — pushing *is* deploying. The app ships as raw ES
+modules (Spektrum arrives from the unpkg CDN via importmap), so there is no build step
+in the deploy path and no CI in this repository by design. Keep `index.html` paths
+relative and shipped code free of build-tool-only syntax — see
+[`.claude/context/deployment.md`](.claude/context/deployment.md).
 
 ## Project docs
 

@@ -22,15 +22,14 @@
     "test:fn": "vitest run -t",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "predeploy": "npm run build",
-    "deploy": "bash scripts/publish-pages.sh",
-    "check:secrets": "git grep -nIE '[A-Za-z0-9+/_-]{32,}={0,2}' -- ':!package-lock.json' ':!*.md' ':!*.svg' ':!.claude/**' || echo 'no secret-shaped strings found'"
+    "deploy": "git push origin main && bash scripts/verify-pages.sh",
+    "check:secrets": "git grep -nIE '[A-Za-z0-9+/_-]{32,}={0,2}' -- ':!package-lock.json' ':!*.md' ':!*.svg' ':!.claude/**' || echo 'no secret-shaped strings found'",
+    "verify:pages": "bash scripts/verify-pages.sh"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "@vitest/coverage-v8": "^4.1.10",
     "eslint": "^10.8.0",
-    "gh-pages": "^6.3.0",
     "globals": "^17.9.0",
     "jsdom": "^30.0.1",
     "vite": "^8.2.0",
