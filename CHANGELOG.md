@@ -10,6 +10,13 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ## [Unreleased]
 
+_Nothing yet — next entries land with phase 8 (API Key Access Layer)._
+
+## [0.7.0] — 2026-08-03 — Phase 7: User Settings & Persistence
+
+The desk is configurable: a settings drawer driven by one schema, layout presets, JSON
+export/import, and an undoable reset.
+
 ### Added
 
 - **A settings drawer** — order size, price step, size presets, risk limits, favourites
@@ -261,7 +268,8 @@ with a test policy and a live URL.
   literal `APP_VERSION` (a JSON import is bundler-only), guarded by a test that fails if
   it drifts from `package.json`; static assets moved from `public/` to the repo root.
 
-[Unreleased]: https://github.com/D-dezeeuw/stockz/compare/v0.6.0...HEAD
+[Unreleased]: https://github.com/D-dezeeuw/stockz/compare/v0.7.0...HEAD
+[0.7.0]: https://github.com/D-dezeeuw/stockz/compare/v0.6.0...v0.7.0
 [0.6.0]: https://github.com/D-dezeeuw/stockz/compare/v0.5.0...v0.6.0
 [0.5.0]: https://github.com/D-dezeeuw/stockz/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/D-dezeeuw/stockz/compare/v0.3.0...v0.4.0
