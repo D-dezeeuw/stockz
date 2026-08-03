@@ -1,0 +1,107 @@
+/*
+ * STOCKZ design tokens — the money-hacker palette.
+ *
+ * Every colour in the app resolves through a token here. Two rules are absolute:
+ *
+ *   1. Profit / buy / up is ALWAYS green. Loss / sell / down is ALWAYS orange.
+ *      Never red-vs-blue, never swapped per theme: a scalper reads colour before they
+ *      read digits, and a palette that means different things on different screens is
+ *      how the wrong button gets clicked at speed.
+ *   2. No component declares a raw colour. If a value is missing, add a token.
+ *
+ * Themes flip by `data-theme` on <html>; :root carries night (the primary theme).
+ */
+
+:root,
+:root[data-theme='night'] {
+  /* Matrix-green ramp — profit, buy, connected, alive */
+  --green-100: #d9ffe7;
+  --green-200: #7cffb0;
+  --green-300: #34f58a;
+  --green: #00e676;
+  --green-600: #00b25c;
+  --green-700: #087f43;
+  --green-dim: #1b5e20;
+  --green-ghost: #0d2b16;
+
+  /* Hot-orange ramp — loss, sell, warning, attention */
+  --orange-100: #ffe2c2;
+  --orange-200: #ffc078;
+  --orange-300: #ffa63d;
+  --orange: #ff9100;
+  --orange-600: #e07600;
+  --orange-700: #a85400;
+  --orange-dim: #5e3200;
+  --orange-hot: #ff3d00;
+
+  /* Near-black surface layers, lightest on top */
+  --bg: #070a07;
+  --bg-block: #0f1510;
+  --bg-raised: #16201a;
+  --bg-inset: #0a0f0b;
+  --bg-overlay: rgb(3 6 3 / 82%);
+
+  /* Ink */
+  --ink: #c8e6c9;
+  --ink-strong: #eafff0;
+  --ink-muted: #6f8a76;
+  --ink-faint: #3f5145;
+  --ink-inverse: #070a07;
+
+  /* Lines */
+  --line: #1b3a24;
+  --line-strong: #2c5c39;
+}
+
+:root[data-theme='day'] {
+  /* The same identity in daylight: green still means profit, orange still means loss,
+     but both darken so they stay legible on a light surface. */
+  --green-100: #063d21;
+  --green-200: #0a6135;
+  --green-300: #00873c;
+  --green: #00873c;
+  --green-600: #0a6135;
+  --green-700: #063d21;
+  --green-dim: #b6dfc4;
+  --green-ghost: #e6f6ec;
+
+  --orange-100: #4a2600;
+  --orange-200: #7a3f00;
+  --orange-300: #b35c00;
+  --orange: #d35400;
+  --orange-600: #a84300;
+  --orange-700: #7a3100;
+  --orange-dim: #f5d9be;
+  --orange-hot: #c62828;
+
+  --bg: #f2f5f1;
+  --bg-block: #ffffff;
+  --bg-raised: #e9efe9;
+  --bg-inset: #dfe7df;
+  --bg-overlay: rgb(255 255 255 / 88%);
+
+  --ink: #16241a;
+  --ink-strong: #05130a;
+  --ink-muted: #4d6154;
+  --ink-faint: #8aa192;
+  --ink-inverse: #ffffff;
+
+  --line: #cadbd0;
+  --line-strong: #9dbaa8;
+}
+
+/* Base surface. Colour comes from tokens only. */
+html {
+  background: var(--bg);
+  color-scheme: dark;
+}
+
+:root[data-theme='day'] {
+  color-scheme: light;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+}

@@ -396,16 +396,16 @@
 **What:** Matrix-green profit hues, hot-orange accent/loss hues and near-black backgrounds that give every screen the money-hacker look.
 **How:** Define --sz-green/--sz-orange/--sz-bg/--sz-ink CSS custom properties in src/styles/tokens.css, bundled by Vite from the main.css entry.
 
-- [ ] **T3.1.1 - Cut color-tokens branch** - What: An isolated line of work for the palette. How: git checkout -b feat/color-tokens from an up-to-date main.
-- [ ] **T3.1.2 - Scaffold tokens.css entry** - What: One canonical home for all design tokens. How: Create src/styles/tokens.css with a :root block and @import it from src/styles/main.css so Vite bundles it.
-- [ ] **T3.1.3 - Matrix-green ramp** - What: A profit color family from faint tint to full glow. How: Add --sz-green-100..900 custom properties anchored on #00ff41 with computed darker and lighter steps.
-- [ ] **T3.1.4 - Hot-orange ramp** - What: A loss/accent family with real heat. How: Add --sz-orange-100..900 anchored on #ff7a00, mirroring the green ramp step-for-step.
-- [ ] **T3.1.5 - Near-black background layers** - What: Deep terminal canvas surfaces with subtle depth. How: Add --sz-bg-0/--sz-bg-1/--sz-bg-2 (#050705, #0b0f0b, #121712) for page, block and inset surfaces.
-- [ ] **T3.1.6 - Ink text tokens** - What: Readable primary, dim and faint text colors on dark ground. How: Add --sz-ink, --sz-ink-dim and --sz-ink-faint as greenish-gray values derived from the ramps.
-- [ ] **T3.1.7 - Apply base surface styles** - What: The app opens straight onto the terminal canvas. How: Set body background and color in main.css from var(--sz-bg-0) and var(--sz-ink).
-- [ ] **T3.1.8 - Token swatch demo block** - What: A visual QA sheet showing every color token at once. How: Dev-only swatch list rendered with Spektrum data-each over a token-name array bound via bindDOM.
-- [ ] **T3.1.9 - Lint and build check** - What: Confidence the palette ships clean. How: Run npx eslint . and npm run build (Vite), then eyeball the swatch sheet on the Vite dev server.
-- [ ] **T3.1.10 - Merge palette to main** - What: The palette becomes the base layer for all later phases. How: Merge feat/color-tokens into main once lint and build are green.
+- [x] **T3.1.1 - Cut color-tokens branch** - What: An isolated line of work for the palette. How: git checkout -b feat/color-tokens from an up-to-date main.
+- [x] **T3.1.2 - Scaffold tokens.css entry** - What: One canonical home for all design tokens. How: Create src/styles/tokens.css with a :root block and @import it from src/styles/main.css so Vite bundles it.
+- [x] **T3.1.3 - Matrix-green ramp** - What: A profit color family from faint tint to full glow. How: Add --sz-green-100..900 custom properties anchored on #00ff41 with computed darker and lighter steps.
+- [x] **T3.1.4 - Hot-orange ramp** - What: A loss/accent family with real heat. How: Add --sz-orange-100..900 anchored on #ff7a00, mirroring the green ramp step-for-step.
+- [x] **T3.1.5 - Near-black background layers** - What: Deep terminal canvas surfaces with subtle depth. How: Add --sz-bg-0/--sz-bg-1/--sz-bg-2 (#050705, #0b0f0b, #121712) for page, block and inset surfaces.
+- [x] **T3.1.6 - Ink text tokens** - What: Readable primary, dim and faint text colors on dark ground. How: Add --sz-ink, --sz-ink-dim and --sz-ink-faint as greenish-gray values derived from the ramps.
+- [x] **T3.1.7 - Apply base surface styles** - What: The app opens straight onto the terminal canvas. How: Set body background and color in main.css from var(--sz-bg-0) and var(--sz-ink).
+- [x] **T3.1.8 - Token swatch demo block** - What: A visual QA sheet showing every color token at once. How: Dev-only swatch list rendered with Spektrum data-each over a token-name array bound via bindDOM.
+- [x] **T3.1.9 - Lint and build check** - What: Confidence the palette ships clean. How: Run npx eslint . and npm run build (Vite), then eyeball the swatch sheet on the Vite dev server.
+- [x] **T3.1.10 - Merge palette to main** - What: The palette becomes the base layer for all later phases. How: Merge feat/color-tokens into main once lint and build are green.
 
 ### F3.2 - Terminal Monospace Typography
 

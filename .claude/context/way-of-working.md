@@ -5,6 +5,14 @@ STOCKZ is delivered feature by feature from `.claude/context/masterplan.md`
 (story). Phases are worked in order; features within a phase may be reordered when a
 dependency demands it.
 
+## The prime directive: do not stop before phase 30
+
+Delivery runs from phase 1 to phase 30 without pausing for approval. Finishing a feature,
+closing a phase, going green, deploying — none of these are reasons to stop; each is a
+checkpoint you pass through on the way to the next feature. When running autonomously,
+end a turn only because the context is exhausted (having first made state durable), never
+because a natural-looking boundary arrived. Only the owner saying so stops the work.
+
 ## The feature cycle (mandatory, every feature)
 
 1. **Sync main** — `git checkout main && git pull origin main`.

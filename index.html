@@ -9,6 +9,7 @@
   <!-- Relative paths: the site is served straight from the repo root, which sits under
        /stockz/ on GitHub Pages. Absolute paths would resolve above that prefix. -->
   <link rel="icon" href="./favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./src/styles/tokens.css">
 
   <!-- The UI engine, straight from the CDN. Pinned to an exact version: the live page
        must never shift under a trader because unpkg published a new minor. The same
@@ -35,6 +36,13 @@
       {{app.name}} v{{app.version}} · engine spektrum@{{app.engine}} · {{ui.status}}
     </p>
     <p class="status-line">{{ui.statusLine}}</p>
+    <!-- Palette proof: every swatch reads its colour from a token, nothing hard-coded. -->
+    <div class="swatches">
+      <span class="swatch" style="background: var(--green)">profit</span>
+      <span class="swatch" style="background: var(--orange)">loss</span>
+      <span class="swatch" style="background: var(--orange-hot)">kill</span>
+      <span class="swatch" style="background: var(--bg-block); color: var(--ink)">block</span>
+    </div>
     <!-- Toast stack: the desk speaking up, rendered straight from state. -->
     <ul class="toasts" data-each="toast in ui.toasts">
       <li :class="'toast toast--' + toast.level">{{toast.message}}</li>
