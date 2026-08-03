@@ -48,6 +48,8 @@ describe('PATHS', () => {
     const declared = Object.values(PATHS)
       .flatMap((group) => Object.values(group))
       .sort()
+    // Every declared path is seeded, and every seeded path is declared - the two
+    // descriptions of the state tree cannot drift apart.
     expect(declared).toEqual(Object.keys(initialState()).sort())
 
     // Every declared path validates against its own namespace guard.

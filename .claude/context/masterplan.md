@@ -1064,160 +1064,160 @@
 **What:** Every module reads the same typed settings.* tree, so theme, layout, sizes, hotkeys, sounds and favorites behave identically everywhere.
 **How:** Define a defaults object in src/settings/schema.js and seed Spektrum state with setValue during boot.
 
-- [ ] **T7.1.1 - Cut schema feature branch** - What: Schema work stays off main until green. How: git checkout -b feature/settings-schema and stub src/settings/schema.js in the Vite tree.
-- [ ] **T7.1.2 - Author SETTINGS_DEFAULTS object** - What: Sane out-of-box prefs (night theme, grid layout, qty presets, sounds on). How: Export a literal covering theme, layout, defaultSizes, hotkeys, sounds, favoriteInstruments.
-- [ ] **T7.1.3 - Implement defineSettingsDefaults()** - What: Callers get an immutable copy so defaults never drift at runtime. How: Return Object.freeze(structuredClone(SETTINGS_DEFAULTS)) from schema.js.
-- [ ] **T7.1.4 - Implement seedSettings()** - What: First-run users get a complete settings tree instantly. How: setValue each missing settings.* key into Spektrum state from the defaults copy.
-- [ ] **T7.1.5 - Implement validateSettingsPatch()** - What: Bad values can never corrupt the desk config. How: Check keys against an allowlist and per-field types, return {ok, errors} without throwing.
-- [ ] **T7.1.6 - Register derived settings selectors** - What: UI reads ready-made values like effective grid dimensions. How: Add Spektrum computed() entries such as settings.gridArea and settings.soundEnabled.
-- [ ] **T7.1.7 - Wire seeding into boot** - What: Settings exist before any dashboard block renders. How: Call seedSettings() in src/main.js ahead of bindDOM() and run().
-- [ ] **T7.1.8 - Expose schema to devtools** - What: Devs inspect the live settings tree while debugging. How: Surface the namespace via Spektrum describe() and spektrum/inspect behind import.meta.env.DEV.
-- [ ] **T7.1.9 - Write single unit tests for schema functions** - What: Each schema function is locked by exactly one test. How: One Vitest test per function in schema.test.js, executed via vitest run -t "<fnName>".
-- [ ] **T7.1.10 - Green-gate and merge schema branch** - What: Schema lands on main ready for dependents. How: Run ESLint plus the targeted Vitest runs, then merge feature/settings-schema into main.
+- [x] **T7.1.1 - Cut schema feature branch** - What: Schema work stays off main until green. How: git checkout -b feature/settings-schema and stub src/settings/schema.js in the Vite tree.
+- [x] **T7.1.2 - Author SETTINGS_DEFAULTS object** - What: Sane out-of-box prefs (night theme, grid layout, qty presets, sounds on). How: Export a literal covering theme, layout, defaultSizes, hotkeys, sounds, favoriteInstruments.
+- [x] **T7.1.3 - Implement defineSettingsDefaults()** - What: Callers get an immutable copy so defaults never drift at runtime. How: Return Object.freeze(structuredClone(SETTINGS_DEFAULTS)) from schema.js.
+- [x] **T7.1.4 - Implement seedSettings()** - What: First-run users get a complete settings tree instantly. How: setValue each missing settings.* key into Spektrum state from the defaults copy.
+- [x] **T7.1.5 - Implement validateSettingsPatch()** - What: Bad values can never corrupt the desk config. How: Check keys against an allowlist and per-field types, return {ok, errors} without throwing.
+- [x] **T7.1.6 - Register derived settings selectors** - What: UI reads ready-made values like effective grid dimensions. How: Add Spektrum computed() entries such as settings.gridArea and settings.soundEnabled.
+- [x] **T7.1.7 - Wire seeding into boot** - What: Settings exist before any dashboard block renders. How: Call seedSettings() in src/main.js ahead of bindDOM() and run().
+- [x] **T7.1.8 - Expose schema to devtools** - What: Devs inspect the live settings tree while debugging. How: Surface the namespace via Spektrum describe() and spektrum/inspect behind import.meta.env.DEV.
+- [x] **T7.1.9 - Write single unit tests for schema functions** - What: Each schema function is locked by exactly one test. How: One Vitest test per function in schema.test.js, executed via vitest run -t "<fnName>".
+- [x] **T7.1.10 - Green-gate and merge schema branch** - What: Schema lands on main ready for dependents. How: Run ESLint plus the targeted Vitest runs, then merge feature/settings-schema into main.
 
 ### F7.2 - spektrum/persist Wiring & Allowlist
 
 **What:** Preferences survive reloads automatically without any save button, keeping the desk instant.
 **How:** Wire spektrum/persist from the unpkg importmap to mirror an allowlisted set of settings.* keys into localStorage.
 
-- [ ] **T7.2.1 - Open persist wiring branch** - What: Persistence plumbing develops in isolation. How: git checkout -b feature/settings-persist from a fresh main pull.
-- [ ] **T7.2.2 - Add spektrum/persist importmap entry** - What: The persistence companion loads without a bundler dependency. How: Extend index.html importmap with https://unpkg.com/spektrum/persist and smoke-load it in Vite dev.
-- [ ] **T7.2.3 - Define PERSIST_ALLOWLIST constant** - What: Only intended keys ever touch localStorage, nothing sensitive. How: Export an array of settings.* paths in src/settings/persist.js reviewed against the schema.
-- [ ] **T7.2.4 - Implement initSettingsPersist()** - What: Any allowlisted change is stored the moment it happens. How: Call persist(state, {keys: PERSIST_ALLOWLIST, storageKey: 'stockz.settings'}).
-- [ ] **T7.2.5 - Namespace the storage payload** - What: Future schema versions can coexist with old ones on device. How: Prefix the localStorage entry as stockz.settings.v1 and centralize the name in one constant.
-- [ ] **T7.2.6 - Verify write-through with watch()** - What: Users trust that a toggled pref is already saved. How: Add a dev-only Spektrum watch() logging persisted paths and confirm localStorage updates on setValue.
-- [ ] **T7.2.7 - Implement assertPersistSafe()** - What: Secrets and vault data can never leak into localStorage via config drift. How: Guard function failing fast if a non-settings.* path appears in the allowlist.
-- [ ] **T7.2.8 - Handle storage quota errors** - What: A full localStorage never crashes the trading session. How: Catch QuotaExceededError around persist writes and post a one-line console warning.
-- [ ] **T7.2.9 - Write single unit tests for persist functions** - What: initSettingsPersist and assertPersistSafe each locked by one test. How: One Vitest test per function with a stubbed localStorage, run via vitest run -t.
-- [ ] **T7.2.10 - Lint, test and merge persist branch** - What: Reliable persistence ships to main. How: Pass ESLint and the targeted Vitest runs, then merge feature/settings-persist.
+- [x] **T7.2.1 - Open persist wiring branch** - What: Persistence plumbing develops in isolation. How: git checkout -b feature/settings-persist from a fresh main pull.
+- [x] **T7.2.2 - Add spektrum/persist importmap entry** - What: The persistence companion loads without a bundler dependency. How: Extend index.html importmap with https://unpkg.com/spektrum/persist and smoke-load it in Vite dev.
+- [x] **T7.2.3 - Define PERSIST_ALLOWLIST constant** - What: Only intended keys ever touch localStorage, nothing sensitive. How: Export an array of settings.* paths in src/settings/persist.js reviewed against the schema.
+- [x] **T7.2.4 - Implement initSettingsPersist()** - What: Any allowlisted change is stored the moment it happens. How: Call persist(state, {keys: PERSIST_ALLOWLIST, storageKey: 'stockz.settings'}).
+- [x] **T7.2.5 - Namespace the storage payload** - What: Future schema versions can coexist with old ones on device. How: Prefix the localStorage entry as stockz.settings.v1 and centralize the name in one constant.
+- [x] **T7.2.6 - Verify write-through with watch()** - What: Users trust that a toggled pref is already saved. How: Add a dev-only Spektrum watch() logging persisted paths and confirm localStorage updates on setValue.
+- [x] **T7.2.7 - Implement assertPersistSafe()** - What: Secrets and vault data can never leak into localStorage via config drift. How: Guard function failing fast if a non-settings.* path appears in the allowlist.
+- [x] **T7.2.8 - Handle storage quota errors** - What: A full localStorage never crashes the trading session. How: Catch QuotaExceededError around persist writes and post a one-line console warning.
+- [x] **T7.2.9 - Write single unit tests for persist functions** - What: initSettingsPersist and assertPersistSafe each locked by one test. How: One Vitest test per function with a stubbed localStorage, run via vitest run -t.
+- [x] **T7.2.10 - Lint, test and merge persist branch** - What: Reliable persistence ships to main. How: Pass ESLint and the targeted Vitest runs, then merge feature/settings-persist.
 
 ### F7.3 - Settings Drawer UI
 
 **What:** One slide-in drawer edits every preference live, with changes applying the instant a field moves.
 **How:** Build a drawer partial using Spektrum data-model two-way bindings, data-action toggles and data-cloak.
 
-- [ ] **T7.3.1 - Start drawer UI branch** - What: Drawer work does not disturb the dashboard shell. How: git checkout -b feature/settings-drawer and scaffold src/ui/settings-drawer.html.
-- [ ] **T7.3.2 - Build drawer markup skeleton** - What: A structured panel with sections for theme, sizes, sounds, favorites. How: Author the partial with data-ref="settingsDrawer" and data-cloak until state binds.
-- [ ] **T7.3.3 - Bind fields with data-model** - What: Editing a field updates the desk immediately, no save step. How: Attach data-model="settings.theme", settings.sounds.enabled, settings.defaultSizes.qty to inputs.
-- [ ] **T7.3.4 - Implement toggleSettingsDrawer()** - What: The drawer opens and closes from the header gear in one click. How: data-action calling a function that flips ui.drawerOpen via setValue and trigger.
-- [ ] **T7.3.5 - Build hotkey capture field** - What: Users rebind hotkeys by pressing the combo, not typing strings. How: keydown listener on a focused input writing a normalized combo string through formatHotkeyCombo().
-- [ ] **T7.3.6 - Build favorites editor list** - What: Favorite instruments are added and removed inline. How: data-each over settings.favoriteInstruments with add/remove data-action handlers.
-- [ ] **T7.3.7 - Style drawer in money-hacker theme** - What: The drawer matches the green/orange terminal look in day and night. How: CSS custom properties from the Phase 3 design tokens, monospace labels, scanline accents.
-- [ ] **T7.3.8 - Add slide-in animation** - What: The drawer feels snappy and never shifts the grid. How: Fixed-position overlay with a 120ms transform transition, zero layout reflow.
-- [ ] **T7.3.9 - Write single unit tests for drawer functions** - What: toggleSettingsDrawer and formatHotkeyCombo each pinned by one test. How: One Vitest test per function using happy-dom, run via vitest run -t.
-- [ ] **T7.3.10 - Verify and merge drawer branch** - What: A working live-editing drawer reaches main. How: Manual pass in Vite dev on both themes, ESLint plus targeted tests, merge feature/settings-drawer.
+- [x] **T7.3.1 - Start drawer UI branch** - What: Drawer work does not disturb the dashboard shell. How: git checkout -b feature/settings-drawer and scaffold src/ui/settings-drawer.html.
+- [x] **T7.3.2 - Build drawer markup skeleton** - What: A structured panel with sections for theme, sizes, sounds, favorites. How: Author the partial with data-ref="settingsDrawer" and data-cloak until state binds.
+- [x] **T7.3.3 - Bind fields with data-model** - What: Editing a field updates the desk immediately, no save step. How: Attach data-model="settings.theme", settings.sounds.enabled, settings.defaultSizes.qty to inputs.
+- [x] **T7.3.4 - Implement toggleSettingsDrawer()** - What: The drawer opens and closes from the header gear in one click. How: data-action calling a function that flips ui.drawerOpen via setValue and trigger.
+- [x] **T7.3.5 - Build hotkey capture field** - What: Users rebind hotkeys by pressing the combo, not typing strings. How: keydown listener on a focused input writing a normalized combo string through formatHotkeyCombo().
+- [x] **T7.3.6 - Build favorites editor list** - What: Favorite instruments are added and removed inline. How: data-each over settings.favoriteInstruments with add/remove data-action handlers.
+- [x] **T7.3.7 - Style drawer in money-hacker theme** - What: The drawer matches the green/orange terminal look in day and night. How: CSS custom properties from the Phase 3 design tokens, monospace labels, scanline accents.
+- [x] **T7.3.8 - Add slide-in animation** - What: The drawer feels snappy and never shifts the grid. How: Fixed-position overlay with a 120ms transform transition, zero layout reflow.
+- [x] **T7.3.9 - Write single unit tests for drawer functions** - What: toggleSettingsDrawer and formatHotkeyCombo each pinned by one test. How: One Vitest test per function using happy-dom, run via vitest run -t.
+- [x] **T7.3.10 - Verify and merge drawer branch** - What: A working live-editing drawer reaches main. How: Manual pass in Vite dev on both themes, ESLint plus targeted tests, merge feature/settings-drawer.
 
 ### F7.4 - Layout Presets
 
 **What:** Traders snapshot and recall named grid arrangements, switching desk setups in one action.
 **How:** Store preset objects under settings.layouts and apply them with setValue plus a Spektrum refresh().
 
-- [ ] **T7.4.1 - Branch for layout presets** - What: Preset logic evolves without touching the live grid code. How: git checkout -b feature/layout-presets and add src/settings/presets.js.
-- [ ] **T7.4.2 - Define preset data shape** - What: Presets capture exactly what a block arrangement needs. How: Document {name, createdAt, blocks: [{id, slot}]} and add it to the schema under settings.layouts.
-- [ ] **T7.4.3 - Implement saveLayoutPreset(name)** - What: The current grid is frozen into a named preset instantly. How: Read the grid block state, clone it into settings.layouts via setValue and validateSettingsPatch.
-- [ ] **T7.4.4 - Implement applyLayoutPreset(name)** - What: One click restores a full desk arrangement. How: setValue the stored blocks into the grid state and call refresh() for an immediate repaint.
-- [ ] **T7.4.5 - Implement deletePreset() and renamePreset()** - What: The preset list stays curated and current. How: Two small functions mutating settings.layouts with duplicate-name rejection.
-- [ ] **T7.4.6 - Build preset picker UI** - What: Presets are visible and switchable from the drawer. How: data-each pill row with data-action apply, plus a name input and save button.
-- [ ] **T7.4.7 - Ship default presets** - What: New users start with Scalp, Monitor and Minimal desks. How: Seed three presets in SETTINGS_DEFAULTS aligned to the Phase 4 grid slots.
-- [ ] **T7.4.8 - Persist layouts across reloads** - What: Custom presets survive a browser restart. How: Add settings.layouts to PERSIST_ALLOWLIST and confirm the localStorage payload round-trips.
-- [ ] **T7.4.9 - Write single unit tests for preset functions** - What: Each of the four preset functions has exactly one test. How: Vitest tests in presets.test.js run individually via vitest run -t.
-- [ ] **T7.4.10 - Merge presets when green** - What: Preset switching becomes part of the shipped desk. How: ESLint plus targeted Vitest runs pass, merge feature/layout-presets into main.
+- [x] **T7.4.1 - Branch for layout presets** - What: Preset logic evolves without touching the live grid code. How: git checkout -b feature/layout-presets and add src/settings/presets.js.
+- [x] **T7.4.2 - Define preset data shape** - What: Presets capture exactly what a block arrangement needs. How: Document {name, createdAt, blocks: [{id, slot}]} and add it to the schema under settings.layouts.
+- [x] **T7.4.3 - Implement saveLayoutPreset(name)** - What: The current grid is frozen into a named preset instantly. How: Read the grid block state, clone it into settings.layouts via setValue and validateSettingsPatch.
+- [x] **T7.4.4 - Implement applyLayoutPreset(name)** - What: One click restores a full desk arrangement. How: setValue the stored blocks into the grid state and call refresh() for an immediate repaint.
+- [x] **T7.4.5 - Implement deletePreset() and renamePreset()** - What: The preset list stays curated and current. How: Two small functions mutating settings.layouts with duplicate-name rejection.
+- [x] **T7.4.6 - Build preset picker UI** - What: Presets are visible and switchable from the drawer. How: data-each pill row with data-action apply, plus a name input and save button.
+- [x] **T7.4.7 - Ship default presets** - What: New users start with Scalp, Monitor and Minimal desks. How: Seed three presets in SETTINGS_DEFAULTS aligned to the Phase 4 grid slots.
+- [x] **T7.4.8 - Persist layouts across reloads** - What: Custom presets survive a browser restart. How: Add settings.layouts to PERSIST_ALLOWLIST and confirm the localStorage payload round-trips.
+- [x] **T7.4.9 - Write single unit tests for preset functions** - What: Each of the four preset functions has exactly one test. How: Vitest tests in presets.test.js run individually via vitest run -t.
+- [x] **T7.4.10 - Merge presets when green** - What: Preset switching becomes part of the shipped desk. How: ESLint plus targeted Vitest runs pass, merge feature/layout-presets into main.
 
 ### F7.5 - Per-Instrument Overrides
 
 **What:** Each instrument can carry its own default quantity and price step, so BTC and a small-cap never share sizing.
 **How:** Keep an overrides map under settings.instruments and merge it over globals with a resolver function.
 
-- [ ] **T7.5.1 - Branch for instrument overrides** - What: Override logic is developed and reviewed in isolation. How: git checkout -b feature/instrument-overrides with src/settings/instruments.js.
-- [ ] **T7.5.2 - Model the overrides map** - What: Overrides are stored predictably per symbol. How: Schema entry settings.instruments as {SYMBOL: {defaultQty, priceStep}} validated by validateSettingsPatch.
-- [ ] **T7.5.3 - Implement getInstrumentDefaults(symbol)** - What: Any module asks once and gets merged, ready-to-use sizing. How: Shallow-merge global defaultSizes with the symbol override, returning a frozen result.
-- [ ] **T7.5.4 - Implement setInstrumentOverride(symbol, patch)** - What: Adjusting one instrument takes a single call. How: Validate the patch then setValue into settings.instruments[symbol].
-- [ ] **T7.5.5 - Implement clearInstrumentOverride(symbol)** - What: An instrument can revert to globals in one action. How: Delete the symbol entry via setValue and confirm getInstrumentDefaults falls back.
-- [ ] **T7.5.6 - Build overrides editor table** - What: All custom-sized instruments are visible and editable in the drawer. How: data-each table with data-model inputs for qty and price step per row.
-- [ ] **T7.5.7 - Add computed active-symbol sizing** - What: Order entry always shows the right qty for the focused instrument. How: computed('trade.effectiveQty') combining ui.activeSymbol and getInstrumentDefaults.
-- [ ] **T7.5.8 - Persist the overrides map** - What: Per-instrument tuning survives reloads. How: Append settings.instruments to PERSIST_ALLOWLIST and verify with the watch() logger.
-- [ ] **T7.5.9 - Write single unit tests for override functions** - What: Resolver, setter and clearer each locked by one test. How: One Vitest test per function in instruments.test.js via vitest run -t.
-- [ ] **T7.5.10 - Merge overrides branch** - What: Instrument-aware sizing lands on main. How: ESLint and targeted tests green, merge feature/instrument-overrides.
+- [x] **T7.5.1 - Branch for instrument overrides** - What: Override logic is developed and reviewed in isolation. How: git checkout -b feature/instrument-overrides with src/settings/instruments.js.
+- [x] **T7.5.2 - Model the overrides map** - What: Overrides are stored predictably per symbol. How: Schema entry settings.instruments as {SYMBOL: {defaultQty, priceStep}} validated by validateSettingsPatch.
+- [x] **T7.5.3 - Implement getInstrumentDefaults(symbol)** - What: Any module asks once and gets merged, ready-to-use sizing. How: Shallow-merge global defaultSizes with the symbol override, returning a frozen result.
+- [x] **T7.5.4 - Implement setInstrumentOverride(symbol, patch)** - What: Adjusting one instrument takes a single call. How: Validate the patch then setValue into settings.instruments[symbol].
+- [x] **T7.5.5 - Implement clearInstrumentOverride(symbol)** - What: An instrument can revert to globals in one action. How: Delete the symbol entry via setValue and confirm getInstrumentDefaults falls back.
+- [x] **T7.5.6 - Build overrides editor table** - What: All custom-sized instruments are visible and editable in the drawer. How: data-each table with data-model inputs for qty and price step per row.
+- [x] **T7.5.7 - Add computed active-symbol sizing** - What: Order entry always shows the right qty for the focused instrument. How: computed('trade.effectiveQty') combining ui.activeSymbol and getInstrumentDefaults.
+- [x] **T7.5.8 - Persist the overrides map** - What: Per-instrument tuning survives reloads. How: Append settings.instruments to PERSIST_ALLOWLIST and verify with the watch() logger.
+- [x] **T7.5.9 - Write single unit tests for override functions** - What: Resolver, setter and clearer each locked by one test. How: One Vitest test per function in instruments.test.js via vitest run -t.
+- [x] **T7.5.10 - Merge overrides branch** - What: Instrument-aware sizing lands on main. How: ESLint and targeted tests green, merge feature/instrument-overrides.
 
 ### F7.6 - Settings Versioning & Migrations
 
 **What:** Schema changes never wipe a trader's saved preferences; old payloads upgrade silently on load.
 **How:** Stamp settings.version into the persisted payload and fold stored data through a migrations registry before seeding.
 
-- [ ] **T7.6.1 - Branch for migrations** - What: Migration machinery is built without risking live persistence. How: git checkout -b feature/settings-migrations and add src/settings/migrations.js.
-- [ ] **T7.6.2 - Stamp SETTINGS_VERSION into payloads** - What: Every stored blob declares which schema wrote it. How: Export SETTINGS_VERSION and include it in the persisted stockz.settings.v1 object.
-- [ ] **T7.6.3 - Create migrations registry** - What: Each schema change ships with an explicit upgrade path. How: Ordered array of {from, to, migrate} entries exported from migrations.js.
-- [ ] **T7.6.4 - Implement migrateSettings(raw)** - What: Any old payload arrives at the current version deterministically. How: Fold raw through registry entries from its version upward, returning {settings, applied}.
-- [ ] **T7.6.5 - Write the first real migration** - What: The pipeline is proven with an actual v1-to-v2 change. How: Migration renaming defaultSizes.qty to defaultSizes.baseQty as the worked example.
-- [ ] **T7.6.6 - Back up before migrating** - What: A failed migration never destroys the only copy of prefs. How: Copy the raw payload to stockz.settings.bak in localStorage before folding.
-- [ ] **T7.6.7 - Guard against corrupt payloads** - What: Malformed JSON in storage still boots the desk with defaults. How: try/catch around JSON.parse, fall back to defineSettingsDefaults with a console warning.
-- [ ] **T7.6.8 - Wire migration into the load path** - What: Users on old versions are upgraded before anything reads settings. How: Run migrateSettings between the localStorage read and seedSettings in boot.
-- [ ] **T7.6.9 - Write single unit tests for migration functions** - What: migrateSettings and each registry migrate fn have one test apiece. How: Vitest tests with fixture payloads per version, run via vitest run -t.
-- [ ] **T7.6.10 - Merge migrations branch** - What: Forward-compatible persistence is live. How: ESLint plus targeted Vitest runs pass, merge feature/settings-migrations.
+- [x] **T7.6.1 - Branch for migrations** - What: Migration machinery is built without risking live persistence. How: git checkout -b feature/settings-migrations and add src/settings/migrations.js.
+- [x] **T7.6.2 - Stamp SETTINGS_VERSION into payloads** - What: Every stored blob declares which schema wrote it. How: Export SETTINGS_VERSION and include it in the persisted stockz.settings.v1 object.
+- [x] **T7.6.3 - Create migrations registry** - What: Each schema change ships with an explicit upgrade path. How: Ordered array of {from, to, migrate} entries exported from migrations.js.
+- [x] **T7.6.4 - Implement migrateSettings(raw)** - What: Any old payload arrives at the current version deterministically. How: Fold raw through registry entries from its version upward, returning {settings, applied}.
+- [x] **T7.6.5 - Write the first real migration** - What: The pipeline is proven with an actual v1-to-v2 change. How: Migration renaming defaultSizes.qty to defaultSizes.baseQty as the worked example.
+- [x] **T7.6.6 - Back up before migrating** - What: A failed migration never destroys the only copy of prefs. How: Copy the raw payload to stockz.settings.bak in localStorage before folding.
+- [x] **T7.6.7 - Guard against corrupt payloads** - What: Malformed JSON in storage still boots the desk with defaults. How: try/catch around JSON.parse, fall back to defineSettingsDefaults with a console warning.
+- [x] **T7.6.8 - Wire migration into the load path** - What: Users on old versions are upgraded before anything reads settings. How: Run migrateSettings between the localStorage read and seedSettings in boot.
+- [x] **T7.6.9 - Write single unit tests for migration functions** - What: migrateSettings and each registry migrate fn have one test apiece. How: Vitest tests with fixture payloads per version, run via vitest run -t.
+- [x] **T7.6.10 - Merge migrations branch** - What: Forward-compatible persistence is live. How: ESLint plus targeted Vitest runs pass, merge feature/settings-migrations.
 
 ### F7.7 - Export & Import Settings as JSON
 
 **What:** A whole desk configuration moves between machines as a single downloadable JSON file.
 **How:** Serialize settings.* with Spektrum serialize() to a Blob download and import via a validated, migrated file read.
 
-- [ ] **T7.7.1 - Branch for settings transfer** - What: Import/export is isolated from persistence internals. How: git checkout -b feature/settings-transfer and add src/settings/transfer.js.
-- [ ] **T7.7.2 - Implement exportSettings()** - What: The full current config becomes one portable object. How: Use Spektrum serialize() scoped to settings.*, attach SETTINGS_VERSION, pretty-print JSON.
-- [ ] **T7.7.3 - Implement downloadSettingsFile()** - What: One click hands the user stockz-settings.json. How: Blob plus URL.createObjectURL on a temporary anchor with the download attribute, then revoke.
-- [ ] **T7.7.4 - Implement importSettingsFile(file)** - What: A dropped file restores a desk in seconds. How: file.text() then JSON.parse, migrateSettings, validateSettingsPatch, setValue the result.
-- [ ] **T7.7.5 - Strip non-allowlisted keys on import** - What: Imported files can never smuggle secrets or junk into state. How: Filter the parsed object against PERSIST_ALLOWLIST before applying.
-- [ ] **T7.7.6 - Build import/export controls in drawer** - What: Both actions live beside the other settings, no hidden menus. How: Terminal-styled buttons plus a hidden file input wired with data-action and data-ref.
-- [ ] **T7.7.7 - Show inline import errors** - What: A bad file is explained in one line without a blocking dialog. How: Write the validator's first error to an ui.importError line rendered with data-if.
-- [ ] **T7.7.8 - Implement verifyRoundTrip()** - What: Users can trust export and import to be lossless. How: Function exporting, re-importing into a scratch object and deep-equal checking the trees.
-- [ ] **T7.7.9 - Write single unit tests for transfer functions** - What: Export, download, import and round-trip each get exactly one test. How: Vitest with fixture JSON and a stubbed anchor, per-function vitest run -t.
-- [ ] **T7.7.10 - Merge transfer branch** - What: Portable configs ship to main. How: ESLint and targeted tests pass, merge feature/settings-transfer.
+- [x] **T7.7.1 - Branch for settings transfer** - What: Import/export is isolated from persistence internals. How: git checkout -b feature/settings-transfer and add src/settings/transfer.js.
+- [x] **T7.7.2 - Implement exportSettings()** - What: The full current config becomes one portable object. How: Use Spektrum serialize() scoped to settings.*, attach SETTINGS_VERSION, pretty-print JSON.
+- [x] **T7.7.3 - Implement downloadSettingsFile()** - What: One click hands the user stockz-settings.json. How: Blob plus URL.createObjectURL on a temporary anchor with the download attribute, then revoke.
+- [x] **T7.7.4 - Implement importSettingsFile(file)** - What: A dropped file restores a desk in seconds. How: file.text() then JSON.parse, migrateSettings, validateSettingsPatch, setValue the result.
+- [x] **T7.7.5 - Strip non-allowlisted keys on import** - What: Imported files can never smuggle secrets or junk into state. How: Filter the parsed object against PERSIST_ALLOWLIST before applying.
+- [x] **T7.7.6 - Build import/export controls in drawer** - What: Both actions live beside the other settings, no hidden menus. How: Terminal-styled buttons plus a hidden file input wired with data-action and data-ref.
+- [x] **T7.7.7 - Show inline import errors** - What: A bad file is explained in one line without a blocking dialog. How: Write the validator's first error to an ui.importError line rendered with data-if.
+- [x] **T7.7.8 - Implement verifyRoundTrip()** - What: Users can trust export and import to be lossless. How: Function exporting, re-importing into a scratch object and deep-equal checking the trees.
+- [x] **T7.7.9 - Write single unit tests for transfer functions** - What: Export, download, import and round-trip each get exactly one test. How: Vitest with fixture JSON and a stubbed anchor, per-function vitest run -t.
+- [x] **T7.7.10 - Merge transfer branch** - What: Portable configs ship to main. How: ESLint and targeted tests pass, merge feature/settings-transfer.
 
 ### F7.8 - Reset to Defaults with Single Undo
 
 **What:** A wiped config is one keypress away from recovery: reset instantly, undo instantly, no confirm dialogs.
 **How:** Capture a Spektrum checkpoint() before reset and restore it through replay() on a short-lived undo affordance.
 
-- [ ] **T7.8.1 - Branch for reset flow** - What: The destructive path is built and reviewed separately. How: git checkout -b feature/settings-reset and add src/settings/reset.js.
-- [ ] **T7.8.2 - Implement resetSettings()** - What: The whole settings tree returns to factory state in one call. How: setValue defineSettingsDefaults() over settings.* and let persist mirror it out.
-- [ ] **T7.8.3 - Capture pre-reset checkpoint** - What: The exact prior state is recoverable, not an approximation. How: Call Spektrum checkpoint() scoped to settings.* inside resetSettings before overwriting.
-- [ ] **T7.8.4 - Implement undoReset()** - What: One action restores everything the reset removed. How: replay() the stored checkpoint back into state and drop the checkpoint reference.
-- [ ] **T7.8.5 - Enforce the single-undo window** - What: Undo is predictable: available once, until the next change. How: Clear the checkpoint on any subsequent settings mutation via a watch() hook or a 30s timeout.
-- [ ] **T7.8.6 - Add RESET control to drawer** - What: Reset is reachable but visually distinct from routine toggles. How: Orange data-action button in its own drawer section, styled as a hazard control.
-- [ ] **T7.8.7 - Show inline UNDO toast** - What: The undo path appears exactly when it is usable. How: data-if toast bound to ui.undoAvailable with a data-action calling undoReset, no modal.
-- [ ] **T7.8.8 - Sync persistence after reset and undo** - What: Storage always matches what the user sees post-action. How: Assert the stockz.settings.v1 payload reflects state after each path in Vite dev.
-- [ ] **T7.8.9 - Write single unit tests for reset functions** - What: resetSettings and undoReset each verified by one test. How: Vitest tests asserting checkpoint capture and replay restore, run via vitest run -t.
-- [ ] **T7.8.10 - Merge reset branch** - What: Safe, instant reset ships. How: ESLint plus targeted Vitest runs green, merge feature/settings-reset into main.
+- [x] **T7.8.1 - Branch for reset flow** - What: The destructive path is built and reviewed separately. How: git checkout -b feature/settings-reset and add src/settings/reset.js.
+- [x] **T7.8.2 - Implement resetSettings()** - What: The whole settings tree returns to factory state in one call. How: setValue defineSettingsDefaults() over settings.* and let persist mirror it out.
+- [x] **T7.8.3 - Capture pre-reset checkpoint** - What: The exact prior state is recoverable, not an approximation. How: Call Spektrum checkpoint() scoped to settings.* inside resetSettings before overwriting.
+- [x] **T7.8.4 - Implement undoReset()** - What: One action restores everything the reset removed. How: replay() the stored checkpoint back into state and drop the checkpoint reference.
+- [x] **T7.8.5 - Enforce the single-undo window** - What: Undo is predictable: available once, until the next change. How: Clear the checkpoint on any subsequent settings mutation via a watch() hook or a 30s timeout.
+- [x] **T7.8.6 - Add RESET control to drawer** - What: Reset is reachable but visually distinct from routine toggles. How: Orange data-action button in its own drawer section, styled as a hazard control.
+- [x] **T7.8.7 - Show inline UNDO toast** - What: The undo path appears exactly when it is usable. How: data-if toast bound to ui.undoAvailable with a data-action calling undoReset, no modal.
+- [x] **T7.8.8 - Sync persistence after reset and undo** - What: Storage always matches what the user sees post-action. How: Assert the stockz.settings.v1 payload reflects state after each path in Vite dev.
+- [x] **T7.8.9 - Write single unit tests for reset functions** - What: resetSettings and undoReset each verified by one test. How: Vitest tests asserting checkpoint capture and replay restore, run via vitest run -t.
+- [x] **T7.8.10 - Merge reset branch** - What: Safe, instant reset ships. How: ESLint plus targeted Vitest runs green, merge feature/settings-reset into main.
 
 ### F7.9 - Boot Order: Restore Before First Render
 
 **What:** The desk opens already personalized - correct theme, layout and sizes on the very first painted frame.
 **How:** Sequence localStorage read, migration and seeding ahead of bindDOM()/run() with addAsync and data-cloak.
 
-- [ ] **T7.9.1 - Branch for boot sequencing** - What: Boot-order changes are testable before touching main. How: git checkout -b feature/settings-boot and open src/main.js for the sequence work.
-- [ ] **T7.9.2 - Codify the boot sequence** - What: The load order is explicit, not accidental. How: BOOT_STEPS constant listing read -> migrate -> seed -> persist-init -> bindDOM -> run in main.js.
-- [ ] **T7.9.3 - Implement restoreSettings()** - What: All persisted prefs are in state before any render logic runs. How: addAsync task performing the localStorage read, migrateSettings and seedSettings in order.
-- [ ] **T7.9.4 - Cloak the shell until settings apply** - What: No flash of wrong theme or default layout, ever. How: data-cloak on the app root removed only after restoreSettings resolves.
-- [ ] **T7.9.5 - Add performance marks around restore** - What: Boot cost of personalization is measurable, keeping startup snappy. How: performance.mark/measure pairs logged in dev as settings-restore-ms.
-- [ ] **T7.9.6 - Add a restore time budget** - What: A slow or blocked storage read never delays trading. How: Promise.race with a 50ms timeout falling back to defaults, reconciling when the read lands.
-- [ ] **T7.9.7 - Reorder main.js call sites** - What: Every downstream module boots against restored settings. How: Move bindDOM() and run() after the restoreSettings await, fixing any early readers.
-- [ ] **T7.9.8 - Verify zero-FOUC reloads** - What: Night-theme users never see a white flash on refresh. How: Repeated hard reloads in Vite dev on both themes plus a throttled-storage check in devtools.
-- [ ] **T7.9.9 - Write single unit tests for boot functions** - What: restoreSettings and the timeout fallback each locked by one test. How: Vitest with fake timers and stubbed storage, run via vitest run -t.
-- [ ] **T7.9.10 - Merge boot branch** - What: Instant personalized startup is the shipped behavior. How: ESLint and targeted tests pass, merge feature/settings-boot.
+- [x] **T7.9.1 - Branch for boot sequencing** - What: Boot-order changes are testable before touching main. How: git checkout -b feature/settings-boot and open src/main.js for the sequence work.
+- [x] **T7.9.2 - Codify the boot sequence** - What: The load order is explicit, not accidental. How: BOOT_STEPS constant listing read -> migrate -> seed -> persist-init -> bindDOM -> run in main.js.
+- [x] **T7.9.3 - Implement restoreSettings()** - What: All persisted prefs are in state before any render logic runs. How: addAsync task performing the localStorage read, migrateSettings and seedSettings in order.
+- [x] **T7.9.4 - Cloak the shell until settings apply** - What: No flash of wrong theme or default layout, ever. How: data-cloak on the app root removed only after restoreSettings resolves.
+- [x] **T7.9.5 - Add performance marks around restore** - What: Boot cost of personalization is measurable, keeping startup snappy. How: performance.mark/measure pairs logged in dev as settings-restore-ms.
+- [x] **T7.9.6 - Add a restore time budget** - What: A slow or blocked storage read never delays trading. How: Promise.race with a 50ms timeout falling back to defaults, reconciling when the read lands.
+- [x] **T7.9.7 - Reorder main.js call sites** - What: Every downstream module boots against restored settings. How: Move bindDOM() and run() after the restoreSettings await, fixing any early readers.
+- [x] **T7.9.8 - Verify zero-FOUC reloads** - What: Night-theme users never see a white flash on refresh. How: Repeated hard reloads in Vite dev on both themes plus a throttled-storage check in devtools.
+- [x] **T7.9.9 - Write single unit tests for boot functions** - What: restoreSettings and the timeout fallback each locked by one test. How: Vitest with fake timers and stubbed storage, run via vitest run -t.
+- [x] **T7.9.10 - Merge boot branch** - What: Instant personalized startup is the shipped behavior. How: ESLint and targeted tests pass, merge feature/settings-boot.
 
 ### F7.10 - Settings Test Harness & Quality Gate
 
 **What:** Every settings function stays covered by exactly one fast test, so refactors here never silently break the desk.
 **How:** Add Vitest project config, targeted npm scripts, a one-test-per-function audit and ESLint storage-access rules.
 
-- [ ] **T7.10.1 - Branch for the settings gate** - What: Tooling changes are reviewed apart from feature code. How: git checkout -b feature/settings-quality-gate.
-- [ ] **T7.10.2 - Add a settings Vitest project** - What: Settings tests run in isolation from the rest of the suite. How: vitest.config.js project entry scoped to src/settings/**/*.test.js with happy-dom.
-- [ ] **T7.10.3 - Add targeted test npm scripts** - What: A single function's test runs in under a second. How: package.json script test:settings passing -t patterns through to vitest run.
-- [ ] **T7.10.4 - Build shared localStorage stub helper** - What: All settings tests use one honest storage fake. How: test/helpers/storage-stub.js implementing the Storage interface with an in-memory Map.
-- [ ] **T7.10.5 - Implement auditSettingsTests()** - What: Missing or duplicated tests are caught mechanically. How: Node script diffing exported function names in src/settings against Vitest test titles.
-- [ ] **T7.10.6 - Wire the audit as an npm script** - What: The one-test-per-function rule is checkable on demand. How: package.json script audit:settings running the audit and exiting non-zero on gaps.
-- [ ] **T7.10.7 - Add ESLint storage restriction** - What: Direct localStorage use outside persist.js is impossible to merge. How: no-restricted-globals/properties override in eslint.config.js scoped to src/settings.
-- [ ] **T7.10.8 - Close audit gaps** - What: Phase 7 exits with full single-test coverage. How: Run audit:settings and add or dedupe tests until it exits clean.
-- [ ] **T7.10.9 - Write single unit tests for harness helpers** - What: The storage stub and audit function are themselves each tested once. How: One Vitest test per helper function, run via vitest run -t.
-- [ ] **T7.10.10 - Merge the quality gate** - What: The guardrails protect all future settings work on main. How: ESLint, audit and targeted Vitest runs green, merge feature/settings-quality-gate.
+- [x] **T7.10.1 - Branch for the settings gate** - What: Tooling changes are reviewed apart from feature code. How: git checkout -b feature/settings-quality-gate.
+- [x] **T7.10.2 - Add a settings Vitest project** - What: Settings tests run in isolation from the rest of the suite. How: vitest.config.js project entry scoped to src/settings/**/*.test.js with happy-dom.
+- [x] **T7.10.3 - Add targeted test npm scripts** - What: A single function's test runs in under a second. How: package.json script test:settings passing -t patterns through to vitest run.
+- [x] **T7.10.4 - Build shared localStorage stub helper** - What: All settings tests use one honest storage fake. How: test/helpers/storage-stub.js implementing the Storage interface with an in-memory Map.
+- [x] **T7.10.5 - Implement auditSettingsTests()** - What: Missing or duplicated tests are caught mechanically. How: Node script diffing exported function names in src/settings against Vitest test titles.
+- [x] **T7.10.6 - Wire the audit as an npm script** - What: The one-test-per-function rule is checkable on demand. How: package.json script audit:settings running the audit and exiting non-zero on gaps.
+- [x] **T7.10.7 - Add ESLint storage restriction** - What: Direct localStorage use outside persist.js is impossible to merge. How: no-restricted-globals/properties override in eslint.config.js scoped to src/settings.
+- [x] **T7.10.8 - Close audit gaps** - What: Phase 7 exits with full single-test coverage. How: Run audit:settings and add or dedupe tests until it exits clean.
+- [x] **T7.10.9 - Write single unit tests for harness helpers** - What: The storage stub and audit function are themselves each tested once. How: One Vitest test per helper function, run via vitest run -t.
+- [x] **T7.10.10 - Merge the quality gate** - What: The guardrails protect all future settings work on main. How: ESLint, audit and targeted Vitest runs green, merge feature/settings-quality-gate.
 
 ---
 

@@ -58,6 +58,15 @@ export const PATHS = Object.freeze({
   settings: Object.freeze({
     theme: 'settings.theme',
     blocks: 'settings.blocks',
+    presets: 'settings.presets',
+    soundEnabled: 'settings.soundEnabled',
+    defaultSize: 'settings.defaultSize',
+    sizePresets: 'settings.sizePresets',
+    priceStep: 'settings.priceStep',
+    defaultMode: 'settings.defaultMode',
+    maxDailyLoss: 'settings.maxDailyLoss',
+    maxPosition: 'settings.maxPosition',
+    favourites: 'settings.favourites',
   }),
   market: Object.freeze({
     venues: 'market.venues',

@@ -152,6 +152,52 @@
       </section>
     </main>
 
+    <!-- Settings drawer. Rendered from the schema, so a new setting appears here by
+         being declared rather than by editing markup. -->
+    <aside class="drawer" data-if="ui.modal === 'settings'" aria-label="Settings">
+      <div class="drawer__bar">
+        <span class="block__state-title">settings</span>
+        <button type="button" class="icon-btn" data-action="click" data-fn="ui.toggleOverlay"
+                data-modal="settings" aria-label="Close settings">x</button>
+      </div>
+      <div class="drawer__body scroll-y">
+        <label class="field">
+          <span class="label">Default order size</span>
+          <input type="number" step="0.001" min="0" class="field__input num"
+                 data-model="settings.defaultSize">
+        </label>
+        <label class="field">
+          <span class="label">Price nudge step</span>
+          <input type="number" step="0.01" min="0" class="field__input num"
+                 data-model="settings.priceStep">
+        </label>
+        <label class="field">
+          <span class="label">Daily max loss</span>
+          <input type="number" step="1" min="0" class="field__input num"
+                 data-model="settings.maxDailyLoss">
+        </label>
+        <label class="field">
+          <span class="label">Max position size</span>
+          <input type="number" step="0.01" min="0" class="field__input num"
+                 data-model="settings.maxPosition">
+        </label>
+        <label class="field">
+          <span class="label">Size presets</span>
+          <input type="text" class="field__input" data-model="settings.sizePresets">
+        </label>
+        <label class="field">
+          <span class="label">Favourite instruments</span>
+          <input type="text" class="field__input" data-model="settings.favourites">
+        </label>
+        <label class="field field--row">
+          <input type="checkbox" data-model="settings.soundEnabled">
+          <span class="label">Sounds</span>
+        </label>
+        <button type="button" class="btn btn--warn" data-action="click"
+                data-fn="settings.reset">reset to defaults</button>
+      </div>
+    </aside>
+
     <!-- Toasts float above the grid. -->
     <ul class="toasts" data-each="toast in ui.toasts">
       <li :class="'toast toast--' + toast.level">{{toast.message}}</li>
