@@ -54,6 +54,7 @@ export const PATHS = Object.freeze({
     toasts: 'ui.toasts',
     columns: 'ui.columns',
     density: 'ui.density',
+    keysPresent: 'ui.keysPresent',
   }),
   settings: Object.freeze({
     theme: 'settings.theme',

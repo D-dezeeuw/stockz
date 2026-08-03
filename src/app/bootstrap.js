@@ -12,6 +12,7 @@ import { registerHeaderActions } from '../ui/header.js'
 import { registerThemeActions, applyTheme, preferredTheme } from '../ui/theme.js'
 import { restoreSettings, persistSettings } from '../state/persist.js'
 import { registerSettingsActions } from '../ui/settings.js'
+import { registerKeyActions, adoptKeys } from '../ui/keys.js'
 import { appVersion } from './version.js'
 
 /**
@@ -55,6 +56,8 @@ export function bootstrap(options = {}) {
   registerHeaderActions()
   registerThemeActions()
   registerSettingsActions()
+  registerKeyActions()
+  adoptKeys()
   applyTheme(doc?.documentElement?.getAttribute?.('data-theme') || preferredTheme(), doc)
   const derived = registerDerived()
   wireEngineErrors()
