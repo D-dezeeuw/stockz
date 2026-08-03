@@ -10,6 +10,13 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ## [Unreleased]
 
+_Nothing yet — next entries land with phase 6 (Day/Night Theme Engine)._
+
+## [0.5.0] — 2026-08-03 — Phase 5: Header, Branding & Navigation
+
+Orientation without looking away from the prices: wordmark, section nav, venue LEDs,
+day-PnL ticker, venue clock, and the theme toggle.
+
 ### Added
 
 - **The header** — STOCKZ wordmark, section nav (desk / trade / journal / stats), live
@@ -217,7 +224,8 @@ with a test policy and a live URL.
   literal `APP_VERSION` (a JSON import is bundler-only), guarded by a test that fails if
   it drifts from `package.json`; static assets moved from `public/` to the repo root.
 
-[Unreleased]: https://github.com/D-dezeeuw/stockz/compare/v0.4.0...HEAD
+[Unreleased]: https://github.com/D-dezeeuw/stockz/compare/v0.5.0...HEAD
+[0.5.0]: https://github.com/D-dezeeuw/stockz/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/D-dezeeuw/stockz/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/D-dezeeuw/stockz/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/D-dezeeuw/stockz/compare/v0.1.0...v0.2.0
