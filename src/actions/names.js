@@ -19,6 +19,10 @@ export const ACTIONS = Object.freeze({
   app: Object.freeze({
     reset: 'app.reset',
   }),
+  settings: Object.freeze({
+    update: 'settings.update',
+    reset: 'settings.reset',
+  }),
 })
 
 /** @returns {string[]} every declared action name, flattened. */

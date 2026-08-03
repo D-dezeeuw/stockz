@@ -10,7 +10,23 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ## [Unreleased]
 
-_Nothing yet — next entries land with phase 7 (User Settings & Persistence)._
+### Added
+
+- **A settings drawer** — order size, price step, size presets, risk limits, favourites
+  and sounds, opened from the header gear and rendered from one declared schema, so a new
+  setting appears by being declared rather than by editing markup. (F7.1, F7.3)
+- **Every write is coerced** — a value typed into the drawer gets exactly the same
+  treatment as one from an imported file. Junk in a risk field becomes the default rather
+  than `NaN`, because a daily-loss limit that quietly became `NaN` is a disabled circuit
+  breaker. (F7.2)
+- **Layout presets** — save the current block arrangement under a name and switch back to
+  it later. (F7.4)
+- **Export and import** — settings travel to another machine as JSON, carrying the block
+  layout, because "my settings" means the desk as it looked. Imports are normalised: a
+  hand-edited file is untrusted input. (F7.7)
+- **Reset with one undo** — restoring defaults checkpoints first and rewinds through the
+  engine's own history, the same mechanism the trade journal uses, so there is one way to
+  go back rather than two. (F7.8)
 
 ## [0.6.0] — 2026-08-03 — Phase 6: Day/Night Theme Engine
 

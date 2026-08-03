@@ -11,6 +11,7 @@ import { registerLayoutActions, observeLayout } from '../blocks/layout.js'
 import { registerHeaderActions } from '../ui/header.js'
 import { registerThemeActions, applyTheme, preferredTheme } from '../ui/theme.js'
 import { restoreSettings, persistSettings } from '../state/persist.js'
+import { registerSettingsActions } from '../ui/settings.js'
 import { appVersion } from './version.js'
 
 /**
@@ -53,6 +54,7 @@ export function bootstrap(options = {}) {
   registerLayoutActions()
   registerHeaderActions()
   registerThemeActions()
+  registerSettingsActions()
   applyTheme(doc?.documentElement?.getAttribute?.('data-theme') || preferredTheme(), doc)
   const derived = registerDerived()
   wireEngineErrors()

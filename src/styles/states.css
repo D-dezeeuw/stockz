@@ -102,3 +102,80 @@
   color: var(--green);
   font-weight: var(--fw-bold);
 }
+
+/* Settings drawer — an overlay, never a page the trader has to navigate back from. */
+.drawer {
+  position: fixed;
+  inset-block: var(--header-h) var(--footer-h);
+  inset-inline-end: 0;
+  inline-size: min(22rem, 100vw);
+  display: grid;
+  grid-template-rows: auto 1fr;
+  background: var(--bg-block);
+  border-inline-start: var(--border-strong);
+  z-index: var(--z-overlay);
+}
+
+.drawer__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--sp-2);
+  border-block-end: var(--border);
+  background: var(--bg-raised);
+}
+
+.drawer__body {
+  display: grid;
+  align-content: start;
+  gap: var(--sp-3);
+  padding: var(--sp-3);
+}
+
+.field {
+  display: grid;
+  gap: var(--sp-1);
+}
+
+.field--row {
+  grid-auto-flow: column;
+  justify-content: start;
+  align-items: center;
+  gap: var(--sp-2);
+}
+
+.field__input {
+  padding: var(--sp-1) var(--sp-2);
+  background: var(--bg-inset);
+  border: var(--border);
+  border-radius: var(--radius-1);
+  color: var(--ink);
+  font: inherit;
+}
+
+.field__input:focus-visible {
+  outline: var(--border-2) solid var(--green);
+  outline-offset: 1px;
+}
+
+.btn {
+  padding: var(--sp-2);
+  background: var(--bg-raised);
+  border: var(--border);
+  border-radius: var(--radius-1);
+  color: var(--ink);
+  font: inherit;
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wide);
+  cursor: pointer;
+}
+
+.btn--warn {
+  border-color: var(--orange-dim);
+  color: var(--orange);
+}
+
+.btn--warn:hover {
+  background: var(--orange-dim);
+  color: var(--ink-inverse);
+}

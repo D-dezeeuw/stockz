@@ -1,5 +1,6 @@
 import { APP_VERSION } from '../app/version.js'
 import { PATHS } from './paths.js'
+import { defaultSettings } from './settings-schema.js'
 
 /**
  * The state tree the desk boots into.
@@ -47,9 +48,12 @@ export function initialState(overrides = {}) {
     [PATHS.ui.columns]: 1,
     [PATHS.ui.density]: 'compact',
 
-    // preferences (the only persisted branch)
-    [PATHS.settings.theme]: 'night',
-    [PATHS.settings.blocks]: [],
+    // preferences (the only persisted branch) - defaults come from the schema so the
+    // drawer, the migration and reset-to-defaults can never disagree about them
+    ...Object.fromEntries(
+      Object.entries(defaultSettings()).map(([key, value]) => [`settings.${key}`, value]),
+    ),
+    [PATHS.settings.presets]: {},
 
     // live venue data
     [PATHS.market.venues]: { okx: { state: 'dead' }, etoro: { state: 'dead' } },
