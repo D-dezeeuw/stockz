@@ -22,6 +22,14 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
   *focused* quote late. (F10.3)
 - **The instrument catalogue is cumulative** — a partial refresh teaches new instruments
   without blanking out ones the desk is already showing. (F10.2)
+- **Offline EToro** — a mock that answers every endpoint with deterministic, *moving*
+  prices through the real mappers and poller, so the whole pipeline stays developable and
+  testable without keys or a network. A frozen mock teaches nothing about a UI whose job
+  is displaying change. (F10.9)
+- **CORS documented honestly** — EToro refuses browser origins, so dev uses a Vite proxy
+  and production either uses a relay you host or leaves the venue off. A public CORS proxy
+  is explicitly rejected: it would see the API keys in every request header, which is the
+  one thing the vault exists to prevent. (F10.6)
 
 ## [0.9.0] — 2026-08-03 — Phase 9: OKX Connectivity
 

@@ -1629,32 +1629,32 @@
 **What:** Open and close EToro positions from the desk with the same acks as every other venue.
 **How:** Wrap EToro order and trade endpoints in etoroFetch calls with pure builders and normalizers unifying results with the phase 17 engine shape.
 
-- [ ] **T10.5.1 - Branch order wrappers** - What: Isolated trading-endpoint work. How: git checkout -b feature/etoro-orders from main; add src/venues/etoro/orders.js.
-- [ ] **T10.5.2 - buildEtoroOrderBody fn** - What: Internal intent translates exactly to EToro fields. How: Implement buildEtoroOrderBody(intent) mapping side/qty/leverage/stops onto the EToro payload.
-- [ ] **T10.5.3 - placeEtoroOrder call** - What: Real order entry to EToro. How: POST the order endpoint via etoroFetch with buildEtoroOrderBody output and return the raw ack.
-- [ ] **T10.5.4 - closeEtoroPosition call** - What: One-shot flatten of any holding. How: Wrap the close-position endpoint keyed by positionId, since EToro closes by position not order.
-- [ ] **T10.5.5 - normalizeEtoroOrderResult fn** - What: One ack shape across venues for phase 17. How: Implement normalizeEtoroOrderResult(res) into {id, clOrdId, status, reason} matching the OKX shape.
-- [ ] **T10.5.6 - fetchEtoroTrades call** - What: Executed trade history ready for the phase 25 journal. How: GET the trades endpoint and map rows through a mapEtoroTrade fn with ts/px/qty/fees.
-- [ ] **T10.5.7 - Ack event wiring** - What: The desk reacts to fills the moment they confirm. How: Push normalized results through trigger('etoro.orderUpdate', o) for engine and portfolio listeners.
-- [ ] **T10.5.8 - Rejection surface** - What: Failed orders explain themselves without blocking. How: Route EtoroError rejections into the shared toast pipeline with the venue name prefixed.
-- [ ] **T10.5.9 - Single unit tests for order fns** - What: buildEtoroOrderBody, normalizeEtoroOrderResult, mapEtoroTrade each proven. How: One Vitest test per function; vitest -t per run.
-- [ ] **T10.5.10 - Merge order wrappers** - What: EToro trading lands on main. How: ESLint plus the three targeted tests green, then merge feature/etoro-orders into main.
+- [x] **T10.5.1 - Branch order wrappers** - What: Isolated trading-endpoint work. How: git checkout -b feature/etoro-orders from main; add src/venues/etoro/orders.js.
+- [x] **T10.5.2 - buildEtoroOrderBody fn** - What: Internal intent translates exactly to EToro fields. How: Implement buildEtoroOrderBody(intent) mapping side/qty/leverage/stops onto the EToro payload.
+- [x] **T10.5.3 - placeEtoroOrder call** - What: Real order entry to EToro. How: POST the order endpoint via etoroFetch with buildEtoroOrderBody output and return the raw ack.
+- [x] **T10.5.4 - closeEtoroPosition call** - What: One-shot flatten of any holding. How: Wrap the close-position endpoint keyed by positionId, since EToro closes by position not order.
+- [x] **T10.5.5 - normalizeEtoroOrderResult fn** - What: One ack shape across venues for phase 17. How: Implement normalizeEtoroOrderResult(res) into {id, clOrdId, status, reason} matching the OKX shape.
+- [x] **T10.5.6 - fetchEtoroTrades call** - What: Executed trade history ready for the phase 25 journal. How: GET the trades endpoint and map rows through a mapEtoroTrade fn with ts/px/qty/fees.
+- [x] **T10.5.7 - Ack event wiring** - What: The desk reacts to fills the moment they confirm. How: Push normalized results through trigger('etoro.orderUpdate', o) for engine and portfolio listeners.
+- [x] **T10.5.8 - Rejection surface** - What: Failed orders explain themselves without blocking. How: Route EtoroError rejections into the shared toast pipeline with the venue name prefixed.
+- [x] **T10.5.9 - Single unit tests for order fns** - What: buildEtoroOrderBody, normalizeEtoroOrderResult, mapEtoroTrade each proven. How: One Vitest test per function; vitest -t per run.
+- [x] **T10.5.10 - Merge order wrappers** - What: EToro trading lands on main. How: ESLint plus the three targeted tests green, then merge feature/etoro-orders into main.
 
 ### F10.6 - CORS Strategy and Dev Relay
 
 **What:** EToro calls that actually work from a static browser app, in dev and in production.
 **How:** A Vite dev-server proxy for local work plus a configurable relay base URL for production, with CORS failures detected and explained.
 
-- [ ] **T10.6.1 - Branch relay strategy** - What: Isolated transport-path work. How: git checkout -b feature/etoro-relay from main; add src/venues/etoro/relay.js and docs/etoro-cors.md.
-- [ ] **T10.6.2 - CORS probe and writeup** - What: Certainty about which endpoints the browser can reach. How: Probe each EToro endpoint from a Vite dev page and record allow/block results in docs/etoro-cors.md.
-- [ ] **T10.6.3 - Vite dev proxy** - What: Frictionless local dev with no CORS errors. How: Configure server.proxy in vite.config.js routing /etoro/* to the EToro API host with changeOrigin.
-- [ ] **T10.6.4 - relayUrl fn** - What: Every call picks the right path automatically. How: Implement relayUrl(path) returning the /etoro proxy prefix in import.meta.env.DEV else the configured relay base.
-- [ ] **T10.6.5 - Relay base setting** - What: Power users can point the desk at their own relay. How: Add a relay URL field to the phase 7 settings store, persisted client-side via spektrum/persist.
-- [ ] **T10.6.6 - detectCorsFailure fn** - What: Opaque network errors get a real explanation. How: Implement detectCorsFailure(err) distinguishing TypeError CORS blocks from timeouts and HTTP errors.
-- [ ] **T10.6.7 - Guided failure toast** - What: A blocked call tells the user exactly what to configure. How: On detected CORS failure, toast a pointer to the relay setting instead of a generic error.
-- [ ] **T10.6.8 - Prod relay documentation** - What: A copy-paste path to production EToro access. How: Document a minimal self-hosted pass-through relay recipe in docs/etoro-cors.md, since GitHub Pages is static-only.
-- [ ] **T10.6.9 - Single unit tests for relay fns** - What: relayUrl and detectCorsFailure verified. How: One Vitest test each covering dev/prod modes and error classes; vitest -t per function.
-- [ ] **T10.6.10 - Merge relay strategy** - What: A working transport path lands on main. How: ESLint plus both targeted tests green, then merge feature/etoro-relay into main.
+- [x] **T10.6.1 - Branch relay strategy** - What: Isolated transport-path work. How: git checkout -b feature/etoro-relay from main; add src/venues/etoro/relay.js and docs/etoro-cors.md.
+- [x] **T10.6.2 - CORS probe and writeup** - What: Certainty about which endpoints the browser can reach. How: Probe each EToro endpoint from a Vite dev page and record allow/block results in docs/etoro-cors.md.
+- [x] **T10.6.3 - Vite dev proxy** - What: Frictionless local dev with no CORS errors. How: Configure server.proxy in vite.config.js routing /etoro/* to the EToro API host with changeOrigin.
+- [x] **T10.6.4 - relayUrl fn** - What: Every call picks the right path automatically. How: Implement relayUrl(path) returning the /etoro proxy prefix in import.meta.env.DEV else the configured relay base.
+- [x] **T10.6.5 - Relay base setting** - What: Power users can point the desk at their own relay. How: Add a relay URL field to the phase 7 settings store, persisted client-side via spektrum/persist.
+- [x] **T10.6.6 - detectCorsFailure fn** - What: Opaque network errors get a real explanation. How: Implement detectCorsFailure(err) distinguishing TypeError CORS blocks from timeouts and HTTP errors.
+- [x] **T10.6.7 - Guided failure toast** - What: A blocked call tells the user exactly what to configure. How: On detected CORS failure, toast a pointer to the relay setting instead of a generic error.
+- [x] **T10.6.8 - Prod relay documentation** - What: A copy-paste path to production EToro access. How: Document a minimal self-hosted pass-through relay recipe in docs/etoro-cors.md, since GitHub Pages is static-only.
+- [x] **T10.6.9 - Single unit tests for relay fns** - What: relayUrl and detectCorsFailure verified. How: One Vitest test each covering dev/prod modes and error classes; vitest -t per function.
+- [x] **T10.6.10 - Merge relay strategy** - What: A working transport path lands on main. How: ESLint plus both targeted tests green, then merge feature/etoro-relay into main.
 
 ### F10.7 - Unified Tick Normalization
 
@@ -1693,16 +1693,16 @@
 **What:** EToro switches off in one click, leaving a pure-crypto desk with zero dead weight.
 **How:** A persisted settings flag plus URL param override gating bootstrap, polling and UI blocks, with clean teardown and no-reload re-enable.
 
-- [ ] **T10.9.1 - Branch feature flag** - What: Isolated kill-switch work. How: git checkout -b feature/etoro-flag from main; add src/venues/etoro/flag.js.
-- [ ] **T10.9.2 - Flag in settings state** - What: The choice survives reloads. How: Store settings.etoro.enabled (default true) synced to localStorage via spektrum/persist.
-- [ ] **T10.9.3 - parseEtoroFlagParam fn** - What: Instant disable from a shared URL. How: Implement parseEtoroFlagParam(search) reading ?etoro=off/on and overriding the stored setting for the session.
-- [ ] **T10.9.4 - isEtoroEnabled fn** - What: One authoritative answer for every module. How: Implement isEtoroEnabled(state) combining the setting and URL override, used at each entry point.
-- [ ] **T10.9.5 - Guarded bootstrap** - What: A disabled venue costs zero requests and zero memory. How: Make initEtoro() a no-op when isEtoroEnabled is false, skipping client, polling and catalog loads.
-- [ ] **T10.9.6 - UI gating** - What: No ghost EToro blocks on a crypto-only desk. How: Wrap EToro grid blocks, badges and settings rows in data-if on the enabled state.
-- [ ] **T10.9.7 - Live teardown** - What: Toggling off stops traffic immediately, not on next reload. How: Watch the flag, stop the F10.3 loop, and abort in-flight fetches via their AbortControllers.
-- [ ] **T10.9.8 - No-reload re-enable** - What: Turning EToro back on takes one click, not a refresh. How: On flag true, fire trigger('etoro.init') to rerun bootstrap and resume polling in place.
-- [ ] **T10.9.9 - Single unit tests for flag fns** - What: parseEtoroFlagParam and isEtoroEnabled verified. How: One Vitest test each over param/setting combinations; vitest -t per function.
-- [ ] **T10.9.10 - Merge feature flag** - What: A clean venue kill-switch lands on main. How: ESLint plus both targeted tests green, then merge feature/etoro-flag into main.
+- [x] **T10.9.1 - Branch feature flag** - What: Isolated kill-switch work. How: git checkout -b feature/etoro-flag from main; add src/venues/etoro/flag.js.
+- [x] **T10.9.2 - Flag in settings state** - What: The choice survives reloads. How: Store settings.etoro.enabled (default true) synced to localStorage via spektrum/persist.
+- [x] **T10.9.3 - parseEtoroFlagParam fn** - What: Instant disable from a shared URL. How: Implement parseEtoroFlagParam(search) reading ?etoro=off/on and overriding the stored setting for the session.
+- [x] **T10.9.4 - isEtoroEnabled fn** - What: One authoritative answer for every module. How: Implement isEtoroEnabled(state) combining the setting and URL override, used at each entry point.
+- [x] **T10.9.5 - Guarded bootstrap** - What: A disabled venue costs zero requests and zero memory. How: Make initEtoro() a no-op when isEtoroEnabled is false, skipping client, polling and catalog loads.
+- [x] **T10.9.6 - UI gating** - What: No ghost EToro blocks on a crypto-only desk. How: Wrap EToro grid blocks, badges and settings rows in data-if on the enabled state.
+- [x] **T10.9.7 - Live teardown** - What: Toggling off stops traffic immediately, not on next reload. How: Watch the flag, stop the F10.3 loop, and abort in-flight fetches via their AbortControllers.
+- [x] **T10.9.8 - No-reload re-enable** - What: Turning EToro back on takes one click, not a refresh. How: On flag true, fire trigger('etoro.init') to rerun bootstrap and resume polling in place.
+- [x] **T10.9.9 - Single unit tests for flag fns** - What: parseEtoroFlagParam and isEtoroEnabled verified. How: One Vitest test each over param/setting combinations; vitest -t per function.
+- [x] **T10.9.10 - Merge feature flag** - What: A clean venue kill-switch lands on main. How: ESLint plus both targeted tests green, then merge feature/etoro-flag into main.
 
 ### F10.10 - Mock Mode with Canned Data
 
