@@ -12,6 +12,11 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ### Added
 
+- **Chart scale maths** — price↔pixel and time↔pixel mapping both ways, auto-ranging
+  snapped to the instrument's tick size, and price formatting derived from that same tick
+  size, so no axis ever labels a price the instrument cannot trade at. Pan/zoom composes
+  as pure transforms, and a debug axis grid (behind the new `debugCharts` setting) draws
+  the geometry so it can be seen rather than trusted. (F13.2)
 - **Canvas core** — devicePixelRatio scaling (a blurry price is a misread price), a
   palette read from the same CSS tokens the DOM uses, and a dirty-flag render loop that
   skips the draw entirely when nothing changed. The pipeline coalesces state writes; the

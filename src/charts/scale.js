@@ -61,6 +61,148 @@ export function priceToY(price, range, height) {
 }
 
 /**
+ * Y pixel → price. The inverse of {@link priceToY}, for reading the cursor.
+ *
+ * @param {number} y - y coordinate.
+ * @param {{min: number, max: number}} range - drawing range.
+ * @param {number} height - canvas height in CSS pixels.
+ * @returns {number} the price under that pixel.
+ */
+export function yToPrice(y, range, height) {
+  const min = range?.min ?? 0
+  const max = range?.max ?? 1
+  if (!Number.isFinite(height) || height <= 0) return min
+
+  return mapRange(y, height, 0, min, max)
+}
+
+/**
+ * Timestamp → x pixel across a sliding window.
+ *
+ * The newest edge of the window is the right edge of the plot: on a scalping chart the
+ * present moment is pinned there and history scrolls away to the left.
+ *
+ * @param {number} ts - epoch milliseconds.
+ * @param {{from: number, to: number}} window - the visible time window.
+ * @param {number} width - canvas width in CSS pixels.
+ * @returns {number} x coordinate.
+ */
+export function timeToX(ts, window, width) {
+  const from = Number(window?.from)
+  const to = Number(window?.to)
+  if (!Number.isFinite(from) || !Number.isFinite(to) || to <= from) return width
+
+  return mapRange(ts, from, to, 0, width)
+}
+
+/**
+ * X pixel → timestamp. The inverse of {@link timeToX}, for the crosshair readout.
+ *
+ * @param {number} x - x coordinate.
+ * @param {{from: number, to: number}} window - the visible time window.
+ * @param {number} width - canvas width in CSS pixels.
+ * @returns {number} epoch milliseconds.
+ */
+export function xToTime(x, window, width) {
+  const from = Number(window?.from)
+  const to = Number(window?.to)
+  if (!Number.isFinite(from) || !Number.isFinite(to) || !Number.isFinite(width) || width <= 0) {
+    return Number.isFinite(to) ? to : 0
+  }
+
+  return mapRange(x, 0, width, from, to)
+}
+
+/**
+ * Auto-frame a slice of prices, snapped to the instrument's tick size.
+ *
+ * Snapping matters: an unsnapped range puts the axis labels between tradable prices, and
+ * a scalper reading "63,421.037" on an instrument that only trades in 0.1 steps is
+ * reading a number that cannot exist.
+ *
+ * @param {number[]} prices - the visible slice.
+ * @param {number} [tickSize] - the instrument's minimum price increment.
+ * @param {number} [padRatio] - fraction of range added above and below.
+ * @returns {{min: number, max: number}} the drawing range.
+ */
+export function autoRange(prices, tickSize = 0, padRatio = 0.08) {
+  const { min, max } = priceRange(prices, padRatio)
+  const step = Number(tickSize)
+  if (!Number.isFinite(step) || step <= 0) return { min, max }
+
+  return {
+    min: Number((Math.floor(min / step) * step).toFixed(10)),
+    max: Number((Math.ceil(max / step) * step).toFixed(10)),
+  }
+}
+
+/**
+ * Format a price with the decimals its tick size implies.
+ *
+ * @param {number} price - the price.
+ * @param {number} [tickSize] - the instrument's minimum price increment.
+ * @returns {string} the formatted price.
+ */
+export function formatPrice(price, tickSize = 0.01) {
+  const value = Number(price)
+  if (!Number.isFinite(value)) return '—'
+
+  const step = Number(tickSize)
+  // The tick size *is* the precision contract: 0.001 means three decimals, 0.5 means one,
+  // 1 means none. Deriving it beats a per-venue table that drifts out of date.
+  const decimals =
+    Number.isFinite(step) && step > 0 ? Math.max(0, Math.min(10, decimalsOf(step))) : 2
+
+  return value.toFixed(decimals)
+}
+
+/**
+ * Count the decimals a tick size carries.
+ *
+ * @param {number} step - the tick size.
+ * @returns {number} decimal places.
+ */
+export function decimalsOf(step) {
+  const text = String(step)
+  // Small ticks arrive from JSON in exponential form (1e-8); the exponent is the answer.
+  const exponent = text.match(/e-(\d+)$/i)
+  if (exponent) return Number(exponent[1])
+
+  const dot = text.indexOf('.')
+  return dot === -1 ? 0 : text.length - dot - 1
+}
+
+/**
+ * Compose two pan/zoom transforms into one.
+ *
+ * @param {{offset?: number, scale?: number}} a - the outer transform.
+ * @param {{offset?: number, scale?: number}} b - the inner transform.
+ * @returns {{offset: number, scale: number}} the combined transform.
+ */
+export function composeTransform(a, b) {
+  const scaleA = Number(a?.scale) || 1
+  const scaleB = Number(b?.scale) || 1
+  const offsetA = Number(a?.offset) || 0
+  const offsetB = Number(b?.offset) || 0
+
+  return { offset: offsetA + offsetB * scaleA, scale: scaleA * scaleB }
+}
+
+/**
+ * Apply a pan/zoom transform to an x coordinate.
+ *
+ * @param {number} x - the untransformed coordinate.
+ * @param {{offset?: number, scale?: number}} [transform] - the transform.
+ * @returns {number} the transformed coordinate.
+ */
+export function applyTransform(x, transform) {
+  const value = Number(x)
+  if (!Number.isFinite(value)) return 0
+
+  return value * (Number(transform?.scale) || 1) + (Number(transform?.offset) || 0)
+}
+
+/**
  * Index → x pixel across a series.
  *
  * @param {number} index - position in the series.
