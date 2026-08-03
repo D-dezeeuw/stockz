@@ -34,6 +34,24 @@ export default [
   },
 
   {
+    // The state map owns every path string. A raw 'trade.dayPnl' literal at a call site
+    // is how a typo invents a silent branch no binding reads - import PATHS instead.
+    files: ['src/**/*.js'],
+    ignores: ['src/state/paths.js', 'src/state/initial.js', '**/*.test.js'],
+    rules: {
+      'no-restricted-syntax': [
+        'error',
+        {
+          selector:
+            "Literal[value=/^(app|ui|settings|market|trade|strategy)\\.[a-zA-Z]/]",
+          message:
+            'Raw state path literal - import the constant from src/state/paths.js instead.',
+        },
+      ],
+    },
+  },
+
+  {
     // Colocated unit tests (see .claude/context/testing-policy.md).
     files: ['**/*.test.js'],
     languageOptions: {

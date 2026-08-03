@@ -22,6 +22,11 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
   prices; the page then uncloaks and the tick pump starts. `initialState()` seeds every
   namespace (app, ui, settings, market, trade, strategy) with trading disarmed, in paper
   mode and flat. (F2.2)
+- **One state map** — every namespace and path is declared in `src/state/paths.js`, with
+  `buildPath` for dynamic branches, `assertKnownNamespace` as the guard and `isPersisted`
+  marking `settings.*` as the only branch that ever reaches localStorage. A lint rule
+  rejects raw path literals, so a typo can no longer invent a silent branch that no
+  binding reads. (F2.3)
 
 ## [0.1.0] — 2026-08-03 — Phase 1: Foundation & Tooling
 
