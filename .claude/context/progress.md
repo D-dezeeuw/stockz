@@ -41,7 +41,23 @@ First feature **F2.1**. The importmap in `index.html` is currently an empty plac
   `strategy.*`. **API keys never enter state** — they would land in history/serialize.
 - Spektrum is already `external` in the Rollup config, so the CDN import survives build.
 
+## Blocked on the owner (one setting)
+
+**GitHub Pages is serving from `main`, not `gh-pages`.** The live URL returns 200 but
+shows the *source* `index.html` (`src="/src/main.js"` → 404s), because Pages is pointed
+at the wrong branch. `gh-pages` itself is correct and current — six files, build only.
+
+Fix: **Settings → Pages → Source: Deploy from a branch → `gh-pages` / `(root)`.**
+Nothing in the codebase can work around this; verify afterwards that
+`curl -s https://d-dezeeuw.github.io/stockz/ | grep -oE 'src="[^"]*"'` shows
+`/stockz/assets/index-<hash>.js`.
+
 ## Gotchas (learned the hard way — do not rediscover)
+
+- **`gh-pages -d dist` leaked the repo onto the public branch** — its remove step spared
+  dotfiles, so `.claude/`, `.env.example`, `.gitignore` and `src/**/.gitkeep` were
+  published. Replaced by `scripts/publish-pages.sh` (orphan commit = exactly `dist/`,
+  force-pushed). Always verify the published tree after deploying.
 
 - **Vite's env bag coerces assigned values to strings.** Injecting a non-string into
   `import.meta.env` in a test is impossible; that is why `readEnv(name, bag)` takes an

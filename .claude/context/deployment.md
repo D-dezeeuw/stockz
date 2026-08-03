@@ -3,11 +3,33 @@
 **There is no GitHub Actions in this repository — ever.** No workflow files, no
 `.github/workflows/`, no CI badges. Publishing is a deliberate local command.
 
+## Repository setting (one-time, required)
+
+**Settings → Pages → Source: "Deploy from a branch" → Branch: `gh-pages`, folder
+`/ (root)`.**
+
+If Pages is pointed at `main` instead, the site serves the *source* `index.html` —
+which references `/src/main.js` and 404s, because the module graph is only resolved at
+build time. Symptom: the live page loads but every asset is missing. Check with
+`curl -s <url> | grep -oE 'src="[^"]*"'`: it must show `/stockz/assets/index-<hash>.js`,
+never `/src/main.js`.
+
 ## How it ships
 
 ```bash
 npm run deploy
-# = vite build && gh-pages -d dist
+# = vite build && bash scripts/publish-pages.sh
+```
+
+`scripts/publish-pages.sh` builds a single orphan commit whose tree is **exactly**
+`dist/` (plus `.nojekyll`) and force-pushes it to `gh-pages`. It replaced a bare
+`gh-pages -d dist` call, which left repository dotfiles (`.claude/`, `.env.example`,
+`.gitignore`, `src/**/.gitkeep`) in the published branch — source files on a public
+site. Always verify after a deploy:
+
+```bash
+git fetch -q origin gh-pages:refs/remotes/origin/gh-pages -f
+git ls-tree -r --name-only origin/gh-pages   # must be the build and nothing else
 ```
 
 - `vite.config.js` sets `base: '/stockz/'` so assets resolve under
