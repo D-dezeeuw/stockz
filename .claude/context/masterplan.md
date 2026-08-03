@@ -1748,48 +1748,48 @@
 **What:** Blocks subscribe to instruments without ever touching sockets, so feeds and UI evolve independently.
 **How:** Build src/data/bus.js, a dependency-free pub/sub keyed by 'channel:instId' topics using a Map of listener Sets.
 
-- [ ] **T11.2.1 - Open bus branch** - What: Bus work isolated until proven green. How: Create feature/f11-2-tick-bus off main following the feature-cycle skill.
-- [ ] **T11.2.2 - createBus factory** - What: A zero-dependency event hub the whole pipeline shares. How: Implement createBus in src/data/bus.js holding a Map from topic string to Set of handlers.
-- [ ] **T11.2.3 - subscribe with disposer** - What: Blocks clean up with one function call, no leak bookkeeping. How: subscribe(topic, fn) adds to the Set and returns an unsubscribe closure that deletes it.
-- [ ] **T11.2.4 - Isolated publish** - What: One broken block can never stall the tick stream. How: publish(topic, payload) iterates handlers inside try/catch, logging failures via console.error without rethrow.
-- [ ] **T11.2.5 - Wildcard topics** - What: HUD and counters tap every tick with one subscription. How: Support 'tick:*' handlers via a second Map matched by channel prefix during publish.
-- [ ] **T11.2.6 - once helper** - What: Warmup logic awaits the first tick without manual unsubscribe. How: Implement once(topic) returning a Promise that resolves on first publish and self-disposes.
-- [ ] **T11.2.7 - Bus introspection** - What: Live listener counts visible while debugging feed issues. How: Add topicCount/listenerCount getters and surface them through spektrum/inspect in dev.
-- [ ] **T11.2.8 - Publish from mappers** - What: Normalized OKX and EToro data actually flows on the bus. How: Wire the feed worker output through F11.1 mappers to bus.publish('tick:<canonId>', tick).
-- [ ] **T11.2.9 - Single unit tests** - What: subscribe, publish, once and wildcard each proven once. How: tests/bus.test.js with one Vitest test per function, executed individually via npx vitest run -t.
-- [ ] **T11.2.10 - Green merge** - What: Stable bus API for every downstream phase. How: ESLint the module, confirm targeted tests pass, merge feature/f11-2-tick-bus to main.
+- [x] **T11.2.1 - Open bus branch** - What: Bus work isolated until proven green. How: Create feature/f11-2-tick-bus off main following the feature-cycle skill.
+- [x] **T11.2.2 - createBus factory** - What: A zero-dependency event hub the whole pipeline shares. How: Implement createBus in src/data/bus.js holding a Map from topic string to Set of handlers.
+- [x] **T11.2.3 - subscribe with disposer** - What: Blocks clean up with one function call, no leak bookkeeping. How: subscribe(topic, fn) adds to the Set and returns an unsubscribe closure that deletes it.
+- [x] **T11.2.4 - Isolated publish** - What: One broken block can never stall the tick stream. How: publish(topic, payload) iterates handlers inside try/catch, logging failures via console.error without rethrow.
+- [x] **T11.2.5 - Wildcard topics** - What: HUD and counters tap every tick with one subscription. How: Support 'tick:*' handlers via a second Map matched by channel prefix during publish.
+- [x] **T11.2.6 - once helper** - What: Warmup logic awaits the first tick without manual unsubscribe. How: Implement once(topic) returning a Promise that resolves on first publish and self-disposes.
+- [x] **T11.2.7 - Bus introspection** - What: Live listener counts visible while debugging feed issues. How: Add topicCount/listenerCount getters and surface them through spektrum/inspect in dev.
+- [x] **T11.2.8 - Publish from mappers** - What: Normalized OKX and EToro data actually flows on the bus. How: Wire the feed worker output through F11.1 mappers to bus.publish('tick:<canonId>', tick).
+- [x] **T11.2.9 - Single unit tests** - What: subscribe, publish, once and wildcard each proven once. How: tests/bus.test.js with one Vitest test per function, executed individually via npx vitest run -t.
+- [x] **T11.2.10 - Green merge** - What: Stable bus API for every downstream phase. How: ESLint the module, confirm targeted tests pass, merge feature/f11-2-tick-bus to main.
 
 ### F11.3 - Fixed-Memory Ring Buffers
 
 **What:** Hundreds of ticks per second stored with zero GC churn and a hard memory ceiling per instrument.
 **How:** Implement src/data/ring.js with preallocated Float64Array columns and head/length indices, overwrite-oldest semantics.
 
-- [ ] **T11.3.1 - Start ring branch** - What: Buffer internals developed without touching main. How: Branch feature/f11-3-ring-buffers from main per feature-cycle.
-- [ ] **T11.3.2 - createRing core** - What: A fixed-capacity structure allocated once at startup. How: createRing(capacity, fields) building one Float64Array per field plus head and length counters.
-- [ ] **T11.3.3 - O(1) push** - What: Every tick stored in constant time under burst load. How: push writes at head modulo capacity, overwriting the oldest slot and bumping an overwrite counter.
-- [ ] **T11.3.4 - latest reader** - What: Renderers read the newest n entries in chronological order. How: Implement latest(n, field) walking backwards from head with modulo wraparound.
-- [ ] **T11.3.5 - Allocation-free snapshot** - What: Chart repaints copy data without creating garbage. How: snapshotInto(targetArray, field) filling a caller-owned reusable Float64Array.
-- [ ] **T11.3.6 - Trade ring registry** - What: Each subscribed instrument gets its own 4096-slot trade ring. How: Map keyed by canonId, rings created lazily on first tick and dropped on unsubscribe.
-- [ ] **T11.3.7 - Candle rings** - What: 512 recent candles per timeframe kept hot for sparklines and charts. How: Per-instrument rings for 1s/5s/1m with ts/o/h/l/c/v fields, filled by F11.7.
-- [ ] **T11.3.8 - Overflow accounting** - What: Silent data loss becomes a visible number. How: Expose overwrittenUnread counts per ring for the F11.9 counters to sample.
-- [ ] **T11.3.9 - Single unit tests** - What: push, latest and snapshotInto each verified by one test including wraparound. How: tests/ring.test.js run per function with npx vitest run -t.
-- [ ] **T11.3.10 - Merge buffers** - What: Fixed-memory storage available pipeline-wide. How: Lint with ESLint, verify the three targeted tests, merge feature/f11-3-ring-buffers into main.
+- [x] **T11.3.1 - Start ring branch** - What: Buffer internals developed without touching main. How: Branch feature/f11-3-ring-buffers from main per feature-cycle.
+- [x] **T11.3.2 - createRing core** - What: A fixed-capacity structure allocated once at startup. How: createRing(capacity, fields) building one Float64Array per field plus head and length counters.
+- [x] **T11.3.3 - O(1) push** - What: Every tick stored in constant time under burst load. How: push writes at head modulo capacity, overwriting the oldest slot and bumping an overwrite counter.
+- [x] **T11.3.4 - latest reader** - What: Renderers read the newest n entries in chronological order. How: Implement latest(n, field) walking backwards from head with modulo wraparound.
+- [x] **T11.3.5 - Allocation-free snapshot** - What: Chart repaints copy data without creating garbage. How: snapshotInto(targetArray, field) filling a caller-owned reusable Float64Array.
+- [x] **T11.3.6 - Trade ring registry** - What: Each subscribed instrument gets its own 4096-slot trade ring. How: Map keyed by canonId, rings created lazily on first tick and dropped on unsubscribe.
+- [x] **T11.3.7 - Candle rings** - What: 512 recent candles per timeframe kept hot for sparklines and charts. How: Per-instrument rings for 1s/5s/1m with ts/o/h/l/c/v fields, filled by F11.7.
+- [x] **T11.3.8 - Overflow accounting** - What: Silent data loss becomes a visible number. How: Expose overwrittenUnread counts per ring for the F11.9 counters to sample.
+- [x] **T11.3.9 - Single unit tests** - What: push, latest and snapshotInto each verified by one test including wraparound. How: tests/ring.test.js run per function with npx vitest run -t.
+- [x] **T11.3.10 - Merge buffers** - What: Fixed-memory storage available pipeline-wide. How: Lint with ESLint, verify the three targeted tests, merge feature/f11-3-ring-buffers into main.
 
 ### F11.4 - rAF-Batched State Flushes
 
 **What:** The UI paints at a steady 60fps while tick bursts coalesce into one Spektrum update per frame.
 **How:** Build src/data/flusher.js staging latest-wins values in a dirty Map and applying setValue once per requestAnimationFrame.
 
-- [ ] **T11.4.1 - Branch the flusher** - What: Frame batching built in isolation. How: git checkout -b feature/f11-4-raf-flusher from main.
-- [ ] **T11.4.2 - Dirty map staging** - What: A thousand ticks on one path collapse to a single write. How: createFlusher with a Map path->value; stage(path, value) overwrites so latest always wins.
-- [ ] **T11.4.3 - Self-stopping rAF loop** - What: Zero CPU spent when the market is quiet. How: Schedule requestAnimationFrame only when the dirty Map is non-empty; loop exits after an empty flush.
-- [ ] **T11.4.4 - Frame flush** - What: All staged paths hit Spektrum state exactly once per paint. How: flush() iterates the dirty Map calling Spektrum setValue per path, then clears it.
-- [ ] **T11.4.5 - Hidden-tab fallback** - What: State stays warm while the tab is backgrounded and rAF is throttled. How: On visibilitychange swap the rAF loop for a 250ms setInterval and back.
-- [ ] **T11.4.6 - Frame budget guard** - What: A monster batch can never blow a frame. How: Cap flush work at 4ms via performance.now() and spill remaining paths to the next frame.
-- [ ] **T11.4.7 - Route bus into flusher** - What: Every feed update reaches the UI through the batch path. How: Rewire bus tick/book subscribers to stage('md.<id>.*') instead of calling setValue directly.
-- [ ] **T11.4.8 - Devtools frame trace** - What: Flush timing observable during tuning. How: In dev builds, log per-flush path counts and durations into spektrum/devtools timeline entries.
-- [ ] **T11.4.9 - Single unit tests** - What: stage, flush and the budget guard each proven once. How: tests/flusher.test.js using vi.useFakeTimers plus a stubbed rAF, one test per function.
-- [ ] **T11.4.10 - Merge flusher** - What: Jank-free updates become the default write path. How: ESLint pass, targeted Vitest runs green, merge feature/f11-4-raf-flusher into main.
+- [x] **T11.4.1 - Branch the flusher** - What: Frame batching built in isolation. How: git checkout -b feature/f11-4-raf-flusher from main.
+- [x] **T11.4.2 - Dirty map staging** - What: A thousand ticks on one path collapse to a single write. How: createFlusher with a Map path->value; stage(path, value) overwrites so latest always wins.
+- [x] **T11.4.3 - Self-stopping rAF loop** - What: Zero CPU spent when the market is quiet. How: Schedule requestAnimationFrame only when the dirty Map is non-empty; loop exits after an empty flush.
+- [x] **T11.4.4 - Frame flush** - What: All staged paths hit Spektrum state exactly once per paint. How: flush() iterates the dirty Map calling Spektrum setValue per path, then clears it.
+- [x] **T11.4.5 - Hidden-tab fallback** - What: State stays warm while the tab is backgrounded and rAF is throttled. How: On visibilitychange swap the rAF loop for a 250ms setInterval and back.
+- [x] **T11.4.6 - Frame budget guard** - What: A monster batch can never blow a frame. How: Cap flush work at 4ms via performance.now() and spill remaining paths to the next frame.
+- [x] **T11.4.7 - Route bus into flusher** - What: Every feed update reaches the UI through the batch path. How: Rewire bus tick/book subscribers to stage('md.<id>.*') instead of calling setValue directly.
+- [x] **T11.4.8 - Devtools frame trace** - What: Flush timing observable during tuning. How: In dev builds, log per-flush path counts and durations into spektrum/devtools timeline entries.
+- [x] **T11.4.9 - Single unit tests** - What: stage, flush and the budget guard each proven once. How: tests/flusher.test.js using vi.useFakeTimers plus a stubbed rAF, one test per function.
+- [x] **T11.4.10 - Merge flusher** - What: Jank-free updates become the default write path. How: ESLint pass, targeted Vitest runs green, merge feature/f11-4-raf-flusher into main.
 
 ### F11.5 - Subscription Manager with Refcounts
 
@@ -1860,16 +1860,16 @@
 **What:** The HUD shows real ticks/sec, flush rate and drop counts, so pipeline health is measured, never guessed.
 **How:** Zero-allocation counter module src/data/pipestats.js incremented in hot paths and sampled to Spektrum state at 1Hz.
 
-- [ ] **T11.9.1 - Counters branch** - What: Instrumentation built without touching main. How: Branch feature/f11-9-pipeline-counters from main.
-- [ ] **T11.9.2 - createCounters** - What: Nanosecond-cheap counting safe inside the hot path. How: Factory exposing plain integer increments for ticksIn, published, flushed, dropped and overflow.
-- [ ] **T11.9.3 - Ring overflow hook** - What: Overwritten-unread buffer slots become countable loss. How: Wire the F11.3 overwrittenUnread deltas into counters.overflow during the sample pass.
-- [ ] **T11.9.4 - Bus and flusher hooks** - What: Every publish and every frame flush is accounted for. How: Increment counters inside bus.publish and the F11.4 flush step behind a single boolean guard.
-- [ ] **T11.9.5 - 1Hz sampler** - What: Raw counters become per-second rates. How: A 1s setInterval computing deltas since last sample, deriving ticks/sec and flushes/sec, then resetting the window.
-- [ ] **T11.9.6 - Publish stats state** - What: Phase 19 HUD reads pipeline.stats like any other state. How: Stage the sampled rates via the flusher into setValue('pipeline.stats', snapshot).
-- [ ] **T11.9.7 - Rolling history** - What: A 60s throughput sparkline for the HUD. How: Maintain a 60-slot circular array of ticks/sec samples exposed at pipeline.stats.history.
-- [ ] **T11.9.8 - Peaks and inspect** - What: Session-high load visible when tuning backpressure. How: Track maxTicksPerSec and register the stats object with Spektrum describe() for spektrum/inspect.
-- [ ] **T11.9.9 - Single unit tests** - What: createCounters and the sampler math each proven once. How: tests/pipestats.test.js with fake timers, one Vitest test per function via -t.
-- [ ] **T11.9.10 - Merge counters** - What: Honest pipeline telemetry on main. How: ESLint pass, targeted tests green, merge feature/f11-9-pipeline-counters into main.
+- [x] **T11.9.1 - Counters branch** - What: Instrumentation built without touching main. How: Branch feature/f11-9-pipeline-counters from main.
+- [x] **T11.9.2 - createCounters** - What: Nanosecond-cheap counting safe inside the hot path. How: Factory exposing plain integer increments for ticksIn, published, flushed, dropped and overflow.
+- [x] **T11.9.3 - Ring overflow hook** - What: Overwritten-unread buffer slots become countable loss. How: Wire the F11.3 overwrittenUnread deltas into counters.overflow during the sample pass.
+- [x] **T11.9.4 - Bus and flusher hooks** - What: Every publish and every frame flush is accounted for. How: Increment counters inside bus.publish and the F11.4 flush step behind a single boolean guard.
+- [x] **T11.9.5 - 1Hz sampler** - What: Raw counters become per-second rates. How: A 1s setInterval computing deltas since last sample, deriving ticks/sec and flushes/sec, then resetting the window.
+- [x] **T11.9.6 - Publish stats state** - What: Phase 19 HUD reads pipeline.stats like any other state. How: Stage the sampled rates via the flusher into setValue('pipeline.stats', snapshot).
+- [x] **T11.9.7 - Rolling history** - What: A 60s throughput sparkline for the HUD. How: Maintain a 60-slot circular array of ticks/sec samples exposed at pipeline.stats.history.
+- [x] **T11.9.8 - Peaks and inspect** - What: Session-high load visible when tuning backpressure. How: Track maxTicksPerSec and register the stats object with Spektrum describe() for spektrum/inspect.
+- [x] **T11.9.9 - Single unit tests** - What: createCounters and the sampler math each proven once. How: tests/pipestats.test.js with fake timers, one Vitest test per function via -t.
+- [x] **T11.9.10 - Merge counters** - What: Honest pipeline telemetry on main. How: ESLint pass, targeted tests green, merge feature/f11-9-pipeline-counters into main.
 
 ### F11.10 - Backpressure Drop Policy
 

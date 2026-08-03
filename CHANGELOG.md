@@ -10,7 +10,15 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ## [Unreleased]
 
-_Nothing yet — next entries land with phase 11 (Real-Time Market Data Pipeline)._
+### Added
+
+- **The tick pipeline** — feeds publish to a bus, ticks land in fixed-size ring buffers,
+  and a single rAF flush writes one value per path per frame. Writing state per tick would
+  re-render the desk hundreds of times a second to show frames a human cannot see; a burst
+  of a hundred ticks now collapses into one write. (F11.2, F11.3, F11.4)
+- **Fixed memory under load** — buffers have a hard capacity and O(1) writes, so a long
+  session cannot degrade into GC pauses exactly when the market gets busy. Drop counts are
+  reported rather than hidden. (F11.3, F11.9)
 
 ## [0.10.0] — 2026-08-03 — Phase 10: EToro Connectivity
 
