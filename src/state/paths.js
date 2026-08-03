@@ -60,6 +60,7 @@ export const PATHS = Object.freeze({
     blocks: 'settings.blocks',
   }),
   market: Object.freeze({
+    venues: 'market.venues',
     instruments: 'market.instruments',
     focus: 'market.focus',
     ticks: 'market.ticks',

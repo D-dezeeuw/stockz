@@ -730,160 +730,160 @@
 **What:** A permanent branded top bar so the trader always knows where they are and where every control lives.
 **How:** position:fixed header in index.html with left/center/right flex zones and a hand-coded inline SVG wordmark glowing via CSS drop-shadow tokens.
 
-- [ ] **T5.1.1 - Cut header shell branch** - What: Isolated line of work for the header shell. How: git checkout -b feature/header-shell from main and push with -u origin.
-- [ ] **T5.1.2 - Scaffold header module** - What: A mountable header entry point later features plug into. How: Create src/ui/header/header.js exporting mountHeader(root) and import it from main.js.
-- [ ] **T5.1.3 - Build fixed bar markup** - What: A bar pinned above the grid through any scroll. How: Add header element with data-ref="header", three flex zones, position:fixed and z-index above grid blocks.
-- [ ] **T5.1.4 - Hand-code SVG wordmark** - What: A crisp STOCKZ logo at any DPI with zero image requests. How: Write src/ui/header/wordmark.js exporting wordmarkSvg() returning inline SVG path markup.
-- [ ] **T5.1.5 - Apply green/orange glow** - What: The money-hacker brand glow on the logo. How: Style the wordmark with filter: drop-shadow using --glow-green and --glow-orange tokens from the phase 3 system.
-- [ ] **T5.1.6 - Wire logo home action** - What: One click on the logo returns to the Dashboard. How: Add data-action="goHome" on the wordmark calling Spektrum trigger('nav:goto', 'dashboard').
-- [ ] **T5.1.7 - Offset the page body** - What: Grid content never hides under the fixed bar. How: Set body padding-top to var(--header-height) and define that custom property in header.css.
-- [ ] **T5.1.8 - Lint header modules** - What: Header code held to project style from day one. How: Run npx eslint src/ui/header and fix every reported issue.
-- [ ] **T5.1.9 - Unit-test shell functions** - What: mountHeader and wordmarkSvg each locked by exactly one test. How: Write one Vitest test per function and run vitest run -t mountHeader then -t wordmarkSvg.
-- [ ] **T5.1.10 - Merge shell to main** - What: The shell lands as the base for all later header features. How: Verify render in the Vite dev server, then merge feature/header-shell into main.
+- [x] **T5.1.1 - Cut header shell branch** - What: Isolated line of work for the header shell. How: git checkout -b feature/header-shell from main and push with -u origin.
+- [x] **T5.1.2 - Scaffold header module** - What: A mountable header entry point later features plug into. How: Create src/ui/header/header.js exporting mountHeader(root) and import it from main.js.
+- [x] **T5.1.3 - Build fixed bar markup** - What: A bar pinned above the grid through any scroll. How: Add header element with data-ref="header", three flex zones, position:fixed and z-index above grid blocks.
+- [x] **T5.1.4 - Hand-code SVG wordmark** - What: A crisp STOCKZ logo at any DPI with zero image requests. How: Write src/ui/header/wordmark.js exporting wordmarkSvg() returning inline SVG path markup.
+- [x] **T5.1.5 - Apply green/orange glow** - What: The money-hacker brand glow on the logo. How: Style the wordmark with filter: drop-shadow using --glow-green and --glow-orange tokens from the phase 3 system.
+- [x] **T5.1.6 - Wire logo home action** - What: One click on the logo returns to the Dashboard. How: Add data-action="goHome" on the wordmark calling Spektrum trigger('nav:goto', 'dashboard').
+- [x] **T5.1.7 - Offset the page body** - What: Grid content never hides under the fixed bar. How: Set body padding-top to var(--header-height) and define that custom property in header.css.
+- [x] **T5.1.8 - Lint header modules** - What: Header code held to project style from day one. How: Run npx eslint src/ui/header and fix every reported issue.
+- [x] **T5.1.9 - Unit-test shell functions** - What: mountHeader and wordmarkSvg each locked by exactly one test. How: Write one Vitest test per function and run vitest run -t mountHeader then -t wordmarkSvg.
+- [x] **T5.1.10 - Merge shell to main** - What: The shell lands as the base for all later header features. How: Verify render in the Vite dev server, then merge feature/header-shell into main.
 
 ### F5.2 - Section nav toggling block sets
 
 **What:** One-click jumps between Dashboard, Trade, Journal and Analytics without any page load.
 **How:** Nav links rendered with data-each from a sections model, writing ui.section in Spektrum so grid blocks show or hide via data-if.
 
-- [ ] **T5.2.1 - Branch off nav work** - What: Nav development kept off main until green. How: git checkout -b feature/header-nav from freshly pulled main.
-- [ ] **T5.2.2 - Define sections model** - What: A single source of truth for app sections. How: Create src/ui/header/nav-model.js exporting navSections() returning {id,label} for dashboard, trade, journal, analytics.
-- [ ] **T5.2.3 - Render nav links** - What: Visible section links in the header center zone. How: Use Spektrum data-each over navSections() output producing one anchor per section with data-action="navGoto".
-- [ ] **T5.2.4 - Implement navigate handler** - What: Clicking a link switches the active section instantly. How: Add navigate(id) in nav.js calling setValue('ui.section', id), bound through data-action.
-- [ ] **T5.2.5 - Compute active link state** - What: The current section is always visually obvious. How: Spektrum computed per link driving :class="active" and aria-current="page" from ui.section.
-- [ ] **T5.2.6 - Gate grid block sets** - What: Each section shows only its own dashboard blocks. How: Tag phase 4 grid block templates with data-if comparing their section id against ui.section.
-- [ ] **T5.2.7 - Sync location.hash** - What: Deep links like #trade restore the right section on load. How: Write hash in navigate(), read it at boot, and listen to hashchange to call setValue.
-- [ ] **T5.2.8 - Style active underline** - What: A snappy terminal-style cue for the current section. How: Orange underline slide-in using a transform transition plus green text glow on hover.
-- [ ] **T5.2.9 - Single tests for nav functions** - What: navSections and navigate each covered by one test. How: One Vitest test per function, executed via vitest run -t navSections and -t navigate.
-- [ ] **T5.2.10 - Green-merge nav branch** - What: Section switching available to everyone on main. How: Run the two targeted tests plus eslint, then merge feature/header-nav into main.
+- [x] **T5.2.1 - Branch off nav work** - What: Nav development kept off main until green. How: git checkout -b feature/header-nav from freshly pulled main.
+- [x] **T5.2.2 - Define sections model** - What: A single source of truth for app sections. How: Create src/ui/header/nav-model.js exporting navSections() returning {id,label} for dashboard, trade, journal, analytics.
+- [x] **T5.2.3 - Render nav links** - What: Visible section links in the header center zone. How: Use Spektrum data-each over navSections() output producing one anchor per section with data-action="navGoto".
+- [x] **T5.2.4 - Implement navigate handler** - What: Clicking a link switches the active section instantly. How: Add navigate(id) in nav.js calling setValue('ui.section', id), bound through data-action.
+- [x] **T5.2.5 - Compute active link state** - What: The current section is always visually obvious. How: Spektrum computed per link driving :class="active" and aria-current="page" from ui.section.
+- [x] **T5.2.6 - Gate grid block sets** - What: Each section shows only its own dashboard blocks. How: Tag phase 4 grid block templates with data-if comparing their section id against ui.section.
+- [x] **T5.2.7 - Sync location.hash** - What: Deep links like #trade restore the right section on load. How: Write hash in navigate(), read it at boot, and listen to hashchange to call setValue.
+- [x] **T5.2.8 - Style active underline** - What: A snappy terminal-style cue for the current section. How: Orange underline slide-in using a transform transition plus green text glow on hover.
+- [x] **T5.2.9 - Single tests for nav functions** - What: navSections and navigate each covered by one test. How: One Vitest test per function, executed via vitest run -t navSections and -t navigate.
+- [x] **T5.2.10 - Green-merge nav branch** - What: Section switching available to everyone on main. How: Run the two targeted tests plus eslint, then merge feature/header-nav into main.
 
 ### F5.3 - Settings gear and drawer trigger
 
 **What:** Settings reachable in one click from anywhere, without leaving the trading view.
 **How:** A gear icon button in the right zone flipping ui.settingsOpen and firing a Spektrum trigger the phase 7 drawer listens to.
 
-- [ ] **T5.3.1 - Start gear branch** - What: Gear work isolated from other header features. How: git checkout -b feature/header-settings-gear off main.
-- [ ] **T5.3.2 - Draw gear icon module** - What: A sharp vector gear matching the terminal look. How: Create src/ui/header/gear-icon.js exporting gearIconSvg() with an inline SVG cog path.
-- [ ] **T5.3.3 - Place gear button** - What: A labeled, clickable gear in the header right zone. How: Button element with data-action="openSettings" and aria-label="Settings" rendered by mountHeader.
-- [ ] **T5.3.4 - Implement drawer toggle** - What: The gear opens and closes the settings drawer. How: toggleSettingsDrawer() flipping ui.settingsOpen via setValue and firing trigger('settings:open').
-- [ ] **T5.3.5 - Add Escape close path** - What: Escape instantly dismisses the drawer for keyboard traders. How: keydown listener that sets ui.settingsOpen false when the drawer is open and Escape is pressed.
-- [ ] **T5.3.6 - Animate hover spin** - What: Tactile feedback that the gear is interactive. How: CSS transition rotating the cog 45deg on :hover with 120ms ease-out, no JS.
-- [ ] **T5.3.7 - Show unsaved dot** - What: A hint when settings changed but are not yet persisted. How: Small orange badge span gated by data-if="settings.dirty" on the gear button.
-- [ ] **T5.3.8 - Style focus ring** - What: Clear keyboard focus without breaking the dark aesthetic. How: outline using --glow-green token on :focus-visible for the gear button.
-- [ ] **T5.3.9 - Unit-test gear functions** - What: gearIconSvg and toggleSettingsDrawer each pinned by one test. How: One Vitest test apiece, run with vitest run -t gearIconSvg and -t toggleSettingsDrawer.
-- [ ] **T5.3.10 - Land gear on main** - What: Settings access shipped for the drawer feature to hook into. How: Confirm open/close in Vite dev, then merge feature/header-settings-gear to main.
+- [x] **T5.3.1 - Start gear branch** - What: Gear work isolated from other header features. How: git checkout -b feature/header-settings-gear off main.
+- [x] **T5.3.2 - Draw gear icon module** - What: A sharp vector gear matching the terminal look. How: Create src/ui/header/gear-icon.js exporting gearIconSvg() with an inline SVG cog path.
+- [x] **T5.3.3 - Place gear button** - What: A labeled, clickable gear in the header right zone. How: Button element with data-action="openSettings" and aria-label="Settings" rendered by mountHeader.
+- [x] **T5.3.4 - Implement drawer toggle** - What: The gear opens and closes the settings drawer. How: toggleSettingsDrawer() flipping ui.settingsOpen via setValue and firing trigger('settings:open').
+- [x] **T5.3.5 - Add Escape close path** - What: Escape instantly dismisses the drawer for keyboard traders. How: keydown listener that sets ui.settingsOpen false when the drawer is open and Escape is pressed.
+- [x] **T5.3.6 - Animate hover spin** - What: Tactile feedback that the gear is interactive. How: CSS transition rotating the cog 45deg on :hover with 120ms ease-out, no JS.
+- [x] **T5.3.7 - Show unsaved dot** - What: A hint when settings changed but are not yet persisted. How: Small orange badge span gated by data-if="settings.dirty" on the gear button.
+- [x] **T5.3.8 - Style focus ring** - What: Clear keyboard focus without breaking the dark aesthetic. How: outline using --glow-green token on :focus-visible for the gear button.
+- [x] **T5.3.9 - Unit-test gear functions** - What: gearIconSvg and toggleSettingsDrawer each pinned by one test. How: One Vitest test apiece, run with vitest run -t gearIconSvg and -t toggleSettingsDrawer.
+- [x] **T5.3.10 - Land gear on main** - What: Settings access shipped for the drawer feature to hook into. How: Confirm open/close in Vite dev, then merge feature/header-settings-gear to main.
 
 ### F5.4 - Day/night toggle slot
 
 **What:** A reserved, correctly placed home for the theme switch so phase 6 drops in without layout churn.
 **How:** A data-ref slot in the header right zone with a mount function and a placeholder button firing trigger('theme:toggle').
 
-- [ ] **T5.4.1 - Open slot branch** - What: Slot work tracked separately until merge. How: git checkout -b feature/header-theme-slot from main.
-- [ ] **T5.4.2 - Reserve slot element** - What: A stable anchor point for the theme control. How: Add span with data-ref="themeSlot" between the gear and the LEDs in the right zone markup.
-- [ ] **T5.4.3 - Export mount function** - What: Phase 6 can inject its toggle with one call. How: mountThemeSlot(componentEl) in header.js replacing slot children with the given element.
-- [ ] **T5.4.4 - Add placeholder button** - What: Theme flipping works even before phase 6 ships. How: Temporary button in the slot firing Spektrum trigger('theme:toggle') on click.
-- [ ] **T5.4.5 - Bind pressed state** - What: Assistive tech knows which mode is active. How: :aria-pressed bound to the expression ui.theme === 'night' in the slot markup.
-- [ ] **T5.4.6 - Add tooltip title** - What: Discoverability of the control and its hotkey. How: title attribute "Toggle day/night (T)" set on the slot button.
-- [ ] **T5.4.7 - Match icon sizing** - What: Visual rhythm across all right-zone icons. How: CSS sizing the slot to the shared 32px hit area and gap used by the gear.
-- [ ] **T5.4.8 - Verify tab order** - What: Logical keyboard flow gear, theme, LEDs. How: Check natural DOM order gives the expected focus sequence in Chrome and fix markup order if not.
-- [ ] **T5.4.9 - Unit-test slot mount** - What: mountThemeSlot pinned by its single test. How: One Vitest test asserting child replacement, run via vitest run -t mountThemeSlot.
-- [ ] **T5.4.10 - Merge slot branch** - What: A ready socket on main for the phase 6 toggle. How: Merge feature/header-theme-slot after the targeted test and eslint pass.
+- [x] **T5.4.1 - Open slot branch** - What: Slot work tracked separately until merge. How: git checkout -b feature/header-theme-slot from main.
+- [x] **T5.4.2 - Reserve slot element** - What: A stable anchor point for the theme control. How: Add span with data-ref="themeSlot" between the gear and the LEDs in the right zone markup.
+- [x] **T5.4.3 - Export mount function** - What: Phase 6 can inject its toggle with one call. How: mountThemeSlot(componentEl) in header.js replacing slot children with the given element.
+- [x] **T5.4.4 - Add placeholder button** - What: Theme flipping works even before phase 6 ships. How: Temporary button in the slot firing Spektrum trigger('theme:toggle') on click.
+- [x] **T5.4.5 - Bind pressed state** - What: Assistive tech knows which mode is active. How: :aria-pressed bound to the expression ui.theme === 'night' in the slot markup.
+- [x] **T5.4.6 - Add tooltip title** - What: Discoverability of the control and its hotkey. How: title attribute "Toggle day/night (T)" set on the slot button.
+- [x] **T5.4.7 - Match icon sizing** - What: Visual rhythm across all right-zone icons. How: CSS sizing the slot to the shared 32px hit area and gap used by the gear.
+- [x] **T5.4.8 - Verify tab order** - What: Logical keyboard flow gear, theme, LEDs. How: Check natural DOM order gives the expected focus sequence in Chrome and fix markup order if not.
+- [x] **T5.4.9 - Unit-test slot mount** - What: mountThemeSlot pinned by its single test. How: One Vitest test asserting child replacement, run via vitest run -t mountThemeSlot.
+- [x] **T5.4.10 - Merge slot branch** - What: A ready socket on main for the phase 6 toggle. How: Merge feature/header-theme-slot after the targeted test and eslint pass.
 
 ### F5.5 - Venue connection LEDs
 
 **What:** Socket health for OKX and EToro visible at a glance, so dead feeds never surprise a scalper mid-trade.
 **How:** Two labeled LED dots bound to conn.okx.status and conn.etoro.status Spektrum values written by the phase 9/10 connectors.
 
-- [ ] **T5.5.1 - Branch LED feature** - What: LED work sandboxed from main. How: git checkout -b feature/header-leds off main.
-- [ ] **T5.5.2 - Build LED markup** - What: Two compact status dots labeled OKX and EToro. How: Right-zone spans with data-ref="ledOkx"/"ledEtoro", each an 8px dot plus tiny venue label.
-- [ ] **T5.5.3 - Declare status contract** - What: A stable state shape connectors can fill later. How: setValue defaults conn.okx.status and conn.etoro.status to 'down', documented in src/state/conn.js.
-- [ ] **T5.5.4 - Map status to class** - What: Color always mirrors real socket state. How: ledClass(status) returning led-up, led-connecting or led-down, bound with a Spektrum computed on :class.
-- [ ] **T5.5.5 - Blink reconnecting state** - What: Reconnects are visibly in progress, not silently stuck. How: CSS @keyframes orange blink applied only by the led-connecting class.
-- [ ] **T5.5.6 - Compute heartbeat tooltip** - What: Hover reveals status plus last heartbeat time. How: computed :title combining status and conn.*.lastBeat formatted as UTC seconds ago.
-- [ ] **T5.5.7 - Wire click reconnect** - What: A dead venue can be kicked without opening settings. How: data-action on each LED firing trigger('conn:reconnect', venue) for the connectors to consume.
-- [ ] **T5.5.8 - Style LED glow** - What: LEDs read instantly against both themes. How: box-shadow glow from --glow-green and --glow-orange tokens, dim red via --down token when offline.
-- [ ] **T5.5.9 - Unit-test ledClass** - What: The status mapping locked by one test. How: Single Vitest test over all three statuses, run with vitest run -t ledClass.
-- [ ] **T5.5.10 - Merge LEDs to main** - What: Connection visibility live for the venue phases to light up. How: Simulate statuses via setValue in dev, then merge feature/header-leds.
+- [x] **T5.5.1 - Branch LED feature** - What: LED work sandboxed from main. How: git checkout -b feature/header-leds off main.
+- [x] **T5.5.2 - Build LED markup** - What: Two compact status dots labeled OKX and EToro. How: Right-zone spans with data-ref="ledOkx"/"ledEtoro", each an 8px dot plus tiny venue label.
+- [x] **T5.5.3 - Declare status contract** - What: A stable state shape connectors can fill later. How: setValue defaults conn.okx.status and conn.etoro.status to 'down', documented in src/state/conn.js.
+- [x] **T5.5.4 - Map status to class** - What: Color always mirrors real socket state. How: ledClass(status) returning led-up, led-connecting or led-down, bound with a Spektrum computed on :class.
+- [x] **T5.5.5 - Blink reconnecting state** - What: Reconnects are visibly in progress, not silently stuck. How: CSS @keyframes orange blink applied only by the led-connecting class.
+- [x] **T5.5.6 - Compute heartbeat tooltip** - What: Hover reveals status plus last heartbeat time. How: computed :title combining status and conn.*.lastBeat formatted as UTC seconds ago.
+- [x] **T5.5.7 - Wire click reconnect** - What: A dead venue can be kicked without opening settings. How: data-action on each LED firing trigger('conn:reconnect', venue) for the connectors to consume.
+- [x] **T5.5.8 - Style LED glow** - What: LEDs read instantly against both themes. How: box-shadow glow from --glow-green and --glow-orange tokens, dim red via --down token when offline.
+- [x] **T5.5.9 - Unit-test ledClass** - What: The status mapping locked by one test. How: Single Vitest test over all three statuses, run with vitest run -t ledClass.
+- [x] **T5.5.10 - Merge LEDs to main** - What: Connection visibility live for the venue phases to light up. How: Simulate statuses via setValue in dev, then merge feature/header-leds.
 
 ### F5.6 - Equity and day-PnL mini ticker
 
 **What:** Account equity and today's PnL always in view, the scalper's scoreboard while flipping trades.
 **How:** Header ticker bound with {{}} expressions to account state, formatted via Intl.NumberFormat and flashed on change through watch.
 
-- [ ] **T5.6.1 - Cut ticker branch** - What: Ticker work merged only when green. How: git checkout -b feature/header-ticker from main.
-- [ ] **T5.6.2 - Lay out ticker markup** - What: Equity and day-PnL side by side near the nav. How: Two bound spans {{fmt.equity}} and {{fmt.dayPnl}} in a ticker container in the center-right zone.
-- [ ] **T5.6.3 - Compute day PnL** - What: Live day performance derived, never manually synced. How: Spektrum computed acct.dayPnl = acct.equity - acct.dayOpenEquity in src/state/acct.js.
-- [ ] **T5.6.4 - Write formatter functions** - What: Compact, signed, readable numbers at all magnitudes. How: formatEquity(n) and formatPnl(n) in src/ui/format.js using Intl.NumberFormat compact notation.
-- [ ] **T5.6.5 - Color by sign** - What: Green gains, orange losses, zero neutral, readable in a blink. How: :class from a computed sign expression mapping to pnl-up, pnl-down, pnl-flat.
-- [ ] **T5.6.6 - Flash on change** - What: Every equity tick is felt, not hunted for. How: watch('acct.equity') adding a .flash class removed on animationend for a 200ms glow pulse.
-- [ ] **T5.6.7 - Toggle percent mode** - What: One click switches PnL between absolute and percent. How: data-action flipping ui.tickerMode, with formatPnl branching on that value.
-- [ ] **T5.6.8 - Hide without keys** - What: No misleading zeros before an API key is loaded. How: data-if="keys.present" on the ticker container, fed by the phase 8 key layer state.
-- [ ] **T5.6.9 - Unit-test formatters** - What: formatEquity and formatPnl each guarded by one test. How: One Vitest test per function, run via vitest run -t formatEquity and -t formatPnl.
-- [ ] **T5.6.10 - Merge ticker branch** - What: The scoreboard live on main. How: Drive acct values with setValue in dev to confirm flashes, then merge feature/header-ticker.
+- [x] **T5.6.1 - Cut ticker branch** - What: Ticker work merged only when green. How: git checkout -b feature/header-ticker from main.
+- [x] **T5.6.2 - Lay out ticker markup** - What: Equity and day-PnL side by side near the nav. How: Two bound spans {{fmt.equity}} and {{fmt.dayPnl}} in a ticker container in the center-right zone.
+- [x] **T5.6.3 - Compute day PnL** - What: Live day performance derived, never manually synced. How: Spektrum computed acct.dayPnl = acct.equity - acct.dayOpenEquity in src/state/acct.js.
+- [x] **T5.6.4 - Write formatter functions** - What: Compact, signed, readable numbers at all magnitudes. How: formatEquity(n) and formatPnl(n) in src/ui/format.js using Intl.NumberFormat compact notation.
+- [x] **T5.6.5 - Color by sign** - What: Green gains, orange losses, zero neutral, readable in a blink. How: :class from a computed sign expression mapping to pnl-up, pnl-down, pnl-flat.
+- [x] **T5.6.6 - Flash on change** - What: Every equity tick is felt, not hunted for. How: watch('acct.equity') adding a .flash class removed on animationend for a 200ms glow pulse.
+- [x] **T5.6.7 - Toggle percent mode** - What: One click switches PnL between absolute and percent. How: data-action flipping ui.tickerMode, with formatPnl branching on that value.
+- [x] **T5.6.8 - Hide without keys** - What: No misleading zeros before an API key is loaded. How: data-if="keys.present" on the ticker container, fed by the phase 8 key layer state.
+- [x] **T5.6.9 - Unit-test formatters** - What: formatEquity and formatPnl each guarded by one test. How: One Vitest test per function, run via vitest run -t formatEquity and -t formatPnl.
+- [x] **T5.6.10 - Merge ticker branch** - What: The scoreboard live on main. How: Drive acct values with setValue in dev to confirm flashes, then merge feature/header-ticker.
 
 ### F5.7 - UTC and session clock
 
 **What:** Exchange-true UTC time plus a market-session hint, so entries line up with volatility windows.
 **How:** A 1s interval writing clock.now into Spektrum, rendered by pure formatters with a session label chip.
 
-- [ ] **T5.7.1 - Branch clock work** - What: Clock feature isolated until verified. How: git checkout -b feature/header-clock off main.
-- [ ] **T5.7.2 - Build clock engine** - What: A single ticking source of truth for header time. How: startClock() in src/ui/header/clock.js running setInterval 1000ms calling setValue('clock.now', Date.now()).
-- [ ] **T5.7.3 - Format UTC readout** - What: Unambiguous HH:MM:SS UTC matching venue timestamps. How: formatUtcClock(ms) using Intl.DateTimeFormat with timeZone 'UTC' and hour12 false.
-- [ ] **T5.7.4 - Derive session hint** - What: Instant context: Asia, London, New York or overlap. How: sessionHint(ms) mapping UTC hour ranges to a session label string.
-- [ ] **T5.7.5 - Bind clock markup** - What: Time and session visible left of the LEDs. How: Spans bound to {{fmt.utc}} and {{fmt.session}} computeds fed from clock.now.
-- [ ] **T5.7.6 - Stop width jitter** - What: A rock-steady clock that never nudges neighbors. How: font-variant-numeric: tabular-nums plus fixed ch width on the time span.
-- [ ] **T5.7.7 - Pause when hidden** - What: Zero wasted timers in background tabs. How: visibilitychange listener stopping the interval on hidden and restarting plus resyncing on visible.
-- [ ] **T5.7.8 - Highlight overlap window** - What: The high-volatility EU/US overlap pops out. How: Orange chip styling applied via :class when sessionHint returns the overlap label.
-- [ ] **T5.7.9 - Unit-test clock functions** - What: startClock, formatUtcClock and sessionHint each with one test. How: One Vitest test per function using fake timers, run per test name with vitest run -t.
-- [ ] **T5.7.10 - Merge clock branch** - What: Session awareness shipped to main. How: Eyeball a minute of ticking in Vite dev, then merge feature/header-clock.
+- [x] **T5.7.1 - Branch clock work** - What: Clock feature isolated until verified. How: git checkout -b feature/header-clock off main.
+- [x] **T5.7.2 - Build clock engine** - What: A single ticking source of truth for header time. How: startClock() in src/ui/header/clock.js running setInterval 1000ms calling setValue('clock.now', Date.now()).
+- [x] **T5.7.3 - Format UTC readout** - What: Unambiguous HH:MM:SS UTC matching venue timestamps. How: formatUtcClock(ms) using Intl.DateTimeFormat with timeZone 'UTC' and hour12 false.
+- [x] **T5.7.4 - Derive session hint** - What: Instant context: Asia, London, New York or overlap. How: sessionHint(ms) mapping UTC hour ranges to a session label string.
+- [x] **T5.7.5 - Bind clock markup** - What: Time and session visible left of the LEDs. How: Spans bound to {{fmt.utc}} and {{fmt.session}} computeds fed from clock.now.
+- [x] **T5.7.6 - Stop width jitter** - What: A rock-steady clock that never nudges neighbors. How: font-variant-numeric: tabular-nums plus fixed ch width on the time span.
+- [x] **T5.7.7 - Pause when hidden** - What: Zero wasted timers in background tabs. How: visibilitychange listener stopping the interval on hidden and restarting plus resyncing on visible.
+- [x] **T5.7.8 - Highlight overlap window** - What: The high-volatility EU/US overlap pops out. How: Orange chip styling applied via :class when sessionHint returns the overlap label.
+- [x] **T5.7.9 - Unit-test clock functions** - What: startClock, formatUtcClock and sessionHint each with one test. How: One Vitest test per function using fake timers, run per test name with vitest run -t.
+- [x] **T5.7.10 - Merge clock branch** - What: Session awareness shipped to main. How: Eyeball a minute of ticking in Vite dev, then merge feature/header-clock.
 
 ### F5.8 - Keyboard hint and hotkey overlay trigger
 
 **What:** A visible reminder that STOCKZ is keyboard-first, opening the hotkey cheat sheet in one press.
 **How:** A kbd icon button plus a global "?" shortcut, both firing trigger('hotkeys:overlay') for the phase 16 overlay.
 
-- [ ] **T5.8.1 - Start hint branch** - What: Hint work off main until tests pass. How: git checkout -b feature/header-kbd-hint from main.
-- [ ] **T5.8.2 - Draw kbd icon** - What: A keycap glyph that reads as "shortcuts here". How: kbdIconSvg() in src/ui/header/kbd-icon.js returning an inline SVG keycap with a ? legend.
-- [ ] **T5.8.3 - Place hint button** - What: The shortcut entry point beside the clock. How: Button with data-action="showHotkeys" and aria-label="Keyboard shortcuts" in the right zone.
-- [ ] **T5.8.4 - Fire overlay trigger** - What: One event any overlay implementation can subscribe to. How: Handler calling Spektrum trigger('hotkeys:overlay'), consumed later by phase 16.
-- [ ] **T5.8.5 - Guard typing targets** - What: Pressing ? inside an input never hijacks focus. How: isTypingTarget(el) checking input, textarea and contenteditable before the shortcut acts.
-- [ ] **T5.8.6 - Bind global shortcut** - What: ? opens the overlay from anywhere. How: window keydown listener matching '?' and calling the same handler when isTypingTarget is false.
-- [ ] **T5.8.7 - Pulse until first use** - What: New users get nudged toward hotkeys once, not forever. How: ui.kbdHintSeen flag synced by spektrum/persist gating a CSS pulse animation.
-- [ ] **T5.8.8 - Style hint alignment** - What: Icon sits flush with the other right-zone controls. How: Apply the shared 32px hit-area sizing and gap tokens in header.css.
-- [ ] **T5.8.9 - Unit-test hint functions** - What: kbdIconSvg and isTypingTarget each locked by one test. How: One Vitest test per function, run via vitest run -t kbdIconSvg and -t isTypingTarget.
-- [ ] **T5.8.10 - Merge hint branch** - What: Hotkey discoverability live on main. How: Confirm trigger fires in spektrum/devtools, then merge feature/header-kbd-hint.
+- [x] **T5.8.1 - Start hint branch** - What: Hint work off main until tests pass. How: git checkout -b feature/header-kbd-hint from main.
+- [x] **T5.8.2 - Draw kbd icon** - What: A keycap glyph that reads as "shortcuts here". How: kbdIconSvg() in src/ui/header/kbd-icon.js returning an inline SVG keycap with a ? legend.
+- [x] **T5.8.3 - Place hint button** - What: The shortcut entry point beside the clock. How: Button with data-action="showHotkeys" and aria-label="Keyboard shortcuts" in the right zone.
+- [x] **T5.8.4 - Fire overlay trigger** - What: One event any overlay implementation can subscribe to. How: Handler calling Spektrum trigger('hotkeys:overlay'), consumed later by phase 16.
+- [x] **T5.8.5 - Guard typing targets** - What: Pressing ? inside an input never hijacks focus. How: isTypingTarget(el) checking input, textarea and contenteditable before the shortcut acts.
+- [x] **T5.8.6 - Bind global shortcut** - What: ? opens the overlay from anywhere. How: window keydown listener matching '?' and calling the same handler when isTypingTarget is false.
+- [x] **T5.8.7 - Pulse until first use** - What: New users get nudged toward hotkeys once, not forever. How: ui.kbdHintSeen flag synced by spektrum/persist gating a CSS pulse animation.
+- [x] **T5.8.8 - Style hint alignment** - What: Icon sits flush with the other right-zone controls. How: Apply the shared 32px hit-area sizing and gap tokens in header.css.
+- [x] **T5.8.9 - Unit-test hint functions** - What: kbdIconSvg and isTypingTarget each locked by one test. How: One Vitest test per function, run via vitest run -t kbdIconSvg and -t isTypingTarget.
+- [x] **T5.8.10 - Merge hint branch** - What: Hotkey discoverability live on main. How: Confirm trigger fires in spektrum/devtools, then merge feature/header-kbd-hint.
 
 ### F5.9 - Scroll density condensing
 
 **What:** More chart pixels while scrolling: the header slims down automatically and returns on scroll-up.
 **How:** rAF-throttled scroll listener feeding a pure hysteresis function that flips ui.headerDense and a dense CSS variant.
 
-- [ ] **T5.9.1 - Branch density work** - What: Density behavior developed in isolation. How: git checkout -b feature/header-density off main.
-- [ ] **T5.9.2 - Write hysteresis function** - What: Clean flips with zero flicker at the boundary. How: densityFor(scrollY, current) in density.js returning 'dense' past 64px and 'full' under 24px.
-- [ ] **T5.9.3 - Attach scroll listener** - What: Density tracks scroll without jank. How: window scroll listener throttled through requestAnimationFrame writing setValue('ui.headerDense', ...).
-- [ ] **T5.9.4 - Build dense variant CSS** - What: A slimmer bar that keeps every control reachable. How: .header--dense class shrinking --header-height, hiding ticker labels, scaling the wordmark 80%.
-- [ ] **T5.9.5 - Animate the collapse** - What: A smooth, non-distracting height change. How: 120ms transition on height and transform properties only, avoiding layout-thrash animations.
-- [ ] **T5.9.6 - Sync body offset** - What: Grid content reflows exactly with the bar height. How: Flip --header-height custom property together with the class so body padding follows.
-- [ ] **T5.9.7 - Register passive cleanup** - What: No scroll-blocking or leaked listeners. How: addEventListener with passive:true plus a removeEventListener path in the header unmount.
-- [ ] **T5.9.8 - Respect reduced motion** - What: Motion-sensitive users get instant snaps, not animation. How: Wrap the transition rules in a prefers-reduced-motion: no-preference media query.
-- [ ] **T5.9.9 - Unit-test densityFor** - What: Hysteresis thresholds pinned by one test. How: Single Vitest test sweeping scrollY values both directions, run via vitest run -t densityFor.
-- [ ] **T5.9.10 - Merge density branch** - What: Auto-condensing shipped on main. How: Scroll-test against the phase 4 grid in Vite dev, then merge feature/header-density.
+- [x] **T5.9.1 - Branch density work** - What: Density behavior developed in isolation. How: git checkout -b feature/header-density off main.
+- [x] **T5.9.2 - Write hysteresis function** - What: Clean flips with zero flicker at the boundary. How: densityFor(scrollY, current) in density.js returning 'dense' past 64px and 'full' under 24px.
+- [x] **T5.9.3 - Attach scroll listener** - What: Density tracks scroll without jank. How: window scroll listener throttled through requestAnimationFrame writing setValue('ui.headerDense', ...).
+- [x] **T5.9.4 - Build dense variant CSS** - What: A slimmer bar that keeps every control reachable. How: .header--dense class shrinking --header-height, hiding ticker labels, scaling the wordmark 80%.
+- [x] **T5.9.5 - Animate the collapse** - What: A smooth, non-distracting height change. How: 120ms transition on height and transform properties only, avoiding layout-thrash animations.
+- [x] **T5.9.6 - Sync body offset** - What: Grid content reflows exactly with the bar height. How: Flip --header-height custom property together with the class so body padding follows.
+- [x] **T5.9.7 - Register passive cleanup** - What: No scroll-blocking or leaked listeners. How: addEventListener with passive:true plus a removeEventListener path in the header unmount.
+- [x] **T5.9.8 - Respect reduced motion** - What: Motion-sensitive users get instant snaps, not animation. How: Wrap the transition rules in a prefers-reduced-motion: no-preference media query.
+- [x] **T5.9.9 - Unit-test densityFor** - What: Hysteresis thresholds pinned by one test. How: Single Vitest test sweeping scrollY values both directions, run via vitest run -t densityFor.
+- [x] **T5.9.10 - Merge density branch** - What: Auto-condensing shipped on main. How: Scroll-test against the phase 4 grid in Vite dev, then merge feature/header-density.
 
 ### F5.10 - Condensed mobile header
 
 **What:** Full orientation on a phone: logo, LEDs and theme stay visible while secondary items tuck into a menu.
 **How:** A matchMedia-driven narrow flag collapsing nav, ticker and clock into an overflow popover below 720px.
 
-- [ ] **T5.10.1 - Open mobile branch** - What: Mobile variant built without touching desktop. How: git checkout -b feature/header-mobile from main.
-- [ ] **T5.10.2 - Bind narrow flag** - What: One reactive value describing viewport class. How: bindNarrowFlag(mql) wiring matchMedia('(max-width: 719px)') change events to setValue('ui.narrow', ...).
-- [ ] **T5.10.3 - Draw menu icon** - What: A recognizable overflow entry point. How: menuIconSvg() in menu-icon.js returning a three-line inline SVG hamburger.
-- [ ] **T5.10.4 - Build overflow popover** - What: Nav links and clock still reachable on small screens. How: Popover panel gated by data-if="ui.narrow && ui.menuOpen" reusing the data-each nav rendering.
-- [ ] **T5.10.5 - Prioritize visible items** - What: Only mission-critical status stays on the bar. How: CSS in the narrow query keeping logo, LEDs and theme slot, moving ticker and clock into the popover.
-- [ ] **T5.10.6 - Size touch targets** - What: Fat-finger-proof taps during mobile scalping. How: min 44px hit areas on all header buttons inside the max-width 719px media query.
-- [ ] **T5.10.7 - Pad safe areas** - What: No controls hidden behind an iOS notch. How: padding derived from env(safe-area-inset-top) and inset-left/right on the header element.
-- [ ] **T5.10.8 - Auto-close on navigate** - What: The menu gets out of the way after a choice. How: watch('ui.section') setting ui.menuOpen false whenever the section changes.
-- [ ] **T5.10.9 - Unit-test mobile functions** - What: bindNarrowFlag and menuIconSvg each held by one test. How: One Vitest test per function with a stubbed mql, run via vitest run -t per name.
-- [ ] **T5.10.10 - Merge mobile branch** - What: A phone-ready header on main. How: Check 375px and 719px widths in Chrome device mode, then merge feature/header-mobile.
+- [x] **T5.10.1 - Open mobile branch** - What: Mobile variant built without touching desktop. How: git checkout -b feature/header-mobile from main.
+- [x] **T5.10.2 - Bind narrow flag** - What: One reactive value describing viewport class. How: bindNarrowFlag(mql) wiring matchMedia('(max-width: 719px)') change events to setValue('ui.narrow', ...).
+- [x] **T5.10.3 - Draw menu icon** - What: A recognizable overflow entry point. How: menuIconSvg() in menu-icon.js returning a three-line inline SVG hamburger.
+- [x] **T5.10.4 - Build overflow popover** - What: Nav links and clock still reachable on small screens. How: Popover panel gated by data-if="ui.narrow && ui.menuOpen" reusing the data-each nav rendering.
+- [x] **T5.10.5 - Prioritize visible items** - What: Only mission-critical status stays on the bar. How: CSS in the narrow query keeping logo, LEDs and theme slot, moving ticker and clock into the popover.
+- [x] **T5.10.6 - Size touch targets** - What: Fat-finger-proof taps during mobile scalping. How: min 44px hit areas on all header buttons inside the max-width 719px media query.
+- [x] **T5.10.7 - Pad safe areas** - What: No controls hidden behind an iOS notch. How: padding derived from env(safe-area-inset-top) and inset-left/right on the header element.
+- [x] **T5.10.8 - Auto-close on navigate** - What: The menu gets out of the way after a choice. How: watch('ui.section') setting ui.menuOpen false whenever the section changes.
+- [x] **T5.10.9 - Unit-test mobile functions** - What: bindNarrowFlag and menuIconSvg each held by one test. How: One Vitest test per function with a stubbed mql, run via vitest run -t per name.
+- [x] **T5.10.10 - Merge mobile branch** - What: A phone-ready header on main. How: Check 375px and 719px widths in Chrome device mode, then merge feature/header-mobile.
 
 ---
 

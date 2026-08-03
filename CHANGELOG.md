@@ -10,7 +10,22 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ## [Unreleased]
 
-_Nothing yet — next entries land with phase 5 (Header, Branding & Navigation)._
+### Added
+
+- **The header** — STOCKZ wordmark, section nav (desk / trade / journal / stats), live
+  venue LEDs, the day-PnL ticker, venue-time clock, hotkey and settings buttons, and the
+  day/night toggle, in fixed positions so the eye finds each answer by muscle memory
+  rather than by searching. (F5.1–F5.9)
+- **Sections switch block sets** — `ui.setSection` picks which blocks are on screen, so
+  'trade' drops the journal and 'journal' drops the ladder, without the trader hiding
+  blocks by hand. An unknown section shows everything rather than an empty screen. (F5.2)
+- **Session clock shows uptime** — a desk that silently reconnected an hour ago and one
+  that has been streaming all session look identical otherwise. (F5.7)
+- **Theme switching** — one attribute on `<html>` flips the whole palette from the token
+  sets already in the stylesheet: no stylesheet swap, no reload, nothing to re-fetch
+  mid-session. A first-time visitor with a light OS preference gets the day theme. (F5.4)
+- **Condensed mobile header** — labels drop, but the LEDs, PnL and clock stay: on a phone
+  the trader still needs to know if they are connected and what they are carrying. (F5.10)
 
 ## [0.4.0] — 2026-08-03 — Phase 4: Dashboard Grid Shell
 

@@ -114,3 +114,102 @@
 .block.is-tripped {
   border-color: var(--orange-hot);
 }
+
+/* Header components */
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-1);
+  color: var(--green);
+  text-decoration: none;
+}
+
+.brand__word {
+  font-size: var(--fs-2);
+  text-shadow: var(--glow-green);
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-1);
+}
+
+.nav__item {
+  padding: var(--sp-1) var(--sp-2);
+  background: transparent;
+  border: var(--border-1) solid transparent;
+  border-radius: var(--radius-1);
+  color: var(--ink-muted);
+  font: inherit;
+  font-size: var(--fs-0);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wide);
+  cursor: pointer;
+}
+
+.nav__item:hover {
+  color: var(--ink);
+}
+
+.nav__item.is-active {
+  color: var(--green);
+  border-color: var(--green-dim);
+  background: var(--green-ghost);
+}
+
+.venues {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-1);
+  white-space: nowrap;
+}
+
+.icon-btn {
+  display: inline-grid;
+  place-items: center;
+  inline-size: 1.75rem;
+  block-size: 1.75rem;
+  padding: 0;
+  background: transparent;
+  border: var(--border-1) solid transparent;
+  border-radius: var(--radius-1);
+  color: var(--ink-muted);
+  cursor: pointer;
+}
+
+.icon-btn:hover {
+  color: var(--green);
+  border-color: var(--green-dim);
+}
+
+/*
+ * Condensed header for narrow screens. Nav labels and the venue names go; the LEDs,
+ * PnL and clock stay — on a phone the trader still needs to know if they are connected
+ * and what they are carrying, which is exactly what does not fit by default.
+ */
+@media (max-width: 40rem) {
+  .app-header {
+    gap: var(--sp-2);
+    padding-inline: var(--sp-2);
+  }
+
+  .brand__word,
+  .status-line {
+    display: none;
+  }
+
+  .nav__item {
+    padding: var(--sp-1);
+    font-size: 0.625rem;
+  }
+
+  .venues {
+    font-size: 0;
+    gap: var(--sp-1);
+  }
+
+  .venues .led {
+    font-size: var(--fs-0);
+  }
+}
