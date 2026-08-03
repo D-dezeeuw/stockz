@@ -10,7 +10,13 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ## [Unreleased]
 
-_Nothing yet — next entries land with phase 3 (Money-Hacker Design System)._
+### Added
+
+- **The money-hacker palette** — matrix-green and hot-orange ramps over near-black
+  surfaces, in both night and day themes. Profit/buy is always green and loss/sell always
+  orange, in both themes: a scalper reads colour before digits, and a palette that means
+  different things on different screens is how the wrong button gets clicked at speed.
+  (F3.1)
 
 ## [0.2.0] — 2026-08-03 — Phase 2: Spektrum Core Integration
 

@@ -33,7 +33,11 @@ optimized for trades-per-hour.
    or rAF-batched. If a change adds a confirmation step, it is wrong.
 7. **Keep `CHANGELOG.md`.** Every feature adds a line under `[Unreleased]` in its merge;
    each closed phase cuts `0.<phase>.0` (phase 30 ships **1.0.0**). See `way-of-working.md`.
-8. **Clear the context after every phase.** When a phase's ten features are merged, close
+8. **Never stop before phase 30 is done.** The masterplan is delivered end to end without
+   pausing for approval. A phase boundary, a green suite, a deploy — none of these are
+   stopping points; close out and start the next feature in the same session. Only an
+   explicit instruction from the owner stops the work.
+9. **Clear the context after every phase.** When a phase's ten features are merged, close
    it (`phase-close` skill): update `.claude/context/progress.md`, then `/clear` and start
    the next phase fresh. Never clear mid-feature. See `way-of-working.md`.
 
