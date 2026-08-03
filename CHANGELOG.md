@@ -26,6 +26,12 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
   the open bar updates it in place instead of drawing hundreds of one-print bars a second.
   Adds VWAP, the reference a mean-reversion scalp measures deviation from. (F11.1, F11.6,
   F11.7)
+- **One door for every feed** — live sockets, polled quotes and (later) replayed sessions
+  all enter through `ingest`, so replay is indistinguishable from live and a second code
+  path cannot grow a second set of bugs. (F11.5)
+- **Silent feeds are called out** — an open socket that stopped delivering marks its venue
+  stale and its blocks with it. Prices that simply stop moving otherwise read as a calm
+  market, which is the most dangerous thing a feed can do. (F11.8, F11.10)
 
 ## [0.10.0] — 2026-08-03 — Phase 10: EToro Connectivity
 

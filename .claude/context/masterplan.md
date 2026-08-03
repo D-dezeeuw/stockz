@@ -1796,16 +1796,16 @@
 **What:** Sockets carry only instruments a block actually shows; channels close the moment the last viewer leaves.
 **How:** Build src/data/subs.js refcounting acquire/release per instId+channel, driving OKX WS subscribe frames and the EToro poll roster.
 
-- [ ] **T11.5.1 - Subs branch** - What: Subscription logic isolated from live feeds until proven. How: Branch feature/f11-5-subscription-manager off main.
-- [ ] **T11.5.2 - Refcount acquire** - What: Ten blocks watching BTC cost exactly one venue subscription. How: acquire(instId, channel) bumps a Map count and opens the venue channel only at 0 to 1.
-- [ ] **T11.5.3 - Release and teardown** - What: Bandwidth freed automatically when views close. How: release decrements and calls the venue close hook when the count hits zero, deleting the ring.
-- [ ] **T11.5.4 - Venue adapter interface** - What: Subs stays venue-agnostic forever. How: Define an {open(ids, channel), close(ids, channel)} adapter contract that phase 9/10 clients implement.
-- [ ] **T11.5.5 - OKX adapter wiring** - What: Real OKX v5 channels follow refcounts. How: Adapter sends op:subscribe/op:unsubscribe JSON frames on the public WS from the phase 9 client.
-- [ ] **T11.5.6 - EToro adapter wiring** - What: EToro polling stays as small as the visible set. How: Adapter adds/removes instrument ids from the phase 10 REST poller roster.
-- [ ] **T11.5.7 - In-flight dedupe** - What: No duplicate subscribe frames while a socket is still connecting. How: Track a pending Set per venue and coalesce requests until the ack arrives.
-- [ ] **T11.5.8 - Resubscribe on reconnect** - What: A dropped socket recovers every watched instrument automatically. How: resubscribeAll() replays the full refcounted set through the adapter after reconnect events.
-- [ ] **T11.5.9 - Single unit tests** - What: acquire, release and resubscribeAll each proven once with a mock adapter. How: tests/subs.test.js, one Vitest test per function via npx vitest run -t.
-- [ ] **T11.5.10 - Merge subs** - What: Demand-driven feeds live on main. How: ESLint clean, targeted tests green, merge feature/f11-5-subscription-manager into main.
+- [x] **T11.5.1 - Subs branch** - What: Subscription logic isolated from live feeds until proven. How: Branch feature/f11-5-subscription-manager off main.
+- [x] **T11.5.2 - Refcount acquire** - What: Ten blocks watching BTC cost exactly one venue subscription. How: acquire(instId, channel) bumps a Map count and opens the venue channel only at 0 to 1.
+- [x] **T11.5.3 - Release and teardown** - What: Bandwidth freed automatically when views close. How: release decrements and calls the venue close hook when the count hits zero, deleting the ring.
+- [x] **T11.5.4 - Venue adapter interface** - What: Subs stays venue-agnostic forever. How: Define an {open(ids, channel), close(ids, channel)} adapter contract that phase 9/10 clients implement.
+- [x] **T11.5.5 - OKX adapter wiring** - What: Real OKX v5 channels follow refcounts. How: Adapter sends op:subscribe/op:unsubscribe JSON frames on the public WS from the phase 9 client.
+- [x] **T11.5.6 - EToro adapter wiring** - What: EToro polling stays as small as the visible set. How: Adapter adds/removes instrument ids from the phase 10 REST poller roster.
+- [x] **T11.5.7 - In-flight dedupe** - What: No duplicate subscribe frames while a socket is still connecting. How: Track a pending Set per venue and coalesce requests until the ack arrives.
+- [x] **T11.5.8 - Resubscribe on reconnect** - What: A dropped socket recovers every watched instrument automatically. How: resubscribeAll() replays the full refcounted set through the adapter after reconnect events.
+- [x] **T11.5.9 - Single unit tests** - What: acquire, release and resubscribeAll each proven once with a mock adapter. How: tests/subs.test.js, one Vitest test per function via npx vitest run -t.
+- [x] **T11.5.10 - Merge subs** - What: Demand-driven feeds live on main. How: ESLint clean, targeted tests green, merge feature/f11-5-subscription-manager into main.
 
 ### F11.6 - Derived Metrics via Computed
 
@@ -1844,16 +1844,16 @@
 **What:** A dead or lagging feed is visible in one glance via a red/amber LED on every block - no silent staleness.
 **How:** Per-instrument last-tick watchdog in src/data/staleness.js writing feed.<id>.status into Spektrum state for :class LED bindings.
 
-- [ ] **T11.8.1 - Watchdog branch** - What: Staleness logic isolated until green. How: Create feature/f11-8-stale-detector from main.
-- [ ] **T11.8.2 - touch recorder** - What: Cheap per-instrument freshness tracking on the hot path. How: touch(canonId) storing performance.now() in a plain Map, called from the bus tick handler.
-- [ ] **T11.8.3 - classify fn** - What: One deterministic rule for live/lagging/stale. How: Pure classify(now, lastTouch) returning 'live' under 2s, 'lagging' under 10s, else 'stale'.
-- [ ] **T11.8.4 - Sweep loop** - What: Statuses refresh every second without per-tick cost. How: 1s setInterval sweeping the touch Map and staging feed.<id>.status through the F11.4 flusher.
-- [ ] **T11.8.5 - LED markup** - What: Every data block header shows its feed light. How: Add a span with :class="feed.<id>.status" and data-cloak to the shared block header template.
-- [ ] **T11.8.6 - LED styling** - What: Instant color language - solid green, pulsing amber, steady red. How: CSS classes with a keyframe pulse in the money-hacker palette, day/night tokens from phase 6.
-- [ ] **T11.8.7 - Venue-level staleness** - What: A closed socket flags all its instruments at once. How: Listen to OKX WS close and missed ping/pong from phase 9 and force-mark that venue's ids stale.
-- [ ] **T11.8.8 - Recovery flash** - What: Reconnection is as visible as failure. How: Spektrum watch on status flipping stale->live adds a one-shot bright-green blink class removed on animationend.
-- [ ] **T11.8.9 - Single unit tests** - What: touch and classify each proven by one test with fake clocks. How: tests/staleness.test.js using vi.useFakeTimers, run per function via -t.
-- [ ] **T11.8.10 - Merge watchdog** - What: Trust-at-a-glance feed health on main. How: ESLint the module, verify targeted tests, merge feature/f11-8-stale-detector into main.
+- [x] **T11.8.1 - Watchdog branch** - What: Staleness logic isolated until green. How: Create feature/f11-8-stale-detector from main.
+- [x] **T11.8.2 - touch recorder** - What: Cheap per-instrument freshness tracking on the hot path. How: touch(canonId) storing performance.now() in a plain Map, called from the bus tick handler.
+- [x] **T11.8.3 - classify fn** - What: One deterministic rule for live/lagging/stale. How: Pure classify(now, lastTouch) returning 'live' under 2s, 'lagging' under 10s, else 'stale'.
+- [x] **T11.8.4 - Sweep loop** - What: Statuses refresh every second without per-tick cost. How: 1s setInterval sweeping the touch Map and staging feed.<id>.status through the F11.4 flusher.
+- [x] **T11.8.5 - LED markup** - What: Every data block header shows its feed light. How: Add a span with :class="feed.<id>.status" and data-cloak to the shared block header template.
+- [x] **T11.8.6 - LED styling** - What: Instant color language - solid green, pulsing amber, steady red. How: CSS classes with a keyframe pulse in the money-hacker palette, day/night tokens from phase 6.
+- [x] **T11.8.7 - Venue-level staleness** - What: A closed socket flags all its instruments at once. How: Listen to OKX WS close and missed ping/pong from phase 9 and force-mark that venue's ids stale.
+- [x] **T11.8.8 - Recovery flash** - What: Reconnection is as visible as failure. How: Spektrum watch on status flipping stale->live adds a one-shot bright-green blink class removed on animationend.
+- [x] **T11.8.9 - Single unit tests** - What: touch and classify each proven by one test with fake clocks. How: tests/staleness.test.js using vi.useFakeTimers, run per function via -t.
+- [x] **T11.8.10 - Merge watchdog** - What: Trust-at-a-glance feed health on main. How: ESLint the module, verify targeted tests, merge feature/f11-8-stale-detector into main.
 
 ### F11.9 - Throughput and Drop Counters
 
@@ -1876,16 +1876,16 @@
 **What:** Under insane bursts the app degrades gracefully - old ticks are shed, the latest price always wins, the UI never freezes.
 **How:** Queue-depth thresholds in src/data/backpressure.js escalating from pass-through to conflation to shedding, with drops counted.
 
-- [ ] **T11.10.1 - Backpressure branch** - What: Overload logic proven before it guards production flow. How: Create feature/f11-10-backpressure from main.
-- [ ] **T11.10.2 - Threshold config** - What: Tunable escalation points in one place. How: Export queue-depth thresholds for normal/conflate/shed modes from src/data/backpressure.js.
-- [ ] **T11.10.3 - conflate fn** - What: Bursts collapse to one latest tick per instrument. How: Pure conflate(entries) reducing an array to last-per-canonId using a Map, preserving arrival order.
-- [ ] **T11.10.4 - shedOldest fn** - What: A hard cap on queue depth with honest loss reporting. How: shedOldest(queue, cap) trimming from the front and returning the number dropped.
-- [ ] **T11.10.5 - Worker batching** - What: Main thread receives one message per frame, not one per tick. How: The feed-parse Worker accumulates ticks and posts a single ArrayBuffer batch every 16ms.
-- [ ] **T11.10.6 - Escalation machine** - What: The pipeline shifts modes automatically as load climbs. How: Evaluate staged-queue depth each flush and step normal->conflate->shed against the thresholds.
-- [ ] **T11.10.7 - Recovery hysteresis** - What: No mode flapping at the boundary. How: De-escalate one level only after depth stays below threshold for 2s of consecutive samples.
-- [ ] **T11.10.8 - Count and expose drops** - What: Shedding is visible in the HUD, never silent. How: Route shedOldest return values into F11.9 counters.dropped and a pipeline.stats.mode field.
-- [ ] **T11.10.9 - Single unit tests** - What: conflate and shedOldest each verified by one test. How: tests/backpressure.test.js with synthetic burst arrays, run per function via npx vitest run -t.
-- [ ] **T11.10.10 - Merge backpressure** - What: Burst-proof pipeline complete on main. How: ESLint clean, targeted tests green, merge feature/f11-10-backpressure into main.
+- [x] **T11.10.1 - Backpressure branch** - What: Overload logic proven before it guards production flow. How: Create feature/f11-10-backpressure from main.
+- [x] **T11.10.2 - Threshold config** - What: Tunable escalation points in one place. How: Export queue-depth thresholds for normal/conflate/shed modes from src/data/backpressure.js.
+- [x] **T11.10.3 - conflate fn** - What: Bursts collapse to one latest tick per instrument. How: Pure conflate(entries) reducing an array to last-per-canonId using a Map, preserving arrival order.
+- [x] **T11.10.4 - shedOldest fn** - What: A hard cap on queue depth with honest loss reporting. How: shedOldest(queue, cap) trimming from the front and returning the number dropped.
+- [x] **T11.10.5 - Worker batching** - What: Main thread receives one message per frame, not one per tick. How: The feed-parse Worker accumulates ticks and posts a single ArrayBuffer batch every 16ms.
+- [x] **T11.10.6 - Escalation machine** - What: The pipeline shifts modes automatically as load climbs. How: Evaluate staged-queue depth each flush and step normal->conflate->shed against the thresholds.
+- [x] **T11.10.7 - Recovery hysteresis** - What: No mode flapping at the boundary. How: De-escalate one level only after depth stays below threshold for 2s of consecutive samples.
+- [x] **T11.10.8 - Count and expose drops** - What: Shedding is visible in the HUD, never silent. How: Route shedOldest return values into F11.9 counters.dropped and a pipeline.stats.mode field.
+- [x] **T11.10.9 - Single unit tests** - What: conflate and shedOldest each verified by one test. How: tests/backpressure.test.js with synthetic burst arrays, run per function via npx vitest run -t.
+- [x] **T11.10.10 - Merge backpressure** - What: Burst-proof pipeline complete on main. How: ESLint clean, targeted tests green, merge feature/f11-10-backpressure into main.
 
 ---
 
