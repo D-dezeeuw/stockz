@@ -26,8 +26,14 @@ describe('initialState', () => {
     expect(state['trade.dayPnl']).toBe(0)
     expect(state['app.version']).toBe(APP_VERSION)
 
-    // Credentials must never appear in state (it is serialized into history).
-    expect(Object.keys(state).join()).not.toMatch(/key|secret|passphrase|token/i)
+    // Credentials must never appear in state (it is serialized into history and journal
+    // exports). Presence booleans are explicitly fine: ui.keysPresent says WHETHER a key
+    // exists, never what it is — the vault holds the values, outside the reactive tree.
+    const credentialish = Object.keys(state).filter(
+      (path) => /key|secret|passphrase|token/i.test(path) && path !== 'ui.keysPresent',
+    )
+    expect(credentialish).toEqual([])
+    expect(state['ui.keysPresent']).toEqual({ okx: false, etoro: false })
 
     // Overrides win, and each call is an independent tree.
     const custom = initialState({ version: '9.9.9', engine: '1.1.0', ts: 1234 })

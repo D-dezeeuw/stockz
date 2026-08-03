@@ -152,6 +152,28 @@
       </section>
     </main>
 
+    <!-- Key modal. Inputs are plain DOM, never data-model: a credential bound to state
+         would land in history and every journal export. -->
+    <div class="modal" data-if="ui.modal === 'keys'" role="dialog" aria-label="API keys">
+      <form class="modal__card" data-action="submit" data-fn="keys.submit" data-venue="okx">
+        <p class="block__state-title">okx credentials</p>
+        <p class="label">Held in memory only — never written to disk or state.</p>
+        <input class="field__input" type="password" name="apiKey" placeholder="api key"
+               autocomplete="off" spellcheck="false">
+        <input class="field__input" type="password" name="secretKey" placeholder="secret key"
+               autocomplete="off" spellcheck="false">
+        <input class="field__input" type="password" name="passphrase" placeholder="passphrase"
+               autocomplete="off" spellcheck="false">
+        <div class="row row--between">
+          <button type="button" class="btn btn--warn" data-action="click" data-fn="keys.lock">
+            lock
+          </button>
+          <button type="button" class="btn" data-action="click" data-fn="ui.toggleOverlay"
+                  data-modal="keys">close</button>
+        </div>
+      </form>
+    </div>
+
     <!-- Settings drawer. Rendered from the schema, so a new setting appears here by
          being declared rather than by editing markup. -->
     <aside class="drawer" data-if="ui.modal === 'settings'" aria-label="Settings">

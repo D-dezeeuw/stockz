@@ -179,3 +179,23 @@
   background: var(--orange-dim);
   color: var(--ink-inverse);
 }
+
+/* Key modal — the one blocking overlay on the desk, and only when keys are missing. */
+.modal {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: var(--bg-overlay);
+  z-index: var(--z-overlay);
+}
+
+.modal__card {
+  display: grid;
+  gap: var(--sp-2);
+  inline-size: min(24rem, 92vw);
+  padding: var(--sp-4);
+  background: var(--bg-block);
+  border: var(--border-strong);
+  border-radius: var(--radius-2);
+}

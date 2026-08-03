@@ -1231,160 +1231,160 @@
 **What:** Opening a prepared link puts a trader's OKX and EToro keys in place before the dashboard finishes painting.
 **How:** Parse okxKey/okxSecret/okxPass/etoroKey/etoroUser from location.search with URLSearchParams during boot.
 
-- [ ] **T8.1.1 - Branch for URL key intake** - What: Key parsing develops behind a branch until proven. How: git checkout -b feature/url-key-intake and add src/keys/params.js.
-- [ ] **T8.1.2 - Implement parseKeyParams(search)** - What: The five key params become a plain object in one pass. How: URLSearchParams lookup of okxKey, okxSecret, okxPass, etoroKey, etoroUser returning nulls for absentees.
-- [ ] **T8.1.3 - Handle encoded characters** - What: Keys containing +, / or = survive the URL intact. How: Rely on URLSearchParams decoding and add fixture cases with percent-encoded values.
-- [ ] **T8.1.4 - Implement normalizeVenueKeys(raw)** - What: Downstream code sees per-venue objects, not flat params. How: Map to {okx: {apiKey, secret, passphrase}, etoro: {apiKey, userKey}} with trimmed values.
-- [ ] **T8.1.5 - Implement hasCompleteKeys(venue)** - What: The app knows instantly whether a venue is tradeable. How: Predicate checking all required fields per venue against the normalized shape.
-- [ ] **T8.1.6 - Ignore unknown params safely** - What: Marketing or share params never break key intake. How: Parse only the five known names and leave every other query param untouched.
-- [ ] **T8.1.7 - Implement redactKey(value)** - What: Logs and errors can mention a key without exposing it. How: Return the first 4 characters plus asterisks, used by every log line in the key layer.
-- [ ] **T8.1.8 - Wire parsing into boot** - What: Keys are available before any venue socket connects. How: Call parseKeyParams in src/main.js directly after settings restore, ahead of Phase 9/10 connectors.
-- [ ] **T8.1.9 - Write single unit tests for parse functions** - What: Each of the four functions locked by exactly one Vitest test. How: Tests in params.test.js with fixture query strings, run via vitest run -t "<fnName>".
-- [ ] **T8.1.10 - Merge intake branch** - What: Link-based key delivery lands on main. How: ESLint plus targeted Vitest runs green, merge feature/url-key-intake.
+- [x] **T8.1.1 - Branch for URL key intake** - What: Key parsing develops behind a branch until proven. How: git checkout -b feature/url-key-intake and add src/keys/params.js.
+- [x] **T8.1.2 - Implement parseKeyParams(search)** - What: The five key params become a plain object in one pass. How: URLSearchParams lookup of okxKey, okxSecret, okxPass, etoroKey, etoroUser returning nulls for absentees.
+- [x] **T8.1.3 - Handle encoded characters** - What: Keys containing +, / or = survive the URL intact. How: Rely on URLSearchParams decoding and add fixture cases with percent-encoded values.
+- [x] **T8.1.4 - Implement normalizeVenueKeys(raw)** - What: Downstream code sees per-venue objects, not flat params. How: Map to {okx: {apiKey, secret, passphrase}, etoro: {apiKey, userKey}} with trimmed values.
+- [x] **T8.1.5 - Implement hasCompleteKeys(venue)** - What: The app knows instantly whether a venue is tradeable. How: Predicate checking all required fields per venue against the normalized shape.
+- [x] **T8.1.6 - Ignore unknown params safely** - What: Marketing or share params never break key intake. How: Parse only the five known names and leave every other query param untouched.
+- [x] **T8.1.7 - Implement redactKey(value)** - What: Logs and errors can mention a key without exposing it. How: Return the first 4 characters plus asterisks, used by every log line in the key layer.
+- [x] **T8.1.8 - Wire parsing into boot** - What: Keys are available before any venue socket connects. How: Call parseKeyParams in src/main.js directly after settings restore, ahead of Phase 9/10 connectors.
+- [x] **T8.1.9 - Write single unit tests for parse functions** - What: Each of the four functions locked by exactly one Vitest test. How: Tests in params.test.js with fixture query strings, run via vitest run -t "<fnName>".
+- [x] **T8.1.10 - Merge intake branch** - What: Link-based key delivery lands on main. How: ESLint plus targeted Vitest runs green, merge feature/url-key-intake.
 
 ### F8.2 - Address Bar Scrub
 
 **What:** Seconds after load the URL is clean - no key ever lingers in the address bar, history or a copied link.
 **How:** Rebuild the URL without key params and swap it in with history.replaceState in the same boot tick as parsing.
 
-- [ ] **T8.2.1 - Branch for URL scrubbing** - What: The scrub path is isolated for careful review. How: git checkout -b feature/url-scrub and add src/keys/scrub.js.
-- [ ] **T8.2.2 - Implement buildCleanUrl(href)** - What: A key-free URL that keeps every legitimate param and the hash. How: URL object surgery deleting only the five key names from searchParams.
-- [ ] **T8.2.3 - Implement scrubKeyParams()** - What: The visible address updates without a reload or history entry. How: history.replaceState(null, '', buildCleanUrl(location.href)).
-- [ ] **T8.2.4 - Scrub hash-carried keys too** - What: Keys passed after # are removed just as thoroughly. How: Extend buildCleanUrl to filter the same five names out of a query-style hash fragment.
-- [ ] **T8.2.5 - Implement safeReplaceState()** - What: A history API failure degrades gracefully instead of crashing boot. How: try/catch wrapper logging a redacted warning and continuing.
-- [ ] **T8.2.6 - Call scrub immediately after parse** - What: The exposure window is a single synchronous tick. How: Invoke scrubKeyParams on the line after parseKeyParams in main.js, before any await.
-- [ ] **T8.2.7 - Verify no residual history entry** - What: The back button never resurrects a keyed URL. How: Manual check in Vite dev that history.length is unchanged and back navigation shows clean URLs.
-- [ ] **T8.2.8 - Add dev fixture link for QA** - What: The scrub is demonstrable on demand with fake keys. How: DEV-only console.info printing a localhost URL with dummy params to exercise the flow.
-- [ ] **T8.2.9 - Write single unit tests for scrub functions** - What: buildCleanUrl, scrubKeyParams and safeReplaceState each get one test. How: Vitest with happy-dom location/history doubles, run via vitest run -t.
-- [ ] **T8.2.10 - Merge scrub branch** - What: Clean-address guarantee ships to main. How: ESLint and targeted tests pass, merge feature/url-scrub.
+- [x] **T8.2.1 - Branch for URL scrubbing** - What: The scrub path is isolated for careful review. How: git checkout -b feature/url-scrub and add src/keys/scrub.js.
+- [x] **T8.2.2 - Implement buildCleanUrl(href)** - What: A key-free URL that keeps every legitimate param and the hash. How: URL object surgery deleting only the five key names from searchParams.
+- [x] **T8.2.3 - Implement scrubKeyParams()** - What: The visible address updates without a reload or history entry. How: history.replaceState(null, '', buildCleanUrl(location.href)).
+- [x] **T8.2.4 - Scrub hash-carried keys too** - What: Keys passed after # are removed just as thoroughly. How: Extend buildCleanUrl to filter the same five names out of a query-style hash fragment.
+- [x] **T8.2.5 - Implement safeReplaceState()** - What: A history API failure degrades gracefully instead of crashing boot. How: try/catch wrapper logging a redacted warning and continuing.
+- [x] **T8.2.6 - Call scrub immediately after parse** - What: The exposure window is a single synchronous tick. How: Invoke scrubKeyParams on the line after parseKeyParams in main.js, before any await.
+- [x] **T8.2.7 - Verify no residual history entry** - What: The back button never resurrects a keyed URL. How: Manual check in Vite dev that history.length is unchanged and back navigation shows clean URLs.
+- [x] **T8.2.8 - Add dev fixture link for QA** - What: The scrub is demonstrable on demand with fake keys. How: DEV-only console.info printing a localhost URL with dummy params to exercise the flow.
+- [x] **T8.2.9 - Write single unit tests for scrub functions** - What: buildCleanUrl, scrubKeyParams and safeReplaceState each get one test. How: Vitest with happy-dom location/history doubles, run via vitest run -t.
+- [x] **T8.2.10 - Merge scrub branch** - What: Clean-address guarantee ships to main. How: ESLint and targeted tests pass, merge feature/url-scrub.
 
 ### F8.3 - Key Entry Modal
 
 **What:** With no keys in the URL, a trader pastes them once into a focused modal and is trading seconds later.
 **How:** Spektrum modal partial gated by data-if on vault status, with data-model password fields per venue.
 
-- [ ] **T8.3.1 - Branch for the key modal** - What: Modal UI work stays off main until polished. How: git checkout -b feature/key-modal and scaffold src/ui/key-modal.html.
-- [ ] **T8.3.2 - Build gated modal markup** - What: The modal appears exactly when keys are missing, never otherwise. How: Partial wrapped in data-if="!vault.hasAnyKeys" with data-cloak against flicker.
-- [ ] **T8.3.3 - Add five venue input fields** - What: OKX and EToro credentials each have a clear, masked home. How: type=password inputs bound with data-model to a transient keyEntry.* draft namespace.
-- [ ] **T8.3.4 - Implement parseCombinedPaste(text)** - What: A whole colon-separated credential string fills all fields in one paste. How: Split key:secret:passphrase patterns and distribute into the draft fields.
-- [ ] **T8.3.5 - Wire submit to the vault** - What: One Enter press arms both venues. How: data-action submitKeys validating with hasCompleteKeys then handing normalized keys to vault.setKeys.
-- [ ] **T8.3.6 - Add browse-only skip** - What: Users without keys still explore charts and watchlists. How: Skip link closing the modal and setting ui.browseOnly for downstream data-if guards.
-- [ ] **T8.3.7 - Style in terminal aesthetic** - What: The first screen a trader sees already feels like the money-hacker desk. How: Green-on-black card, orange accents, monospace labels, both theme variants.
-- [ ] **T8.3.8 - Tune keyboard flow** - What: The modal is operable without touching the mouse. How: Autofocus first field, Enter submits, Escape triggers skip, tab order across the five inputs.
-- [ ] **T8.3.9 - Write single unit tests for modal functions** - What: parseCombinedPaste and submitKeys each pinned by one Vitest test. How: happy-dom tests dispatching paste and submit, run via vitest run -t.
-- [ ] **T8.3.10 - Merge modal branch** - What: The paste-once entry path reaches main. How: Manual dev pass plus ESLint and targeted tests, merge feature/key-modal.
+- [x] **T8.3.1 - Branch for the key modal** - What: Modal UI work stays off main until polished. How: git checkout -b feature/key-modal and scaffold src/ui/key-modal.html.
+- [x] **T8.3.2 - Build gated modal markup** - What: The modal appears exactly when keys are missing, never otherwise. How: Partial wrapped in data-if="!vault.hasAnyKeys" with data-cloak against flicker.
+- [x] **T8.3.3 - Add five venue input fields** - What: OKX and EToro credentials each have a clear, masked home. How: type=password inputs bound with data-model to a transient keyEntry.* draft namespace.
+- [x] **T8.3.4 - Implement parseCombinedPaste(text)** - What: A whole colon-separated credential string fills all fields in one paste. How: Split key:secret:passphrase patterns and distribute into the draft fields.
+- [x] **T8.3.5 - Wire submit to the vault** - What: One Enter press arms both venues. How: data-action submitKeys validating with hasCompleteKeys then handing normalized keys to vault.setKeys.
+- [x] **T8.3.6 - Add browse-only skip** - What: Users without keys still explore charts and watchlists. How: Skip link closing the modal and setting ui.browseOnly for downstream data-if guards.
+- [x] **T8.3.7 - Style in terminal aesthetic** - What: The first screen a trader sees already feels like the money-hacker desk. How: Green-on-black card, orange accents, monospace labels, both theme variants.
+- [x] **T8.3.8 - Tune keyboard flow** - What: The modal is operable without touching the mouse. How: Autofocus first field, Enter submits, Escape triggers skip, tab order across the five inputs.
+- [x] **T8.3.9 - Write single unit tests for modal functions** - What: parseCombinedPaste and submitKeys each pinned by one Vitest test. How: happy-dom tests dispatching paste and submit, run via vitest run -t.
+- [x] **T8.3.10 - Merge modal branch** - What: The paste-once entry path reaches main. How: Manual dev pass plus ESLint and targeted tests, merge feature/key-modal.
 
 ### F8.4 - In-Memory Vault Module
 
 **What:** Credentials live only in RAM for the session - no snapshot, serializer or storage sync can ever capture them.
 **How:** Closure-scoped store in src/keys/vault.js kept outside Spektrum state, exposing only status booleans to the UI.
 
-- [ ] **T8.4.1 - Branch for the vault** - What: The most sensitive module gets a dedicated review lane. How: git checkout -b feature/key-vault and add src/keys/vault.js.
-- [ ] **T8.4.2 - Build the closure store** - What: No other module can reach raw keys by import or inspection. How: Module-private Map inside an IIFE-style closure with no export of the container.
-- [ ] **T8.4.3 - Implement setKeys(venue, creds)** - What: Arming a venue is one validated call. How: Check the shape with hasCompleteKeys, write into the closure Map, trigger('vault:changed').
-- [ ] **T8.4.4 - Implement getSigningMaterial(venue)** - What: The OKX HMAC signer and EToro client fetch creds without copies leaking. How: Return the live object for signing use only, documented as do-not-store.
-- [ ] **T8.4.5 - Mirror status booleans into state** - What: The UI reacts to vault changes without ever holding keys. How: setValue vault.hasAnyKeys and vault.okxReady/etoroReady flags on every vault change.
-- [ ] **T8.4.6 - Keep the vault out of time travel** - What: checkpoint(), serialize() and replay() stay key-free by construction. How: Store nothing key-shaped in Spektrum state; assert flags-only via a describe() review.
-- [ ] **T8.4.7 - Implement clearVault()** - What: Every credential is droppable in a single call. How: Map.clear(), null the draft namespace, flip status booleans false, trigger('vault:cleared').
-- [ ] **T8.4.8 - Freeze the vault API surface** - What: The exported contract cannot be monkey-patched at runtime. How: Object.freeze the exported API object and lint against default exports in the module.
-- [ ] **T8.4.9 - Write single unit tests for vault functions** - What: setKeys, getSigningMaterial and clearVault each get exactly one test. How: Vitest tests in vault.test.js asserting isolation, run via vitest run -t.
-- [ ] **T8.4.10 - Merge vault branch** - What: The RAM-only credential core ships. How: ESLint plus targeted Vitest runs green, merge feature/key-vault.
+- [x] **T8.4.1 - Branch for the vault** - What: The most sensitive module gets a dedicated review lane. How: git checkout -b feature/key-vault and add src/keys/vault.js.
+- [x] **T8.4.2 - Build the closure store** - What: No other module can reach raw keys by import or inspection. How: Module-private Map inside an IIFE-style closure with no export of the container.
+- [x] **T8.4.3 - Implement setKeys(venue, creds)** - What: Arming a venue is one validated call. How: Check the shape with hasCompleteKeys, write into the closure Map, trigger('vault:changed').
+- [x] **T8.4.4 - Implement getSigningMaterial(venue)** - What: The OKX HMAC signer and EToro client fetch creds without copies leaking. How: Return the live object for signing use only, documented as do-not-store.
+- [x] **T8.4.5 - Mirror status booleans into state** - What: The UI reacts to vault changes without ever holding keys. How: setValue vault.hasAnyKeys and vault.okxReady/etoroReady flags on every vault change.
+- [x] **T8.4.6 - Keep the vault out of time travel** - What: checkpoint(), serialize() and replay() stay key-free by construction. How: Store nothing key-shaped in Spektrum state; assert flags-only via a describe() review.
+- [x] **T8.4.7 - Implement clearVault()** - What: Every credential is droppable in a single call. How: Map.clear(), null the draft namespace, flip status booleans false, trigger('vault:cleared').
+- [x] **T8.4.8 - Freeze the vault API surface** - What: The exported contract cannot be monkey-patched at runtime. How: Object.freeze the exported API object and lint against default exports in the module.
+- [x] **T8.4.9 - Write single unit tests for vault functions** - What: setKeys, getSigningMaterial and clearVault each get exactly one test. How: Vitest tests in vault.test.js asserting isolation, run via vitest run -t.
+- [x] **T8.4.10 - Merge vault branch** - What: The RAM-only credential core ships. How: ESLint plus targeted Vitest runs green, merge feature/key-vault.
 
 ### F8.5 - Remember On This Device
 
 **What:** Regulars skip re-pasting keys: an explicit opt-in stores an obfuscated copy locally, with the risk stated plainly.
 **How:** XOR-plus-base64 obfuscation with a random device salt in localStorage under stockz.keys.remembered, loaded at boot.
 
-- [ ] **T8.5.1 - Branch for remember-me** - What: The only storage-touching key path is built in isolation. How: git checkout -b feature/remember-keys and add src/keys/remember.js.
-- [ ] **T8.5.2 - Add opt-in checkbox with warning** - What: Users choose storage knowingly, never by default. How: Unchecked data-model checkbox in the key modal beside plain copy: obfuscated, not encrypted.
-- [ ] **T8.5.3 - Implement obfuscate()/deobfuscate()** - What: Stored keys are not casual-glance readable in devtools. How: XOR bytes with a crypto.getRandomValues salt then base64, salt kept beside the blob.
-- [ ] **T8.5.4 - Implement saveRemembered(keys)** - What: One call persists the opted-in credential copy. How: Serialize normalized venue keys, obfuscate, write stockz.keys.remembered to localStorage.
-- [ ] **T8.5.5 - Implement loadRemembered()** - What: Returning traders are armed before the modal can even appear. How: Read, deobfuscate and vault.setKeys during boot, before the modal's data-if evaluates.
-- [ ] **T8.5.6 - Implement forgetRemembered()** - What: The stored copy is removable in one action from the modal. How: localStorage.removeItem plus salt cleanup, wired to a data-action forget button.
-- [ ] **T8.5.7 - Exclude the blob from settings export** - What: Sharing a settings file never ships credentials. How: Assert stockz.keys.remembered is outside PERSIST_ALLOWLIST and untouched by Phase 7 exportSettings.
-- [ ] **T8.5.8 - Style the warning state** - What: The risk trade-off is impossible to miss. How: Orange hazard styling on the checkbox row and a persistent remembered badge in the modal.
-- [ ] **T8.5.9 - Write single unit tests for remember functions** - What: All five remember functions locked by one test each. How: Vitest with the shared storage stub, round-tripping fixtures, run via vitest run -t.
-- [ ] **T8.5.10 - Merge remember branch** - What: Opt-in convenience ships with its guardrails. How: ESLint and targeted tests pass, merge feature/remember-keys.
+- [x] **T8.5.1 - Branch for remember-me** - What: The only storage-touching key path is built in isolation. How: git checkout -b feature/remember-keys and add src/keys/remember.js.
+- [x] **T8.5.2 - Add opt-in checkbox with warning** - What: Users choose storage knowingly, never by default. How: Unchecked data-model checkbox in the key modal beside plain copy: obfuscated, not encrypted.
+- [x] **T8.5.3 - Implement obfuscate()/deobfuscate()** - What: Stored keys are not casual-glance readable in devtools. How: XOR bytes with a crypto.getRandomValues salt then base64, salt kept beside the blob.
+- [x] **T8.5.4 - Implement saveRemembered(keys)** - What: One call persists the opted-in credential copy. How: Serialize normalized venue keys, obfuscate, write stockz.keys.remembered to localStorage.
+- [x] **T8.5.5 - Implement loadRemembered()** - What: Returning traders are armed before the modal can even appear. How: Read, deobfuscate and vault.setKeys during boot, before the modal's data-if evaluates.
+- [x] **T8.5.6 - Implement forgetRemembered()** - What: The stored copy is removable in one action from the modal. How: localStorage.removeItem plus salt cleanup, wired to a data-action forget button.
+- [x] **T8.5.7 - Exclude the blob from settings export** - What: Sharing a settings file never ships credentials. How: Assert stockz.keys.remembered is outside PERSIST_ALLOWLIST and untouched by Phase 7 exportSettings.
+- [x] **T8.5.8 - Style the warning state** - What: The risk trade-off is impossible to miss. How: Orange hazard styling on the checkbox row and a persistent remembered badge in the modal.
+- [x] **T8.5.9 - Write single unit tests for remember functions** - What: All five remember functions locked by one test each. How: Vitest with the shared storage stub, round-tripping fixtures, run via vitest run -t.
+- [x] **T8.5.10 - Merge remember branch** - What: Opt-in convenience ships with its guardrails. How: ESLint and targeted tests pass, merge feature/remember-keys.
 
 ### F8.6 - Key Validation Ping & LEDs
 
 **What:** Within a second of arming, per-venue LEDs show green for valid keys, red for rejected ones - no guessing.
 **How:** Lightweight authenticated pings to OKX v5 REST and EToro REST driving a computed LED state per venue.
 
-- [ ] **T8.6.1 - Branch for key validation** - What: Venue ping logic is developed against fixtures first. How: git checkout -b feature/key-validation and add src/keys/validate.js.
-- [ ] **T8.6.2 - Implement validateOkxKeys()** - What: OKX credentials are proven against the real venue. How: HMAC-SHA256 signed GET /api/v5/account/config with vault signing material, mapping 200 to valid.
-- [ ] **T8.6.3 - Implement validateEtoroKeys()** - What: EToro credentials get the same instant verdict. How: Authenticated EToro REST metadata request with the api and user keys in headers.
-- [ ] **T8.6.4 - Implement classifyValidationError(err)** - What: A wrong key and a down network light differently. How: Map 401 to invalid, timeout/abort to unreachable, other statuses to warning.
-- [ ] **T8.6.5 - Add abort and timeout control** - What: A hung venue can never stall the boot path. How: AbortController with a 3 second cap on both validators, resolving to unreachable.
-- [ ] **T8.6.6 - Build the LED component** - What: Venue readiness is glanceable from the header at all times. How: Small block bound to computed('vault.okxLed') styles - gray, amber pulse, green, red.
-- [ ] **T8.6.7 - Auto-validate on vault change** - What: Feedback starts the moment keys arrive from URL, modal or storage. How: watch() on vault:changed events firing both validators as addAsync jobs.
-- [ ] **T8.6.8 - Show latency next to each LED** - What: Scalpers see venue round-trip cost before their first order. How: performance.now() deltas around each ping rendered as ms in the LED tooltip line.
-- [ ] **T8.6.9 - Write single unit tests for validation functions** - What: Both validators and the classifier each get exactly one test. How: Vitest with mocked fetch responses per status, run via vitest run -t.
-- [ ] **T8.6.10 - Merge validation branch** - What: Trustworthy key feedback lands on main. How: ESLint plus targeted Vitest runs green, merge feature/key-validation.
+- [x] **T8.6.1 - Branch for key validation** - What: Venue ping logic is developed against fixtures first. How: git checkout -b feature/key-validation and add src/keys/validate.js.
+- [x] **T8.6.2 - Implement validateOkxKeys()** - What: OKX credentials are proven against the real venue. How: HMAC-SHA256 signed GET /api/v5/account/config with vault signing material, mapping 200 to valid.
+- [x] **T8.6.3 - Implement validateEtoroKeys()** - What: EToro credentials get the same instant verdict. How: Authenticated EToro REST metadata request with the api and user keys in headers.
+- [x] **T8.6.4 - Implement classifyValidationError(err)** - What: A wrong key and a down network light differently. How: Map 401 to invalid, timeout/abort to unreachable, other statuses to warning.
+- [x] **T8.6.5 - Add abort and timeout control** - What: A hung venue can never stall the boot path. How: AbortController with a 3 second cap on both validators, resolving to unreachable.
+- [x] **T8.6.6 - Build the LED component** - What: Venue readiness is glanceable from the header at all times. How: Small block bound to computed('vault.okxLed') styles - gray, amber pulse, green, red.
+- [x] **T8.6.7 - Auto-validate on vault change** - What: Feedback starts the moment keys arrive from URL, modal or storage. How: watch() on vault:changed events firing both validators as addAsync jobs.
+- [x] **T8.6.8 - Show latency next to each LED** - What: Scalpers see venue round-trip cost before their first order. How: performance.now() deltas around each ping rendered as ms in the LED tooltip line.
+- [x] **T8.6.9 - Write single unit tests for validation functions** - What: Both validators and the classifier each get exactly one test. How: Vitest with mocked fetch responses per status, run via vitest run -t.
+- [x] **T8.6.10 - Merge validation branch** - What: Trustworthy key feedback lands on main. How: ESLint plus targeted Vitest runs green, merge feature/key-validation.
 
 ### F8.7 - Instant Lock Action
 
 **What:** One keystroke wipes every credential from memory - walking away from the desk is always safe.
 **How:** A lockVault() action clearing the vault and flipping the UI back to the modal, bound to a configurable hotkey.
 
-- [ ] **T8.7.1 - Branch for the lock action** - What: The panic path gets focused implementation and review. How: git checkout -b feature/vault-lock and add src/keys/lock.js.
-- [ ] **T8.7.2 - Implement lockVault(options)** - What: Locking is one synchronous call with no async gap. How: Call clearVault(), optionally forgetRemembered() when options.forget, trigger('vault:locked').
-- [ ] **T8.7.3 - Abort in-flight signed requests** - What: No authenticated call outlives the lock. How: Registry of active AbortControllers in the key layer, all aborted inside lockVault.
-- [ ] **T8.7.4 - Flip the UI on lock** - What: The desk visibly disarms the instant the action fires. How: vault status booleans go false so the key modal data-if reopens and LEDs drop to gray.
-- [ ] **T8.7.5 - Register the lock hotkey** - What: Lock works without reaching for the mouse, mid-trade. How: Default Ctrl+Shift+L read from settings.hotkeys.lockVault through the Phase 16 hotkey registry contract.
-- [ ] **T8.7.6 - Add header lock button** - What: A visible always-present escape hatch beside the LEDs. How: Padlock glyph button with data-action lockVault in the header strip, both themes.
-- [ ] **T8.7.7 - Keep lock dialog-free** - What: Zero confirmations - lock is instant by design, matching desk speed. How: Verify the full path has no confirm() or modal gate; re-arming is the only recovery.
-- [ ] **T8.7.8 - Emit a lock audit event** - What: The trade journal can show when the desk was disarmed. How: trigger('audit:vault-locked') with a timestamp only, no credential data, for Phase 25 consumption.
-- [ ] **T8.7.9 - Write single unit tests for lock functions** - What: lockVault and the abort-registry helper each locked by one test. How: Vitest asserting cleared state and aborted controllers, run via vitest run -t.
-- [ ] **T8.7.10 - Merge lock branch** - What: The instant kill-switch for credentials ships. How: ESLint and targeted tests pass, merge feature/vault-lock.
+- [x] **T8.7.1 - Branch for the lock action** - What: The panic path gets focused implementation and review. How: git checkout -b feature/vault-lock and add src/keys/lock.js.
+- [x] **T8.7.2 - Implement lockVault(options)** - What: Locking is one synchronous call with no async gap. How: Call clearVault(), optionally forgetRemembered() when options.forget, trigger('vault:locked').
+- [x] **T8.7.3 - Abort in-flight signed requests** - What: No authenticated call outlives the lock. How: Registry of active AbortControllers in the key layer, all aborted inside lockVault.
+- [x] **T8.7.4 - Flip the UI on lock** - What: The desk visibly disarms the instant the action fires. How: vault status booleans go false so the key modal data-if reopens and LEDs drop to gray.
+- [x] **T8.7.5 - Register the lock hotkey** - What: Lock works without reaching for the mouse, mid-trade. How: Default Ctrl+Shift+L read from settings.hotkeys.lockVault through the Phase 16 hotkey registry contract.
+- [x] **T8.7.6 - Add header lock button** - What: A visible always-present escape hatch beside the LEDs. How: Padlock glyph button with data-action lockVault in the header strip, both themes.
+- [x] **T8.7.7 - Keep lock dialog-free** - What: Zero confirmations - lock is instant by design, matching desk speed. How: Verify the full path has no confirm() or modal gate; re-arming is the only recovery.
+- [x] **T8.7.8 - Emit a lock audit event** - What: The trade journal can show when the desk was disarmed. How: trigger('audit:vault-locked') with a timestamp only, no credential data, for Phase 25 consumption.
+- [x] **T8.7.9 - Write single unit tests for lock functions** - What: lockVault and the abort-registry helper each locked by one test. How: Vitest asserting cleared state and aborted controllers, run via vitest run -t.
+- [x] **T8.7.10 - Merge lock branch** - What: The instant kill-switch for credentials ships. How: ESLint and targeted tests pass, merge feature/vault-lock.
 
 ### F8.8 - Multi-Account Slots & Quick Switch
 
 **What:** Traders juggle several venue accounts and jump between them in one action without re-entering keys.
 **How:** Named slots inside the vault closure, each holding a full venue key set, with a cycle hotkey and header pills.
 
-- [ ] **T8.8.1 - Branch for account slots** - What: Multi-account plumbing is built without risking single-account flow. How: git checkout -b feature/account-slots and add src/keys/slots.js.
-- [ ] **T8.8.2 - Model slots in the vault** - What: Each account is a named, isolated credential set. How: Extend the vault closure to a Map of slotName to venue-key sets with an activeSlot pointer.
-- [ ] **T8.8.3 - Implement addSlot() and removeSlot()** - What: Accounts are added and retired without touching others. How: Two functions guarding duplicate names and refusing removal of the active slot.
-- [ ] **T8.8.4 - Implement switchSlot(name)** - What: The whole desk re-arms onto another account instantly. How: Move activeSlot, re-mirror status booleans, re-run both validators for the new slot.
-- [ ] **T8.8.5 - Build slot pills in the header** - What: The active account is always visible and one click away. How: data-each pill row over vault.slotNames with the active pill highlighted orange.
-- [ ] **T8.8.6 - Add the cycle hotkey** - What: Keyboard-first traders rotate accounts mid-session. How: settings.hotkeys.cycleSlot binding calling switchSlot with the next name in order.
-- [ ] **T8.8.7 - Track per-slot LED state** - What: Every account's validity is known before switching into it. How: Keyed validation results per slot feeding the LED computed for the active slot.
-- [ ] **T8.8.8 - Extend remember-me per slot** - What: Opted-in users get all their accounts back on reload. How: Namespace stockz.keys.remembered blobs by slot name in save/load/forget functions.
-- [ ] **T8.8.9 - Write single unit tests for slot functions** - What: addSlot, removeSlot and switchSlot each pinned by one test. How: Vitest tests in slots.test.js covering guards and switching, run via vitest run -t.
-- [ ] **T8.8.10 - Merge slots branch** - What: Multi-account trading lands on main. How: ESLint plus targeted Vitest runs green, merge feature/account-slots.
+- [x] **T8.8.1 - Branch for account slots** - What: Multi-account plumbing is built without risking single-account flow. How: git checkout -b feature/account-slots and add src/keys/slots.js.
+- [x] **T8.8.2 - Model slots in the vault** - What: Each account is a named, isolated credential set. How: Extend the vault closure to a Map of slotName to venue-key sets with an activeSlot pointer.
+- [x] **T8.8.3 - Implement addSlot() and removeSlot()** - What: Accounts are added and retired without touching others. How: Two functions guarding duplicate names and refusing removal of the active slot.
+- [x] **T8.8.4 - Implement switchSlot(name)** - What: The whole desk re-arms onto another account instantly. How: Move activeSlot, re-mirror status booleans, re-run both validators for the new slot.
+- [x] **T8.8.5 - Build slot pills in the header** - What: The active account is always visible and one click away. How: data-each pill row over vault.slotNames with the active pill highlighted orange.
+- [x] **T8.8.6 - Add the cycle hotkey** - What: Keyboard-first traders rotate accounts mid-session. How: settings.hotkeys.cycleSlot binding calling switchSlot with the next name in order.
+- [x] **T8.8.7 - Track per-slot LED state** - What: Every account's validity is known before switching into it. How: Keyed validation results per slot feeding the LED computed for the active slot.
+- [x] **T8.8.8 - Extend remember-me per slot** - What: Opted-in users get all their accounts back on reload. How: Namespace stockz.keys.remembered blobs by slot name in save/load/forget functions.
+- [x] **T8.8.9 - Write single unit tests for slot functions** - What: addSlot, removeSlot and switchSlot each pinned by one test. How: Vitest tests in slots.test.js covering guards and switching, run via vitest run -t.
+- [x] **T8.8.10 - Merge slots branch** - What: Multi-account trading lands on main. How: ESLint plus targeted Vitest runs green, merge feature/account-slots.
 
 ### F8.9 - Dev Environment Key Fallback
 
 **What:** Developers boot a fully armed desk from a local .env file - no pasting keys a hundred times a day.
 **How:** Read import.meta.env STOCKZ_* variables in Vite dev mode as the lowest-priority key source.
 
-- [ ] **T8.9.1 - Branch for env fallback** - What: Dev-only conveniences are fenced off from production code paths. How: git checkout -b feature/env-keys and add src/keys/env.js.
-- [ ] **T8.9.2 - Configure the STOCKZ_ env prefix** - What: Vite exposes exactly the intended variables and nothing else. How: Set envPrefix 'STOCKZ_' in vite.config.js so import.meta.env carries the five keys.
-- [ ] **T8.9.3 - Implement readEnvKeys()** - What: Env credentials arrive in the same shape as URL ones. How: Read STOCKZ_OKX_API_KEY, STOCKZ_OKX_SECRET_KEY, STOCKZ_OKX_PASSPHRASE, STOCKZ_ETORO_API_KEY, STOCKZ_ETORO_USER_KEY into normalizeVenueKeys.
-- [ ] **T8.9.4 - Gate on dev mode only** - What: Production bundles contain no env key logic at all. How: Wrap the call site in import.meta.env.DEV so Vite tree-shakes it from the build.
-- [ ] **T8.9.5 - Ship .env.local.example** - What: New contributors see exactly which names to set, valueless. How: Commit the example file with blank STOCKZ_* entries and confirm .env.local is gitignored.
-- [ ] **T8.9.6 - Implement resolveKeySource()** - What: Key precedence is deterministic: URL, then remembered, then env, then modal. How: Ordered resolver returning the first complete source with its origin label.
-- [ ] **T8.9.7 - Log the source without values** - What: Devs know where their session's keys came from at a glance. How: DEV console.info printing the origin label and redactKey previews only.
-- [ ] **T8.9.8 - Audit the production bundle** - What: Proof, not hope, that no env keys reach GitHub Pages output. How: Run vite build and grep dist/ for STOCKZ_ occurrences, expecting zero.
-- [ ] **T8.9.9 - Write single unit tests for env functions** - What: readEnvKeys and resolveKeySource each verified by one test. How: Vitest with stubbed import.meta.env objects, run via vitest run -t.
-- [ ] **T8.9.10 - Merge env branch** - What: Frictionless dev arming ships safely. How: ESLint, bundle audit and targeted tests pass, merge feature/env-keys.
+- [x] **T8.9.1 - Branch for env fallback** - What: Dev-only conveniences are fenced off from production code paths. How: git checkout -b feature/env-keys and add src/keys/env.js.
+- [x] **T8.9.2 - Configure the STOCKZ_ env prefix** - What: Vite exposes exactly the intended variables and nothing else. How: Set envPrefix 'STOCKZ_' in vite.config.js so import.meta.env carries the five keys.
+- [x] **T8.9.3 - Implement readEnvKeys()** - What: Env credentials arrive in the same shape as URL ones. How: Read STOCKZ_OKX_API_KEY, STOCKZ_OKX_SECRET_KEY, STOCKZ_OKX_PASSPHRASE, STOCKZ_ETORO_API_KEY, STOCKZ_ETORO_USER_KEY into normalizeVenueKeys.
+- [x] **T8.9.4 - Gate on dev mode only** - What: Production bundles contain no env key logic at all. How: Wrap the call site in import.meta.env.DEV so Vite tree-shakes it from the build.
+- [x] **T8.9.5 - Ship .env.local.example** - What: New contributors see exactly which names to set, valueless. How: Commit the example file with blank STOCKZ_* entries and confirm .env.local is gitignored.
+- [x] **T8.9.6 - Implement resolveKeySource()** - What: Key precedence is deterministic: URL, then remembered, then env, then modal. How: Ordered resolver returning the first complete source with its origin label.
+- [x] **T8.9.7 - Log the source without values** - What: Devs know where their session's keys came from at a glance. How: DEV console.info printing the origin label and redactKey previews only.
+- [x] **T8.9.8 - Audit the production bundle** - What: Proof, not hope, that no env keys reach GitHub Pages output. How: Run vite build and grep dist/ for STOCKZ_ occurrences, expecting zero.
+- [x] **T8.9.9 - Write single unit tests for env functions** - What: readEnvKeys and resolveKeySource each verified by one test. How: Vitest with stubbed import.meta.env objects, run via vitest run -t.
+- [x] **T8.9.10 - Merge env branch** - What: Frictionless dev arming ships safely. How: ESLint, bundle audit and targeted tests pass, merge feature/env-keys.
 
 ### F8.10 - Key Layer Test Harness & Leak Gate
 
 **What:** The key layer stays provably tight: every function has its one test and no code path can leak a credential.
 **How:** Shared DOM doubles, a one-test-per-function audit, ESLint storage bans and a snapshot secret-scan wired into npm scripts.
 
-- [ ] **T8.10.1 - Branch for the key gate** - What: Security tooling is reviewed apart from feature logic. How: git checkout -b feature/key-quality-gate.
-- [ ] **T8.10.2 - Build location and history doubles** - What: All key tests share one honest browser fake. How: test/helpers/nav-stub.js faking location, history.replaceState and URLSearchParams behavior.
-- [ ] **T8.10.3 - Create dummy-key fixtures** - What: Tests exercise realistic shapes with obviously fake values. How: fixtures/keys.js exporting DUMMY_ prefixed key sets and prebuilt keyed URLs.
-- [ ] **T8.10.4 - Extend the test audit to src/keys** - What: Every exported key function is mechanically confirmed to have one test. How: Point the Phase 7 audit script at src/keys and add npm script audit:keys.
-- [ ] **T8.10.5 - Ban storage access outside remember.js** - What: A future patch cannot quietly persist credentials. How: ESLint no-restricted-globals/properties override for localStorage and sessionStorage in src/keys.
-- [ ] **T8.10.6 - Add a repo secret scan script** - What: Real key values can never sit in the git history. How: npm script scan:secrets grepping tracked files for live-looking OKX/EToro credential patterns, failing on hits.
-- [ ] **T8.10.7 - Implement assertNoKeysInSnapshot()** - What: Time-travel output is certified credential-free. How: Function running serialize() and checkpoint() with an armed vault and asserting no fixture values appear.
-- [ ] **T8.10.8 - Close the audit gaps** - What: Phase 8 exits at exactly one test per function. How: Run audit:keys, add or dedupe Vitest tests until the script exits clean.
-- [ ] **T8.10.9 - Write single unit tests for gate helpers** - What: The nav stub factory and assertNoKeysInSnapshot each get one test. How: One Vitest test per helper, run via vitest run -t "<fnName>".
-- [ ] **T8.10.10 - Merge the key gate** - What: Leak-proofing guards all future key work on main. How: ESLint, audits, secret scan and targeted tests green, merge feature/key-quality-gate.
+- [x] **T8.10.1 - Branch for the key gate** - What: Security tooling is reviewed apart from feature logic. How: git checkout -b feature/key-quality-gate.
+- [x] **T8.10.2 - Build location and history doubles** - What: All key tests share one honest browser fake. How: test/helpers/nav-stub.js faking location, history.replaceState and URLSearchParams behavior.
+- [x] **T8.10.3 - Create dummy-key fixtures** - What: Tests exercise realistic shapes with obviously fake values. How: fixtures/keys.js exporting DUMMY_ prefixed key sets and prebuilt keyed URLs.
+- [x] **T8.10.4 - Extend the test audit to src/keys** - What: Every exported key function is mechanically confirmed to have one test. How: Point the Phase 7 audit script at src/keys and add npm script audit:keys.
+- [x] **T8.10.5 - Ban storage access outside remember.js** - What: A future patch cannot quietly persist credentials. How: ESLint no-restricted-globals/properties override for localStorage and sessionStorage in src/keys.
+- [x] **T8.10.6 - Add a repo secret scan script** - What: Real key values can never sit in the git history. How: npm script scan:secrets grepping tracked files for live-looking OKX/EToro credential patterns, failing on hits.
+- [x] **T8.10.7 - Implement assertNoKeysInSnapshot()** - What: Time-travel output is certified credential-free. How: Function running serialize() and checkpoint() with an armed vault and asserting no fixture values appear.
+- [x] **T8.10.8 - Close the audit gaps** - What: Phase 8 exits at exactly one test per function. How: Run audit:keys, add or dedupe Vitest tests until the script exits clean.
+- [x] **T8.10.9 - Write single unit tests for gate helpers** - What: The nav stub factory and assertNoKeysInSnapshot each get one test. How: One Vitest test per helper, run via vitest run -t "<fnName>".
+- [x] **T8.10.10 - Merge the key gate** - What: Leak-proofing guards all future key work on main. How: ESLint, audits, secret scan and targeted tests green, merge feature/key-quality-gate.
 
 ---
 

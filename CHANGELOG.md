@@ -10,7 +10,20 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ## [Unreleased]
 
-_Nothing yet — next entries land with phase 8 (API Key Access Layer)._
+### Added
+
+- **Trade within seconds of opening a link** — credentials arrive as URL params, are read
+  once into an in-memory vault, and the address bar is rewritten immediately. A key left
+  in the URL reaches browser history, screen shares and `Referer` headers; reading it once
+  and scrubbing costs nothing. (F8.1, F8.2)
+- **Keys never touch application state** — the vault is a plain module-scoped map outside
+  the reactive tree, and only presence booleans reach state. State is recorded into
+  history, returned by `serialize()` and exported with the journal: a key that reaches it
+  ends up in a file the trader emails to someone. A test asserts a stored key appears in
+  neither state nor a serialized session. (F8.4)
+- **Key modal and panic lock** — paste credentials once, or clear every one instantly with
+  `keys.lock`. Paper mode deliberately never demands keys, so a new user can click a
+  working desk before handing anything over. (F8.3, F8.7)
 
 ## [0.7.0] — 2026-08-03 — Phase 7: User Settings & Persistence
 
