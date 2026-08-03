@@ -10,6 +10,13 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ## [Unreleased]
 
+_Nothing yet — next entries land with phase 3 (Money-Hacker Design System)._
+
+## [0.2.0] — 2026-08-03 — Phase 2: Spektrum Core Integration
+
+The desk became reactive: one state tree, one action registry, derived values that
+cannot go stale, and errors that reach the trader instead of the console.
+
 ### Added
 
 - **UI engine on tap** — Spektrum 1.1.0 and its companions (persist, devtools, inspect,
@@ -117,5 +124,6 @@ with a test policy and a live URL.
   literal `APP_VERSION` (a JSON import is bundler-only), guarded by a test that fails if
   it drifts from `package.json`; static assets moved from `public/` to the repo root.
 
-[Unreleased]: https://github.com/D-dezeeuw/stockz/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/D-dezeeuw/stockz/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/D-dezeeuw/stockz/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/D-dezeeuw/stockz/releases/tag/v0.1.0
