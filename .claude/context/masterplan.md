@@ -142,16 +142,16 @@
 **What:** A test setup where each function has exactly one focused test and targeted runs finish in under a second.
 **How:** Configure vitest.config.js with node environment and globals, plus a naming convention and the test:fn targeting workflow.
 
-- [ ] **T1.6.1 - Cut vitest feature branch** - What: Test infrastructure lands only when demonstrably fast. How: Run git checkout -b feature/vitest-harness from main.
-- [ ] **T1.6.2 - Scaffold vitest.config.js** - What: Tests are discovered from one canonical location. How: Create vitest.config.js with test.include ['tests/**/*.test.js'] and environment 'node'.
-- [ ] **T1.6.3 - Enable test globals** - What: describe/it/expect work without imports, matching the ESLint override. How: Set test.globals true in vitest.config.js.
-- [ ] **T1.6.4 - Define the naming convention** - What: Any function's single test is findable by name alone. How: Document tests/<area>/<module>.<functionName>.test.js with one it() per file in tests/CONVENTIONS.md.
-- [ ] **T1.6.5 - Optimize for speed** - What: Sub-second targeted runs that never break scalping flow. How: Disable coverage by default and set test.watch false for the run scripts.
-- [ ] **T1.6.6 - Add appVersion sample function** - What: A tiny reference function demonstrating the policy end to end. How: Implement appVersion() in src/app/version.js returning the version from package.json import.
-- [ ] **T1.6.7 - Write the appVersion unit test** - What: The reference function carries its one allowed test. How: Add tests/app/version.appVersion.test.js asserting the semver shape.
-- [ ] **T1.6.8 - Prove targeted execution** - What: Evidence test:fn runs exactly one test. How: Run npm run test:fn appVersion and confirm the reporter shows 1 passed, 0 skipped files touched otherwise.
-- [ ] **T1.6.9 - Verify full-suite run** - What: The whole suite still passes as a merge gate. How: Run npm run test and confirm all current tests pass with exit code 0.
-- [ ] **T1.6.10 - Merge vitest branch** - What: The testing contract every later feature must follow is now enforced. How: Merge feature/vitest-harness into main after both run verifications.
+- [x] **T1.6.1 - Cut vitest feature branch** - What: Test infrastructure lands only when demonstrably fast. How: Run git checkout -b feature/vitest-harness from main.
+- [x] **T1.6.2 - Scaffold vitest.config.js** - What: Tests are discovered from one canonical location. How: Create vitest.config.js with test.include ['tests/**/*.test.js'] and environment 'node'.
+- [x] **T1.6.3 - Enable test globals** - What: describe/it/expect work without imports, matching the ESLint override. How: Set test.globals true in vitest.config.js.
+- [x] **T1.6.4 - Define the naming convention** - What: Any function's single test is findable by name alone. How: Document tests/<area>/<module>.<functionName>.test.js with one it() per file in tests/CONVENTIONS.md.
+- [x] **T1.6.5 - Optimize for speed** - What: Sub-second targeted runs that never break scalping flow. How: Disable coverage by default and set test.watch false for the run scripts.
+- [x] **T1.6.6 - Add appVersion sample function** - What: A tiny reference function demonstrating the policy end to end. How: Implement appVersion() in src/app/version.js returning the version from package.json import.
+- [x] **T1.6.7 - Write the appVersion unit test** - What: The reference function carries its one allowed test. How: Add tests/app/version.appVersion.test.js asserting the semver shape.
+- [x] **T1.6.8 - Prove targeted execution** - What: Evidence test:fn runs exactly one test. How: Run npm run test:fn appVersion and confirm the reporter shows 1 passed, 0 skipped files touched otherwise.
+- [x] **T1.6.9 - Verify full-suite run** - What: The whole suite still passes as a merge gate. How: Run npm run test and confirm all current tests pass with exit code 0.
+- [x] **T1.6.10 - Merge vitest branch** - What: The testing contract every later feature must follow is now enforced. How: Merge feature/vitest-harness into main after both run verifications.
 
 ### F1.7 - Local Env & Secret Key Handling
 
