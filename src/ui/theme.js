@@ -42,9 +42,32 @@ export function applyTheme(theme, doc = globalThis.document) {
   const next = THEMES.includes(theme) ? theme : 'night'
 
   doc?.documentElement?.setAttribute?.('data-theme', next)
+  syncBrowserChrome(next, doc)
   setValue(PATHS.ui.theme, next)
   setValue(PATHS.settings.theme, next)
   return next
+}
+
+/** Background colour the browser chrome should match, per theme. */
+export const CHROME_COLOR = Object.freeze({ night: '#070a07', day: '#f2f5f1' })
+
+/**
+ * Keep the browser's own chrome in step with the theme.
+ *
+ * On mobile the address bar takes its colour from this meta tag; leaving it dark under a
+ * light theme puts a black band above a white desk.
+ *
+ * @param {string} theme - a THEMES member.
+ * @param {Document} [doc] - document to update.
+ * @returns {string} the colour applied, or '' when there is no meta tag.
+ */
+export function syncBrowserChrome(theme, doc = globalThis.document) {
+  const meta = doc?.querySelector?.('meta[name="theme-color"]')
+  if (!meta) return ''
+
+  const color = CHROME_COLOR[theme] ?? CHROME_COLOR.night
+  meta.setAttribute('content', color)
+  return color
 }
 
 /**

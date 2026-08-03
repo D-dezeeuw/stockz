@@ -1,6 +1,14 @@
 // @vitest-environment jsdom
 import { describe, it, expect, beforeEach } from 'vitest'
-import { THEMES, preferredTheme, applyTheme, setTheme, registerThemeActions } from './theme.js'
+import {
+  THEMES,
+  CHROME_COLOR,
+  preferredTheme,
+  applyTheme,
+  setTheme,
+  syncBrowserChrome,
+  registerThemeActions,
+} from './theme.js'
 import { appState, tick, resetState } from '../app/engine.js'
 import { clearActions, dispatchAction, actionNames } from '../actions/registry.js'
 import { ACTIONS } from '../actions/names.js'
@@ -69,5 +77,24 @@ describe('registerThemeActions', () => {
 
     expect(appState.ui.theme).toBe('day')
     expect(document.documentElement.getAttribute('data-theme')).toBe('day')
+  })
+})
+
+describe('syncBrowserChrome', () => {
+  it('matches the browser chrome to the theme, so no dark band tops a light desk', () => {
+    document.head.innerHTML = '<meta name="theme-color" content="#000000">'
+
+    expect(syncBrowserChrome('day', document)).toBe(CHROME_COLOR.day)
+    expect(document.querySelector('meta[name="theme-color"]').getAttribute('content')).toBe(
+      '#f2f5f1',
+    )
+
+    expect(syncBrowserChrome('night', document)).toBe(CHROME_COLOR.night)
+    // An unknown theme falls back rather than writing an undefined colour.
+    expect(syncBrowserChrome('neon', document)).toBe(CHROME_COLOR.night)
+
+    document.head.innerHTML = ''
+    expect(syncBrowserChrome('day', document)).toBe('')
+    expect(syncBrowserChrome('day', null)).toBe('')
   })
 })

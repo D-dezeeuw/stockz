@@ -103,8 +103,30 @@ export function registerSystems(options = {}) {
  */
 export function onThemeChange(state) {
   const theme = state?.ui?.theme ?? 'unknown'
-  log.debug(`theme -> ${theme}`)
+
+  // Canvas layers cannot inherit CSS custom properties: a chart drawn in phosphor green
+  // stays phosphor green on a white background until it is redrawn. Every canvas
+  // renderer registers here (phase 13) and repaints on this signal.
+  for (const repaint of themeSubscribers) repaint(theme)
+
+  log.debug(`theme -> ${theme} (${themeSubscribers.size} repaints)`)
   return theme
+}
+
+/** Canvas renderers that must repaint when the palette flips. */
+const themeSubscribers = new Set()
+
+/**
+ * Register a canvas repaint for theme changes.
+ *
+ * @param {(theme: string) => unknown} repaint - called with the new theme.
+ * @returns {() => void} unsubscribe.
+ */
+export function onThemeRepaint(repaint) {
+  if (typeof repaint !== 'function') return () => {}
+
+  themeSubscribers.add(repaint)
+  return () => themeSubscribers.delete(repaint)
 }
 
 /**

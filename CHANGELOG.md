@@ -10,7 +10,21 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ## [Unreleased]
 
-_Nothing yet — next entries land with phase 6 (Day/Night Theme Engine)._
+### Added
+
+- **Your theme and layout survive a reload** — settings persist to localStorage, versioned
+  and migrated, so a schema change never costs a trader their arrangement. Only
+  `settings.*` is stored: a resurrected position from yesterday that *looks* live is a
+  real loss, not a cosmetic bug. Corrupt storage or a refusing browser degrades to
+  defaults instead of blocking the boot. (F6.1)
+- **No white flash on load** — an inline script stamps the cached theme before any
+  stylesheet or module runs, because a night-theme trader loading a white page for one
+  frame at 2am is not a small annoyance. (F6.6)
+- **150ms theme crossfade** — surfaces and text fade, numbers do not: a price that fades
+  between values is a price you cannot read at speed. (F6.7)
+- **Canvas re-palette seam** — renderers subscribe to theme changes, since a chart drawn
+  in phosphor green stays green on a white background until it is redrawn. (F6.8)
+- **Browser chrome follows the theme** — no dark address bar above a light desk. (F6.9)
 
 ## [0.5.0] — 2026-08-03 — Phase 5: Header, Branding & Navigation
 
