@@ -2,6 +2,7 @@ import { setValue, bindDOM, run, tick, checkpoint, engineInfo } from './engine.j
 import { initialState } from '../state/initial.js'
 import { registerCoreActions, actionNames } from '../actions/registry.js'
 import { registerDerived } from '../state/derived.js'
+import { registerSystems } from '../state/systems.js'
 import { appVersion } from './version.js'
 
 /**
@@ -34,6 +35,8 @@ export function bootstrap(options = {}) {
   // nothing, and derived paths would render as blanks on the first paint.
   registerCoreActions()
   const derived = registerDerived()
+
+  registerSystems({ now: () => now || Date.now() })
 
   const cleanup = bindDOM(doc)
   tick()

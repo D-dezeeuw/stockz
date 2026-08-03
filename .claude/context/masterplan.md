@@ -309,16 +309,16 @@
 **What:** Repeating per-tick work like clocks and heartbeats runs centrally, so feed phases just plug in.
 **How:** Register an addSystem loop in src/app/systems.js plus watch() subscriptions, with HMR-safe teardown.
 
-- [ ] **T2.6.1 - Cut systems feature branch** - What: The tick loop merges only once it survives hot reload. How: Run git checkout -b feature/tick-systems from main.
-- [ ] **T2.6.2 - Scaffold registerSystems** - What: One boot call starts all recurring work. How: Write registerSystems() in src/app/systems.js invoked from bootstrap() after registerDerived.
-- [ ] **T2.6.3 - Implement the clock system** - What: A shared now timestamp for staleness checks everywhere. How: Add addSystem('clock') writing Date.now() into market.now each tick via a clockTick() function.
-- [ ] **T2.6.4 - Implement the heartbeat system** - What: A visible liveness counter proving the loop runs. How: Add addSystem('heartbeat') incrementing ui.tickCount with addValue at animation-frame cadence.
-- [ ] **T2.6.5 - Add theme watch stub** - What: A ready seam for the phase 6 theme engine. How: Register watch on settings.user.theme logging changes through the phase 1 createLogger('systems') namespace.
-- [ ] **T2.6.6 - Add spread anomaly watch** - What: Crossed markets get flagged the instant they appear. How: Register watch on market.spread calling a spreadFlipped(prev, next) function that warns when the sign changes.
-- [ ] **T2.6.7 - Implement stopSystems teardown** - What: Vite HMR never leaves duplicate loops running. How: Write stopSystems() removing systems and watchers and wire it to import.meta.hot.dispose.
-- [ ] **T2.6.8 - Write the four single unit tests** - What: registerSystems, stopSystems, clockTick and spreadFlipped each locked by one test. How: Add targeted tests under tests/app/ run via vitest run -t.
-- [ ] **T2.6.9 - Verify HMR safety** - What: Proof edits mid-session cannot double the tick rate. How: Edit systems.js during npm run dev and confirm ui.tickCount keeps a single cadence in the overlay.
-- [ ] **T2.6.10 - Merge systems branch** - What: A central heartbeat is ready for market data phases. How: Merge feature/tick-systems into main after the HMR verification.
+- [x] **T2.6.1 - Cut systems feature branch** - What: The tick loop merges only once it survives hot reload. How: Run git checkout -b feature/tick-systems from main.
+- [x] **T2.6.2 - Scaffold registerSystems** - What: One boot call starts all recurring work. How: Write registerSystems() in src/app/systems.js invoked from bootstrap() after registerDerived.
+- [x] **T2.6.3 - Implement the clock system** - What: A shared now timestamp for staleness checks everywhere. How: Add addSystem('clock') writing Date.now() into market.now each tick via a clockTick() function.
+- [x] **T2.6.4 - Implement the heartbeat system** - What: A visible liveness counter proving the loop runs. How: Add addSystem('heartbeat') incrementing ui.tickCount with addValue at animation-frame cadence.
+- [x] **T2.6.5 - Add theme watch stub** - What: A ready seam for the phase 6 theme engine. How: Register watch on settings.user.theme logging changes through the phase 1 createLogger('systems') namespace.
+- [x] **T2.6.6 - Add spread anomaly watch** - What: Crossed markets get flagged the instant they appear. How: Register watch on market.spread calling a spreadFlipped(prev, next) function that warns when the sign changes.
+- [x] **T2.6.7 - Implement stopSystems teardown** - What: Vite HMR never leaves duplicate loops running. How: Write stopSystems() removing systems and watchers and wire it to import.meta.hot.dispose.
+- [x] **T2.6.8 - Write the four single unit tests** - What: registerSystems, stopSystems, clockTick and spreadFlipped each locked by one test. How: Add targeted tests under tests/app/ run via vitest run -t.
+- [x] **T2.6.9 - Verify HMR safety** - What: Proof edits mid-session cannot double the tick rate. How: Edit systems.js during npm run dev and confirm ui.tickCount keeps a single cadence in the overlay.
+- [x] **T2.6.10 - Merge systems branch** - What: A central heartbeat is ready for market data phases. How: Merge feature/tick-systems into main after the HMR verification.
 
 ### F2.7 - Async Data via addAsync and refresh
 

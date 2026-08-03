@@ -37,6 +37,11 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
   open-order count and the header status line all recompute the moment a dependency
   moves, so two blocks can never disagree. Exposure is signed *notional*, not quantity:
   one lot of a $60k instrument is not one lot of a $3k one. (F2.5)
+- **Background systems** — a UTC clock and uptime counter (venues stamp in UTC, so the
+  desk does too), a heartbeat that proves the render pump is alive, a theme watch for
+  canvas re-palettes, and a spread-anomaly warning that fires on the *crossing* rather
+  than every tick. All teardown-tracked, so a reload cannot stack a second clock on the
+  first. (F2.6)
 
 ## [0.1.0] — 2026-08-03 — Phase 1: Foundation & Tooling
 

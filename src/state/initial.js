@@ -30,6 +30,9 @@ export function initialState(overrides = {}) {
     [PATHS.app.version]: version,
     [PATHS.app.engine]: engine,
     [PATHS.app.bootedAt]: ts,
+    [PATHS.app.clock]: '',
+    [PATHS.app.uptime]: 0,
+    [PATHS.app.heartbeat]: 0,
 
     // what is on screen
     [PATHS.ui.status]: 'ready',
