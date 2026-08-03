@@ -4,6 +4,7 @@ import { registerCoreActions, actionNames } from '../actions/registry.js'
 import { registerDerived } from '../state/derived.js'
 import { registerSystems } from '../state/systems.js'
 import { mountDevtools } from './devtools.js'
+import { wireEngineErrors } from '../ui/toast.js'
 import { appVersion } from './version.js'
 
 /**
@@ -36,6 +37,7 @@ export function bootstrap(options = {}) {
   // nothing, and derived paths would render as blanks on the first paint.
   registerCoreActions()
   const derived = registerDerived()
+  wireEngineErrors()
 
   registerSystems({ now: makeBootClock(now) })
 

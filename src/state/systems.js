@@ -1,6 +1,7 @@
 import { addSystem, removeSystem, setValue, watch, appState } from '../app/engine.js'
 import { PATHS } from './paths.js'
 import { createLogger } from '../utils/log.js'
+import { expireToasts } from '../ui/toast.js'
 
 /**
  * Repeating work, registered once and centrally.
@@ -134,7 +135,8 @@ export function makeSpreadWatcher(logger = log) {
  * Write one clock tick into state.
  *
  * @param {number} ms - current epoch ms.
- * @returns {{clock: string, uptime: number}} what was written.
+ * @returns {{clock: string, uptime: number, expired: number}} what was written and how
+ *   many toasts aged out on this pass.
  */
 export function tickClock(ms) {
   const clock = utcClock(ms)
@@ -142,7 +144,10 @@ export function tickClock(ms) {
 
   setValue(PATHS.app.clock, clock)
   setValue(PATHS.app.uptime, uptime)
-  return { clock, uptime }
+  // One expiry pass per clock tick beats N pending timeouts, and stays correct after the
+  // tab has been backgrounded.
+  const expired = expireToasts(ms)
+  return { clock, uptime, expired }
 }
 
 /**

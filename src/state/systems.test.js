@@ -74,7 +74,7 @@ describe('tickClock', () => {
     const result = tickClock(Date.UTC(2026, 7, 3, 14, 0, 30))
     tick()
 
-    expect(result).toEqual({ clock: '14:00:30', uptime: 30 })
+    expect(result).toEqual({ clock: '14:00:30', uptime: 30, expired: 0 })
     expect(appState.app.clock).toBe('14:00:30')
     expect(appState.app.uptime).toBe(30)
   })
