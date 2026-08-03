@@ -38,6 +38,9 @@ export const PATHS = Object.freeze({
     version: 'app.version',
     engine: 'app.engine',
     bootedAt: 'app.bootedAt',
+    clock: 'app.clock',
+    uptime: 'app.uptime',
+    heartbeat: 'app.heartbeat',
   }),
   ui: Object.freeze({
     status: 'ui.status',
