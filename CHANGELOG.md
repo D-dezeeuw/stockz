@@ -10,7 +10,18 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ## [Unreleased]
 
-_Nothing yet — next entries land with phase 13 (Micro-Charts & Sparklines)._
+### Added
+
+- **Canvas core** — devicePixelRatio scaling (a blurry price is a misread price), a
+  palette read from the same CSS tokens the DOM uses, and a dirty-flag render loop that
+  skips the draw entirely when nothing changed. The pipeline coalesces state writes; the
+  chart coalesces draws, and that spare budget belongs to the order path. (F13.1, F13.8)
+- **Charts repaint on a theme flip** — canvas cannot inherit CSS custom properties, so a
+  chart drawn in phosphor green would stay green on a white background until something
+  redrew it. (F13.10)
+- **Chart scale maths** — price→y (inverted, because canvas grows down), index→x, padded
+  price ranges, candle geometry that keeps a doji visible, and gridlines snapped to round
+  numbers including quarter steps. (F13.1)
 
 ## [0.12.0] — 2026-08-03 — Phase 12: Watchlists & Instruments
 
