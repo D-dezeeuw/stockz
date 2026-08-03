@@ -126,16 +126,16 @@
 **What:** Instant feedback on unused vars, sloppy comparisons and style drift so reviews stay fast.
 **How:** Write eslint.config.js flat config using @eslint/js recommended rules with browser, worker and Vitest globals.
 
-- [ ] **T1.5.1 - Cut eslint feature branch** - What: Lint rollout cannot block other work in progress. How: Run git checkout -b feature/eslint from main.
-- [ ] **T1.5.2 - Install lint packages** - What: The rule engine and environment globals are locally available. How: Run npm install -D @eslint/js globals.
-- [ ] **T1.5.3 - Scaffold flat config** - What: A modern single-file lint setup with no legacy .eslintrc. How: Create eslint.config.js exporting an array starting with js.configs.recommended.
-- [ ] **T1.5.4 - Set language options** - What: The linter understands the exact runtime the app targets. How: Configure ecmaVersion 2024, sourceType module and globals.browser plus globals.worker.
-- [ ] **T1.5.5 - Tune core rules** - What: The riskiest bug patterns for a trading desk are hard errors. How: Enable no-unused-vars, prefer-const, no-var and eqeqeq at error level.
-- [ ] **T1.5.6 - Add tests override block** - What: Test files lint clean without imports for describe/it/expect. How: Add a config entry scoped to tests/**/*.test.js injecting Vitest globals.
-- [ ] **T1.5.7 - Set ignore patterns** - What: Lint runs stay fast by skipping generated output. How: Add an ignores entry for dist/, coverage/ and node_modules/.
-- [ ] **T1.5.8 - Lint the existing code** - What: A clean baseline so future diffs only show new issues. How: Run npm run lint:fix across the repo and hand-fix anything remaining.
-- [ ] **T1.5.9 - Verify rule enforcement** - What: Proof the config actually bites. How: Temporarily add an unused variable in src/main.js, confirm eslint fails, then revert it.
-- [ ] **T1.5.10 - Merge eslint branch** - What: Every future feature branch inherits the same guardrails. How: Merge feature/eslint into main once the repo lints clean.
+- [x] **T1.5.1 - Cut eslint feature branch** - What: Lint rollout cannot block other work in progress. How: Run git checkout -b feature/eslint from main.
+- [x] **T1.5.2 - Install lint packages** - What: The rule engine and environment globals are locally available. How: Run npm install -D @eslint/js globals.
+- [x] **T1.5.3 - Scaffold flat config** - What: A modern single-file lint setup with no legacy .eslintrc. How: Create eslint.config.js exporting an array starting with js.configs.recommended.
+- [x] **T1.5.4 - Set language options** - What: The linter understands the exact runtime the app targets. How: Configure ecmaVersion 2024, sourceType module and globals.browser plus globals.worker.
+- [x] **T1.5.5 - Tune core rules** - What: The riskiest bug patterns for a trading desk are hard errors. How: Enable no-unused-vars, prefer-const, no-var and eqeqeq at error level.
+- [x] **T1.5.6 - Add tests override block** - What: Test files lint clean without imports for describe/it/expect. How: Add a config entry scoped to tests/**/*.test.js injecting Vitest globals.
+- [x] **T1.5.7 - Set ignore patterns** - What: Lint runs stay fast by skipping generated output. How: Add an ignores entry for dist/, coverage/ and node_modules/.
+- [x] **T1.5.8 - Lint the existing code** - What: A clean baseline so future diffs only show new issues. How: Run npm run lint:fix across the repo and hand-fix anything remaining.
+- [x] **T1.5.9 - Verify rule enforcement** - What: Proof the config actually bites. How: Temporarily add an unused variable in src/main.js, confirm eslint fails, then revert it.
+- [x] **T1.5.10 - Merge eslint branch** - What: Every future feature branch inherits the same guardrails. How: Merge feature/eslint into main once the repo lints clean.
 
 ### F1.6 - Vitest Harness & One-Test-Per-Function Policy
 
