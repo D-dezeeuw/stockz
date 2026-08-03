@@ -3,48 +3,62 @@
 **There is no GitHub Actions in this repository — ever.** No workflow files, no
 `.github/workflows/`, no CI badges. Publishing is a deliberate local command.
 
-## Repository setting (one-time, required)
+## How it ships: push `main`, that's the deploy
 
-**Settings → Pages → Source: "Deploy from a branch" → Branch: `gh-pages`, folder
-`/ (root)`.**
-
-If Pages is pointed at `main` instead, the site serves the *source* `index.html` —
-which references `/src/main.js` and 404s, because the module graph is only resolved at
-build time. Symptom: the live page loads but every asset is missing. Check with
-`curl -s <url> | grep -oE 'src="[^"]*"'`: it must show `/stockz/assets/index-<hash>.js`,
-never `/src/main.js`.
-
-## How it ships
+**Pages source: "Deploy from a branch" → `main`, folder `/ (root)`.** The repository
+root *is* the website. There is no build in the deploy path and no `gh-pages` branch.
 
 ```bash
 npm run deploy
-# = vite build && bash scripts/publish-pages.sh
+# = git push origin main && bash scripts/verify-pages.sh
 ```
 
-`scripts/publish-pages.sh` builds a single orphan commit whose tree is **exactly**
-`dist/` (plus `.nojekyll`) and force-pushes it to `gh-pages`. It replaced a bare
-`gh-pages -d dist` call, which left repository dotfiles (`.claude/`, `.env.example`,
-`.gitignore`, `src/**/.gitkeep`) in the published branch — source files on a public
-site. Always verify after a deploy:
+This works because STOCKZ ships as what it already is: vanilla ES modules the browser
+loads natively, with Spektrum arriving from the unpkg CDN through the importmap. Nothing
+in `src/` needs transforming to run.
+
+### The rules that keep raw serving working
+
+Break one of these and the live site 404s while localhost stays happy:
+
+1. **Relative paths only in `index.html`** — `./src/main.js`, `./favicon.svg`. The site
+   lives under `/stockz/`, so a leading `/` escapes the prefix.
+2. **No build-tool-only syntax in shipped code** — no JSON imports
+   (`import pkg from '../package.json'`), no `?raw`/`?url` suffixes, no bare specifiers
+   except the ones declared in the importmap. `import.meta.env` is safe only behind a
+   guard (`import.meta.env?.DEV`), since it is undefined outside Vite.
+3. **Static assets at the repo root**, not in `public/` — Vite dev maps `public/` to
+   `/`, but a raw static server does not, so root is the only path that works in both.
+4. **Every import path is explicit and complete** — `./utils/env.js`, extension
+   included. The browser has no resolver.
+
+`npm run build` still exists as a sanity check and for `npm run preview`; `dist/` is
+never published.
+
+### Always verify after deploying
 
 ```bash
-git fetch -q origin gh-pages:refs/remotes/origin/gh-pages -f
-git ls-tree -r --name-only origin/gh-pages   # must be the build and nothing else
+npm run verify:pages
 ```
 
-- `vite.config.js` sets `base: '/stockz/'` so assets resolve under
-  `https://d-dezeeuw.github.io/stockz/`.
-- The [`gh-pages`](https://www.npmjs.com/package/gh-pages) npm package force-pushes
-  `dist/` to the `gh-pages` branch; GitHub Pages serves that branch.
-- `public/404.html` mirrors `index.html` so deep links survive Pages routing.
-- The importmap in the built `index.html` pins the exact Spektrum version
-  (`https://unpkg.com/spektrum@<x.y.z>/...`) — `@latest` is for dev only; a release
-  never shifts under the user.
+Checks the live page, its entry module and the favicon return 200, that no asset path is
+absolute, and that `#app` is present. Pushing is not evidence that it loads.
+
+Other standing rules:
+
+- `vite.config.js` still sets `base: '/stockz/'` for `npm run build` / `npm run preview`
+  — local checks only, never published.
+- `404.html` at the repo root mirrors `index.html` so deep links survive Pages routing
+  (added when routing arrives).
+- The importmap in `index.html` pins the exact Spektrum version
+  (`https://unpkg.com/spektrum@<x.y.z>/...`) before a release — `@1` is for dev only; a
+  live page must never shift under the user because a CDN published a new minor.
 
 ## Release ritual
 
 1. On `main`, all merged features green (per `testing-policy.md`).
-2. Bump version in `package.json`, add a CHANGELOG entry (keep-a-changelog style).
+2. Bump version in `package.json` **and `APP_VERSION` in `src/app/version.js`** (the
+   `appVersion` test fails if they drift), add a CHANGELOG entry.
 3. `npm run deploy` from the local checkout.
 4. Smoke check the live URL: page loads themed · key modal appears (or URL-param key
    accepted) · OKX LED green · ticks flowing · paper-mode order round-trips.
@@ -52,8 +66,9 @@ git ls-tree -r --name-only origin/gh-pages   # must be the build and nothing els
 
 ## Rollback
 
-`gh-pages` history is disposable: check out the previous tag and `npm run deploy`
-again. Never edit the `gh-pages` branch by hand.
+The site is `main`, so a rollback is a git revert: `git revert <bad commit>` (or
+`git reset --hard <tag>` on a branch you then merge) and push. Pages redeploys within a
+minute. Verify with `npm run verify:pages`.
 
 ## Access URLs
 

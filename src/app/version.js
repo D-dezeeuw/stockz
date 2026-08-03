@@ -1,11 +1,16 @@
-import pkg from '../../package.json'
+/**
+ * The running desk version.
+ *
+ * Declared as a literal rather than imported from package.json: the site is served as
+ * raw ES modules straight from the repo (no bundler in production), and a JSON import
+ * is a build-tool feature the browser would not resolve. `appVersion`'s single test
+ * asserts this constant still matches package.json, so the two cannot drift.
+ */
+export const APP_VERSION = '0.1.0'
 
 /**
- * The running desk version, sourced from the package manifest so a release bump
- * is the single place a version changes.
- *
  * @returns {string} semver string, e.g. '0.1.0'.
  */
 export function appVersion() {
-  return String(pkg.version)
+  return APP_VERSION
 }

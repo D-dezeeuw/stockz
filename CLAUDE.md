@@ -24,7 +24,8 @@ optimized for trades-per-hour.
 2. **Exactly one Vitest unit test per function.** When testing, run only that function's
    test — never the whole suite as routine. The merge gate additionally requires
    **> 80% coverage including branches** on the feature's files. See `testing-policy.md`.
-3. **No GitHub Actions.** Ever. Deploys go out locally via the `gh-pages` package.
+3. **No GitHub Actions.** Ever. GitHub Pages serves the `main` branch root — pushing is
+   deploying. The app ships as raw ES modules: no build step in the deploy path.
 4. **UI = Spektrum from unpkg CDN** (importmap, pinned major `spektrum@1`). No SPA framework.
 5. **Secrets never land in git.** Env vars `STOCKZ_OKX_*` / `STOCKZ_ETORO_*` are for local
    dev; in the browser keys come from URL params or the key modal.
@@ -44,6 +45,6 @@ the current phase in `.claude/context/masterplan.md`. That trio is the whole han
 ```bash
 npm run dev       # Vite dev server
 npm run build     # production build (GitHub Pages base path)
-npm run deploy    # build + publish dist/ to gh-pages branch (local, no CI)
+npm run deploy    # push main (the site) + verify the live page — no CI, no build step
 npx vitest run <file> -t "<functionName>"   # test exactly one function
 ```

@@ -18,7 +18,7 @@ one-test-per-function gate, safe env handling and a leveled logger with a dev ov
 | Feature | What now exists | Where |
 | --- | --- | --- |
 | F1.1 | repo skeleton, editorconfig, Node 22 pin, LF, ignore rules | root |
-| F1.2 | ESM manifest + 9 npm scripts (dev/build/preview/test/test:fn/lint/lint:fix/check:secrets/deploy) | `package.json` |
+| F1.2 | ESM manifest + npm scripts (dev/build/preview/test/test:fn/lint/lint:fix/check:secrets/deploy/verify:pages) | `package.json` |
 | F1.3 | mode-aware base (`/` dev, `/stockz/` prod), port 5173, es2022, `@`→src, Spektrum external | `vite.config.js` |
 | F1.4 | `mountApp`, `autoMount` — the boot path | `src/main.js` |
 | F1.5 | flat config; eqeqeq / no-var / prefer-const / no-unused-vars are errors | `eslint.config.js` |
@@ -41,24 +41,29 @@ First feature **F2.1**. The importmap in `index.html` is currently an empty plac
   `strategy.*`. **API keys never enter state** — they would land in history/serialize.
 - Spektrum is already `external` in the Rollup config, so the CDN import survives build.
 
-## Blocked on the owner (one setting)
+## Deployment model: Pages serves `main` root (owner's call)
 
-**GitHub Pages is serving from `main`, not `gh-pages`.** The live URL returns 200 but
-shows the *source* `index.html` (`src="/src/main.js"` → 404s), because Pages is pointed
-at the wrong branch. `gh-pages` itself is correct and current — six files, build only.
+**Pushing `main` is the deploy.** No `gh-pages` branch, no build step in the deploy
+path — the app ships as raw ES modules the browser loads natively, with Spektrum coming
+from the unpkg CDN via the importmap. `npm run deploy` = push + `verify:pages`.
 
-Fix: **Settings → Pages → Source: Deploy from a branch → `gh-pages` / `(root)`.**
-Nothing in the codebase can work around this; verify afterwards that
-`curl -s https://d-dezeeuw.github.io/stockz/ | grep -oE 'src="[^"]*"'` shows
-`/stockz/assets/index-<hash>.js`.
+Four rules keep raw serving working (breaking one 404s the live site while localhost
+stays happy): relative paths in `index.html`; no build-tool-only syntax in shipped code
+(no JSON imports, no `?raw`, `import.meta.env` only behind `?.`); static assets at the
+repo root, not `public/`; complete import paths with extensions.
 
 ## Gotchas (learned the hard way — do not rediscover)
 
-- **`gh-pages -d dist` leaked the repo onto the public branch** — its remove step spared
-  dotfiles, so `.claude/`, `.env.example`, `.gitignore` and `src/**/.gitkeep` were
-  published. Replaced by `scripts/publish-pages.sh` (orphan commit = exactly `dist/`,
-  force-pushed). Always verify the published tree after deploying.
-
+- **A push is not evidence the site loads.** The first deploy served a page that
+  returned 200 while every asset 404'd (absolute `/src/main.js` under the `/stockz/`
+  prefix). `npm run verify:pages` exists to catch exactly that; run it after every
+  deploy.
+- **Simulate Pages before trusting a deploy**: copy tracked files into `<tmp>/stockz/`,
+  `python3 -m http.server`, load `http://localhost:PORT/stockz/` in headless Chromium.
+  That reproduces the prefix and the no-bundler environment; the Vite dev server does
+  not.
+- `public/` is a Vite-only convention (mapped to `/` in dev). With raw serving it is a
+  literal path, so static assets live at the repo root instead.
 - **Vite's env bag coerces assigned values to strings.** Injecting a non-string into
   `import.meta.env` in a test is impossible; that is why `readEnv(name, bag)` takes an
   injectable bag. Prefer injectable sources over ambient globals — it is what keeps
@@ -81,6 +86,13 @@ Nothing in the codebase can work around this; verify afterwards that
   fixtures and `CONVENTIONS.md` only.
 - **No separate `vitest.config.js`** — Vitest reads `vite.config.js` natively, so the
   test config lives there.
+- **No `gh-pages` package / branch** — phase 30's plan text assumes publishing `dist/`
+  to a `gh-pages` branch. The owner's Pages setting serves `main` root instead, so the
+  deploy is a push and the build is a local check only. Revise phase 30 accordingly when
+  it comes up; do not "restore" gh-pages.
+- **`appVersion` reads a literal `APP_VERSION`**, not a JSON import — browsers cannot
+  resolve `import pkg from '../../package.json'` unbundled. Its single test asserts the
+  constant still equals `package.json`, so they cannot drift.
 - **Commits are authored as Danny de Zeeuw** (`danny@nekomedia.nl`), never a bot
   identity. The CCR stop-hook flags these as "Unverified"; that is expected and
   accepted. The hook's whitelist could not be patched from inside the session (blocked

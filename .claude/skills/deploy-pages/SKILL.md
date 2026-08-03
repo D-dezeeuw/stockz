@@ -1,43 +1,56 @@
 ---
 name: deploy-pages
-description: Ship STOCKZ to GitHub Pages with the local gh-pages deploy - build, publish, smoke-check, tag, rollback. Use for releases and Pages issues. Never via GitHub Actions.
+description: Ship STOCKZ to GitHub Pages - push main (the site), verify the live page, tag and roll back. Use for releases and Pages issues. Never via GitHub Actions.
 ---
 
 # Deploy to GitHub Pages
 
-No CI. No GitHub Actions. Deploys are a local, deliberate command from a clean `main`.
-Full context: `.claude/context/deployment.md`.
+No CI. No build step. **GitHub Pages serves the `main` branch root, so pushing `main`
+is the deploy.** Full context: `.claude/context/deployment.md`.
 
 ## Ship it
 
 ```bash
 git checkout main && git pull origin main
-npm version patch            # or minor/major; updates package.json + tag
-# edit CHANGELOG.md: move Unreleased -> new version
-npm run deploy               # vite build && gh-pages -d dist
-git push origin main --tags
+npm run deploy          # git push origin main && bash scripts/verify-pages.sh
 ```
 
-Prerequisites checked before every deploy:
-- `vite.config.js` has `base: '/stockz/'` (repo-name path for project Pages).
-- Built `index.html` importmap pins an **exact** spektrum version — no `@1`, no
-  `@latest` in production.
-- `public/404.html` exists (SPA fallback).
-- No `.github/workflows/` directory exists. If one appeared, delete it in the same
-  commit and mention it.
+For a version release, first bump `package.json` **and** `APP_VERSION` in
+`src/app/version.js` (the `appVersion` test fails if they drift), add a CHANGELOG entry,
+then deploy and `git tag v<x.y.z> && git push --tags`.
 
-## Smoke check (the live URL, ~2 minutes)
+## Why raw source works
 
-1. Page loads with cached theme, no flash, no console errors.
-2. No keys → key modal appears; with `?okxKey=...` → URL scrubbed, session live.
-3. OKX LED green, watchlist ticking, chart moving.
-4. Paper mode: place + flatten one order, journal records it.
-5. Day/night toggle persists across reload.
+STOCKZ is vanilla ES modules the browser loads natively; Spektrum arrives from the unpkg
+CDN through the importmap. Nothing needs transforming — which is why the deploy has no
+build. The cost is four rules that must hold in every commit:
+
+1. **Relative paths in `index.html`** (`./src/main.js`) — the site lives under
+   `/stockz/`, so a leading `/` escapes the prefix.
+2. **No build-tool-only syntax in shipped code** — no JSON imports, no `?raw`/`?url`,
+   no bare specifiers outside the importmap; `import.meta.env` only behind `?.`.
+3. **Static assets at the repo root**, not `public/` (Vite dev maps `public/` to `/`, a
+   static server does not).
+4. **Complete import paths with extensions** — the browser has no resolver.
+
+`npm run build` remains for local sanity checks and `npm run preview`; `dist/` is never
+published and is gitignored.
+
+## Verify — every time
+
+```bash
+npm run verify:pages
+```
+
+Asserts the live page, `src/main.js` and `favicon.svg` return 200, that no asset path is
+absolute, and that `#app` is present. A push is not evidence that the site loads: the
+classic failure is localhost working while the live page 404s on every asset.
+
+Also smoke it by eye at least once per phase: themed load, no console errors, and
+whatever that phase added.
 
 ## Rollback
 
-```bash
-git checkout v<previous> && npm ci && npm run deploy && git checkout main
-```
-
-The `gh-pages` branch is generated output — never edit or merge it manually.
+The site is `main`, so rolling back is `git revert <commit>` (or reset a branch to the
+last good tag and merge it) followed by a push. Pages picks it up within a minute;
+confirm with `npm run verify:pages`.
