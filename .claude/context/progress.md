@@ -5,11 +5,23 @@ in `masterplan.md`, and knows where the project stands. Rewritten at every phase
 
 ---
 
-## Status: Phase 11 closed (v0.11.0) · Phase 12 next
+## Status: Phase 12 closed (v0.12.0) · Phase 13 next
 
 **Live:** https://d-dezeeuw.github.io/stockz/ (Pages serves `main` root — pushing is deploying)
-**Tests:** 234, one per function, all passing individually. Every gated file ≥85% branches.
+**Tests:** 262, one per function, all passing individually. Every gated file ≥85% branches.
 **Branch model:** everything merges to `main`; no feature branches outstanding.
+
+## Phase 12 — Watchlists & Instruments (closed)
+
+| Feature | What now exists | Where |
+| --- | --- | --- |
+| F12.1, F12.8 | `createList`, `renameList`, `deleteList`, `addSymbol`, `removeSymbol`, `reorderSymbol`, `findList`, `qualifySymbol`, `splitSymbol` | `src/lists/ops.js` |
+| F12.2, F12.5, F12.9 | `seedLists`, `activeList`, `setActiveList`, `focusSymbol`, `addToList`, `removeFromList`, `moveInList`, `manageList` | `src/lists/state.js` |
+| F12.6, F12.7 | `buildRow`, `buildRows` (frame-based pulse), `sparklinePoints`, `sparklinePath` | `src/lists/rows.js` |
+| F12.4 | `fuzzyScore`, `searchInstruments` | `src/lists/search.js` |
+
+Symbols are **venue-qualified** (`okx:BTC-USDT`) everywhere past this point.
+`market.focus` holds a qualified symbol and is **not** persisted.
 
 ## Phase 11 — Real-Time Market Data Pipeline (closed)
 
@@ -160,22 +172,26 @@ go stale, and faults that reach the trader instead of the console.
 | F2.9 | `pushToast`, `dismissToast`, `expireToasts`, `describeEngineError`, `wireEngineErrors` | `src/ui/toast.js` |
 | F2.10 | `collectExpressions`, `renderPrecompileModule`, `cspMeta`, `npm run build:csp` | `src/app/csp.js`, `docs/csp.md` |
 
-## Next up: Phase 12 — Watchlists & Instruments
+## Next up: Phase 13 — Micro-Charts & Sparklines
 
-First feature **F12.1**. The pipeline is complete but **no venue client is started at
-boot** — `bootstrap.js` never calls `createOkxSocket` or the EToro poller, so the desk
-runs on seeded state only. Phase 12 (or the first feature that needs live data) should
-wire that: create the socket, `setVenueState`, subscribe, and route frames through
-`ingest`.
+First feature **F13.1**. Canvas work: `sparklinePath` (SVG) exists for rows, but there is
+no canvas renderer yet.
 
-For phase 12 itself:
+- Canvas core needs devicePixelRatio scaling and a `ResizeObserver` — `observeLayout` in
+  `src/blocks/layout.js` shows the injection pattern to copy.
+- Data comes from `candles()` / `recentTrades()` in `src/pipeline/`; no new state needed.
+- **`onThemeRepaint` in `src/state/systems.js` is the seam** — canvas cannot inherit CSS
+  custom properties, so renderers must subscribe and repaint on a theme flip.
+- A dirty-flag rAF loop: do nothing when nothing changed. The pipeline already coalesces
+  writes, so the chart should coalesce draws.
+- Pure scale/transform maths (price→y, time→x) is where the single tests go; the draw
+  calls themselves stay a thin untested edge.
 
-- Watchlist CRUD in `settings.*` (persisted), rendered with `data-each` — remember
-  Spektrum's container-not-template rule.
-- Fuzzy symbol search across both venues; OKX has no catalogue fetch yet, EToro has
-  `learnInstruments`/`symbolFor`.
-- `market.focus` already exists and drives what the pipeline flushes.
-- Row cells want `latestTick`/`recentTrades` from the bus, and `fmt.*` for display.
+### Still outstanding across phases
+**No venue client is started at boot.** `bootstrap.js` still never calls
+`createOkxSocket`, so the desk runs on seeded state. Everything needed exists
+(`createOkxSocket`, `ingest`, `setVenueState`, `subscribeFrame`); this is a wiring job
+worth doing before any phase that needs live prices on screen.
 
 ## Gotchas (learned the hard way — do not rediscover)
 
