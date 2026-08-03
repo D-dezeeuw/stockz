@@ -9,6 +9,7 @@ import {
   stopSystems,
   onThemeChange,
   makeSpreadWatcher,
+  onThemeRepaint,
 } from './systems.js'
 import { appState, setValue, tick, resetState } from '../app/engine.js'
 import { PATHS } from './paths.js'
@@ -156,5 +157,26 @@ describe('makeSpreadWatcher', () => {
     expect(warnings).toHaveLength(2)
 
     expect(watcher(null)).toBe(false)
+  })
+})
+
+describe('onThemeRepaint', () => {
+  it('lets canvas renderers repaint on a palette flip, and unsubscribe cleanly', () => {
+    const seen = []
+    const stop = onThemeRepaint((theme) => seen.push(theme))
+
+    // A canvas drawn in phosphor green stays green on white until it is redrawn.
+    onThemeChange({ ui: { theme: 'day' } })
+    expect(seen).toEqual(['day'])
+
+    onThemeChange({ ui: { theme: 'night' } })
+    expect(seen).toEqual(['day', 'night'])
+
+    stop()
+    onThemeChange({ ui: { theme: 'day' } })
+    expect(seen).toHaveLength(2)
+
+    // A non-function registration is ignored rather than breaking the loop.
+    expect(() => onThemeRepaint(null)()).not.toThrow()
   })
 })

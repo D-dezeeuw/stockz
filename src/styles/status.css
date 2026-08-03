@@ -85,3 +85,28 @@ a:focus-visible,
     transition-duration: 0.01ms !important;
   }
 }
+
+/*
+ * Theme crossfade. Only surface and text colours transition — a 150ms fade on the whole
+ * page would drag the price cells with it, and a price that fades between values is a
+ * price you cannot read at speed.
+ */
+html,
+body,
+.app-header,
+.app-footer,
+.block,
+.block__bar {
+  transition:
+    background-color var(--dur-normal) var(--ease-out),
+    border-color var(--dur-normal) var(--ease-out),
+    color var(--dur-normal) var(--ease-out);
+}
+
+/* Numbers never fade: they must be legible in every frame of the switch. */
+.price,
+.pnl,
+.tnum,
+.num {
+  transition: none;
+}

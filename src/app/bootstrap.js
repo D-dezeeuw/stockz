@@ -10,6 +10,7 @@ import { seedBlocks } from '../blocks/seed.js'
 import { registerLayoutActions, observeLayout } from '../blocks/layout.js'
 import { registerHeaderActions } from '../ui/header.js'
 import { registerThemeActions, applyTheme, preferredTheme } from '../ui/theme.js'
+import { restoreSettings, persistSettings } from '../state/persist.js'
 import { appVersion } from './version.js'
 
 /**
@@ -37,6 +38,11 @@ export function bootstrap(options = {}) {
   })
 
   for (const [path, value] of Object.entries(state)) setValue(path, value)
+
+  // Stored preferences land before anything binds, so the first paint is already the
+  // trader's layout and theme rather than defaults that visibly change a frame later.
+  restoreSettings()
+  persistSettings()
 
   // Actions and derivations must exist before bindDOM: data-fn attributes would bind to
   // nothing, and derived paths would render as blanks on the first paint.

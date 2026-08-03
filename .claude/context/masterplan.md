@@ -897,160 +897,160 @@
 **What:** The chosen theme survives reloads, restarts and even other tabs, so night mode is set once and stays.
 **How:** A ui.theme value in Spektrum synced to localStorage through spektrum/persist, with a validated setTheme function and a theme:changed trigger.
 
-- [ ] **T6.1.1 - Cut theme state branch** - What: State work isolated until proven. How: git checkout -b feature/theme-state from freshly pulled main.
-- [ ] **T6.1.2 - Scaffold state module** - What: One home for all theme state logic. How: Create src/theme/state.js registering ui.theme with setValue and a 'night' default.
-- [ ] **T6.1.3 - Implement setTheme** - What: Theme changes go through one validated gate. How: setTheme(name) accepting only 'day', 'night' or 'auto', ignoring anything else, then calling setValue.
-- [ ] **T6.1.4 - Wire persist sync** - What: The choice written to disk automatically. How: Configure spektrum/persist to mirror ui.theme under the stockz.settings localStorage namespace.
-- [ ] **T6.1.5 - Sanitize stored values** - What: A corrupted localStorage entry can never break boot. How: sanitizeTheme(raw) coercing unknown persisted strings back to 'night' before first setValue.
-- [ ] **T6.1.6 - Broadcast changes** - What: Every subsystem hears about theme flips the same way. How: Fire Spektrum trigger('theme:changed', name) at the end of every successful setTheme.
-- [ ] **T6.1.7 - Stamp root attribute** - What: CSS can select palettes off a single attribute. How: watch('ui.theme') writing document.documentElement.dataset.theme on every change.
-- [ ] **T6.1.8 - Verify multi-tab sync** - What: Flipping theme in one tab flips all tabs. How: Open two Vite dev tabs and confirm the spektrum/persist storage-event sync updates both.
-- [ ] **T6.1.9 - Unit-test state functions** - What: setTheme and sanitizeTheme each pinned by one test. How: One Vitest test per function, run via vitest run -t setTheme and -t sanitizeTheme.
-- [ ] **T6.1.10 - Merge state branch** - What: The theme backbone available on main. How: Merge feature/theme-state after the two targeted tests and eslint come back clean.
+- [x] **T6.1.1 - Cut theme state branch** - What: State work isolated until proven. How: git checkout -b feature/theme-state from freshly pulled main.
+- [x] **T6.1.2 - Scaffold state module** - What: One home for all theme state logic. How: Create src/theme/state.js registering ui.theme with setValue and a 'night' default.
+- [x] **T6.1.3 - Implement setTheme** - What: Theme changes go through one validated gate. How: setTheme(name) accepting only 'day', 'night' or 'auto', ignoring anything else, then calling setValue.
+- [x] **T6.1.4 - Wire persist sync** - What: The choice written to disk automatically. How: Configure spektrum/persist to mirror ui.theme under the stockz.settings localStorage namespace.
+- [x] **T6.1.5 - Sanitize stored values** - What: A corrupted localStorage entry can never break boot. How: sanitizeTheme(raw) coercing unknown persisted strings back to 'night' before first setValue.
+- [x] **T6.1.6 - Broadcast changes** - What: Every subsystem hears about theme flips the same way. How: Fire Spektrum trigger('theme:changed', name) at the end of every successful setTheme.
+- [x] **T6.1.7 - Stamp root attribute** - What: CSS can select palettes off a single attribute. How: watch('ui.theme') writing document.documentElement.dataset.theme on every change.
+- [x] **T6.1.8 - Verify multi-tab sync** - What: Flipping theme in one tab flips all tabs. How: Open two Vite dev tabs and confirm the spektrum/persist storage-event sync updates both.
+- [x] **T6.1.9 - Unit-test state functions** - What: setTheme and sanitizeTheme each pinned by one test. How: One Vitest test per function, run via vitest run -t setTheme and -t sanitizeTheme.
+- [x] **T6.1.10 - Merge state branch** - What: The theme backbone available on main. How: Merge feature/theme-state after the two targeted tests and eslint come back clean.
 
 ### F6.2 - Sun/moon header toggle
 
 **What:** A satisfying one-click sun/moon switch exactly where the header reserved space for it.
 **How:** A toggle component mounted through the phase 5 mountThemeSlot, swapping SVG icons and routing clicks into setTheme.
 
-- [ ] **T6.2.1 - Branch toggle work** - What: Toggle built without disturbing main. How: git checkout -b feature/theme-toggle off main.
-- [ ] **T6.2.2 - Scaffold toggle component** - What: A self-contained control ready for the header. How: src/theme/toggle.js exporting createThemeToggle() returning a button element, passed to mountThemeSlot.
-- [ ] **T6.2.3 - Draw sun and moon** - What: Instantly readable mode iconography. How: themeToggleSvg(theme) returning a sun path for night (tap for day) and moon path for day.
-- [ ] **T6.2.4 - Route toggle clicks** - What: Clicks flip day and night reliably. How: onToggleTheme() reading ui.theme and calling setTheme with the opposite value, bound via data-action.
-- [ ] **T6.2.5 - Swap icon reactively** - What: The icon always shows the next mode, never a stale one. How: Spektrum computed re-rendering the button innerHTML from themeToggleSvg on ui.theme change.
-- [ ] **T6.2.6 - Animate the flip** - What: A delightful 150ms rotate-fade on switch. How: CSS transition on transform and opacity keyed off a data-theme attribute on the button.
-- [ ] **T6.2.7 - Label for a11y** - What: Screen readers announce the action, not the icon. How: Dynamic aria-label "Switch to day theme"/"Switch to night theme" plus aria-pressed binding.
-- [ ] **T6.2.8 - Consume theme:toggle trigger** - What: The phase 5 placeholder event and future hotkey both work. How: Subscribe to trigger('theme:toggle') and route it into onToggleTheme.
-- [ ] **T6.2.9 - Unit-test toggle functions** - What: themeToggleSvg and onToggleTheme each held by one test. How: One Vitest test per function, run with vitest run -t themeToggleSvg and -t onToggleTheme.
-- [ ] **T6.2.10 - Merge toggle branch** - What: The real switch replaces the placeholder on main. How: Click-test both directions in Vite dev, then merge feature/theme-toggle.
+- [x] **T6.2.1 - Branch toggle work** - What: Toggle built without disturbing main. How: git checkout -b feature/theme-toggle off main.
+- [x] **T6.2.2 - Scaffold toggle component** - What: A self-contained control ready for the header. How: src/theme/toggle.js exporting createThemeToggle() returning a button element, passed to mountThemeSlot.
+- [x] **T6.2.3 - Draw sun and moon** - What: Instantly readable mode iconography. How: themeToggleSvg(theme) returning a sun path for night (tap for day) and moon path for day.
+- [x] **T6.2.4 - Route toggle clicks** - What: Clicks flip day and night reliably. How: onToggleTheme() reading ui.theme and calling setTheme with the opposite value, bound via data-action.
+- [x] **T6.2.5 - Swap icon reactively** - What: The icon always shows the next mode, never a stale one. How: Spektrum computed re-rendering the button innerHTML from themeToggleSvg on ui.theme change.
+- [x] **T6.2.6 - Animate the flip** - What: A delightful 150ms rotate-fade on switch. How: CSS transition on transform and opacity keyed off a data-theme attribute on the button.
+- [x] **T6.2.7 - Label for a11y** - What: Screen readers announce the action, not the icon. How: Dynamic aria-label "Switch to day theme"/"Switch to night theme" plus aria-pressed binding.
+- [x] **T6.2.8 - Consume theme:toggle trigger** - What: The phase 5 placeholder event and future hotkey both work. How: Subscribe to trigger('theme:toggle') and route it into onToggleTheme.
+- [x] **T6.2.9 - Unit-test toggle functions** - What: themeToggleSvg and onToggleTheme each held by one test. How: One Vitest test per function, run with vitest run -t themeToggleSvg and -t onToggleTheme.
+- [x] **T6.2.10 - Merge toggle branch** - What: The real switch replaces the placeholder on main. How: Click-test both directions in Vite dev, then merge feature/theme-toggle.
 
 ### F6.3 - Night palette tokens
 
 **What:** The signature money-hacker look: near-black depths, phosphor green text, hot orange highlights.
 **How:** A :root[data-theme="night"] custom-property set in night.css plus a matching nightPalette() JS object for canvas renderers.
 
-- [ ] **T6.3.1 - Branch night palette** - What: Palette work reviewable in isolation. How: git checkout -b feature/theme-night from main.
-- [ ] **T6.3.2 - Create night.css** - What: A single stylesheet owning every dark token. How: src/theme/night.css with a :root[data-theme="night"] block, imported from the main style entry.
-- [ ] **T6.3.3 - Set core tokens** - What: The base canvas of the night look. How: --bg near-black #060a08, --fg phosphor green #2bff9e, --accent hot orange #ff7a1a.
-- [ ] **T6.3.4 - Layer semantic tokens** - What: Consistent panels, borders and states everywhere. How: --bg-panel, --border, --muted, --up, --down defined from the core trio, never raw hex in components.
-- [ ] **T6.3.5 - Define chart tokens** - What: Hand-rolled canvas charts share the exact palette. How: --chart-grid, --chart-up, --chart-down, --chart-crosshair tokens scoped in the same block.
-- [ ] **T6.3.6 - Tune glow tokens** - What: Wordmark, LEDs and flashes glow with one dial. How: --glow-green and --glow-orange rgba values sized for dark backgrounds.
-- [ ] **T6.3.7 - Mirror palette in JS** - What: Canvas code reads colors without touching getComputedStyle per frame. How: nightPalette() in src/theme/palettes.js returning the same hex values as night.css.
-- [ ] **T6.3.8 - Style selection and scrollbars** - What: Even browser chrome feels like the terminal. How: ::selection green-on-black and scrollbar-color declarations inside the night block.
-- [ ] **T6.3.9 - Unit-test nightPalette** - What: The JS mirror pinned by its single test. How: One Vitest test asserting required keys and hex format, run via vitest run -t nightPalette.
-- [ ] **T6.3.10 - Merge night branch** - What: The dark identity live on main. How: Visual pass over header, grid and ticker in Vite dev, then merge feature/theme-night.
+- [x] **T6.3.1 - Branch night palette** - What: Palette work reviewable in isolation. How: git checkout -b feature/theme-night from main.
+- [x] **T6.3.2 - Create night.css** - What: A single stylesheet owning every dark token. How: src/theme/night.css with a :root[data-theme="night"] block, imported from the main style entry.
+- [x] **T6.3.3 - Set core tokens** - What: The base canvas of the night look. How: --bg near-black #060a08, --fg phosphor green #2bff9e, --accent hot orange #ff7a1a.
+- [x] **T6.3.4 - Layer semantic tokens** - What: Consistent panels, borders and states everywhere. How: --bg-panel, --border, --muted, --up, --down defined from the core trio, never raw hex in components.
+- [x] **T6.3.5 - Define chart tokens** - What: Hand-rolled canvas charts share the exact palette. How: --chart-grid, --chart-up, --chart-down, --chart-crosshair tokens scoped in the same block.
+- [x] **T6.3.6 - Tune glow tokens** - What: Wordmark, LEDs and flashes glow with one dial. How: --glow-green and --glow-orange rgba values sized for dark backgrounds.
+- [x] **T6.3.7 - Mirror palette in JS** - What: Canvas code reads colors without touching getComputedStyle per frame. How: nightPalette() in src/theme/palettes.js returning the same hex values as night.css.
+- [x] **T6.3.8 - Style selection and scrollbars** - What: Even browser chrome feels like the terminal. How: ::selection green-on-black and scrollbar-color declarations inside the night block.
+- [x] **T6.3.9 - Unit-test nightPalette** - What: The JS mirror pinned by its single test. How: One Vitest test asserting required keys and hex format, run via vitest run -t nightPalette.
+- [x] **T6.3.10 - Merge night branch** - What: The dark identity live on main. How: Visual pass over header, grid and ticker in Vite dev, then merge feature/theme-night.
 
 ### F6.4 - Day palette tokens
 
 **What:** A bright, low-glare daytime look that keeps the green/orange identity fully readable.
 **How:** A :root[data-theme="day"] token set with deepened brand colors, identical property names to night, and a dayPalette() JS mirror.
 
-- [ ] **T6.4.1 - Branch day palette** - What: Day tokens developed beside a stable night set. How: git checkout -b feature/theme-day off main.
-- [ ] **T6.4.2 - Create day.css** - What: A dedicated stylesheet for the light mode. How: src/theme/day.css with a :root[data-theme="day"] block imported next to night.css.
-- [ ] **T6.4.3 - Set light core tokens** - What: A calm paper-like base for daylight use. How: --bg off-white #f4f6f4, --fg near-black ink #101410, panels a shade darker than --bg.
-- [ ] **T6.4.4 - Deepen brand colors** - What: Green and orange stay on-brand yet legible on light. How: --accent-green #0a7d4f and --accent hot orange #c65a11 chosen for light-background contrast.
-- [ ] **T6.4.5 - Keep token name parity** - What: Zero component code branches on theme. How: Define exactly the same custom-property names as night.css, values only differing.
-- [ ] **T6.4.6 - Soften glows for day** - What: No neon smear on white backgrounds. How: Replace drop-shadow glows with subtle box-shadow elevation values in the day block.
-- [ ] **T6.4.7 - Mirror day palette in JS** - What: Charts get day colors from the same source pattern. How: dayPalette() added to src/theme/palettes.js matching day.css hex for hex.
-- [ ] **T6.4.8 - Check token parity** - What: A missing day token can never fall through to night. How: checkTokenParity(a, b) comparing key sets of both palettes and returning the diff.
-- [ ] **T6.4.9 - Unit-test day functions** - What: dayPalette and checkTokenParity each locked by one test. How: One Vitest test per function, run via vitest run -t dayPalette and -t checkTokenParity.
-- [ ] **T6.4.10 - Merge day branch** - What: Both looks complete on main. How: Flip themes in Vite dev checking every header element, then merge feature/theme-day.
+- [x] **T6.4.1 - Branch day palette** - What: Day tokens developed beside a stable night set. How: git checkout -b feature/theme-day off main.
+- [x] **T6.4.2 - Create day.css** - What: A dedicated stylesheet for the light mode. How: src/theme/day.css with a :root[data-theme="day"] block imported next to night.css.
+- [x] **T6.4.3 - Set light core tokens** - What: A calm paper-like base for daylight use. How: --bg off-white #f4f6f4, --fg near-black ink #101410, panels a shade darker than --bg.
+- [x] **T6.4.4 - Deepen brand colors** - What: Green and orange stay on-brand yet legible on light. How: --accent-green #0a7d4f and --accent hot orange #c65a11 chosen for light-background contrast.
+- [x] **T6.4.5 - Keep token name parity** - What: Zero component code branches on theme. How: Define exactly the same custom-property names as night.css, values only differing.
+- [x] **T6.4.6 - Soften glows for day** - What: No neon smear on white backgrounds. How: Replace drop-shadow glows with subtle box-shadow elevation values in the day block.
+- [x] **T6.4.7 - Mirror day palette in JS** - What: Charts get day colors from the same source pattern. How: dayPalette() added to src/theme/palettes.js matching day.css hex for hex.
+- [x] **T6.4.8 - Check token parity** - What: A missing day token can never fall through to night. How: checkTokenParity(a, b) comparing key sets of both palettes and returning the diff.
+- [x] **T6.4.9 - Unit-test day functions** - What: dayPalette and checkTokenParity each locked by one test. How: One Vitest test per function, run via vitest run -t dayPalette and -t checkTokenParity.
+- [x] **T6.4.10 - Merge day branch** - What: Both looks complete on main. How: Flip themes in Vite dev checking every header element, then merge feature/theme-day.
 
 ### F6.5 - OS preference first-boot default
 
 **What:** First visit already looks right: the app opens matching the OS dark or light preference.
 **How:** matchMedia('(prefers-color-scheme: dark)') resolved through pure functions, applied only when no persisted choice exists, with an auto mode.
 
-- [ ] **T6.5.1 - Branch OS default work** - What: Preference logic isolated from the stores. How: git checkout -b feature/theme-os-default from main.
-- [ ] **T6.5.2 - Write detect function** - What: OS preference read through one testable seam. How: detectPreferredTheme(mqlDark) in src/theme/os.js mapping matches true to 'night', false to 'day'.
-- [ ] **T6.5.3 - Write resolve function** - What: One precedence rule: stored choice beats OS beats night. How: resolveBootTheme(stored, prefersDark) returning the effective theme for boot.
-- [ ] **T6.5.4 - Apply on first boot** - What: Fresh browsers land on the right side automatically. How: Call resolveBootTheme during state init, only writing ui.theme when persist had no value.
-- [ ] **T6.5.5 - Implement auto mode** - What: 'auto' keeps following the OS as it changes at dusk. How: matchMedia change listener re-running setTheme resolution while ui.theme is 'auto'.
-- [ ] **T6.5.6 - Exit auto on manual flip** - What: A deliberate toggle always wins over the OS. How: onToggleTheme sets an explicit 'day'/'night', which persist stores and auto logic then skips.
-- [ ] **T6.5.7 - Expose auto in settings** - What: Users can hand control back to the OS later. How: Register an 'auto' choice in the phase 7 settings model options for theme.
-- [ ] **T6.5.8 - Fallback without matchMedia** - What: Ancient or headless environments still boot cleanly. How: Guard for undefined window.matchMedia defaulting straight to 'night'.
-- [ ] **T6.5.9 - Unit-test preference functions** - What: detectPreferredTheme and resolveBootTheme each with one test. How: One Vitest test per function with stubbed mql objects, run per name via vitest run -t.
-- [ ] **T6.5.10 - Merge OS default branch** - What: Smart first-boot behavior on main. How: Test with cleared localStorage in both OS modes, then merge feature/theme-os-default.
+- [x] **T6.5.1 - Branch OS default work** - What: Preference logic isolated from the stores. How: git checkout -b feature/theme-os-default from main.
+- [x] **T6.5.2 - Write detect function** - What: OS preference read through one testable seam. How: detectPreferredTheme(mqlDark) in src/theme/os.js mapping matches true to 'night', false to 'day'.
+- [x] **T6.5.3 - Write resolve function** - What: One precedence rule: stored choice beats OS beats night. How: resolveBootTheme(stored, prefersDark) returning the effective theme for boot.
+- [x] **T6.5.4 - Apply on first boot** - What: Fresh browsers land on the right side automatically. How: Call resolveBootTheme during state init, only writing ui.theme when persist had no value.
+- [x] **T6.5.5 - Implement auto mode** - What: 'auto' keeps following the OS as it changes at dusk. How: matchMedia change listener re-running setTheme resolution while ui.theme is 'auto'.
+- [x] **T6.5.6 - Exit auto on manual flip** - What: A deliberate toggle always wins over the OS. How: onToggleTheme sets an explicit 'day'/'night', which persist stores and auto logic then skips.
+- [x] **T6.5.7 - Expose auto in settings** - What: Users can hand control back to the OS later. How: Register an 'auto' choice in the phase 7 settings model options for theme.
+- [x] **T6.5.8 - Fallback without matchMedia** - What: Ancient or headless environments still boot cleanly. How: Guard for undefined window.matchMedia defaulting straight to 'night'.
+- [x] **T6.5.9 - Unit-test preference functions** - What: detectPreferredTheme and resolveBootTheme each with one test. How: One Vitest test per function with stubbed mql objects, run per name via vitest run -t.
+- [x] **T6.5.10 - Merge OS default branch** - What: Smart first-boot behavior on main. How: Test with cleared localStorage in both OS modes, then merge feature/theme-os-default.
 
 ### F6.6 - No-flash theme boot
 
 **What:** Never a white flash at night or a black flash by day: the correct palette is set before the first paint.
 **How:** A tiny inline script in the index.html head reading localStorage and prefers-color-scheme synchronously before any stylesheet applies.
 
-- [ ] **T6.6.1 - Branch no-flash work** - What: Boot path changes reviewed on their own. How: git checkout -b feature/theme-noflash off main.
-- [ ] **T6.6.2 - Add inline head script** - What: Theme decided before CSS even loads. How: Place a small inline script tag in index.html above the stylesheet links.
-- [ ] **T6.6.3 - Read storage safely** - What: Boot never crashes on blocked or corrupt storage. How: try/catch around localStorage.getItem('stockz.settings') with JSON.parse inside the snippet.
-- [ ] **T6.6.4 - Fall back to OS query** - What: First-time visitors get the no-flash treatment too. How: Inline matchMedia('(prefers-color-scheme: dark)') check when no stored theme is found.
-- [ ] **T6.6.5 - Stamp theme pre-paint** - What: CSS selectors match from the very first frame. How: Set document.documentElement.dataset.theme synchronously at the end of the snippet.
-- [ ] **T6.6.6 - Keep snippet CSP-safe** - What: The script survives a strict spektrum/compile CSP build. How: Plain statements only, no eval or Function, and record the script hash in a code comment.
-- [ ] **T6.6.7 - Share pure boot logic** - What: App and snippet agree on one resolution algorithm. How: readBootTheme(raw, prefersDark) in src/theme/boot.js with a sync-with-snippet comment on both sides.
-- [ ] **T6.6.8 - Verify zero flash** - What: Proof the flash is gone on slow connections. How: Chrome DevTools 3G throttled reloads in both themes watching the first rendered frame.
-- [ ] **T6.6.9 - Unit-test readBootTheme** - What: Boot resolution pinned by its single test. How: One Vitest test over stored, empty and corrupt inputs, run via vitest run -t readBootTheme.
-- [ ] **T6.6.10 - Merge no-flash branch** - What: Flicker-free boots for everyone on main. How: Merge feature/theme-noflash after the targeted test and throttled checks pass.
+- [x] **T6.6.1 - Branch no-flash work** - What: Boot path changes reviewed on their own. How: git checkout -b feature/theme-noflash off main.
+- [x] **T6.6.2 - Add inline head script** - What: Theme decided before CSS even loads. How: Place a small inline script tag in index.html above the stylesheet links.
+- [x] **T6.6.3 - Read storage safely** - What: Boot never crashes on blocked or corrupt storage. How: try/catch around localStorage.getItem('stockz.settings') with JSON.parse inside the snippet.
+- [x] **T6.6.4 - Fall back to OS query** - What: First-time visitors get the no-flash treatment too. How: Inline matchMedia('(prefers-color-scheme: dark)') check when no stored theme is found.
+- [x] **T6.6.5 - Stamp theme pre-paint** - What: CSS selectors match from the very first frame. How: Set document.documentElement.dataset.theme synchronously at the end of the snippet.
+- [x] **T6.6.6 - Keep snippet CSP-safe** - What: The script survives a strict spektrum/compile CSP build. How: Plain statements only, no eval or Function, and record the script hash in a code comment.
+- [x] **T6.6.7 - Share pure boot logic** - What: App and snippet agree on one resolution algorithm. How: readBootTheme(raw, prefersDark) in src/theme/boot.js with a sync-with-snippet comment on both sides.
+- [x] **T6.6.8 - Verify zero flash** - What: Proof the flash is gone on slow connections. How: Chrome DevTools 3G throttled reloads in both themes watching the first rendered frame.
+- [x] **T6.6.9 - Unit-test readBootTheme** - What: Boot resolution pinned by its single test. How: One Vitest test over stored, empty and corrupt inputs, run via vitest run -t readBootTheme.
+- [x] **T6.6.10 - Merge no-flash branch** - What: Flicker-free boots for everyone on main. How: Merge feature/theme-noflash after the targeted test and throttled checks pass.
 
 ### F6.7 - 150ms theme crossfade
 
 **What:** Theme switches feel silky: colors glide over in a deliberate 150ms instead of snapping harshly.
 **How:** A temporary .theme-xfade class transitioning color properties, attached around the flip and removed on transitionend.
 
-- [ ] **T6.7.1 - Branch crossfade work** - What: Transition polish built without risk to switching. How: git checkout -b feature/theme-xfade from main.
-- [ ] **T6.7.2 - Define fade token** - What: One tunable dial for transition speed. How: --theme-fade-ms: 150ms custom property in the shared theme tokens file.
-- [ ] **T6.7.3 - Write crossfade class** - What: Only color-ish properties animate, nothing moves. How: .theme-xfade * { transition: background-color, color, border-color, fill, stroke var(--theme-fade-ms) }.
-- [ ] **T6.7.4 - Orchestrate the flip** - What: The class exists exactly as long as the fade. How: applyThemeTransition(fn) adding the class, invoking the setTheme flip, removing on transitionend.
-- [ ] **T6.7.5 - Add timeout fallback** - What: A missed transitionend can never freeze the class on. How: setTimeout at fade duration plus 50ms buffer as a guaranteed removal path.
-- [ ] **T6.7.6 - Guard first paint** - What: Boot renders instantly with no ghost fade. How: Never attach .theme-xfade during the no-flash boot path, only on user-driven flips.
-- [ ] **T6.7.7 - Respect reduced motion** - What: Motion-sensitive users get instant clean switches. How: Skip applyThemeTransition entirely when prefers-reduced-motion: reduce matches.
-- [ ] **T6.7.8 - Exclude canvas surfaces** - What: Charts never double-fade against their repaint. How: A .no-xfade escape class on chart containers excluded from the transition selector.
-- [ ] **T6.7.9 - Unit-test applyThemeTransition** - What: Class lifecycle pinned by one test. How: Single Vitest test with fake timers asserting add, flip and removal, run via vitest run -t applyThemeTransition.
-- [ ] **T6.7.10 - Merge crossfade branch** - What: Buttery switching live on main. How: Hammer the toggle rapidly in Vite dev confirming no stuck class, then merge feature/theme-xfade.
+- [x] **T6.7.1 - Branch crossfade work** - What: Transition polish built without risk to switching. How: git checkout -b feature/theme-xfade from main.
+- [x] **T6.7.2 - Define fade token** - What: One tunable dial for transition speed. How: --theme-fade-ms: 150ms custom property in the shared theme tokens file.
+- [x] **T6.7.3 - Write crossfade class** - What: Only color-ish properties animate, nothing moves. How: .theme-xfade * { transition: background-color, color, border-color, fill, stroke var(--theme-fade-ms) }.
+- [x] **T6.7.4 - Orchestrate the flip** - What: The class exists exactly as long as the fade. How: applyThemeTransition(fn) adding the class, invoking the setTheme flip, removing on transitionend.
+- [x] **T6.7.5 - Add timeout fallback** - What: A missed transitionend can never freeze the class on. How: setTimeout at fade duration plus 50ms buffer as a guaranteed removal path.
+- [x] **T6.7.6 - Guard first paint** - What: Boot renders instantly with no ghost fade. How: Never attach .theme-xfade during the no-flash boot path, only on user-driven flips.
+- [x] **T6.7.7 - Respect reduced motion** - What: Motion-sensitive users get instant clean switches. How: Skip applyThemeTransition entirely when prefers-reduced-motion: reduce matches.
+- [x] **T6.7.8 - Exclude canvas surfaces** - What: Charts never double-fade against their repaint. How: A .no-xfade escape class on chart containers excluded from the transition selector.
+- [x] **T6.7.9 - Unit-test applyThemeTransition** - What: Class lifecycle pinned by one test. How: Single Vitest test with fake timers asserting add, flip and removal, run via vitest run -t applyThemeTransition.
+- [x] **T6.7.10 - Merge crossfade branch** - What: Buttery switching live on main. How: Hammer the toggle rapidly in Vite dev confirming no stuck class, then merge feature/theme-xfade.
 
 ### F6.8 - Canvas re-palette on switch
 
 **What:** Sparklines, micro-charts and the order book repaint in the new palette the instant the theme flips.
 **How:** A Spektrum watch on ui.theme driving a chart registry of repaint callbacks fed by a memoized getChartPalette resolver.
 
-- [ ] **T6.8.1 - Branch canvas repaint** - What: Chart integration isolated from theme core. How: git checkout -b feature/theme-canvas off main.
-- [ ] **T6.8.2 - Build palette resolver** - What: Any renderer asks one function for its colors. How: getChartPalette(theme) in palettes.js returning nightPalette() or dayPalette() by name.
-- [ ] **T6.8.3 - Memoize palette objects** - What: Zero per-frame allocation in hot render loops. How: Cache the two palette objects at module scope so getChartPalette returns stable references.
-- [ ] **T6.8.4 - Create chart registry** - What: Every canvas can opt into theme repaints. How: registerChart(repaintFn) and unregisterChart(repaintFn) managing a Set in src/theme/charts.js.
-- [ ] **T6.8.5 - Repaint on late register** - What: A chart mounted mid-session paints correctly at once. How: registerChart immediately invokes the callback with the current palette.
-- [ ] **T6.8.6 - Watch and repaint** - What: One theme flip repaints every chart in a single frame. How: watch('ui.theme') scheduling one requestAnimationFrame that runs all registered callbacks.
-- [ ] **T6.8.7 - Notify chart workers** - What: Worker-driven renderers recolor too. How: postMessage({type:'theme', palette}) to the feed-parsing Workers from the same watch handler.
-- [ ] **T6.8.8 - Verify live recolor** - What: Confidence the pipeline works end to end. How: Flip themes in Vite dev with a phase 13 sparkline and phase 14 book mounted, checking both repaint.
-- [ ] **T6.8.9 - Unit-test repaint functions** - What: getChartPalette, registerChart and unregisterChart each with one test. How: One Vitest test per function, run per name with vitest run -t.
-- [ ] **T6.8.10 - Merge canvas branch** - What: Theme-aware charts on main. How: Merge feature/theme-canvas after the three targeted tests pass green.
+- [x] **T6.8.1 - Branch canvas repaint** - What: Chart integration isolated from theme core. How: git checkout -b feature/theme-canvas off main.
+- [x] **T6.8.2 - Build palette resolver** - What: Any renderer asks one function for its colors. How: getChartPalette(theme) in palettes.js returning nightPalette() or dayPalette() by name.
+- [x] **T6.8.3 - Memoize palette objects** - What: Zero per-frame allocation in hot render loops. How: Cache the two palette objects at module scope so getChartPalette returns stable references.
+- [x] **T6.8.4 - Create chart registry** - What: Every canvas can opt into theme repaints. How: registerChart(repaintFn) and unregisterChart(repaintFn) managing a Set in src/theme/charts.js.
+- [x] **T6.8.5 - Repaint on late register** - What: A chart mounted mid-session paints correctly at once. How: registerChart immediately invokes the callback with the current palette.
+- [x] **T6.8.6 - Watch and repaint** - What: One theme flip repaints every chart in a single frame. How: watch('ui.theme') scheduling one requestAnimationFrame that runs all registered callbacks.
+- [x] **T6.8.7 - Notify chart workers** - What: Worker-driven renderers recolor too. How: postMessage({type:'theme', palette}) to the feed-parsing Workers from the same watch handler.
+- [x] **T6.8.8 - Verify live recolor** - What: Confidence the pipeline works end to end. How: Flip themes in Vite dev with a phase 13 sparkline and phase 14 book mounted, checking both repaint.
+- [x] **T6.8.9 - Unit-test repaint functions** - What: getChartPalette, registerChart and unregisterChart each with one test. How: One Vitest test per function, run per name with vitest run -t.
+- [x] **T6.8.10 - Merge canvas branch** - What: Theme-aware charts on main. How: Merge feature/theme-canvas after the three targeted tests pass green.
 
 ### F6.9 - Browser chrome per theme
 
 **What:** The browser itself joins the theme: tab favicon and mobile UI bars match day or night.
 **How:** applyBrowserChrome swapping meta theme-color content and the link rel=icon href between two favicon SVGs on every theme change.
 
-- [ ] **T6.9.1 - Branch chrome work** - What: Browser-facing polish built separately. How: git checkout -b feature/theme-chrome from main.
-- [ ] **T6.9.2 - Add theme-color meta** - What: Android and Safari UI bars tint to match the app. How: meta name="theme-color" element in index.html updated to the active --bg hex.
-- [ ] **T6.9.3 - Draw favicon variants** - What: The tab icon reads well against any tab-bar shade. How: public/favicon-night.svg green-on-black and public/favicon-day.svg green-on-white STOCKZ marks.
-- [ ] **T6.9.4 - Implement chrome swapper** - What: One function retargets all browser chrome. How: applyBrowserChrome(theme) in src/theme/chrome.js setting link[rel="icon"] href and meta content.
-- [ ] **T6.9.5 - Hook the change trigger** - What: Chrome follows every flip automatically. How: Subscribe applyBrowserChrome to the trigger('theme:changed') event from F6.1.
-- [ ] **T6.9.6 - Cover iOS standalone** - What: Home-screen installs get a matching status bar. How: apple-mobile-web-app-status-bar-style meta set alongside theme-color.
-- [ ] **T6.9.7 - Add ico fallback** - What: Legacy browsers without SVG favicon support still show a mark. How: public/favicon.ico referenced as a sized fallback link element.
-- [ ] **T6.9.8 - Verify build assets** - What: Favicons guaranteed present on GitHub Pages. How: Run vite build and confirm both SVGs and the ico land in dist/ from public/.
-- [ ] **T6.9.9 - Unit-test applyBrowserChrome** - What: The swap logic pinned by its single test. How: One Vitest test with jsdom asserting href and content per theme, run via vitest run -t applyBrowserChrome.
-- [ ] **T6.9.10 - Merge chrome branch** - What: Fully themed browser presence on main. How: Eyeball tab and meta in both themes in Vite dev, then merge feature/theme-chrome.
+- [x] **T6.9.1 - Branch chrome work** - What: Browser-facing polish built separately. How: git checkout -b feature/theme-chrome from main.
+- [x] **T6.9.2 - Add theme-color meta** - What: Android and Safari UI bars tint to match the app. How: meta name="theme-color" element in index.html updated to the active --bg hex.
+- [x] **T6.9.3 - Draw favicon variants** - What: The tab icon reads well against any tab-bar shade. How: public/favicon-night.svg green-on-black and public/favicon-day.svg green-on-white STOCKZ marks.
+- [x] **T6.9.4 - Implement chrome swapper** - What: One function retargets all browser chrome. How: applyBrowserChrome(theme) in src/theme/chrome.js setting link[rel="icon"] href and meta content.
+- [x] **T6.9.5 - Hook the change trigger** - What: Chrome follows every flip automatically. How: Subscribe applyBrowserChrome to the trigger('theme:changed') event from F6.1.
+- [x] **T6.9.6 - Cover iOS standalone** - What: Home-screen installs get a matching status bar. How: apple-mobile-web-app-status-bar-style meta set alongside theme-color.
+- [x] **T6.9.7 - Add ico fallback** - What: Legacy browsers without SVG favicon support still show a mark. How: public/favicon.ico referenced as a sized fallback link element.
+- [x] **T6.9.8 - Verify build assets** - What: Favicons guaranteed present on GitHub Pages. How: Run vite build and confirm both SVGs and the ico land in dist/ from public/.
+- [x] **T6.9.9 - Unit-test applyBrowserChrome** - What: The swap logic pinned by its single test. How: One Vitest test with jsdom asserting href and content per theme, run via vitest run -t applyBrowserChrome.
+- [x] **T6.9.10 - Merge chrome branch** - What: Fully themed browser presence on main. How: Eyeball tab and meta in both themes in Vite dev, then merge feature/theme-chrome.
 
 ### F6.10 - Contrast validation pass
 
 **What:** Guaranteed readability: every text and signal color in both palettes proven against WCAG contrast ratios.
 **How:** A contrastRatio utility plus an auditPalette sweep over critical token pairs, runnable as npm run audit:contrast, with failing tokens tuned.
 
-- [ ] **T6.10.1 - Branch contrast work** - What: Audit tooling and fixes tracked together. How: git checkout -b feature/theme-contrast off main.
-- [ ] **T6.10.2 - Write ratio utility** - What: A correct, reusable WCAG measurement. How: contrastRatio(fgHex, bgHex) in src/theme/contrast.js implementing relative luminance per WCAG 2.1.
-- [ ] **T6.10.3 - Write audit function** - What: Whole palettes checked in one call. How: auditPalette(palette, pairs) returning an array of pairs falling below their threshold.
-- [ ] **T6.10.4 - Define critical pairs** - What: The checks cover what traders actually read. How: Pair list for fg/bg, accent/bg, up and down on panel, muted/bg and button label tokens.
-- [ ] **T6.10.5 - Set thresholds** - What: Standards-backed pass bars, not guesses. How: 4.5:1 for body-size text pairs and 3:1 for large text and UI glyph pairs in the pair definitions.
-- [ ] **T6.10.6 - Add audit script** - What: One command reports both palettes before any release. How: scripts/audit-contrast.mjs run by npm run audit:contrast printing a pass/fail table via Node 22.
-- [ ] **T6.10.7 - Tune failing night tokens** - What: Night mode passes every check. How: Adjust phosphor green and muted luminance in night.css until auditPalette returns empty.
-- [ ] **T6.10.8 - Tune failing day tokens** - What: Day mode passes every check. How: Deepen the day orange and muted ink in day.css until all pairs clear their thresholds.
-- [ ] **T6.10.9 - Unit-test audit functions** - What: contrastRatio and auditPalette each locked by one test. How: One Vitest test per function with known ratio fixtures, run via vitest run -t per name.
-- [ ] **T6.10.10 - Merge contrast branch** - What: Provably readable palettes on main. How: Run npm run audit:contrast clean on both palettes, then merge feature/theme-contrast.
+- [x] **T6.10.1 - Branch contrast work** - What: Audit tooling and fixes tracked together. How: git checkout -b feature/theme-contrast off main.
+- [x] **T6.10.2 - Write ratio utility** - What: A correct, reusable WCAG measurement. How: contrastRatio(fgHex, bgHex) in src/theme/contrast.js implementing relative luminance per WCAG 2.1.
+- [x] **T6.10.3 - Write audit function** - What: Whole palettes checked in one call. How: auditPalette(palette, pairs) returning an array of pairs falling below their threshold.
+- [x] **T6.10.4 - Define critical pairs** - What: The checks cover what traders actually read. How: Pair list for fg/bg, accent/bg, up and down on panel, muted/bg and button label tokens.
+- [x] **T6.10.5 - Set thresholds** - What: Standards-backed pass bars, not guesses. How: 4.5:1 for body-size text pairs and 3:1 for large text and UI glyph pairs in the pair definitions.
+- [x] **T6.10.6 - Add audit script** - What: One command reports both palettes before any release. How: scripts/audit-contrast.mjs run by npm run audit:contrast printing a pass/fail table via Node 22.
+- [x] **T6.10.7 - Tune failing night tokens** - What: Night mode passes every check. How: Adjust phosphor green and muted luminance in night.css until auditPalette returns empty.
+- [x] **T6.10.8 - Tune failing day tokens** - What: Day mode passes every check. How: Deepen the day orange and muted ink in day.css until all pairs clear their thresholds.
+- [x] **T6.10.9 - Unit-test audit functions** - What: contrastRatio and auditPalette each locked by one test. How: One Vitest test per function with known ratio fixtures, run via vitest run -t per name.
+- [x] **T6.10.10 - Merge contrast branch** - What: Provably readable palettes on main. How: Run npm run audit:contrast clean on both palettes, then merge feature/theme-contrast.
 
 ---
 

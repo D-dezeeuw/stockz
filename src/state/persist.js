@@ -1,0 +1,146 @@
+import { appState, setValue, watch } from '../app/engine.js'
+import { PATHS, PERSISTED_NAMESPACES } from './paths.js'
+import { createLogger } from '../utils/log.js'
+
+/**
+ * Settings persistence.
+ *
+ * Only `settings.*` is stored. Market data, positions and orders are deliberately never
+ * written to localStorage: they would be stale on the next load in a way that *looks*
+ * live, and a trader acting on a resurrected position from yesterday is a real loss, not
+ * a cosmetic bug.
+ *
+ * The store is versioned. A schema change bumps `SETTINGS_VERSION` and a migration turns
+ * the old shape into the new one — a trader should never lose their layout because the
+ * desk shipped a new field.
+ */
+
+const log = createLogger('persist')
+
+/** Bumped whenever the persisted shape changes; drives migration. */
+export const SETTINGS_VERSION = 1
+
+/** localStorage key. */
+export const STORAGE_KEY = 'stockz.settings.v1'
+
+/**
+ * Read persisted settings.
+ *
+ * Corrupt or unreadable storage returns null rather than throwing: a broken cache must
+ * degrade to defaults, never stop the desk from booting.
+ *
+ * @param {Storage} [storage] - storage to read from.
+ * @returns {{version: number, settings: object}|null} the stored payload, or null.
+ */
+export function loadSettings(storage = globalThis.localStorage) {
+  try {
+    const raw = storage?.getItem?.(STORAGE_KEY)
+    if (!raw) return null
+
+    const parsed = JSON.parse(raw)
+    if (!parsed || typeof parsed !== 'object' || typeof parsed.settings !== 'object') return null
+
+    return { version: Number(parsed.version) || 0, settings: parsed.settings }
+  } catch (err) {
+    log.warn(`unreadable settings: ${err?.message ?? err}`)
+    return null
+  }
+}
+
+/**
+ * Write settings to storage.
+ *
+ * Storage failures (private mode, quota) are logged and swallowed — losing a preference
+ * is an inconvenience, and it must never interrupt trading.
+ *
+ * @param {object} settings - the settings branch.
+ * @param {Storage} [storage] - storage to write to.
+ * @returns {boolean} true when the write succeeded.
+ */
+export function saveSettings(settings, storage = globalThis.localStorage) {
+  try {
+    storage?.setItem?.(
+      STORAGE_KEY,
+      JSON.stringify({ version: SETTINGS_VERSION, settings: settings ?? {} }),
+    )
+    return true
+  } catch (err) {
+    log.warn(`could not save settings: ${err?.message ?? err}`)
+    return false
+  }
+}
+
+/**
+ * Bring a stored payload up to the current schema version.
+ *
+ * @param {{version: number, settings: object}|null} payload - what was stored.
+ * @returns {object} settings in the current shape ({} when there is nothing usable).
+ */
+export function migrateSettings(payload) {
+  if (!payload?.settings) return {}
+
+  const settings = { ...payload.settings }
+
+  // v0 (pre-versioning) stored the theme as a bare boolean `dark`.
+  if ((payload.version ?? 0) < 1) {
+    if ('dark' in settings) {
+      settings.theme = settings.dark ? 'night' : 'day'
+      delete settings.dark
+    }
+  }
+
+  return settings
+}
+
+/**
+ * Apply stored settings into state, before the first paint.
+ *
+ * @param {Storage} [storage] - storage to read from.
+ * @returns {string[]} the paths restored.
+ */
+export function restoreSettings(storage = globalThis.localStorage) {
+  const settings = migrateSettings(loadSettings(storage))
+  const restored = []
+
+  for (const [key, value] of Object.entries(settings)) {
+    const path = `settings.${key}`
+    setValue(path, value)
+    restored.push(path)
+  }
+
+  if (restored.length > 0) log.debug(`restored ${restored.length} settings`)
+  return restored
+}
+
+/**
+ * Keep storage in step with the settings branch.
+ *
+ * @param {Storage} [storage] - storage to write to.
+ * @returns {(state: object) => boolean} the watcher that was registered.
+ */
+export function persistSettings(storage = globalThis.localStorage) {
+  const watcher = (state) => saveSettings(state?.settings, storage)
+
+  watch([PATHS.settings.theme, PATHS.settings.blocks], watcher)
+  return watcher
+}
+
+/**
+ * Whether a namespace is allowed into storage — the guard that keeps live trading data
+ * out of a browser store.
+ *
+ * @param {string} namespace - state namespace.
+ * @returns {boolean} true when persistence is allowed.
+ */
+export function isPersistable(namespace) {
+  return PERSISTED_NAMESPACES.includes(String(namespace ?? '').split('.')[0])
+}
+
+/**
+ * The settings branch as it currently stands.
+ *
+ * @returns {object} the settings object (never undefined).
+ */
+export function currentSettings() {
+  return appState?.settings ?? {}
+}

@@ -9,6 +9,30 @@
   <!-- Relative paths: the site is served straight from the repo root, which sits under
        /stockz/ on GitHub Pages. Absolute paths would resolve above that prefix. -->
   <link rel="icon" href="./favicon.svg" type="image/svg+xml">
+
+  <!-- No-flash theme boot. This runs BEFORE any stylesheet or module, because a
+       night-theme trader loading a white page for one frame at 2am is not a small
+       annoyance. Inline and synchronous on purpose: a deferred module would paint first.
+       Kept tiny and duplicated from src/ui/theme.js by necessity - the module graph does
+       not exist yet at this point in the document. -->
+  <script>
+    (function () {
+      try {
+        var stored = JSON.parse(localStorage.getItem('stockz.settings.v1') || 'null')
+        var theme = stored && stored.settings && stored.settings.theme
+        if (theme !== 'night' && theme !== 'day') {
+          theme = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches
+            ? 'day'
+            : 'night'
+        }
+        document.documentElement.setAttribute('data-theme', theme)
+        var meta = document.querySelector('meta[name="theme-color"]')
+        if (meta) meta.setAttribute('content', theme === 'day' ? '#f2f5f1' : '#070a07')
+      } catch (e) {
+        document.documentElement.setAttribute('data-theme', 'night')
+      }
+    })()
+  </script>
   <link rel="stylesheet" href="./src/styles/tokens.css">
   <link rel="stylesheet" href="./src/styles/type.css">
   <link rel="stylesheet" href="./src/styles/layout.css">
