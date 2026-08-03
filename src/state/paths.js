@@ -41,6 +41,7 @@ export const PATHS = Object.freeze({
   }),
   ui: Object.freeze({
     status: 'ui.status',
+    statusLine: 'ui.statusLine',
     theme: 'ui.theme',
     section: 'ui.section',
     modal: 'ui.modal',
@@ -54,6 +55,12 @@ export const PATHS = Object.freeze({
     instruments: 'market.instruments',
     focus: 'market.focus',
     ticks: 'market.ticks',
+    bid: 'market.bid',
+    ask: 'market.ask',
+    // derived (written by computed, never by hand)
+    mid: 'market.mid',
+    spread: 'market.spread',
+    spreadBps: 'market.spreadBps',
   }),
   trade: Object.freeze({
     armed: 'trade.armed',
@@ -61,6 +68,9 @@ export const PATHS = Object.freeze({
     orders: 'trade.orders',
     positions: 'trade.positions',
     dayPnl: 'trade.dayPnl',
+    // derived
+    exposure: 'trade.exposure',
+    openOrders: 'trade.openOrders',
   }),
   strategy: Object.freeze({
     registered: 'strategy.registered',

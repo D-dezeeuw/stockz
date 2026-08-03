@@ -293,16 +293,16 @@
 **What:** Spread, mid and exposure totals appear on screen and stay correct without any manual recalculation.
 **How:** Register computed() definitions in src/app/derived.js built from pure functions over market.* and trade.* paths.
 
-- [ ] **T2.5.1 - Cut derived feature branch** - What: Derived math lands with tests proving it. How: Run git checkout -b feature/computed-derived from main.
-- [ ] **T2.5.2 - Scaffold registerDerived** - What: One boot call installs all derived values. How: Write registerDerived() in src/app/derived.js called from bootstrap() after state seeding.
-- [ ] **T2.5.3 - Implement spreadOf and its computed** - What: Live bid-ask spread anywhere in the UI. How: Write pure spreadOf(bid, ask) and register computed market.spread over market.book.bestBid and bestAsk.
-- [ ] **T2.5.4 - Implement midOf and its computed** - What: A venue-valid midprice for quoting logic. How: Write midOf(bid, ask, tickSize) using roundToTick from phase 1 and register computed market.mid.
-- [ ] **T2.5.5 - Implement exposureOf and its computed** - What: Total open exposure always current for risk display. How: Write exposureOf(orders) summing size times price and register computed trade.totalExposure over trade.orders.
-- [ ] **T2.5.6 - Add open order count computed** - What: The HUD phases get a free live order counter. How: Register computed trade.openCount as trade.orders.length via a countOf(orders) pure function.
-- [ ] **T2.5.7 - Compose the status line** - What: One glanceable line mixing boot state and spread. How: Register computed ui.statusLine joining ui.bootStatus with formatPrice(market.spread) from phase 1 utils.
-- [ ] **T2.5.8 - Seed and bind demo values** - What: Visible proof derived values react. How: Seed bestBid/bestAsk in initialState and bind {{market.spread}} and {{ui.statusLine}} in index.html.
-- [ ] **T2.5.9 - Write the four single unit tests** - What: spreadOf, midOf, exposureOf and countOf each locked by one test. How: Add targeted tests under tests/app/ and run each via vitest run -t by name.
-- [ ] **T2.5.10 - Merge derived branch** - What: Reactive market math is available to charts and HUD phases. How: Merge feature/computed-derived into main after console setValue on bestBid visibly updates the DOM.
+- [x] **T2.5.1 - Cut derived feature branch** - What: Derived math lands with tests proving it. How: Run git checkout -b feature/computed-derived from main.
+- [x] **T2.5.2 - Scaffold registerDerived** - What: One boot call installs all derived values. How: Write registerDerived() in src/app/derived.js called from bootstrap() after state seeding.
+- [x] **T2.5.3 - Implement spreadOf and its computed** - What: Live bid-ask spread anywhere in the UI. How: Write pure spreadOf(bid, ask) and register computed market.spread over market.book.bestBid and bestAsk.
+- [x] **T2.5.4 - Implement midOf and its computed** - What: A venue-valid midprice for quoting logic. How: Write midOf(bid, ask, tickSize) using roundToTick from phase 1 and register computed market.mid.
+- [x] **T2.5.5 - Implement exposureOf and its computed** - What: Total open exposure always current for risk display. How: Write exposureOf(orders) summing size times price and register computed trade.totalExposure over trade.orders.
+- [x] **T2.5.6 - Add open order count computed** - What: The HUD phases get a free live order counter. How: Register computed trade.openCount as trade.orders.length via a countOf(orders) pure function.
+- [x] **T2.5.7 - Compose the status line** - What: One glanceable line mixing boot state and spread. How: Register computed ui.statusLine joining ui.bootStatus with formatPrice(market.spread) from phase 1 utils.
+- [x] **T2.5.8 - Seed and bind demo values** - What: Visible proof derived values react. How: Seed bestBid/bestAsk in initialState and bind {{market.spread}} and {{ui.statusLine}} in index.html.
+- [x] **T2.5.9 - Write the four single unit tests** - What: spreadOf, midOf, exposureOf and countOf each locked by one test. How: Add targeted tests under tests/app/ and run each via vitest run -t by name.
+- [x] **T2.5.10 - Merge derived branch** - What: Reactive market math is available to charts and HUD phases. How: Merge feature/computed-derived into main after console setValue on bestBid visibly updates the DOM.
 
 ### F2.6 - Per-Tick Systems via addSystem and watch
 

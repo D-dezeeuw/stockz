@@ -1,6 +1,7 @@
 import { setValue, bindDOM, run, tick, checkpoint, engineInfo } from './engine.js'
 import { initialState } from '../state/initial.js'
 import { registerCoreActions, actionNames } from '../actions/registry.js'
+import { registerDerived } from '../state/derived.js'
 import { appVersion } from './version.js'
 
 /**
@@ -15,8 +16,8 @@ import { appVersion } from './version.js'
  * @param {{doc?: Document, now?: number, autoRun?: boolean}} [options]
  *   `autoRun: false` seeds and binds without starting the rAF loop — what tests want,
  *   since an rAF pump never finishes on its own.
- * @returns {{paths: string[], actions: string[], cleanup: () => void}} seeded paths, the
- *   actions registered at boot, and a DOM unbind.
+ * @returns {{paths: string[], actions: string[], derived: string[], cleanup: () => void}}
+ *   seeded paths, actions and derived paths registered at boot, and a DOM unbind.
  */
 export function bootstrap(options = {}) {
   const { doc = globalThis.document, now = 0, autoRun = true } = options
@@ -29,8 +30,10 @@ export function bootstrap(options = {}) {
 
   for (const [path, value] of Object.entries(state)) setValue(path, value)
 
-  // Actions must exist before bindDOM, or data-fn attributes bind to nothing.
+  // Actions and derivations must exist before bindDOM: data-fn attributes would bind to
+  // nothing, and derived paths would render as blanks on the first paint.
   registerCoreActions()
+  const derived = registerDerived()
 
   const cleanup = bindDOM(doc)
   tick()
@@ -39,7 +42,7 @@ export function bootstrap(options = {}) {
 
   if (autoRun) run()
 
-  return { paths: Object.keys(state), actions: actionNames(), cleanup }
+  return { paths: Object.keys(state), actions: actionNames(), derived, cleanup }
 }
 
 /**

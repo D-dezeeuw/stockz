@@ -33,6 +33,10 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
   all dispatch through. Ships `ui.setStatus` and `app.reset`; duplicate registration is a
   hard error, and an unknown name warns instead of throwing so a stale keybinding cannot
   take the desk down mid-session. (F2.4)
+- **Derived values that cannot go stale** — mid, spread, spread in bps, net exposure,
+  open-order count and the header status line all recompute the moment a dependency
+  moves, so two blocks can never disagree. Exposure is signed *notional*, not quantity:
+  one lot of a $60k instrument is not one lot of a $3k one. (F2.5)
 
 ## [0.1.0] — 2026-08-03 — Phase 1: Foundation & Tooling
 

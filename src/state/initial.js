@@ -33,6 +33,7 @@ export function initialState(overrides = {}) {
 
     // what is on screen
     [PATHS.ui.status]: 'ready',
+    [PATHS.ui.statusLine]: '',
     [PATHS.ui.theme]: 'night',
     [PATHS.ui.section]: 'dashboard',
     [PATHS.ui.modal]: '',
@@ -46,6 +47,11 @@ export function initialState(overrides = {}) {
     [PATHS.market.instruments]: [],
     [PATHS.market.focus]: '',
     [PATHS.market.ticks]: 0,
+    [PATHS.market.bid]: 0,
+    [PATHS.market.ask]: 0,
+    [PATHS.market.mid]: 0,
+    [PATHS.market.spread]: 0,
+    [PATHS.market.spreadBps]: 0,
 
     // trading
     [PATHS.trade.armed]: false,
@@ -53,6 +59,8 @@ export function initialState(overrides = {}) {
     [PATHS.trade.orders]: [],
     [PATHS.trade.positions]: [],
     [PATHS.trade.dayPnl]: 0,
+    [PATHS.trade.exposure]: 0,
+    [PATHS.trade.openOrders]: 0,
 
     // strategies
     [PATHS.strategy.registered]: [],
