@@ -5,11 +5,33 @@ in `masterplan.md`, and knows where the project stands. Rewritten at every phase
 
 ---
 
-## Status: Phase 2 closed (v0.2.0) · Phase 3 next
+## Status: Phase 3 closed (v0.3.0) · Phase 4 next
 
 **Live:** https://d-dezeeuw.github.io/stockz/ (Pages serves `main` root — pushing is deploying)
-**Tests:** 81, one per function, all passing individually. Every gated file ≥85% branches.
+**Tests:** 98, one per function, all passing individually. Every gated file ≥85% branches.
 **Branch model:** everything merges to `main`; no feature branches outstanding.
+
+## Phase 3 — Money-Hacker Design System (closed)
+
+The desk got its face. Styles are plain CSS files linked from `index.html` (no bundler in
+the deploy path), tokens on `:root`, day variant under `[data-theme='day']`.
+
+| Feature | What now exists | Where |
+| --- | --- | --- |
+| F3.1 | green/orange ramps, near-black surfaces, day variant | `src/styles/tokens.css` |
+| F3.2 | monospace stack, type scale, tabular numerals by default | `src/styles/type.css` |
+| F3.3 | 4px spacing step, radius/border, grid metrics (`--block-w/h`) | `src/styles/layout.css` |
+| F3.4 | glow, LEDs, tick pulse, scanlines; all off under reduced motion | `src/styles/accents.css` |
+| F3.5 | `statusOfValue`, `statusClass`, `valueClass`, `sideClass`, `connectionClass`, `tickPulseClass` | `src/ui/status-color.js` |
+| F3.6 | 100–150ms motion budget, focus rings, reduced-motion killswitch | `src/styles/status.css` |
+| F3.7 | `icon()`, `escapeAttr()`, `sideIcon()` — 10 inline SVGs on a 16px grid | `src/ui/icons.js` |
+| F3.8 | `fmt.*` global so bindings can format and colour in one expression | `src/ui/format-bindings.js` |
+| F3.9 | token-resolved utility classes; `[data-cloak]` hiding rule | `src/styles/utilities.css` |
+| F3.10 | `parseHex`, `relativeLuminance`, `contrastRatio`, `meetsContrast`, `auditContrast` | `src/ui/contrast.js` |
+
+**The contrast audit caught a real defect**: day-theme orange was 4.17:1 on white (below
+AA), so loss values would have been harder to read than profit values in daylight. Token
+is now `#b84600`. Re-run that test after any token change.
 
 ## Phase 2 — Spektrum Core Integration (closed)
 
@@ -29,18 +51,20 @@ go stale, and faults that reach the trader instead of the console.
 | F2.9 | `pushToast`, `dismissToast`, `expireToasts`, `describeEngineError`, `wireEngineErrors` | `src/ui/toast.js` |
 | F2.10 | `collectExpressions`, `renderPrecompileModule`, `cspMeta`, `npm run build:csp` | `src/app/csp.js`, `docs/csp.md` |
 
-## Next up: Phase 3 — Money-Hacker Design System
+## Next up: Phase 4 — Dashboard Grid Shell
 
-First feature **F3.1**. The page currently has no styling at all: `index.html` renders a
-boot line, the status line, a toast `<ul>` and one dispatch button, unstyled. Decided
-already (see `.claude/context/design-system.md`):
+First feature **F4.1**. `index.html` currently holds a flat `#app` with a boot line, a
+status line, a demo price cell, swatches, the toast `<ul>` and one dispatch button — no
+grid, no header, no footer. Decided already:
 
-- Tokens as CSS custom properties on `:root`, flipped by `data-theme="night|day"` on
-  `<html>` (already set in the markup).
-- Profit/buy is **always green**, loss/sell **always orange** — never red/blue.
-- Monospace everywhere, `font-variant-numeric: tabular-nums` on every number.
-- `src/styles/` exists and is empty; nothing imports CSS yet.
-- `.toast--<level>` classes are already emitted by the toast binding and need styling.
+- Grid metrics already exist as tokens: `--block-w` (22rem min column), `--block-h`
+  (15rem, every block the same height), `--grid-gap`, `--header-h`, `--footer-h`.
+- Blocks come from a **registry in state** rendered with `data-each` — remember
+  Spektrum's container-not-template rule for `data-each`.
+- Block visibility toggles belong in `settings.*` (the only persisted branch).
+- The footer is Neko Media + LinkedIn/npm/GitHub icons; `icon()` already ships a chart,
+  gear, clock and keyboard, so add the three brand marks there.
+- `.scroll-y` and the no-sideways-scroll rule are already in `layout.css`.
 
 ## Gotchas (learned the hard way — do not rediscover)
 

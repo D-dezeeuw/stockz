@@ -10,6 +10,14 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ## [Unreleased]
 
+_Nothing yet — next entries land with phase 4 (Dashboard Grid Shell)._
+
+## [0.3.0] — 2026-08-03 — Phase 3: Money-Hacker Design System
+
+The desk got its face: green/orange terminal palette in two themes, monospace with
+tabular numerals, density tokens, accents that mean something, and contrast proven by
+test rather than by eye.
+
 ### Added
 
 - **The money-hacker palette** — matrix-green and hot-orange ramps over near-black
@@ -165,6 +173,7 @@ with a test policy and a live URL.
   literal `APP_VERSION` (a JSON import is bundler-only), guarded by a test that fails if
   it drifts from `package.json`; static assets moved from `public/` to the repo root.
 
-[Unreleased]: https://github.com/D-dezeeuw/stockz/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/D-dezeeuw/stockz/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/D-dezeeuw/stockz/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/D-dezeeuw/stockz/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/D-dezeeuw/stockz/releases/tag/v0.1.0
