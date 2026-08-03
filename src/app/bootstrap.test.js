@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { describe, it, expect, beforeEach } from 'vitest'
-import { bootstrap, revealApp } from './bootstrap.js'
+import { bootstrap, revealApp, makeBootClock } from './bootstrap.js'
 import { appState, resetState } from './engine.js'
 
 beforeEach(() => {
@@ -43,5 +43,19 @@ describe('revealApp', () => {
     // Nothing to reveal, and no document at all, are both safe.
     expect(revealApp(document)).toBe(0)
     expect(revealApp(null)).toBe(0)
+  })
+})
+
+describe('makeBootClock', () => {
+  it('pins time when given a timestamp and follows the wall clock otherwise', () => {
+    expect(makeBootClock(1700000000000)()).toBe(1700000000000)
+
+    const live = makeBootClock()
+    const before = Date.now()
+    expect(live()).toBeGreaterThanOrEqual(before)
+
+    // 0, NaN and undefined all mean "use real time", not "the epoch".
+    expect(makeBootClock(0)()).toBeGreaterThanOrEqual(before)
+    expect(makeBootClock(NaN)()).toBeGreaterThanOrEqual(before)
   })
 })

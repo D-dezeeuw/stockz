@@ -36,7 +36,7 @@ export function bootstrap(options = {}) {
   registerCoreActions()
   const derived = registerDerived()
 
-  registerSystems({ now: () => now || Date.now() })
+  registerSystems({ now: makeBootClock(now) })
 
   const cleanup = bindDOM(doc)
   tick()
@@ -46,6 +46,20 @@ export function bootstrap(options = {}) {
   if (autoRun) run()
 
   return { paths: Object.keys(state), actions: actionNames(), derived, cleanup }
+}
+
+/**
+ * The clock the desk's systems read.
+ *
+ * A fixed timestamp pins time for tests and replay; anything else follows the wall
+ * clock. Extracted rather than inlined so both paths are reachable by one test — an
+ * inline arrow here is invisible to the coverage gate.
+ *
+ * @param {number} [fixed] - pinned epoch ms; 0 or omitted means live time.
+ * @returns {() => number} the clock function.
+ */
+export function makeBootClock(fixed) {
+  return () => (Number.isFinite(fixed) && fixed > 0 ? fixed : Date.now())
 }
 
 /**
