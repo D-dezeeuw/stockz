@@ -10,6 +10,13 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ## [Unreleased]
 
+_Nothing yet — next entries land with phase 5 (Header, Branding & Navigation)._
+
+## [0.4.0] — 2026-08-03 — Phase 4: Dashboard Grid Shell
+
+The desk got its shape: a header, a uniform grid of same-size blocks driven entirely by a
+registry in state, and a footer.
+
 ### Added
 
 - **The dashboard grid** — a header, a uniform grid and a footer. Every block is exactly
@@ -195,7 +202,8 @@ with a test policy and a live URL.
   literal `APP_VERSION` (a JSON import is bundler-only), guarded by a test that fails if
   it drifts from `package.json`; static assets moved from `public/` to the repo root.
 
-[Unreleased]: https://github.com/D-dezeeuw/stockz/compare/v0.3.0...HEAD
+[Unreleased]: https://github.com/D-dezeeuw/stockz/compare/v0.4.0...HEAD
+[0.4.0]: https://github.com/D-dezeeuw/stockz/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/D-dezeeuw/stockz/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/D-dezeeuw/stockz/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/D-dezeeuw/stockz/releases/tag/v0.1.0

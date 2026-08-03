@@ -5,11 +5,26 @@ in `masterplan.md`, and knows where the project stands. Rewritten at every phase
 
 ---
 
-## Status: Phase 3 closed (v0.3.0) · Phase 4 next
+## Status: Phase 4 closed (v0.4.0) · Phase 5 next
 
 **Live:** https://d-dezeeuw.github.io/stockz/ (Pages serves `main` root — pushing is deploying)
-**Tests:** 98, one per function, all passing individually. Every gated file ≥85% branches.
+**Tests:** 116, one per function, all passing individually. Every gated file ≥85% branches.
 **Branch model:** everything merges to `main`; no feature branches outstanding.
+
+## Phase 4 — Dashboard Grid Shell (closed)
+
+| Feature | What now exists | Where |
+| --- | --- | --- |
+| F4.1 | `.app-shell` header/grid/footer rows; equal cells via auto-fit + `grid-auto-rows` | `src/styles/grid.css` |
+| F4.2, F4.10 | `makeBlock`, `addBlock`, `removeBlock`, `updateBlock`, `reorderBlock`, `sortBlocks`, `visibleBlocks`, `toggleBlock`, `currentBlocks`, `commitBlocks` | `src/blocks/registry.js` |
+| F4.3, F4.5, F4.6 | block chrome, skeleton shimmer, empty and error states | `src/styles/states.css`, `index.html` |
+| F4.4 | `columnCount`, `densityFor`, `applyLayout`, `observeLayout` | `src/blocks/layout.js` |
+| F4.7 | footer: Neko Media + LinkedIn/npm/GitHub inline SVG | `index.html` |
+| F4.8 | `setBlockVisibility` + `ui.toggleBlock` action | `src/blocks/layout.js` |
+| — | 8 starter blocks seeded at boot without trampling a saved layout | `src/blocks/seed.js` |
+
+`commitBlocks` is the single write point and normalises through `makeBlock`, so anything
+downstream can trust every entry.
 
 ## Phase 3 — Money-Hacker Design System (closed)
 
@@ -51,20 +66,17 @@ go stale, and faults that reach the trader instead of the console.
 | F2.9 | `pushToast`, `dismissToast`, `expireToasts`, `describeEngineError`, `wireEngineErrors` | `src/ui/toast.js` |
 | F2.10 | `collectExpressions`, `renderPrecompileModule`, `cspMeta`, `npm run build:csp` | `src/app/csp.js`, `docs/csp.md` |
 
-## Next up: Phase 4 — Dashboard Grid Shell
+## Next up: Phase 5 — Header, Branding & Navigation
 
-First feature **F4.1**. `index.html` currently holds a flat `#app` with a boot line, a
-status line, a demo price cell, swatches, the toast `<ul>` and one dispatch button — no
-grid, no header, no footer. Decided already:
+First feature **F5.1**. The header exists as a bar (`.app-header`) showing the wordmark,
+version, status line, day PnL and clock. Still to come: the SVG logo, nav that switches
+block sets, venue LEDs, the settings gear and the theme toggle.
 
-- Grid metrics already exist as tokens: `--block-w` (22rem min column), `--block-h`
-  (15rem, every block the same height), `--grid-gap`, `--header-h`, `--footer-h`.
-- Blocks come from a **registry in state** rendered with `data-each` — remember
-  Spektrum's container-not-template rule for `data-each`.
-- Block visibility toggles belong in `settings.*` (the only persisted branch).
-- The footer is Neko Media + LinkedIn/npm/GitHub icons; `icon()` already ships a chart,
-  gear, clock and keyboard, so add the three brand marks there.
-- `.scroll-y` and the no-sideways-scroll rule are already in `layout.css`.
+- `connectionClass()` (F3.5) already maps venue socket state to LED classes.
+- `icon()` ships gear, sun, moon, keyboard, chart and clock — the header needs no new art.
+- Nav should drive `ui.section`, which is already seeded and in `PATHS`.
+- Theme toggle writes `ui.theme` **and** `settings.theme`; phase 6 owns the persistence
+  and the no-flash boot script.
 
 ## Gotchas (learned the hard way — do not rediscover)
 
