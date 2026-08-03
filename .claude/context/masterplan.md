@@ -190,16 +190,16 @@
 **What:** Leveled logging plus an on-screen overlay so feed and order issues are visible without opening devtools.
 **How:** Build src/utils/log.js with debug/info/warn/error levels, a ring buffer and a dev-only DOM overlay.
 
-- [ ] **T1.9.1 - Cut logger feature branch** - What: Logging ships together with its overlay and tests. How: Run git checkout -b feature/logger from main.
-- [ ] **T1.9.2 - Implement createLogger** - What: Namespaced, timestamped log lines per subsystem. How: Write createLogger(namespace) in src/utils/log.js returning debug/info/warn/error methods with ISO timestamps.
-- [ ] **T1.9.3 - Implement setLogLevel** - What: Noise control from a single switch during a live session. How: Write setLogLevel(level) filtering which methods emit based on an ordered level list.
-- [ ] **T1.9.4 - Implement recordEntry ring buffer** - What: The last 200 log lines are retained for the overlay and later audit phases. How: Write recordEntry(entry) appending to a capped in-memory array exported for reads.
-- [ ] **T1.9.5 - Implement mountLogOverlay** - What: Errors surface on-screen the moment they happen. How: Write mountLogOverlay() rendering the buffer into a fixed bottom-right pre element only when import.meta.env.DEV.
-- [ ] **T1.9.6 - Style the overlay** - What: Readable green-on-black monospace fitting the terminal vibe. How: Apply inline styles for position fixed, rgba black background, lime text and 11px monospace font.
-- [ ] **T1.9.7 - Capture global errors** - What: No crash goes unseen, even outside logger calls. How: Wire window.onerror and unhandledrejection listeners into the error level in src/main.js.
-- [ ] **T1.9.8 - Write the four single unit tests** - What: Each logging function locked by its one test. How: Add targeted tests for createLogger, setLogLevel, recordEntry and mountLogOverlay under tests/utils/ using jsdom where DOM is touched.
-- [ ] **T1.9.9 - Verify overlay behavior** - What: Proof the overlay helps in dev and vanishes in prod. How: Throw a test error in npm run dev to see it on-screen, then confirm npm run preview shows no overlay.
-- [ ] **T1.9.10 - Merge logger branch** - What: Every later phase gets instant visible diagnostics. How: Merge feature/logger into main after the dev and preview verification.
+- [x] **T1.9.1 - Cut logger feature branch** - What: Logging ships together with its overlay and tests. How: Run git checkout -b feature/logger from main.
+- [x] **T1.9.2 - Implement createLogger** - What: Namespaced, timestamped log lines per subsystem. How: Write createLogger(namespace) in src/utils/log.js returning debug/info/warn/error methods with ISO timestamps.
+- [x] **T1.9.3 - Implement setLogLevel** - What: Noise control from a single switch during a live session. How: Write setLogLevel(level) filtering which methods emit based on an ordered level list.
+- [x] **T1.9.4 - Implement recordEntry ring buffer** - What: The last 200 log lines are retained for the overlay and later audit phases. How: Write recordEntry(entry) appending to a capped in-memory array exported for reads.
+- [x] **T1.9.5 - Implement mountLogOverlay** - What: Errors surface on-screen the moment they happen. How: Write mountLogOverlay() rendering the buffer into a fixed bottom-right pre element only when import.meta.env.DEV.
+- [x] **T1.9.6 - Style the overlay** - What: Readable green-on-black monospace fitting the terminal vibe. How: Apply inline styles for position fixed, rgba black background, lime text and 11px monospace font.
+- [x] **T1.9.7 - Capture global errors** - What: No crash goes unseen, even outside logger calls. How: Wire window.onerror and unhandledrejection listeners into the error level in src/main.js.
+- [x] **T1.9.8 - Write the four single unit tests** - What: Each logging function locked by its one test. How: Add targeted tests for createLogger, setLogLevel, recordEntry and mountLogOverlay under tests/utils/ using jsdom where DOM is touched.
+- [x] **T1.9.9 - Verify overlay behavior** - What: Proof the overlay helps in dev and vanishes in prod. How: Throw a test error in npm run dev to see it on-screen, then confirm npm run preview shows no overlay.
+- [x] **T1.9.10 - Merge logger branch** - What: Every later phase gets instant visible diagnostics. How: Merge feature/logger into main after the dev and preview verification.
 
 ### F1.10 - Developer Docs & .claude Context Wiring
 
