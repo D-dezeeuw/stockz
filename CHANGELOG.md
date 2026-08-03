@@ -10,7 +10,13 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ## [Unreleased]
 
-_Nothing yet — next entries land with phase 2 (Spektrum Core Integration)._
+### Added
+
+- **UI engine on tap** — Spektrum 1.1.0 and its companions (persist, devtools, inspect,
+  dock, compile) resolve from the unpkg CDN through a pinned importmap, with a
+  modulepreload hint so the engine downloads before app code runs. `src/app/engine.js`
+  is the single local door to the engine, and `engineInfo()` reports the version the
+  page actually loaded. (F2.1)
 
 ## [0.1.0] — 2026-08-03 — Phase 1: Foundation & Tooling
 
