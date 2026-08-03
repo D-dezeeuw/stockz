@@ -42,6 +42,12 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
   canvas re-palettes, and a spread-anomaly warning that fires on the *crossing* rather
   than every tick. All teardown-tracked, so a reload cannot stack a second clock on the
   first. (F2.6)
+- **Async data with visible status** — every remote source writes the same value/status/
+  error trio, so a block can show loading, ready or dead without inventing its own flags.
+  A new request aborts the one it replaces (a late reply overwriting a newer one is a
+  stale-data bug that is very hard to spot), retries back off exponentially to a ceiling,
+  and a failing source degrades only its own block while the rest of the desk keeps
+  trading. (F2.7)
 
 ## [0.1.0] — 2026-08-03 — Phase 1: Foundation & Tooling
 

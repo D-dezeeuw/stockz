@@ -41,6 +41,9 @@ export const PATHS = Object.freeze({
     clock: 'app.clock',
     uptime: 'app.uptime',
     heartbeat: 'app.heartbeat',
+    serverTime: 'app.serverTime',
+    serverTimeStatus: 'app.serverTimeStatus',
+    serverTimeError: 'app.serverTimeError',
   }),
   ui: Object.freeze({
     status: 'ui.status',

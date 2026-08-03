@@ -33,6 +33,9 @@ export function initialState(overrides = {}) {
     [PATHS.app.clock]: '',
     [PATHS.app.uptime]: 0,
     [PATHS.app.heartbeat]: 0,
+    [PATHS.app.serverTime]: 0,
+    [PATHS.app.serverTimeStatus]: 'idle',
+    [PATHS.app.serverTimeError]: '',
 
     // what is on screen
     [PATHS.ui.status]: 'ready',
