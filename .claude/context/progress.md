@@ -5,11 +5,25 @@ in `masterplan.md`, and knows where the project stands. Rewritten at every phase
 
 ---
 
-## Status: Phase 5 closed (v0.5.0) · Phase 6 next
+## Status: Phase 6 closed (v0.6.0) · Phase 7 next
 
 **Live:** https://d-dezeeuw.github.io/stockz/ (Pages serves `main` root — pushing is deploying)
-**Tests:** 126, one per function, all passing individually. Every gated file ≥85% branches.
+**Tests:** 135, one per function, all passing individually. Every gated file ≥85% branches.
 **Branch model:** everything merges to `main`; no feature branches outstanding.
+
+## Phase 6 — Day/Night Theme Engine (closed)
+
+| Feature | What now exists | Where |
+| --- | --- | --- |
+| F6.1 | `loadSettings`, `saveSettings`, `migrateSettings` (versioned), `restoreSettings`, `persistSettings`, `isPersistable` | `src/state/persist.js` |
+| F6.6 | inline no-flash boot script — stamps `data-theme` before any stylesheet | `index.html` `<head>` |
+| F6.7 | 150ms crossfade on surfaces; numbers explicitly excluded | `src/styles/status.css` |
+| F6.8 | `onThemeRepaint` — canvas renderers subscribe here (phase 13 uses it) | `src/state/systems.js` |
+| F6.9 | `syncBrowserChrome` + `CHROME_COLOR` | `src/ui/theme.js` |
+
+**Storage key is `stockz.settings.v1`.** The no-flash script duplicates the theme read by
+necessity (no module graph that early) — if the key or shape changes, change it in
+`persist.js` **and** in `index.html`.
 
 ## Phase 5 — Header, Branding & Navigation (closed)
 
@@ -77,20 +91,19 @@ go stale, and faults that reach the trader instead of the console.
 | F2.9 | `pushToast`, `dismissToast`, `expireToasts`, `describeEngineError`, `wireEngineErrors` | `src/ui/toast.js` |
 | F2.10 | `collectExpressions`, `renderPrecompileModule`, `cspMeta`, `npm run build:csp` | `src/app/csp.js`, `docs/csp.md` |
 
-## Next up: Phase 6 — Day/Night Theme Engine
+## Next up: Phase 7 — User Settings & Persistence
 
-First feature **F6.1**. The theme *mechanism* already exists (`src/ui/theme.js`:
-`applyTheme` stamps `data-theme` on `<html>` and writes both `ui.theme` and
-`settings.theme`; the toggle is wired in the header). Phase 6 adds what is missing:
+First feature **F7.1**. The persistence *layer* already exists (`src/state/persist.js`,
+wired into bootstrap; theme and blocks already round-trip). Phase 7 adds the settings
+the trader actually edits and the UI to edit them:
 
-- **Persistence** via `spektrum/persist` on the `settings.*` branch — nothing is stored
-  yet, so a reload loses the choice.
-- **No-flash boot**: an inline `<script>` in `<head>` must read the cached theme and stamp
-  `data-theme` *before* first paint, or a night-theme user sees a white flash.
-- Canvas charts re-palette on theme change — the seam is `onThemeChange` in
-  `src/state/systems.js`, currently a debug log.
-- `<meta name="theme-color">` is hard-coded to the night colour and should follow.
-- Contrast for both palettes is already asserted by `auditContrast` (F3.10).
+- A settings **drawer** — `ui.modal === 'settings'` is already toggled by the header gear
+  via `ui.toggleOverlay`; nothing renders for it yet.
+- Schema: default order size, price step, hotkeys, sounds, favourite instruments.
+- Layout presets (save/load named block arrangements) on top of the block registry.
+- Export/import settings as JSON; reset-to-defaults with a `checkpoint()` undo.
+- `SETTINGS_VERSION`/`migrateSettings` already exist — extend the migration when the
+  schema grows, and remember the no-flash script in `index.html` reads the same key.
 
 ## Gotchas (learned the hard way — do not rediscover)
 
