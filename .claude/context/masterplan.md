@@ -206,16 +206,16 @@
 **What:** Any new contributor, human or agent, goes from clone to a running desk in under five minutes.
 **How:** Write a README quickstart, scripts and env docs, plus CLAUDE.md context encoding the repo's process rules.
 
-- [ ] **T1.10.1 - Cut dev-docs feature branch** - What: Docs merge only after a clean-clone dry run. How: Run git checkout -b feature/dev-docs from main.
-- [ ] **T1.10.2 - Write README pitch and stack** - What: Instant orientation on what STOCKZ is and how it is built. How: Author README.md intro naming the vanilla-ESM SPA, Spektrum via unpkg, Vite, Vitest and GitHub Pages stack.
-- [ ] **T1.10.3 - Write README quickstart** - What: Three copy-paste commands to a running desk. How: Document nvm use 22, npm install and npm run dev with the localhost:5173 URL.
-- [ ] **T1.10.4 - Write README scripts table** - What: Every npm command explained in one glance. How: Add a table covering dev, build, preview, test, test:fn, lint, check:secrets and deploy.
-- [ ] **T1.10.5 - Write README keys section** - What: Clear, safe setup for OKX and EToro credentials. How: Explain copying .env.example to .env.local, the STOCKZ_ prefix rule and the never-commit-values warning.
-- [ ] **T1.10.6 - Author CLAUDE.md conventions** - What: Agent sessions automatically follow house rules. How: Write root CLAUDE.md covering repo layout, feature-branch-per-feature flow and the one-test-per-function policy with test:fn usage.
-- [ ] **T1.10.7 - Wire .claude settings** - What: Agents run the standard toolchain without permission friction. How: Add .claude/settings.json allowlisting npm run dev/build/test/test:fn/lint commands.
-- [ ] **T1.10.8 - Write docs/architecture.md map** - What: A one-page mental model of modules before the codebase grows. How: Diagram src/app, src/utils, tests mirroring and the future Spektrum state tree in Markdown.
-- [ ] **T1.10.9 - Dry-run the quickstart** - What: Docs proven correct, not aspirational. How: Clone the repo into a scratch directory, follow README verbatim to a running dev server and fix any gap found.
-- [ ] **T1.10.10 - Merge dev-docs branch** - What: Phase 1 closes with a self-explaining, agent-ready repo. How: Merge feature/dev-docs into main after the dry run succeeds.
+- [x] **T1.10.1 - Cut dev-docs feature branch** - What: Docs merge only after a clean-clone dry run. How: Run git checkout -b feature/dev-docs from main.
+- [x] **T1.10.2 - Write README pitch and stack** - What: Instant orientation on what STOCKZ is and how it is built. How: Author README.md intro naming the vanilla-ESM SPA, Spektrum via unpkg, Vite, Vitest and GitHub Pages stack.
+- [x] **T1.10.3 - Write README quickstart** - What: Three copy-paste commands to a running desk. How: Document nvm use 22, npm install and npm run dev with the localhost:5173 URL.
+- [x] **T1.10.4 - Write README scripts table** - What: Every npm command explained in one glance. How: Add a table covering dev, build, preview, test, test:fn, lint, check:secrets and deploy.
+- [x] **T1.10.5 - Write README keys section** - What: Clear, safe setup for OKX and EToro credentials. How: Explain copying .env.example to .env.local, the STOCKZ_ prefix rule and the never-commit-values warning.
+- [x] **T1.10.6 - Author CLAUDE.md conventions** - What: Agent sessions automatically follow house rules. How: Write root CLAUDE.md covering repo layout, feature-branch-per-feature flow and the one-test-per-function policy with test:fn usage.
+- [x] **T1.10.7 - Wire .claude settings** - What: Agents run the standard toolchain without permission friction. How: Add .claude/settings.json allowlisting npm run dev/build/test/test:fn/lint commands.
+- [x] **T1.10.8 - Write docs/architecture.md map** - What: A one-page mental model of modules before the codebase grows. How: Diagram src/app, src/utils, tests mirroring and the future Spektrum state tree in Markdown.
+- [x] **T1.10.9 - Dry-run the quickstart** - What: Docs proven correct, not aspirational. How: Clone the repo into a scratch directory, follow README verbatim to a running dev server and fix any gap found.
+- [x] **T1.10.10 - Merge dev-docs branch** - What: Phase 1 closes with a self-explaining, agent-ready repo. How: Merge feature/dev-docs into main after the dry run succeeds.
 
 ---
 
