@@ -1,0 +1,22 @@
+import { describe, it, expect, beforeEach } from 'vitest'
+import { ACTIONS, allActionNames } from './names.js'
+import { registerCoreActions, actionNames, clearActions } from './registry.js'
+
+beforeEach(() => {
+  clearActions()
+})
+
+describe('allActionNames', () => {
+  it('flattens the declared names and matches what boot actually registers', () => {
+    expect(allActionNames()).toEqual(['ui.setStatus', 'app.reset'])
+
+    registerCoreActions()
+    expect(actionNames().sort()).toEqual(allActionNames().sort())
+
+    // Every name follows <namespace>.<verb>, which is what registerAction enforces.
+    for (const name of allActionNames()) expect(name).toMatch(/^[a-z]+\.[a-zA-Z]+$/)
+
+    expect(Object.isFrozen(ACTIONS)).toBe(true)
+    expect(Object.isFrozen(ACTIONS.ui)).toBe(true)
+  })
+})

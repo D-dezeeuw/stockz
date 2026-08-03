@@ -37,7 +37,12 @@ export default [
     // The state map owns every path string. A raw 'trade.dayPnl' literal at a call site
     // is how a typo invents a silent branch no binding reads - import PATHS instead.
     files: ['src/**/*.js'],
-    ignores: ['src/state/paths.js', 'src/state/initial.js', '**/*.test.js'],
+    ignores: [
+      'src/state/paths.js',
+      'src/state/initial.js',
+      'src/actions/names.js',
+      '**/*.test.js',
+    ],
     rules: {
       'no-restricted-syntax': [
         'error',

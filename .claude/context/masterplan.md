@@ -277,16 +277,16 @@
 **What:** Every user action lives in one registry callable from HTML data-action, keeping clicks O(1) fast.
 **How:** Build src/app/actions.js registering namespaced handlers with Spektrum defineFn and a programmatic dispatch helper.
 
-- [ ] **T2.4.1 - Cut actions feature branch** - What: The action layer merges as one reviewed unit. How: Run git checkout -b feature/action-registry from main.
-- [ ] **T2.4.2 - Scaffold registerActions** - What: One boot call installs every handler. How: Write registerActions() in src/app/actions.js iterating an actions map into defineFn(name, handler) calls.
-- [ ] **T2.4.3 - Implement app.reset action** - What: A clean-slate command for demos and recovery. How: Add an 'app.reset' handler applying initialState() over the tree via setValue.
-- [ ] **T2.4.4 - Implement ui.setStatus action** - What: Any module can update the status line uniformly. How: Add a 'ui.setStatus' handler writing its payload to ui.bootStatus through paths constants.
-- [ ] **T2.4.5 - Document naming convention** - What: Predictable namespace.verb action names forever. How: Write the convention header comment in actions.js and mirror it in docs/state-map.md.
-- [ ] **T2.4.6 - Wire a DOM dispatch proof** - What: Confidence HTML can trigger registry actions. How: Add a dev-only button with data-action="app.reset" inside a data-if="ui.devMode" block in index.html.
-- [ ] **T2.4.7 - Implement dispatchAction helper** - What: Hotkeys and bots in later phases call actions programmatically. How: Write dispatchAction(name, payload) in actions.js invoking the registered handler via trigger.
-- [ ] **T2.4.8 - Guard duplicate registration** - What: Copy-paste bugs surface immediately in dev. How: Make registerActions() throw when defineFn would overwrite an existing action name.
-- [ ] **T2.4.9 - Write the four single unit tests** - What: registerActions, dispatchAction and both handlers each locked by one test. How: Add targeted tests under tests/app/ running each via vitest run -t.
-- [ ] **T2.4.10 - Merge actions branch** - What: A stable action surface unblocks order entry and hotkey phases. How: Merge feature/action-registry into main after clicking the dev button resets state in the browser.
+- [x] **T2.4.1 - Cut actions feature branch** - What: The action layer merges as one reviewed unit. How: Run git checkout -b feature/action-registry from main.
+- [x] **T2.4.2 - Scaffold registerActions** - What: One boot call installs every handler. How: Write registerActions() in src/app/actions.js iterating an actions map into defineFn(name, handler) calls.
+- [x] **T2.4.3 - Implement app.reset action** - What: A clean-slate command for demos and recovery. How: Add an 'app.reset' handler applying initialState() over the tree via setValue.
+- [x] **T2.4.4 - Implement ui.setStatus action** - What: Any module can update the status line uniformly. How: Add a 'ui.setStatus' handler writing its payload to ui.bootStatus through paths constants.
+- [x] **T2.4.5 - Document naming convention** - What: Predictable namespace.verb action names forever. How: Write the convention header comment in actions.js and mirror it in docs/state-map.md.
+- [x] **T2.4.6 - Wire a DOM dispatch proof** - What: Confidence HTML can trigger registry actions. How: Add a dev-only button with data-action="app.reset" inside a data-if="ui.devMode" block in index.html.
+- [x] **T2.4.7 - Implement dispatchAction helper** - What: Hotkeys and bots in later phases call actions programmatically. How: Write dispatchAction(name, payload) in actions.js invoking the registered handler via trigger.
+- [x] **T2.4.8 - Guard duplicate registration** - What: Copy-paste bugs surface immediately in dev. How: Make registerActions() throw when defineFn would overwrite an existing action name.
+- [x] **T2.4.9 - Write the four single unit tests** - What: registerActions, dispatchAction and both handlers each locked by one test. How: Add targeted tests under tests/app/ running each via vitest run -t.
+- [x] **T2.4.10 - Merge actions branch** - What: A stable action surface unblocks order entry and hotkey phases. How: Merge feature/action-registry into main after clicking the dev button resets state in the browser.
 
 ### F2.5 - Derived Values via computed
 

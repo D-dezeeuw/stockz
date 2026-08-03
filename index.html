@@ -34,6 +34,10 @@
     <p class="boot-line">
       {{app.name}} v{{app.version}} · engine spektrum@{{app.engine}} · {{ui.status}}
     </p>
+    <!-- Dispatch proof: HTML calls a registered action by name, no glue code. -->
+    <button type="button" data-action="click" data-fn="ui.setStatus" data-status="armed">
+      set status: armed
+    </button>
   </div>
   <!-- footer: phase 4 -->
 
