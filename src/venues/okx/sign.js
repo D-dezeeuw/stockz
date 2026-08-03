@@ -45,8 +45,11 @@ export function toBase64(buffer) {
   let binary = ''
   for (const byte of bytes) binary += String.fromCharCode(byte)
 
+  // btoa is the browser path and always exists where this ships. The Buffer branch is
+  // reached only under Node (tests), and is read off globalThis so browser bundles never
+  // reference a Node global.
   if (typeof btoa === 'function') return btoa(binary)
-  return Buffer.from(bytes).toString('base64')
+  return globalThis.Buffer.from(bytes).toString('base64')
 }
 
 /**
