@@ -68,8 +68,8 @@ export default [
   },
 
   {
-    // Build/tooling config runs in Node.
-    files: ['vite.config.js', 'eslint.config.js'],
+    // Build/tooling scripts run in Node.
+    files: ['vite.config.js', 'eslint.config.js', 'scripts/**/*.mjs', 'scripts/**/*.js'],
     languageOptions: {
       globals: { ...globals.node },
     },

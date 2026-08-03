@@ -57,6 +57,12 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
   behind the feed', not `E_TICK_OVERFLOW`). The stack is capped at four and newest-first,
   so a venue erroring dozens of times a second cannot bury the prices, and toasts age out
   on the clock tick rather than on per-toast timers. (F2.9)
+- **CSP groundwork** — `npm run build:csp` extracts every runtime expression from the
+  page and generates a precompiled module, so the desk can eventually run without
+  `unsafe-eval` — the directive most worth not having on a page holding API keys. The
+  extraction is unit-tested against the real `index.html`, because a missed expression
+  fails silently at runtime rather than at build time. The default build is unchanged.
+  (F2.10)
 
 ## [0.1.0] — 2026-08-03 — Phase 1: Foundation & Tooling
 

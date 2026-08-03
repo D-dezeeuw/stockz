@@ -373,16 +373,16 @@
 **What:** The desk can later run under a strict no-eval Content-Security-Policy without a rewrite.
 **How:** Add a spektrum/compile precompile script, a build:csp npm path and a runtime switch, documented for future hardening.
 
-- [ ] **T2.10.1 - Cut csp-compile feature branch** - What: The hardening path merges without touching the default build. How: Run git checkout -b feature/csp-compile from main.
-- [ ] **T2.10.2 - Write the CSP readiness doc** - What: The team understands why and when the eval-free path is needed. How: Author docs/csp.md explaining strict CSP, the spektrum/compile flow and GitHub Pages header limits.
-- [ ] **T2.10.3 - Implement compileTemplates script** - What: Bindings become precompiled modules with no runtime eval. How: Write compileTemplates() in scripts/compile-templates.mjs running spektrum/compile over index.html and emitting src/app/compiled-bindings.js.
-- [ ] **T2.10.4 - Add build:csp npm script** - What: One command produces the hardened bundle. How: Add "build:csp" running node scripts/compile-templates.mjs then vite build with STOCKZ_CSP=1 in the env.
-- [ ] **T2.10.5 - Add the runtime switch** - What: One codebase serves both normal and CSP builds. How: Make bootstrap() import compiled-bindings.js when readEnv('STOCKZ_CSP') === '1', else bind templates live.
-- [ ] **T2.10.6 - Add report-only CSP meta** - What: Violations show up in dev long before enforcement. How: Add a Content-Security-Policy-Report-Only meta tag in index.html allowing unpkg.com and self.
-- [ ] **T2.10.7 - Write the compileTemplates unit test** - What: The compile step locked by its single test. How: Add tests/scripts/compile-templates.compileTemplates.test.js over a fixture HTML snippet and run vitest run -t compileTemplates.
-- [ ] **T2.10.8 - Verify the hardened build** - What: Proof the desk boots with eval disabled. How: Run npm run build:csp, serve dist with an enforcing CSP meta and confirm boot with zero violations in console.
-- [ ] **T2.10.9 - Verify the default build unchanged** - What: Assurance normal deploys carry no compile overhead. How: Run npm run build without the flag and diff dist output against a pre-branch build for parity.
-- [ ] **T2.10.10 - Merge csp-compile branch** - What: Phase 2 closes with an engine that is fast today and hardenable tomorrow. How: Merge feature/csp-compile into main after both build verifications.
+- [x] **T2.10.1 - Cut csp-compile feature branch** - What: The hardening path merges without touching the default build. How: Run git checkout -b feature/csp-compile from main.
+- [x] **T2.10.2 - Write the CSP readiness doc** - What: The team understands why and when the eval-free path is needed. How: Author docs/csp.md explaining strict CSP, the spektrum/compile flow and GitHub Pages header limits.
+- [x] **T2.10.3 - Implement compileTemplates script** - What: Bindings become precompiled modules with no runtime eval. How: Write compileTemplates() in scripts/compile-templates.mjs running spektrum/compile over index.html and emitting src/app/compiled-bindings.js.
+- [x] **T2.10.4 - Add build:csp npm script** - What: One command produces the hardened bundle. How: Add "build:csp" running node scripts/compile-templates.mjs then vite build with STOCKZ_CSP=1 in the env.
+- [x] **T2.10.5 - Add the runtime switch** - What: One codebase serves both normal and CSP builds. How: Make bootstrap() import compiled-bindings.js when readEnv('STOCKZ_CSP') === '1', else bind templates live.
+- [x] **T2.10.6 - Add report-only CSP meta** - What: Violations show up in dev long before enforcement. How: Add a Content-Security-Policy-Report-Only meta tag in index.html allowing unpkg.com and self.
+- [x] **T2.10.7 - Write the compileTemplates unit test** - What: The compile step locked by its single test. How: Add tests/scripts/compile-templates.compileTemplates.test.js over a fixture HTML snippet and run vitest run -t compileTemplates.
+- [x] **T2.10.8 - Verify the hardened build** - What: Proof the desk boots with eval disabled. How: Run npm run build:csp, serve dist with an enforcing CSP meta and confirm boot with zero violations in console.
+- [x] **T2.10.9 - Verify the default build unchanged** - What: Assurance normal deploys carry no compile overhead. How: Run npm run build without the flag and diff dist output against a pre-branch build for parity.
+- [x] **T2.10.10 - Merge csp-compile branch** - What: Phase 2 closes with an engine that is fast today and hardenable tomorrow. How: Merge feature/csp-compile into main after both build verifications.
 
 ---
 
