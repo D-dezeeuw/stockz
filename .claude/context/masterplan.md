@@ -412,32 +412,32 @@
 **What:** Crisp monospace text with tabular numerals so stacked prices align and scan instantly.
 **How:** A --sz-font-mono JetBrains Mono fallback chain, a compact type scale and font-variant-numeric utilities in tokens.css.
 
-- [ ] **T3.2.1 - Cut typography branch** - What: Type work proceeds without touching main. How: git checkout -b feat/typography from main.
-- [ ] **T3.2.2 - Monospace stack token** - What: One font token every component inherits. How: Add --sz-font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace to tokens.css.
-- [ ] **T3.2.3 - Self-host JetBrains Mono** - What: The signature face loads offline-safe on GitHub Pages. How: Place woff2 files in public/fonts with @font-face rules and font-display: swap.
-- [ ] **T3.2.4 - Compact type scale** - What: Sizes tuned for dense grid blocks. How: Add --sz-text-2xs..--sz-text-xl tokens (10px-20px) with a 1.2 ratio in tokens.css.
-- [ ] **T3.2.5 - Line-height and tracking tokens** - What: Tight but legible vertical rhythm. How: Add --sz-leading-tight/normal and --sz-tracking tokens sized for terminal density.
-- [ ] **T3.2.6 - Tabular numeral utility** - What: Price digits line up in perfect columns. How: Add .sz-num with font-variant-numeric: tabular-nums slashed-zero in main.css.
-- [ ] **T3.2.7 - Base element type styles** - What: Body, headings and code default to the terminal voice. How: Style body, h1-h4 and code from the font, scale and leading tokens.
-- [ ] **T3.2.8 - Type specimen demo block** - What: Proof digits align and sizes read at density. How: Dev-only specimen with a fake price column rendered via Spektrum data-each.
-- [ ] **T3.2.9 - Verify typography build** - What: Type ships without lint or bundle errors. How: Run npx eslint . plus npm run build and check the specimen in Vite dev.
-- [ ] **T3.2.10 - Merge typography to main** - What: Every later phase types in the terminal voice. How: Merge feat/typography into main when checks pass.
+- [x] **T3.2.1 - Cut typography branch** - What: Type work proceeds without touching main. How: git checkout -b feat/typography from main.
+- [x] **T3.2.2 - Monospace stack token** - What: One font token every component inherits. How: Add --sz-font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace to tokens.css.
+- [x] **T3.2.3 - Self-host JetBrains Mono** - What: The signature face loads offline-safe on GitHub Pages. How: Place woff2 files in public/fonts with @font-face rules and font-display: swap.
+- [x] **T3.2.4 - Compact type scale** - What: Sizes tuned for dense grid blocks. How: Add --sz-text-2xs..--sz-text-xl tokens (10px-20px) with a 1.2 ratio in tokens.css.
+- [x] **T3.2.5 - Line-height and tracking tokens** - What: Tight but legible vertical rhythm. How: Add --sz-leading-tight/normal and --sz-tracking tokens sized for terminal density.
+- [x] **T3.2.6 - Tabular numeral utility** - What: Price digits line up in perfect columns. How: Add .sz-num with font-variant-numeric: tabular-nums slashed-zero in main.css.
+- [x] **T3.2.7 - Base element type styles** - What: Body, headings and code default to the terminal voice. How: Style body, h1-h4 and code from the font, scale and leading tokens.
+- [x] **T3.2.8 - Type specimen demo block** - What: Proof digits align and sizes read at density. How: Dev-only specimen with a fake price column rendered via Spektrum data-each.
+- [x] **T3.2.9 - Verify typography build** - What: Type ships without lint or bundle errors. How: Run npx eslint . plus npm run build and check the specimen in Vite dev.
+- [x] **T3.2.10 - Merge typography to main** - What: Every later phase types in the terminal voice. How: Merge feat/typography into main when checks pass.
 
 ### F3.3 - Density Spacing, Radius and Border Tokens
 
 **What:** Tight, consistent gaps and edges so many blocks fit on screen without visual noise.
 **How:** A 4px-base spacing scale, small radii and hairline border tokens in tokens.css sized for dense grids.
 
-- [ ] **T3.3.1 - Cut density-tokens branch** - What: Spacing work isolated from main. How: git checkout -b feat/density-tokens from main.
-- [ ] **T3.3.2 - Spacing scale tokens** - What: Predictable gaps everywhere. How: Add --sz-space-0..8 on a 4px base (0-32px) to tokens.css.
-- [ ] **T3.3.3 - Radius tokens** - What: Sharp terminal corners with a hint of soften. How: Add --sz-radius-xs/sm/md (2px/4px/6px) tokens.
-- [ ] **T3.3.4 - Hairline border tokens** - What: Crisp 1px block edges that never smear. How: Add --sz-border-hair: 1px solid var(--sz-line) with a --sz-line color alias to the ink family.
-- [ ] **T3.3.5 - Block padding and gap presets** - What: One knob controls grid density. How: Add --sz-block-pad and --sz-gap tokens composed from the spacing scale.
-- [ ] **T3.3.6 - Focus ring token** - What: Keyboard focus visible without breaking density. How: Add --sz-focus outline token using the green ramp at 2px offset 1px.
-- [ ] **T3.3.7 - Apply density to demo blocks** - What: Swatch and specimen blocks demonstrate real density. How: Restyle the dev demo blocks using only the new spacing/radius/border tokens.
-- [ ] **T3.3.8 - Density audit at laptop width** - What: The scale holds up on a 13-inch screen. How: Check the Vite dev server at 1280px and adjust token values where blocks feel cramped.
-- [ ] **T3.3.9 - Lint and build pass** - What: Density tokens ship clean. How: Run npx eslint . and npm run build with no warnings.
-- [ ] **T3.3.10 - Merge density tokens to main** - What: The grid shell in phase 4 can consume the tokens. How: Merge feat/density-tokens into main when green.
+- [x] **T3.3.1 - Cut density-tokens branch** - What: Spacing work isolated from main. How: git checkout -b feat/density-tokens from main.
+- [x] **T3.3.2 - Spacing scale tokens** - What: Predictable gaps everywhere. How: Add --sz-space-0..8 on a 4px base (0-32px) to tokens.css.
+- [x] **T3.3.3 - Radius tokens** - What: Sharp terminal corners with a hint of soften. How: Add --sz-radius-xs/sm/md (2px/4px/6px) tokens.
+- [x] **T3.3.4 - Hairline border tokens** - What: Crisp 1px block edges that never smear. How: Add --sz-border-hair: 1px solid var(--sz-line) with a --sz-line color alias to the ink family.
+- [x] **T3.3.5 - Block padding and gap presets** - What: One knob controls grid density. How: Add --sz-block-pad and --sz-gap tokens composed from the spacing scale.
+- [x] **T3.3.6 - Focus ring token** - What: Keyboard focus visible without breaking density. How: Add --sz-focus outline token using the green ramp at 2px offset 1px.
+- [x] **T3.3.7 - Apply density to demo blocks** - What: Swatch and specimen blocks demonstrate real density. How: Restyle the dev demo blocks using only the new spacing/radius/border tokens.
+- [x] **T3.3.8 - Density audit at laptop width** - What: The scale holds up on a 13-inch screen. How: Check the Vite dev server at 1280px and adjust token values where blocks feel cramped.
+- [x] **T3.3.9 - Lint and build pass** - What: Density tokens ship clean. How: Run npx eslint . and npm run build with no warnings.
+- [x] **T3.3.10 - Merge density tokens to main** - What: The grid shell in phase 4 can consume the tokens. How: Merge feat/density-tokens into main when green.
 
 ### F3.4 - Glow, Scanline and Flicker Accents
 

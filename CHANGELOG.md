@@ -17,6 +17,13 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
   orange, in both themes: a scalper reads colour before digits, and a palette that means
   different things on different screens is how the wrong button gets clicked at speed.
   (F3.1)
+- **Terminal typography** — monospace throughout, with tabular numerals as the *default*
+  rather than an opt-in: proportional digits change width as prices move, so a column of
+  quotes shivers on every tick and the eye has to re-find the decimal point. No web fonts
+  are loaded — a blocking font request is unacceptable on a page selling latency. (F3.2)
+- **Density tokens** — a 4px spacing step, near-square corners and the grid metrics every
+  block will share, tuned to fit the most instruments and fills on screen at once. The
+  page never scrolls sideways; content scrolls inside its own block. (F3.3)
 
 ## [0.2.0] — 2026-08-03 — Phase 2: Spektrum Core Integration
 
