@@ -5,11 +5,26 @@ in `masterplan.md`, and knows where the project stands. Rewritten at every phase
 
 ---
 
-## Status: Phase 8 closed (v0.8.0) · Phase 9 next
+## Status: Phase 9 closed (v0.9.0) · Phase 10 next
 
 **Live:** https://d-dezeeuw.github.io/stockz/ (Pages serves `main` root — pushing is deploying)
-**Tests:** 165, one per function, all passing individually. Every gated file ≥85% branches.
+**Tests:** 191, one per function, all passing individually. Every gated file ≥85% branches.
 **Branch model:** everything merges to `main`; no feature branches outstanding.
+
+## Phase 9 — OKX Connectivity (closed)
+
+| Feature | What now exists | Where |
+| --- | --- | --- |
+| F9.3, F9.4 | `okxTimestamp`, `prehashString`, `toBase64`, `hmacSha256`, `signRequest`, `buildLoginFrame` | `src/venues/okx/sign.js` |
+| F9.1, F9.2 | `createOkxSocket` (backoff + resubscribe), `subscribeFrame`, `parseFrame`, `isStale` | `src/venues/okx/socket.js` |
+| F9.6, F9.10 | `mapTicker/Trade/Book/Order/Position/Error`, `toNum`, `mapOrderState` | `src/venues/okx/map.js` |
+| F9.5, F9.8 | `okxRequest`, `placeOrder`, `cancelOrder`, `fetchPositions`, `withinRateLimit` | `src/venues/okx/rest.js` |
+
+Venue facts worth keeping: the WS login signs a **seconds** timestamp while REST signs the
+ISO string; a GET signs an **empty** body (`{}` must not be signed); OKX returns HTTP 200
+with `code: '1'` for business failures and the real reason is the per-item `sCode`.
+Nothing here opens a socket in tests — the socket factory, timer, `fetch` and
+`crypto.subtle` are all injected.
 
 ## Phase 8 — API Key Access Layer (closed)
 
@@ -119,23 +134,21 @@ go stale, and faults that reach the trader instead of the console.
 | F2.9 | `pushToast`, `dismissToast`, `expireToasts`, `describeEngineError`, `wireEngineErrors` | `src/ui/toast.js` |
 | F2.10 | `collectExpressions`, `renderPrecompileModule`, `cspMeta`, `npm run build:csp` | `src/app/csp.js`, `docs/csp.md` |
 
-## Next up: Phase 9 — OKX Connectivity
+## Next up: Phase 10 — EToro Connectivity
 
-First feature **F9.1**. Nothing talks to a venue yet. What phase 9 must build:
+First feature **F10.1**. Mirror the OKX shape (`src/venues/okx/`) into `src/venues/etoro/`:
 
-- WS client wrapper with auto-reconnect (exponential backoff — `retryDelay` already
-  exists in `src/state/async.js`) and resubscribe on recovery.
-- Public channels: `tickers`, `trades`, `books5`/`books-l2-tbt`.
-- Private WS login: HMAC-SHA256 over `timestamp + 'GET' + '/users/self/verify'` using
-  Web Crypto (`crypto.subtle`), keys from `getKey('okx', …)` — **never from state**.
-- Signed REST (`OK-ACCESS-KEY/SIGN/TIMESTAMP/PASSPHRASE`) for orders and account.
-- Book checksum validation with resync on mismatch.
-- Venue state belongs in `market.venues.okx.state` — the header LEDs already bind to it
-  (`live`/`connecting`/`stale`/`dead` via `connectionClass`).
-- Every payload mapper is a pure function with one test; sockets stay in a thin edge.
-- Note: this container's headless Chromium cannot reach the network, and unit tests must
-  not open real sockets — inject a socket factory the way `registerSystems` injects its
-  timer.
+- REST only — no public stream — so quotes come from an **adaptive poller**: fast for the
+  focused instrument, slow for watchlist rows, paused when the tab is hidden.
+- Keys are `apiKey` + `userKey`, already in the vault (`getKey('etoro', …)`), sent as
+  headers rather than signed.
+- Mappers must emit the *same* internal schema as OKX's, so nothing downstream branches on
+  venue. Reuse the tick/order/position shapes in `src/venues/okx/map.js` as the contract.
+- Feature-flagged (`settings` has no flag yet — add one) so the desk runs clean OKX-only.
+- Mock mode with canned data for offline dev; the container has no network, so the mock
+  path is what tests exercise.
+- CORS is a real risk from a browser; document the dev-proxy strategy rather than baking
+  in a third-party CORS proxy.
 
 ## Gotchas (learned the hard way — do not rediscover)
 

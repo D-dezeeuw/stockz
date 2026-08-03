@@ -10,6 +10,13 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ## [Unreleased]
 
+_Nothing yet — next entries land with phase 10 (EToro Connectivity)._
+
+## [0.9.0] — 2026-08-03 — Phase 9: OKX Connectivity
+
+A real line to the venue: signed requests, a socket that survives a bad network, and
+mappers that keep every venue quirk out of the app.
+
 ### Added
 
 - **OKX request signing** — HMAC-SHA256 via Web Crypto, with the secret read from the
@@ -308,7 +315,8 @@ with a test policy and a live URL.
   literal `APP_VERSION` (a JSON import is bundler-only), guarded by a test that fails if
   it drifts from `package.json`; static assets moved from `public/` to the repo root.
 
-[Unreleased]: https://github.com/D-dezeeuw/stockz/compare/v0.8.0...HEAD
+[Unreleased]: https://github.com/D-dezeeuw/stockz/compare/v0.9.0...HEAD
+[0.9.0]: https://github.com/D-dezeeuw/stockz/compare/v0.8.0...v0.9.0
 [0.8.0]: https://github.com/D-dezeeuw/stockz/compare/v0.7.0...v0.8.0
 [0.7.0]: https://github.com/D-dezeeuw/stockz/compare/v0.6.0...v0.7.0
 [0.6.0]: https://github.com/D-dezeeuw/stockz/compare/v0.5.0...v0.6.0
