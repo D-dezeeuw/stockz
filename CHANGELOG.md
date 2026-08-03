@@ -25,6 +25,12 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
   each a pure function so no venue quirk escapes into the app: `''` becomes `0` rather
   than `NaN`, a signed position size becomes an explicit side, and error codes become
   sentences a trader can act on. (F9.6, F9.10)
+- **Signed REST with a client-side rate budget** — orders, cancels and positions over
+  HTTPS as the fallback when the socket is reconnecting; a trader who wants out of a
+  position does not care which transport carries the cancel. Calls that would breach
+  OKX's published limits are refused locally, because being rate-limited mid-scalp costs
+  a fill. Every call returns a result object and never throws: an exception on the order
+  path leaves the trader unsure whether the order went. (F9.4, F9.5, F9.8)
 
 ## [0.8.0] — 2026-08-03 — Phase 8: API Key Access Layer
 
