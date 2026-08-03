@@ -10,6 +10,7 @@
 
 import { appVersion } from './app/version.js'
 import { keyPresenceBanner } from './utils/env.js'
+import { createLogger, mountLogOverlay, captureGlobalErrors } from './utils/log.js'
 
 export const APP_NAME = 'STOCKZ'
 
@@ -45,5 +46,9 @@ export function autoMount(doc = globalThis.document) {
   return mountApp(doc)
 }
 
-console.info(`${APP_NAME} v${appVersion()} | ${keyPresenceBanner()}`)
+const log = createLogger('boot')
+
+captureGlobalErrors()
+mountLogOverlay()
+log.info(`${APP_NAME} v${appVersion()} | ${keyPresenceBanner()}`)
 autoMount()
