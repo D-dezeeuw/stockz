@@ -30,6 +30,14 @@ optimized for trades-per-hour.
    dev; in the browser keys come from URL params or the key modal.
 6. **Speed first.** Every interaction targets <100ms perceived latency; every hot path is O(1)
    or rAF-batched. If a change adds a confirmation step, it is wrong.
+7. **Clear the context after every phase.** When a phase's ten features are merged, close
+   it (`phase-close` skill): update `.claude/context/progress.md`, then `/clear` and start
+   the next phase fresh. Never clear mid-feature. See `way-of-working.md`.
+
+## Starting a fresh context
+
+Read, in order: this file → `.claude/context/progress.md` (where the project stands) →
+the current phase in `.claude/context/masterplan.md`. That trio is the whole handoff.
 
 ## Quick commands
 

@@ -24,7 +24,39 @@ dependency demands it.
    automatically — no human approval step**. Delete the feature branch.
 8. **Tick the plan** — mark the feature's tasks `- [x]` in `masterplan.md` in the same
    merge.
-9. Only then start the next feature.
+9. Only then start the next feature. After the phase's **tenth** feature, close the
+   phase and clear the context (below).
+
+## Phase boundaries — clear the context window
+
+**After every phase (all 10 features merged), the context window is cleared before the
+next phase begins.** Long sessions accumulate dead detail — resolved errors, superseded
+file contents, finished branches — and a scalping codebase needs the model's attention
+on the phase in front of it, not the twenty features behind it.
+
+The rule only works because state lives on disk, not in the conversation. Before
+clearing, the phase must be **closeable**:
+
+1. All 10 features merged to `main` and pushed; no feature branches left behind.
+2. All 100 task checkboxes for the phase ticked in `masterplan.md`.
+3. Working tree clean — nothing uncommitted, nothing untracked.
+4. `.claude/context/progress.md` updated: phase closed, what shipped, the next phase's
+   first feature, and any gotcha the next session would otherwise rediscover the hard
+   way.
+5. No stray processes: dev/preview servers stopped, ports free, scratch clones deleted.
+6. **Deployed and shared** — `npm run deploy`, then post
+   `https://d-dezeeuw.github.io/stockz/` in the reply with one line on what is newly
+   visible. Every phase ends on a clickable result. From phase 15 (Rapid Order Entry)
+   onward this is the point of the phase — the user must be able to click the thing
+   that was built.
+
+Then clear the context (`/clear`) and start the next phase fresh. The first act of the
+new context is to read `CLAUDE.md`, `progress.md` and the next phase in `masterplan.md`
+— that trio is the entire handoff. Nothing else may be assumed to carry over.
+
+Mid-phase, do not clear: a half-finished feature's reasoning is not on disk. If the
+context is genuinely full mid-phase, finish or abandon the current feature first
+(branch merged or branch deleted), update `progress.md`, then clear.
 
 ## Auto-merge gate (the only quality bar)
 

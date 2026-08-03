@@ -31,3 +31,8 @@ Releasing:
 
 Rollback = redeploy the previous tag. Report every merge/deploy with hashes and the
 live URL state.
+
+Closing a phase: when the merge you just made was a phase's tenth feature, run the
+`phase-close` skill — confirm no feature branches, no uncommitted work and no stray
+dev/preview servers remain, update `.claude/context/progress.md` with what shipped and
+what is next, push it, and clear the context window before the next phase begins.
