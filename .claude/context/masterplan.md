@@ -325,16 +325,16 @@
 **What:** Remote fetches land in state with loading and error flags, ready for the venue phases 9-11.
 **How:** Wire addAsync sources in src/app/asyncData.js with refresh()-driven revalidation, backoff and abort handling.
 
-- [ ] **T2.7.1 - Cut async-data feature branch** - What: The async pattern merges proven against a real endpoint. How: Run git checkout -b feature/async-data from main.
-- [ ] **T2.7.2 - Scaffold registerAsync** - What: One boot call declares every remote source. How: Write registerAsync() in src/app/asyncData.js invoked from bootstrap() wiring addAsync definitions.
-- [ ] **T2.7.3 - Add serverTime async source** - What: A first live remote value proving the whole path. How: Register addAsync for market.serverTime fetching the public OKX /api/v5/public/time REST endpoint.
-- [ ] **T2.7.4 - Define status convention** - What: Any binding can show loading, ready or error uniformly. How: Have each async writer set a sibling .status key to 'loading', 'ready' or 'error' around the fetch.
-- [ ] **T2.7.5 - Implement refreshServerTime** - What: On-demand revalidation callable from UI and tests. How: Write refreshServerTime() calling refresh('market.serverTime') and expose it as a data-action dev button.
-- [ ] **T2.7.6 - Implement retryDelay backoff** - What: Failed sources retry politely without hammering venues. How: Write pure retryDelay(attempt) in asyncData.js returning capped exponential milliseconds used on error status.
-- [ ] **T2.7.7 - Abort in-flight on dispose** - What: HMR and teardown never leak dangling requests. How: Route fetches through an AbortController cancelled in import.meta.hot.dispose alongside stopSystems.
-- [ ] **T2.7.8 - Write the three single unit tests** - What: registerAsync, refreshServerTime and retryDelay each locked by one test. How: Add targeted tests mocking fetch with vi.stubGlobal and run via vitest run -t.
-- [ ] **T2.7.9 - Verify failure recovery** - What: Confidence errors degrade gracefully and heal. How: Toggle devtools offline mode, watch status flip to error, go online and confirm refresh returns it to ready.
-- [ ] **T2.7.10 - Merge async-data branch** - What: The remote-data pattern all venue code will copy is on main. How: Merge feature/async-data into main after the offline recovery verification.
+- [x] **T2.7.1 - Cut async-data feature branch** - What: The async pattern merges proven against a real endpoint. How: Run git checkout -b feature/async-data from main.
+- [x] **T2.7.2 - Scaffold registerAsync** - What: One boot call declares every remote source. How: Write registerAsync() in src/app/asyncData.js invoked from bootstrap() wiring addAsync definitions.
+- [x] **T2.7.3 - Add serverTime async source** - What: A first live remote value proving the whole path. How: Register addAsync for market.serverTime fetching the public OKX /api/v5/public/time REST endpoint.
+- [x] **T2.7.4 - Define status convention** - What: Any binding can show loading, ready or error uniformly. How: Have each async writer set a sibling .status key to 'loading', 'ready' or 'error' around the fetch.
+- [x] **T2.7.5 - Implement refreshServerTime** - What: On-demand revalidation callable from UI and tests. How: Write refreshServerTime() calling refresh('market.serverTime') and expose it as a data-action dev button.
+- [x] **T2.7.6 - Implement retryDelay backoff** - What: Failed sources retry politely without hammering venues. How: Write pure retryDelay(attempt) in asyncData.js returning capped exponential milliseconds used on error status.
+- [x] **T2.7.7 - Abort in-flight on dispose** - What: HMR and teardown never leak dangling requests. How: Route fetches through an AbortController cancelled in import.meta.hot.dispose alongside stopSystems.
+- [x] **T2.7.8 - Write the three single unit tests** - What: registerAsync, refreshServerTime and retryDelay each locked by one test. How: Add targeted tests mocking fetch with vi.stubGlobal and run via vitest run -t.
+- [x] **T2.7.9 - Verify failure recovery** - What: Confidence errors degrade gracefully and heal. How: Toggle devtools offline mode, watch status flip to error, go online and confirm refresh returns it to ready.
+- [x] **T2.7.10 - Merge async-data branch** - What: The remote-data pattern all venue code will copy is on main. How: Merge feature/async-data into main after the offline recovery verification.
 
 ### F2.8 - Devtools Mounted in Dev Builds Only
 
