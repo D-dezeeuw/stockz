@@ -62,16 +62,16 @@
 **What:** A predictable folder structure so every later phase knows exactly where code, assets and tests live.
 **How:** Create the src/, public/, tests/ skeleton in the git repo with a strict .gitignore, .editorconfig and Node 22 pin.
 
-- [ ] **T1.1.1 - Cut layout feature branch** - What: Scaffold work stays isolated until proven green. How: Run git checkout -b feature/repo-layout from main.
-- [ ] **T1.1.2 - Create src/ tree** - What: One obvious home for all application code. How: Add src/ with app/, utils/ and styles/ subfolders plus an empty src/main.js entry stub.
-- [ ] **T1.1.3 - Create public/ assets folder** - What: Static files served untouched by Vite and GitHub Pages. How: Add public/ containing a favicon.svg placeholder and robots.txt.
-- [ ] **T1.1.4 - Create tests/ mirror** - What: Predictable test discovery that mirrors source layout. How: Add tests/ mirroring the src/ folders with a placeholder smoke.test.js for Vitest.
-- [ ] **T1.1.5 - Write .gitignore** - What: node_modules, builds and local secrets can never enter history. How: List node_modules/, dist/, coverage/, .env.local, .env*.local and .DS_Store in .gitignore.
-- [ ] **T1.1.6 - Add .editorconfig** - What: Identical 2-space LF UTF-8 formatting in every editor. How: Create .editorconfig with indent_style=space, indent_size=2, end_of_line=lf, charset=utf-8.
-- [ ] **T1.1.7 - Pin Node 22** - What: Everyone runs the exact runtime the toolchain targets. How: Add .nvmrc containing 22 so nvm use matches the Node 22 requirement.
-- [ ] **T1.1.8 - Normalize line endings** - What: No CRLF diff noise across contributor machines. How: Add .gitattributes with "* text=auto eol=lf".
-- [ ] **T1.1.9 - Verify ignore rules** - What: Proof that secrets and build output stay untracked. How: Touch dist/probe.txt and .env.local, then confirm git status is clean and git check-ignore matches both.
-- [ ] **T1.1.10 - Merge layout branch** - What: The skeleton lands on main as the base for all later phases. How: Merge feature/repo-layout into main after the ignore verification passes.
+- [x] **T1.1.1 - Cut layout feature branch** - What: Scaffold work stays isolated until proven green. How: Run git checkout -b feature/repo-layout from main.
+- [x] **T1.1.2 - Create src/ tree** - What: One obvious home for all application code. How: Add src/ with app/, utils/ and styles/ subfolders plus an empty src/main.js entry stub.
+- [x] **T1.1.3 - Create public/ assets folder** - What: Static files served untouched by Vite and GitHub Pages. How: Add public/ containing a favicon.svg placeholder and robots.txt.
+- [x] **T1.1.4 - Create tests/ mirror** - What: Predictable test discovery that mirrors source layout. How: Add tests/ mirroring the src/ folders with a placeholder smoke.test.js for Vitest.
+- [x] **T1.1.5 - Write .gitignore** - What: node_modules, builds and local secrets can never enter history. How: List node_modules/, dist/, coverage/, .env.local, .env*.local and .DS_Store in .gitignore.
+- [x] **T1.1.6 - Add .editorconfig** - What: Identical 2-space LF UTF-8 formatting in every editor. How: Create .editorconfig with indent_style=space, indent_size=2, end_of_line=lf, charset=utf-8.
+- [x] **T1.1.7 - Pin Node 22** - What: Everyone runs the exact runtime the toolchain targets. How: Add .nvmrc containing 22 so nvm use matches the Node 22 requirement.
+- [x] **T1.1.8 - Normalize line endings** - What: No CRLF diff noise across contributor machines. How: Add .gitattributes with "* text=auto eol=lf".
+- [x] **T1.1.9 - Verify ignore rules** - What: Proof that secrets and build output stay untracked. How: Touch dist/probe.txt and .env.local, then confirm git status is clean and git check-ignore matches both.
+- [x] **T1.1.10 - Merge layout branch** - What: The skeleton lands on main as the base for all later phases. How: Merge feature/repo-layout into main after the ignore verification passes.
 
 ### F1.2 - package.json & npm Scripts
 

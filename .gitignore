@@ -141,3 +141,10 @@ dist
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 .vite/
+
+# STOCKZ
+.env.local
+.env.*.local
+.DS_Store
+dist/
+coverage/
