@@ -34,10 +34,16 @@ export default defineConfig(({ mode }) => ({
   },
 
   test: {
+    // One test per function, colocated next to the source it covers
+    // (.claude/context/testing-policy.md). Targeted runs stay sub-second.
     environment: 'node',
     include: ['src/**/*.test.js'],
+    globals: true,
+    watch: false,
     passWithNoTests: true,
     coverage: {
+      // Off by default; the merge gate enables it explicitly per feature.
+      enabled: false,
       provider: 'v8',
       reporter: ['text-summary'],
     },
