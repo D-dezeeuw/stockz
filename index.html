@@ -10,12 +10,23 @@
        /stockz/ on GitHub Pages. Absolute paths would resolve above that prefix. -->
   <link rel="icon" href="./favicon.svg" type="image/svg+xml">
 
-  <!-- Phase 2 (Spektrum Core Integration) pins spektrum@1 + companions here. -->
+  <!-- The UI engine, straight from the CDN. Pinned to an exact version: the live page
+       must never shift under a trader because unpkg published a new minor. The same
+       version is a devDependency so Node, Vitest and the Vite dev server resolve the
+       identical module. -->
   <script type="importmap">
   {
-    "imports": {}
+    "imports": {
+      "spektrum":          "https://unpkg.com/spektrum@1.1.0/spektrum.js",
+      "spektrum/persist":  "https://unpkg.com/spektrum@1.1.0/companions/spektrum-persist.min.js",
+      "spektrum/devtools": "https://unpkg.com/spektrum@1.1.0/companions/spektrum-devtools.min.js",
+      "spektrum/inspect":  "https://unpkg.com/spektrum@1.1.0/companions/spektrum-inspect.min.js",
+      "spektrum/dock":     "https://unpkg.com/spektrum@1.1.0/companions/spektrum-dock.min.js",
+      "spektrum/compile":  "https://unpkg.com/spektrum@1.1.0/companions/spektrum-compile.min.js"
+    }
   }
   </script>
+  <link rel="modulepreload" href="https://unpkg.com/spektrum@1.1.0/spektrum.js">
 </head>
 <body>
   <!-- header: phase 5 -->

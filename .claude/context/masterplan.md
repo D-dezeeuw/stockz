@@ -229,16 +229,16 @@
 **What:** The UI engine loads instantly from CDN with zero bundled dependencies and no version drift.
 **How:** Fill the index.html importmap with spektrum@1 and companion module URLs from unpkg, plus a local re-export shim.
 
-- [ ] **T2.1.1 - Cut importmap feature branch** - What: CDN wiring merges only when modules provably resolve. How: Run git checkout -b feature/importmap from main.
-- [ ] **T2.1.2 - Pin the core engine** - What: One immutable source of the UI engine for every load. How: Add "spektrum": "https://unpkg.com/spektrum@1" to the importmap placeholder from phase 1.
-- [ ] **T2.1.3 - Pin the companions** - What: persist, devtools, inspect, dock and compile ready when their phases need them. How: Add importmap entries for each spektrum/* companion pinned to the same @1 unpkg path.
-- [ ] **T2.1.4 - Add modulepreload hint** - What: The engine starts downloading before main.js executes, cutting boot latency. How: Add link rel="modulepreload" for the spektrum core URL in index.html head.
-- [ ] **T2.1.5 - Confirm Vite passthrough** - What: The build never mangles or inlines the CDN map. How: Run npm run build and diff the importmap block in dist/index.html against source, relying on the rollup external config.
-- [ ] **T2.1.6 - Create engine shim module** - What: App code imports one local module, easing future engine swaps. How: Write src/app/engine.js re-exporting setValue, addValue, trigger, computed, addAsync, refresh, addSystem, watch, defineFn, bindDOM, run and friends from 'spektrum'.
-- [ ] **T2.1.7 - Implement engineInfo** - What: The running engine version is visible for bug reports. How: Write engineInfo() in src/app/engine.js returning the version string exposed by the spektrum module.
-- [ ] **T2.1.8 - Write the engineInfo unit test** - What: The shim's function locked by its single test. How: Add tests/app/engine.engineInfo.test.js mocking the spektrum import and run vitest run -t engineInfo.
-- [ ] **T2.1.9 - Verify CDN loading** - What: Proof modules arrive from unpkg with proper caching. How: Load npm run dev in a browser and check the network tab for spektrum requests returning 200 with cache headers.
-- [ ] **T2.1.10 - Merge importmap branch** - What: The engine supply line becomes part of main. How: Merge feature/importmap into main after the network verification.
+- [x] **T2.1.1 - Cut importmap feature branch** - What: CDN wiring merges only when modules provably resolve. How: Run git checkout -b feature/importmap from main.
+- [x] **T2.1.2 - Pin the core engine** - What: One immutable source of the UI engine for every load. How: Add "spektrum": "https://unpkg.com/spektrum@1" to the importmap placeholder from phase 1.
+- [x] **T2.1.3 - Pin the companions** - What: persist, devtools, inspect, dock and compile ready when their phases need them. How: Add importmap entries for each spektrum/* companion pinned to the same @1 unpkg path.
+- [x] **T2.1.4 - Add modulepreload hint** - What: The engine starts downloading before main.js executes, cutting boot latency. How: Add link rel="modulepreload" for the spektrum core URL in index.html head.
+- [x] **T2.1.5 - Confirm Vite passthrough** - What: The build never mangles or inlines the CDN map. How: Run npm run build and diff the importmap block in dist/index.html against source, relying on the rollup external config.
+- [x] **T2.1.6 - Create engine shim module** - What: App code imports one local module, easing future engine swaps. How: Write src/app/engine.js re-exporting setValue, addValue, trigger, computed, addAsync, refresh, addSystem, watch, defineFn, bindDOM, run and friends from 'spektrum'.
+- [x] **T2.1.7 - Implement engineInfo** - What: The running engine version is visible for bug reports. How: Write engineInfo() in src/app/engine.js returning the version string exposed by the spektrum module.
+- [x] **T2.1.8 - Write the engineInfo unit test** - What: The shim's function locked by its single test. How: Add tests/app/engine.engineInfo.test.js mocking the spektrum import and run vitest run -t engineInfo.
+- [x] **T2.1.9 - Verify CDN loading** - What: Proof modules arrive from unpkg with proper caching. How: Load npm run dev in a browser and check the network tab for spektrum requests returning 200 with cache headers.
+- [x] **T2.1.10 - Merge importmap branch** - What: The engine supply line becomes part of main. How: Merge feature/importmap into main after the network verification.
 
 ### F2.2 - App Bootstrap: State, bindDOM, run
 

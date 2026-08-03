@@ -9,6 +9,7 @@
  */
 
 import { appVersion } from './app/version.js'
+import { engineInfo } from './app/engine.js'
 import { keyPresenceBanner } from './utils/env.js'
 import { createLogger, mountLogOverlay, captureGlobalErrors } from './utils/log.js'
 
@@ -50,5 +51,8 @@ const log = createLogger('boot')
 
 captureGlobalErrors()
 mountLogOverlay()
-log.info(`${APP_NAME} v${appVersion()} | ${keyPresenceBanner()}`)
+const engine = engineInfo()
+log.info(
+  `${APP_NAME} v${appVersion()} | engine ${engine.name}@${engine.version} | ${keyPresenceBanner()}`,
+)
 autoMount()
