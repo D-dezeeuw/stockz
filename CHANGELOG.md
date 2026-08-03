@@ -10,7 +10,18 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ## [Unreleased]
 
-_Nothing yet — next entries land with phase 10 (EToro Connectivity)._
+### Added
+
+- **EToro on the same desk** — REST client with key headers, instrument catalogue,
+  quotes, and portfolio, all mapped into **exactly** the internal shapes OKX produces. A
+  test asserts key-for-key parity, because the moment a block writes
+  `if (venue === 'etoro')` the desk has two of everything. (F10.1, F10.2, F10.4, F10.7)
+- **Adaptive quote polling** — EToro has no stream, so the focused instrument polls every
+  second, watchlist rows every five, and a hidden tab not at all. Polling everything at
+  one rate burns the budget on rows nobody is looking at, which is what makes the
+  *focused* quote late. (F10.3)
+- **The instrument catalogue is cumulative** — a partial refresh teaches new instruments
+  without blanking out ones the desk is already showing. (F10.2)
 
 ## [0.9.0] — 2026-08-03 — Phase 9: OKX Connectivity
 
