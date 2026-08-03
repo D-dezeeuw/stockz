@@ -3,6 +3,7 @@ import { initialState } from '../state/initial.js'
 import { registerCoreActions, actionNames } from '../actions/registry.js'
 import { registerDerived } from '../state/derived.js'
 import { registerSystems } from '../state/systems.js'
+import { mountDevtools } from './devtools.js'
 import { appVersion } from './version.js'
 
 /**
@@ -42,6 +43,9 @@ export function bootstrap(options = {}) {
   tick()
   revealApp(doc)
   checkpoint('boot', { version: appVersion() })
+
+  // Dev only, and never awaited: instrumentation must not delay the first paint.
+  mountDevtools()
 
   if (autoRun) run()
 
