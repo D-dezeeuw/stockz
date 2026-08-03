@@ -45,3 +45,10 @@ npx vitest run src/engine/bracket.test.js -t "ocoSibling"
 Never run bare `npx vitest` / whole-suite / watch mode as part of the cycle. When a
 test fails: decide first whether the contract (test) or the code is wrong; fix that
 one; re-run that one.
+
+## The merge gate
+
+Before a feature auto-merges to main, its test files run once more with coverage scoped
+to the feature's own files and must clear **> 80% on lines, statements, functions and
+branches** (see `feature-cycle` skill for the command). Low branch coverage = make the
+one test walk more branches, or split the function — never a second test.

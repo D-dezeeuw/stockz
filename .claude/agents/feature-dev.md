@@ -21,8 +21,12 @@ Rules of engagement:
    `npx vitest run <file> -t "<functionName>"`. Never run the whole suite.
 4. Respect the grid (uniform blocks), the token system (no raw colors), and the hot-path
    rules (no dialogs, no unbounded loops on the order/tick path).
-5. When green: pull main into the branch, resolve conflicts there, merge `--no-ff` into
-   main, tick the feature's checkboxes in `masterplan.md` in the same merge.
+5. When every single test passes AND the coverage gate is green (> 80% lines,
+   statements, functions and branches on the feature's files — see
+   `way-of-working.md`): pull main into the branch, resolve conflicts there, then
+   **auto-merge** `--no-ff` into main and push — no approval step. Tick the feature's
+   checkboxes in `masterplan.md` in the same merge. A red gate means deepen the single
+   tests or split functions — never add a second test, never merge below the bar.
 6. Report: branch name, files changed, functions + their single tests, and the merge
    commit hash. If blocked, report exactly which task and why — do not improvise scope.
 

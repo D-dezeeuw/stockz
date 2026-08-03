@@ -18,10 +18,12 @@ optimized for trades-per-hour.
 
 ## Non-negotiables (short form)
 
-1. **One feature = one branch.** Implement only that feature there; merge to main when its
-   tests are green; then the next feature. See `way-of-working.md`.
+1. **One feature = one branch.** Implement only that feature there; when its tests are
+   green and the coverage gate passes, it **auto-merges and pushes to main — no approval
+   step**; then the next feature. See `way-of-working.md`.
 2. **Exactly one Vitest unit test per function.** When testing, run only that function's
-   test — never the whole suite as routine. See `testing-policy.md`.
+   test — never the whole suite as routine. The merge gate additionally requires
+   **> 80% coverage including branches** on the feature's files. See `testing-policy.md`.
 3. **No GitHub Actions.** Ever. Deploys go out locally via the `gh-pages` package.
 4. **UI = Spektrum from unpkg CDN** (importmap, pinned major `spektrum@1`). No SPA framework.
 5. **Secrets never land in git.** Env vars `STOCKZ_OKX_*` / `STOCKZ_ETORO_*` are for local

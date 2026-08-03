@@ -11,7 +11,10 @@ Read `.claude/context/way-of-working.md` and `.claude/context/deployment.md` fir
 
 Merging a feature branch:
 1. Confirm the branch's new functions each pass their single Vitest test
-   (`npx vitest run <file> -t "<fn>"` — targeted runs only).
+   (`npx vitest run <file> -t "<fn>"` — targeted runs only) AND that the coverage gate
+   is green: > 80% lines/statements/functions/branches on the feature's files
+   (`--coverage.enabled --coverage.include='<touched files>'`). Both green = merge and
+   push to main automatically, no approval; either red = the branch waits.
 2. Pull latest `main` into the feature branch; resolve conflicts there. When both sides
    changed the same logic, keep behavior from `main` and re-apply the feature's intent —
    never drop either silently.

@@ -27,16 +27,28 @@ The only way code reaches `main`. One feature (`F<phase>.<n>` from
    npx vitest run src/path/module.test.js -t "functionName"
    ```
    Green = all of this feature's new functions pass their single tests.
-5. **Re-sync.** `git pull origin main` into the branch. Resolve conflicts **on the
-   branch**. Re-run only the single tests of functions touched by the resolution.
-6. **Merge.**
+5. **Coverage gate.** Run the feature's test files with coverage scoped to the files the
+   feature touched; all four metrics must exceed 80% — **including branches**:
+   ```bash
+   npx vitest run src/path/module.test.js \
+     --coverage.enabled --coverage.include='src/path/module.js' \
+     --coverage.thresholds.lines=80 --coverage.thresholds.statements=80 \
+     --coverage.thresholds.functions=80 --coverage.thresholds.branches=80
+   ```
+   Red gate = stay on the branch; deepen each function's single test (or split the
+   function), never add a second test or lower thresholds.
+6. **Re-sync.** `git pull origin main` into the branch. Resolve conflicts **on the
+   branch**. Re-run the single tests (and the gate, if code changed) of anything touched
+   by the resolution.
+7. **Auto-merge.** Tests green + gate green = merge and push to main **immediately and
+   automatically — no approval step**:
    ```bash
    git checkout main
    git merge --no-ff feature/f<phase>-<n>-<slug> -m "feat(f<phase>.<n>): <feature name>"
    git push origin main
    git branch -d feature/f<phase>-<n>-<slug>
    ```
-7. **Tick the plan.** Mark the feature's `- [ ]` tasks as `- [x]` in `masterplan.md`
+8. **Tick the plan.** Mark the feature's `- [ ]` tasks as `- [x]` in `masterplan.md`
    (include this in the merge or as `docs(f<phase>.<n>): tick plan`).
 
 ## Guards

@@ -22,8 +22,32 @@ no exception:
 
 - A feature is "green" when each of its new functions' single tests passes when run
   individually like that.
-- Do not add integration tests, e2e tests, snapshot tests, or coverage gates. Do not run
-  `vitest` bare (whole suite) as part of the feature cycle.
+- Do not add integration tests, e2e tests, or snapshot tests. Do not run `vitest` bare
+  (whole suite) as part of the feature cycle.
+
+## The merge gate: coverage above 80%, including branching
+
+Passing tests alone do not merge a feature. Before the auto-merge to `main`
+(see `way-of-working.md`), the feature's tests are run once more **with coverage,
+scoped to the files the feature touched**, and must report **> 80% lines, statements,
+functions and branches**:
+
+```bash
+npx vitest run src/lib/pnl.test.js \
+  --coverage.enabled \
+  --coverage.include='src/lib/pnl.js' \
+  --coverage.thresholds.lines=80 --coverage.thresholds.statements=80 \
+  --coverage.thresholds.functions=80 --coverage.thresholds.branches=80
+```
+
+- Requires the `@vitest/coverage-v8` dev dependency (installed in Phase 1).
+- Gate green → the feature **merges and pushes to main automatically**, no approval.
+- Gate red → raise coverage *within the policy*: make each function's single test walk
+  more of its branches, or split a too-branchy function into smaller functions that each
+  get their own single test. Never add a second test to the same function, and never
+  lower the thresholds.
+- Coverage is measured only at this gate and only over the feature's files — no global
+  coverage reports, no repo-wide thresholds.
 
 ## Writing the one test well
 
