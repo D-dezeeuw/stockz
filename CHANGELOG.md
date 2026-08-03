@@ -10,6 +10,12 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ## [Unreleased]
 
+_Nothing yet — next entries land with phase 13 (Micro-Charts & Sparklines)._
+
+## [0.12.0] — 2026-08-03 — Phase 12: Watchlists & Instruments
+
+Curated lists of fast movers with one-click focus, live rows, sparklines and fuzzy search.
+
 ### Added
 
 - **Watchlists** — create, rename, delete, add, remove and reorder, persisted with the
@@ -390,7 +396,8 @@ with a test policy and a live URL.
   literal `APP_VERSION` (a JSON import is bundler-only), guarded by a test that fails if
   it drifts from `package.json`; static assets moved from `public/` to the repo root.
 
-[Unreleased]: https://github.com/D-dezeeuw/stockz/compare/v0.11.0...HEAD
+[Unreleased]: https://github.com/D-dezeeuw/stockz/compare/v0.12.0...HEAD
+[0.12.0]: https://github.com/D-dezeeuw/stockz/compare/v0.11.0...v0.12.0
 [0.11.0]: https://github.com/D-dezeeuw/stockz/compare/v0.10.0...v0.11.0
 [0.10.0]: https://github.com/D-dezeeuw/stockz/compare/v0.9.0...v0.10.0
 [0.9.0]: https://github.com/D-dezeeuw/stockz/compare/v0.8.0...v0.9.0
