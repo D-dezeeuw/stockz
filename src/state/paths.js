@@ -52,6 +52,8 @@ export const PATHS = Object.freeze({
     section: 'ui.section',
     modal: 'ui.modal',
     toasts: 'ui.toasts',
+    columns: 'ui.columns',
+    density: 'ui.density',
   }),
   settings: Object.freeze({
     theme: 'settings.theme',

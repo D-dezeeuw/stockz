@@ -611,16 +611,16 @@
 **What:** The desk shows 1, 2, 3 or 4 columns depending on available width, always with equal-size blocks.
 **How:** container-type inline-size on the grid wrapper with @container breakpoints switching explicit column templates.
 
-- [ ] **T4.4.1 - Cut responsive-columns branch** - What: Breakpoint work isolated from main. How: git checkout -b feat/responsive-columns from main.
-- [ ] **T4.4.2 - Breakpoint tokens** - What: Column switch points are named, not magic numbers. How: Add --sz-bp-2/--sz-bp-3/--sz-bp-4 width tokens to tokens.css.
-- [ ] **T4.4.3 - Container query context** - What: Columns respond to the grid's own width, not the viewport. How: Set container-type: inline-size and container-name: deskgrid on the grid wrapper.
-- [ ] **T4.4.4 - One and two column tiers** - What: Phones and split screens get readable stacks. How: Write @container deskgrid rules pinning grid-template-columns to 1 then 2 equal fr tracks.
-- [ ] **T4.4.5 - Three and four column tiers** - What: Laptops and ultrawides use all their space. How: Add @container rules for 3 and 4 equal fr tracks above --sz-bp-3 and --sz-bp-4.
-- [ ] **T4.4.6 - Per-tier cell height** - What: Blocks keep useful proportions at every tier. How: Override --sz-cell-h inside each @container tier so cells stay same-size within a tier.
-- [ ] **T4.4.7 - Per-tier gap tuning** - What: Density feels right from phone to ultrawide. How: Scale --sz-gap per tier using the phase 3 spacing scale.
-- [ ] **T4.4.8 - Responsive sweep verify** - What: Every tier proven at real device widths. How: Use Chrome DevTools responsive mode at 390, 820, 1280 and 2560px and confirm 1/2/3/4 columns of equal cells.
-- [ ] **T4.4.9 - Lint and build verify** - What: Breakpoint CSS ships clean. How: Run npx eslint . and npm run build with no warnings.
-- [ ] **T4.4.10 - Merge responsive columns to main** - What: The desk fits every screen traders use. How: Merge feat/responsive-columns into main when green.
+- [x] **T4.4.1 - Cut responsive-columns branch** - What: Breakpoint work isolated from main. How: git checkout -b feat/responsive-columns from main.
+- [x] **T4.4.2 - Breakpoint tokens** - What: Column switch points are named, not magic numbers. How: Add --sz-bp-2/--sz-bp-3/--sz-bp-4 width tokens to tokens.css.
+- [x] **T4.4.3 - Container query context** - What: Columns respond to the grid's own width, not the viewport. How: Set container-type: inline-size and container-name: deskgrid on the grid wrapper.
+- [x] **T4.4.4 - One and two column tiers** - What: Phones and split screens get readable stacks. How: Write @container deskgrid rules pinning grid-template-columns to 1 then 2 equal fr tracks.
+- [x] **T4.4.5 - Three and four column tiers** - What: Laptops and ultrawides use all their space. How: Add @container rules for 3 and 4 equal fr tracks above --sz-bp-3 and --sz-bp-4.
+- [x] **T4.4.6 - Per-tier cell height** - What: Blocks keep useful proportions at every tier. How: Override --sz-cell-h inside each @container tier so cells stay same-size within a tier.
+- [x] **T4.4.7 - Per-tier gap tuning** - What: Density feels right from phone to ultrawide. How: Scale --sz-gap per tier using the phase 3 spacing scale.
+- [x] **T4.4.8 - Responsive sweep verify** - What: Every tier proven at real device widths. How: Use Chrome DevTools responsive mode at 390, 820, 1280 and 2560px and confirm 1/2/3/4 columns of equal cells.
+- [x] **T4.4.9 - Lint and build verify** - What: Breakpoint CSS ships clean. How: Run npx eslint . and npm run build with no warnings.
+- [x] **T4.4.10 - Merge responsive columns to main** - What: The desk fits every screen traders use. How: Merge feat/responsive-columns into main when green.
 
 ### F4.5 - Skeleton Shimmer Loading State
 
@@ -675,16 +675,16 @@
 **What:** Traders show or hide any block instantly, and their layout choice survives reloads.
 **How:** A toggle panel of data-model checkboxes, a toggleBlock function, and spektrum/persist syncing the flags to localStorage.
 
-- [ ] **T4.8.1 - Cut block-toggles branch** - What: Visibility work isolated from main. How: git checkout -b feat/block-toggles from main.
-- [ ] **T4.8.2 - Toggle panel markup** - What: One list controls every block's presence. How: Render a panel with data-each over blocks, each row a checkbox bound via data-model="block.visible".
-- [ ] **T4.8.3 - toggleBlock function** - What: A single tested entry point flips visibility. How: Write toggleBlock(id) in src/state/blocks.js flipping the entry's visible flag through setValue.
-- [ ] **T4.8.4 - Panel action wiring** - What: Checkbox clicks route through the one function. How: Bind data-action on rows to call toggleBlock with the row's block id.
-- [ ] **T4.8.5 - Persist visibility flags** - What: The chosen layout is still there tomorrow. How: Wire spektrum/persist to sync the blocks state to the localStorage key stockz.blocks.
-- [ ] **T4.8.6 - Hydration order check** - What: Saved choices beat seed defaults on load. How: Ensure persist restore runs before bindDOM/run in main.js and verify with a prepared localStorage value.
-- [ ] **T4.8.7 - Single unit test for toggleBlock** - What: The flip logic locked by exactly one test. How: Write its one Vitest test and run npx vitest run tests/blocks.test.js -t toggleBlock.
-- [ ] **T4.8.8 - Reflow polish** - What: Blocks appear and vanish without the page jumping. How: Let the grid reflow under a 150ms --sz-motion-base transition and confirm scroll position holds.
-- [ ] **T4.8.9 - Toggle-reload verify** - What: The full cycle proven: hide, reload, still hidden. How: Toggle blocks on the Vite dev server, hard-reload, and confirm restored visibility.
-- [ ] **T4.8.10 - Merge toggles to main** - What: Personal desk layouts become a core capability. How: Merge feat/block-toggles into main when targeted test and lint pass.
+- [x] **T4.8.1 - Cut block-toggles branch** - What: Visibility work isolated from main. How: git checkout -b feat/block-toggles from main.
+- [x] **T4.8.2 - Toggle panel markup** - What: One list controls every block's presence. How: Render a panel with data-each over blocks, each row a checkbox bound via data-model="block.visible".
+- [x] **T4.8.3 - toggleBlock function** - What: A single tested entry point flips visibility. How: Write toggleBlock(id) in src/state/blocks.js flipping the entry's visible flag through setValue.
+- [x] **T4.8.4 - Panel action wiring** - What: Checkbox clicks route through the one function. How: Bind data-action on rows to call toggleBlock with the row's block id.
+- [x] **T4.8.5 - Persist visibility flags** - What: The chosen layout is still there tomorrow. How: Wire spektrum/persist to sync the blocks state to the localStorage key stockz.blocks.
+- [x] **T4.8.6 - Hydration order check** - What: Saved choices beat seed defaults on load. How: Ensure persist restore runs before bindDOM/run in main.js and verify with a prepared localStorage value.
+- [x] **T4.8.7 - Single unit test for toggleBlock** - What: The flip logic locked by exactly one test. How: Write its one Vitest test and run npx vitest run tests/blocks.test.js -t toggleBlock.
+- [x] **T4.8.8 - Reflow polish** - What: Blocks appear and vanish without the page jumping. How: Let the grid reflow under a 150ms --sz-motion-base transition and confirm scroll position holds.
+- [x] **T4.8.9 - Toggle-reload verify** - What: The full cycle proven: hide, reload, still hidden. How: Toggle blocks on the Vite dev server, hard-reload, and confirm restored visibility.
+- [x] **T4.8.10 - Merge toggles to main** - What: Personal desk layouts become a core capability. How: Merge feat/block-toggles into main when targeted test and lint pass.
 
 ### F4.9 - Scroll Containment
 

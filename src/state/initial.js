@@ -44,6 +44,8 @@ export function initialState(overrides = {}) {
     [PATHS.ui.section]: 'dashboard',
     [PATHS.ui.modal]: '',
     [PATHS.ui.toasts]: [],
+    [PATHS.ui.columns]: 1,
+    [PATHS.ui.density]: 'compact',
 
     // preferences (the only persisted branch)
     [PATHS.settings.theme]: 'night',

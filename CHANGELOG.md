@@ -27,6 +27,12 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 - **Footer** — Neko Media with LinkedIn, npm and GitHub links as inline SVG. (F4.7)
 - **Scroll containment** — the page never scrolls sideways; a busy tape scrolls inside its
   own block. (F4.9)
+- **The desk knows its own width** — column count and a density band (compact/normal/wide)
+  are measured from the grid element via ResizeObserver, not the window, so a side panel
+  narrowing the grid counts as a resize. Blocks will use the band to decide how much
+  detail to render on a laptop versus an ultrawide. (F4.4)
+- **Block visibility toggles** — `ui.toggleBlock` shows or hides any block by id from HTML
+  or a hotkey, and the choice persists with the rest of the layout. (F4.8)
 
 ## [0.3.0] — 2026-08-03 — Phase 3: Money-Hacker Design System
 
