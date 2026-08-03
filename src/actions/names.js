@@ -19,6 +19,14 @@ export const ACTIONS = Object.freeze({
   app: Object.freeze({
     reset: 'app.reset',
   }),
+  lists: Object.freeze({
+    focus: 'lists.focus',
+    add: 'lists.add',
+    remove: 'lists.remove',
+    move: 'lists.move',
+    setActive: 'lists.setActive',
+    manage: 'lists.manage',
+  }),
   keys: Object.freeze({
     submit: 'keys.submit',
     lock: 'keys.lock',

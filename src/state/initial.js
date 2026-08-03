@@ -56,6 +56,8 @@ export function initialState(overrides = {}) {
       Object.entries(defaultSettings()).map(([key, value]) => [`settings.${key}`, value]),
     ),
     [PATHS.settings.presets]: {},
+    [PATHS.settings.watchlists]: [],
+    [PATHS.settings.activeListId]: '',
 
     // live venue data
     [PATHS.market.venues]: { okx: { state: 'dead' }, etoro: { state: 'dead' } },

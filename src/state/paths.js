@@ -60,6 +60,8 @@ export const PATHS = Object.freeze({
     theme: 'settings.theme',
     blocks: 'settings.blocks',
     presets: 'settings.presets',
+    watchlists: 'settings.watchlists',
+    activeListId: 'settings.activeListId',
     soundEnabled: 'settings.soundEnabled',
     defaultSize: 'settings.defaultSize',
     sizePresets: 'settings.sizePresets',
