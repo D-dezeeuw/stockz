@@ -1,34 +1,28 @@
 // @vitest-environment jsdom
 import { describe, it, expect } from 'vitest'
-import { mountApp, autoMount, APP_NAME } from './main.js'
+import { bootWhenReady, APP_NAME } from './main.js'
 
-describe('mountApp', () => {
-  it('fills #app with the boot text, uncloaks it, and no-ops without a root', () => {
-    document.body.innerHTML = '<div id="app" data-cloak></div>'
+describe('bootWhenReady', () => {
+  it('boots immediately when ready and defers to DOMContentLoaded while loading', () => {
+    expect(APP_NAME).toBe('STOCKZ')
 
-    const root = mountApp(document)
+    const calls = []
+    const boot = (options) => {
+      calls.push(options)
+      return 'booted'
+    }
 
-    expect(root).toBe(document.getElementById('app'))
-    expect(root.textContent).toBe(`${APP_NAME} booting`)
-    expect(root.hasAttribute('data-cloak')).toBe(false)
+    // jsdom reports 'complete' -> boots straight away.
+    expect(bootWhenReady(document, boot)).toBe('booted')
+    expect(calls).toHaveLength(1)
+    expect(calls[0].doc).toBe(document)
+    expect(typeof calls[0].now).toBe('number')
 
-    document.body.innerHTML = ''
-    expect(mountApp(document)).toBeNull()
-    expect(mountApp(null)).toBeNull()
-  })
-})
-
-describe('autoMount', () => {
-  it('mounts immediately when ready and defers to DOMContentLoaded while loading', () => {
-    document.body.innerHTML = '<div id="app" data-cloak></div>'
-
-    // readyState 'complete' in jsdom -> mounts straight away.
-    expect(autoMount(document)).toBe(document.getElementById('app'))
     // Explicit null (a document-less environment) short-circuits.
-    expect(autoMount(null)).toBeNull()
+    expect(bootWhenReady(null, boot)).toBeNull()
+    expect(calls).toHaveLength(1)
 
-    // While loading, it registers a once-listener that mounts when fired.
-    document.body.innerHTML = '<div id="app" data-cloak></div>'
+    // While loading, it registers a once-listener that boots when fired.
     let handler = null
     const loadingDoc = {
       readyState: 'loading',
@@ -37,13 +31,13 @@ describe('autoMount', () => {
         expect(opts).toEqual({ once: true })
         handler = fn
       },
-      getElementById: (id) => document.getElementById(id),
     }
 
-    expect(autoMount(loadingDoc)).toBeNull()
-    expect(document.getElementById('app').textContent).toBe('')
+    expect(bootWhenReady(loadingDoc, boot)).toBeNull()
+    expect(calls).toHaveLength(1)
 
     handler()
-    expect(document.getElementById('app').textContent).toBe(`${APP_NAME} booting`)
+    expect(calls).toHaveLength(2)
+    expect(calls[1].doc).toBe(loadingDoc)
   })
 })

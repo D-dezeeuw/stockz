@@ -17,6 +17,11 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
   modulepreload hint so the engine downloads before app code runs. `src/app/engine.js`
   is the single local door to the engine, and `engineInfo()` reports the version the
   page actually loaded. (F2.1)
+- **The desk boots reactive** — state is seeded before the DOM is bound, so the first
+  paint already carries real values instead of flashing placeholders at someone watching
+  prices; the page then uncloaks and the tick pump starts. `initialState()` seeds every
+  namespace (app, ui, settings, market, trade, strategy) with trading disarmed, in paper
+  mode and flat. (F2.2)
 
 ## [0.1.0] — 2026-08-03 — Phase 1: Foundation & Tooling
 

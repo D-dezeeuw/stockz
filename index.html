@@ -30,7 +30,11 @@
 </head>
 <body>
   <!-- header: phase 5 -->
-  <div id="app" data-cloak></div>
+  <div id="app" data-cloak>
+    <p class="boot-line">
+      {{app.name}} v{{app.version}} · engine spektrum@{{app.engine}} · {{ui.status}}
+    </p>
+  </div>
   <!-- footer: phase 4 -->
 
   <script type="module" src="./src/main.js"></script>
