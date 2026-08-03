@@ -174,16 +174,16 @@
 **What:** One tested toolbox for price and quantity formatting plus scalping math every later phase reuses.
 **How:** Build src/utils/format.js and src/utils/math.js as pure ES modules with exactly one Vitest test per function.
 
-- [ ] **T1.8.1 - Cut shared-utils feature branch** - What: The toolbox lands atomically with all its tests. How: Run git checkout -b feature/shared-utils from main.
-- [ ] **T1.8.2 - Implement formatPrice** - What: Prices always render with venue-correct decimals. How: Write formatPrice(value, tickSize) in src/utils/format.js deriving decimal places from the tick size exponent.
-- [ ] **T1.8.3 - Implement formatQty** - What: Quantities respect each instrument's lot granularity. How: Write formatQty(value, lotSize) in src/utils/format.js truncating to the lot size precision.
-- [ ] **T1.8.4 - Implement formatPct** - What: PnL badges get signed, consistent percent strings. How: Write formatPct(value) in src/utils/format.js returning "+1.25%" style output with two decimals.
-- [ ] **T1.8.5 - Implement clamp** - What: Order sizes and UI values stay inside hard bounds. How: Write clamp(value, min, max) in src/utils/math.js using Math.min and Math.max.
-- [ ] **T1.8.6 - Implement roundToTick** - What: Every computed price is venue-submittable. How: Write roundToTick(price, tickSize) in src/utils/math.js rounding to the nearest tick multiple avoiding float drift.
-- [ ] **T1.8.7 - Implement bpsDiff** - What: Spread and slippage compare in basis points at a glance. How: Write bpsDiff(a, b) in src/utils/math.js returning ((a - b) / b) * 10000.
-- [ ] **T1.8.8 - Write the six single unit tests** - What: Each helper is locked by exactly one focused test. How: Add one test file per function under tests/utils/ and run each via vitest run -t with its function name.
-- [ ] **T1.8.9 - Lint and edge-check the toolbox** - What: Helpers proven safe for zero, negative and NaN inputs. How: Run eslint on src/utils/ and extend each single test's expect set with its edge case inside the same it().
-- [ ] **T1.8.10 - Merge shared-utils branch** - What: A trusted math base unblocks charts, orders and PnL phases. How: Merge feature/shared-utils into main once all six targeted tests pass.
+- [x] **T1.8.1 - Cut shared-utils feature branch** - What: The toolbox lands atomically with all its tests. How: Run git checkout -b feature/shared-utils from main.
+- [x] **T1.8.2 - Implement formatPrice** - What: Prices always render with venue-correct decimals. How: Write formatPrice(value, tickSize) in src/utils/format.js deriving decimal places from the tick size exponent.
+- [x] **T1.8.3 - Implement formatQty** - What: Quantities respect each instrument's lot granularity. How: Write formatQty(value, lotSize) in src/utils/format.js truncating to the lot size precision.
+- [x] **T1.8.4 - Implement formatPct** - What: PnL badges get signed, consistent percent strings. How: Write formatPct(value) in src/utils/format.js returning "+1.25%" style output with two decimals.
+- [x] **T1.8.5 - Implement clamp** - What: Order sizes and UI values stay inside hard bounds. How: Write clamp(value, min, max) in src/utils/math.js using Math.min and Math.max.
+- [x] **T1.8.6 - Implement roundToTick** - What: Every computed price is venue-submittable. How: Write roundToTick(price, tickSize) in src/utils/math.js rounding to the nearest tick multiple avoiding float drift.
+- [x] **T1.8.7 - Implement bpsDiff** - What: Spread and slippage compare in basis points at a glance. How: Write bpsDiff(a, b) in src/utils/math.js returning ((a - b) / b) * 10000.
+- [x] **T1.8.8 - Write the six single unit tests** - What: Each helper is locked by exactly one focused test. How: Add one test file per function under tests/utils/ and run each via vitest run -t with its function name.
+- [x] **T1.8.9 - Lint and edge-check the toolbox** - What: Helpers proven safe for zero, negative and NaN inputs. How: Run eslint on src/utils/ and extend each single test's expect set with its edge case inside the same it().
+- [x] **T1.8.10 - Merge shared-utils branch** - What: A trusted math base unblocks charts, orders and PnL phases. How: Merge feature/shared-utils into main once all six targeted tests pass.
 
 ### F1.9 - Logger & On-Screen Dev Overlay
 
