@@ -148,3 +148,4 @@ vite.config.ts.timestamp-*
 .DS_Store
 dist/
 coverage/
+src/app/compiled-expressions.js
