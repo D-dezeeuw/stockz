@@ -245,16 +245,16 @@
 **What:** The app boots into a live reactive state tree, so the DOM reflects state with zero manual wiring.
 **How:** Build src/app/bootstrap.js creating initial state, calling bindDOM('#app') and starting the engine with run().
 
-- [ ] **T2.2.1 - Cut bootstrap feature branch** - What: The boot path changes only as a proven whole. How: Run git checkout -b feature/bootstrap from main.
-- [ ] **T2.2.2 - Implement initialState factory** - What: A single canonical seed for the entire state tree. How: Write initialState() in src/app/bootstrap.js returning empty ui, market, trade and settings roots plus ui.bootStatus.
-- [ ] **T2.2.3 - Implement bootstrap sequence** - What: One deterministic entry that brings the desk alive. How: Write bootstrap() applying initialState via setValue, calling bindDOM('#app') then run() from the engine shim.
-- [ ] **T2.2.4 - Rewire main.js** - What: The phase 1 stub is replaced by the real reactive boot. How: Replace the mountApp body to await bootstrap() on DOMContentLoaded, keeping its single test updated.
-- [ ] **T2.2.5 - Wire data-cloak reveal** - What: Users never see raw {{expr}} template flashes. How: Add a CSS rule hiding [data-cloak] and rely on bindDOM removing the attribute after binding.
-- [ ] **T2.2.6 - Add first live binding** - What: Visible proof state drives the DOM. How: Put {{ui.bootStatus}} in index.html and have bootstrap() setValue it from "booting" to "ready".
-- [ ] **T2.2.7 - Take the boot checkpoint** - What: A baseline snapshot for time-travel audit in phase 25. How: Call checkpoint('boot') right after run() inside bootstrap().
-- [ ] **T2.2.8 - Write the two single unit tests** - What: initialState and bootstrap each locked by one test. How: Add targeted jsdom-based tests under tests/app/ and run each via vitest run -t by name.
-- [ ] **T2.2.9 - Verify reactive boot** - What: Confidence the tree is live end to end. How: In npm run dev confirm bootStatus flips to ready, console is clean and replay() lists the boot mutations.
-- [ ] **T2.2.10 - Merge bootstrap branch** - What: Every subsequent phase builds on a running engine. How: Merge feature/bootstrap into main after the browser verification.
+- [x] **T2.2.1 - Cut bootstrap feature branch** - What: The boot path changes only as a proven whole. How: Run git checkout -b feature/bootstrap from main.
+- [x] **T2.2.2 - Implement initialState factory** - What: A single canonical seed for the entire state tree. How: Write initialState() in src/app/bootstrap.js returning empty ui, market, trade and settings roots plus ui.bootStatus.
+- [x] **T2.2.3 - Implement bootstrap sequence** - What: One deterministic entry that brings the desk alive. How: Write bootstrap() applying initialState via setValue, calling bindDOM('#app') then run() from the engine shim.
+- [x] **T2.2.4 - Rewire main.js** - What: The phase 1 stub is replaced by the real reactive boot. How: Replace the mountApp body to await bootstrap() on DOMContentLoaded, keeping its single test updated.
+- [x] **T2.2.5 - Wire data-cloak reveal** - What: Users never see raw {{expr}} template flashes. How: Add a CSS rule hiding [data-cloak] and rely on bindDOM removing the attribute after binding.
+- [x] **T2.2.6 - Add first live binding** - What: Visible proof state drives the DOM. How: Put {{ui.bootStatus}} in index.html and have bootstrap() setValue it from "booting" to "ready".
+- [x] **T2.2.7 - Take the boot checkpoint** - What: A baseline snapshot for time-travel audit in phase 25. How: Call checkpoint('boot') right after run() inside bootstrap().
+- [x] **T2.2.8 - Write the two single unit tests** - What: initialState and bootstrap each locked by one test. How: Add targeted jsdom-based tests under tests/app/ and run each via vitest run -t by name.
+- [x] **T2.2.9 - Verify reactive boot** - What: Confidence the tree is live end to end. How: In npm run dev confirm bootStatus flips to ready, console is clean and replay() lists the boot mutations.
+- [x] **T2.2.10 - Merge bootstrap branch** - What: Every subsequent phase builds on a running engine. How: Merge feature/bootstrap into main after the browser verification.
 
 ### F2.3 - State Namespace Conventions
 
