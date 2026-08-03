@@ -78,16 +78,16 @@
 **What:** One-command dev, build, preview, test, lint and deploy so nobody memorizes tool invocations.
 **How:** Author package.json for Node 22 with type module and npm scripts wrapping Vite, Vitest, ESLint and gh-pages.
 
-- [ ] **T1.2.1 - Cut scripts feature branch** - What: Manifest work merges only once every script runs. How: Run git checkout -b feature/npm-scripts from main.
-- [ ] **T1.2.2 - Author package manifest** - What: A valid ESM package identity for the whole project. How: Run npm init -y, then set name stockz, private true, type module and engines.node ">=22".
-- [ ] **T1.2.3 - Install the toolchain** - What: All build and test tooling available offline after one install. How: Run npm install -D vite vitest eslint gh-pages and commit package-lock.json.
-- [ ] **T1.2.4 - Add dev script** - What: Instant HMR dev server with one command. How: Add "dev": "vite" to package.json scripts.
-- [ ] **T1.2.5 - Add build and preview scripts** - What: Reproducible production bundles plus a local smoke server. How: Add "build": "vite build" and "preview": "vite preview" scripts.
-- [ ] **T1.2.6 - Add test scripts** - What: Full runs plus single-function targeting per the one-test-per-function policy. How: Add "test": "vitest run" and "test:fn": "vitest run -t" scripts.
-- [ ] **T1.2.7 - Add lint scripts** - What: One command to check or auto-fix style across the repo. How: Add "lint": "eslint ." and "lint:fix": "eslint . --fix" scripts.
-- [ ] **T1.2.8 - Add deploy script pair** - What: One local command publishes the desk to GitHub Pages, no CI needed. How: Add "predeploy": "npm run build" and "deploy": "gh-pages -d dist" scripts.
-- [ ] **T1.2.9 - Verify every script** - What: Certainty that all commands exit cleanly before anyone depends on them. How: Execute dev (then kill), build, preview, test, lint in sequence and check exit code 0.
-- [ ] **T1.2.10 - Merge scripts branch** - What: The command surface becomes the contract for all later phases. How: Merge feature/npm-scripts into main after the script verification run.
+- [x] **T1.2.1 - Cut scripts feature branch** - What: Manifest work merges only once every script runs. How: Run git checkout -b feature/npm-scripts from main.
+- [x] **T1.2.2 - Author package manifest** - What: A valid ESM package identity for the whole project. How: Run npm init -y, then set name stockz, private true, type module and engines.node ">=22".
+- [x] **T1.2.3 - Install the toolchain** - What: All build and test tooling available offline after one install. How: Run npm install -D vite vitest eslint gh-pages and commit package-lock.json.
+- [x] **T1.2.4 - Add dev script** - What: Instant HMR dev server with one command. How: Add "dev": "vite" to package.json scripts.
+- [x] **T1.2.5 - Add build and preview scripts** - What: Reproducible production bundles plus a local smoke server. How: Add "build": "vite build" and "preview": "vite preview" scripts.
+- [x] **T1.2.6 - Add test scripts** - What: Full runs plus single-function targeting per the one-test-per-function policy. How: Add "test": "vitest run" and "test:fn": "vitest run -t" scripts.
+- [x] **T1.2.7 - Add lint scripts** - What: One command to check or auto-fix style across the repo. How: Add "lint": "eslint ." and "lint:fix": "eslint . --fix" scripts.
+- [x] **T1.2.8 - Add deploy script pair** - What: One local command publishes the desk to GitHub Pages, no CI needed. How: Add "predeploy": "npm run build" and "deploy": "gh-pages -d dist" scripts.
+- [x] **T1.2.9 - Verify every script** - What: Certainty that all commands exit cleanly before anyone depends on them. How: Execute dev (then kill), build, preview, test, lint in sequence and check exit code 0.
+- [x] **T1.2.10 - Merge scripts branch** - What: The command surface becomes the contract for all later phases. How: Merge feature/npm-scripts into main after the script verification run.
 
 ### F1.3 - Vite Config Ready for GitHub Pages
 
