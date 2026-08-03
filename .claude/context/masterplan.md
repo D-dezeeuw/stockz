@@ -1732,16 +1732,16 @@
 **What:** Every block reads ticks, candles and book updates in one identical shape, no matter which venue produced them.
 **How:** Create src/data/schema.js as a vanilla ES module with factory and mapper functions converting OKX v5 and EToro payloads to normalized objects.
 
-- [ ] **T11.1.1 - Cut schema branch** - What: Isolated workspace so schema work only lands on main when green. How: git checkout -b feature/f11-1-market-schema from main per the feature-cycle skill.
-- [ ] **T11.1.2 - Define typedefs** - What: One documented contract every later phase codes against. How: Write JSDoc typedef blocks for Tick, Candle and BookDelta at the top of src/data/schema.js.
-- [ ] **T11.1.3 - Build makeTick** - What: A canonical trade object with epoch-ms ts, instId, price, size, side. How: Implement makeTick returning a frozen plain object, numbers coerced with Number().
-- [ ] **T11.1.4 - Build makeCandle and makeBookDelta** - What: Canonical OHLCV and bid/ask delta shapes for charts and books. How: Add both factories to schema.js with tf tag and sorted [price,size] level arrays.
-- [ ] **T11.1.5 - Map OKX payloads** - What: OKX v5 trades and books arrive already normalized. How: Write mapOkxTrade and mapOkxBook parsing v5 WS arg/data frames, converting px/sz/side strings to numbers.
-- [ ] **T11.1.6 - Map EToro quotes** - What: EToro REST quotes join the same stream as OKX ticks. How: Write mapEtoroQuote turning EToro quote JSON into a synthetic Tick tagged with its venue.
-- [ ] **T11.1.7 - Canonical instrument ids** - What: One key per instrument usable as bus topic and state path. How: Implement canonId producing 'okx:BTC-USDT' / 'etoro:AAPL' style ids plus a parseId inverse.
-- [ ] **T11.1.8 - Guard invalid data** - What: Garbage payloads never reach buffers or the UI. How: Implement isValidTick rejecting NaN, zero/negative size and backwards ts; mappers return null on failure.
-- [ ] **T11.1.9 - Single unit tests** - What: Each new schema function proven by exactly one Vitest test. How: Per the single-test skill, add tests/schema.test.js and run npx vitest run -t per function name.
-- [ ] **T11.1.10 - Lint and merge** - What: Schema contract available to all parallel feature branches. How: Run npx eslint src/data/schema.js, then merge feature/f11-1-market-schema into main.
+- [x] **T11.1.1 - Cut schema branch** - What: Isolated workspace so schema work only lands on main when green. How: git checkout -b feature/f11-1-market-schema from main per the feature-cycle skill.
+- [x] **T11.1.2 - Define typedefs** - What: One documented contract every later phase codes against. How: Write JSDoc typedef blocks for Tick, Candle and BookDelta at the top of src/data/schema.js.
+- [x] **T11.1.3 - Build makeTick** - What: A canonical trade object with epoch-ms ts, instId, price, size, side. How: Implement makeTick returning a frozen plain object, numbers coerced with Number().
+- [x] **T11.1.4 - Build makeCandle and makeBookDelta** - What: Canonical OHLCV and bid/ask delta shapes for charts and books. How: Add both factories to schema.js with tf tag and sorted [price,size] level arrays.
+- [x] **T11.1.5 - Map OKX payloads** - What: OKX v5 trades and books arrive already normalized. How: Write mapOkxTrade and mapOkxBook parsing v5 WS arg/data frames, converting px/sz/side strings to numbers.
+- [x] **T11.1.6 - Map EToro quotes** - What: EToro REST quotes join the same stream as OKX ticks. How: Write mapEtoroQuote turning EToro quote JSON into a synthetic Tick tagged with its venue.
+- [x] **T11.1.7 - Canonical instrument ids** - What: One key per instrument usable as bus topic and state path. How: Implement canonId producing 'okx:BTC-USDT' / 'etoro:AAPL' style ids plus a parseId inverse.
+- [x] **T11.1.8 - Guard invalid data** - What: Garbage payloads never reach buffers or the UI. How: Implement isValidTick rejecting NaN, zero/negative size and backwards ts; mappers return null on failure.
+- [x] **T11.1.9 - Single unit tests** - What: Each new schema function proven by exactly one Vitest test. How: Per the single-test skill, add tests/schema.test.js and run npx vitest run -t per function name.
+- [x] **T11.1.10 - Lint and merge** - What: Schema contract available to all parallel feature branches. How: Run npx eslint src/data/schema.js, then merge feature/f11-1-market-schema into main.
 
 ### F11.2 - Tick Bus Event Module
 
@@ -1812,32 +1812,32 @@
 **What:** Mid, spread, VWAP and tick velocity are ready-made state every block reads with zero extra wiring.
 **How:** Pure calc functions in src/data/metrics.js registered as Spektrum computed() keys per subscribed instrument.
 
-- [ ] **T11.6.1 - Metrics branch** - What: Derived-value work sandboxed from main. How: Create feature/f11-6-derived-metrics from main per feature-cycle.
-- [ ] **T11.6.2 - calcMid** - What: A fair midpoint price for HUD and order entry defaults. How: Pure calcMid(bid, ask) in src/data/metrics.js returning (bid+ask)/2, null when either side is missing.
-- [ ] **T11.6.3 - calcSpreadBps** - What: Spread in basis points, the scalper's cost-of-entry number. How: calcSpreadBps(bid, ask) = (ask-bid)/mid*10000 rounded to one decimal.
-- [ ] **T11.6.4 - calcVwap** - What: Rolling volume-weighted average price for drift detection. How: calcVwap(ring, windowMs) summing price*size over the trade ring window without allocations.
-- [ ] **T11.6.5 - calcTickVelocity** - What: Ticks-per-second momentum reading that flags heating instruments. How: calcTickVelocity(ring, now) counting ring entries inside a sliding 1s window.
-- [ ] **T11.6.6 - Register computeds** - What: Metrics appear as md.<id>.mid/spread/vwap/velocity state. How: On subs acquire, register Spektrum computed() keys wrapping the calc fns over book and ring inputs.
-- [ ] **T11.6.7 - Lifecycle teardown** - What: No orphaned computeds after an instrument is dropped. How: Store disposers per canonId and remove the computed registrations on subs release.
-- [ ] **T11.6.8 - Frame-aligned refresh** - What: Derived values update once per frame, not once per tick. How: Trigger computed re-evaluation from the F11.4 flush step via Spektrum refresh on touched ids.
-- [ ] **T11.6.9 - Single unit tests** - What: All four calc functions each verified by exactly one test. How: tests/metrics.test.js with edge cases (empty ring, crossed book), run per function via -t.
-- [ ] **T11.6.10 - Merge metrics** - What: Instant analytics for phases 13-21 on main. How: ESLint the module, confirm the four targeted tests, merge feature/f11-6-derived-metrics.
+- [x] **T11.6.1 - Metrics branch** - What: Derived-value work sandboxed from main. How: Create feature/f11-6-derived-metrics from main per feature-cycle.
+- [x] **T11.6.2 - calcMid** - What: A fair midpoint price for HUD and order entry defaults. How: Pure calcMid(bid, ask) in src/data/metrics.js returning (bid+ask)/2, null when either side is missing.
+- [x] **T11.6.3 - calcSpreadBps** - What: Spread in basis points, the scalper's cost-of-entry number. How: calcSpreadBps(bid, ask) = (ask-bid)/mid*10000 rounded to one decimal.
+- [x] **T11.6.4 - calcVwap** - What: Rolling volume-weighted average price for drift detection. How: calcVwap(ring, windowMs) summing price*size over the trade ring window without allocations.
+- [x] **T11.6.5 - calcTickVelocity** - What: Ticks-per-second momentum reading that flags heating instruments. How: calcTickVelocity(ring, now) counting ring entries inside a sliding 1s window.
+- [x] **T11.6.6 - Register computeds** - What: Metrics appear as md.<id>.mid/spread/vwap/velocity state. How: On subs acquire, register Spektrum computed() keys wrapping the calc fns over book and ring inputs.
+- [x] **T11.6.7 - Lifecycle teardown** - What: No orphaned computeds after an instrument is dropped. How: Store disposers per canonId and remove the computed registrations on subs release.
+- [x] **T11.6.8 - Frame-aligned refresh** - What: Derived values update once per frame, not once per tick. How: Trigger computed re-evaluation from the F11.4 flush step via Spektrum refresh on touched ids.
+- [x] **T11.6.9 - Single unit tests** - What: All four calc functions each verified by exactly one test. How: tests/metrics.test.js with edge cases (empty ring, crossed book), run per function via -t.
+- [x] **T11.6.10 - Merge metrics** - What: Instant analytics for phases 13-21 on main. How: ESLint the module, confirm the four targeted tests, merge feature/f11-6-derived-metrics.
 
 ### F11.7 - Candle Aggregator
 
 **What:** Live 1s/5s/1m candles built straight from raw trades, available before venues publish their own bars.
 **How:** Bucketing aggregator in src/data/candles.js folding ticks into OHLCV keyed by floor(ts/interval), publishing closes on the bus.
 
-- [ ] **T11.7.1 - Aggregator branch** - What: Candle logic developed off main. How: Branch feature/f11-7-candle-aggregator from main.
-- [ ] **T11.7.2 - bucketStart fn** - What: Deterministic bucket boundaries shared by live and replay code. How: Pure bucketStart(ts, intervalMs) = Math.floor(ts/intervalMs)*intervalMs in src/data/candles.js.
-- [ ] **T11.7.3 - foldTick fn** - What: Each trade updates its bucket in constant time. How: foldTick(bucket, tick) mutating open/high/low/close/volume, initializing OHLC from the first trade.
-- [ ] **T11.7.4 - createAggregator** - What: One object tracks open 1s/5s/1m buckets per instrument. How: Factory holding three current buckets per canonId and routing each tick through foldTick.
-- [ ] **T11.7.5 - Boundary close** - What: Finished candles reach charts the instant their interval ends. How: When a tick crosses bucketStart, close the old bucket and bus.publish('candle:<id>:<tf>').
-- [ ] **T11.7.6 - Gap fill** - What: Quiet instruments still render continuous candle series. How: gapFill emitting flat candles (carry close, zero volume) for every skipped interval.
-- [ ] **T11.7.7 - Idle sweeper** - What: Candles close on time even when no trade crosses the boundary. How: A 250ms setInterval sweep closing any bucket whose interval has elapsed.
-- [ ] **T11.7.8 - Ring persistence and wiring** - What: Closed candles stored hot for sparklines and micro-charts. How: Subscribe aggregator to 'tick:*' and append closed candles into the F11.3 candle rings.
-- [ ] **T11.7.9 - Single unit tests** - What: bucketStart, foldTick and gapFill each proven by one test. How: tests/candles.test.js with fixed timestamps, run individually via npx vitest run -t.
-- [ ] **T11.7.10 - Merge aggregator** - What: Homegrown candles feeding phases 13 and 27. How: ESLint pass, targeted tests green, merge feature/f11-7-candle-aggregator into main.
+- [x] **T11.7.1 - Aggregator branch** - What: Candle logic developed off main. How: Branch feature/f11-7-candle-aggregator from main.
+- [x] **T11.7.2 - bucketStart fn** - What: Deterministic bucket boundaries shared by live and replay code. How: Pure bucketStart(ts, intervalMs) = Math.floor(ts/intervalMs)*intervalMs in src/data/candles.js.
+- [x] **T11.7.3 - foldTick fn** - What: Each trade updates its bucket in constant time. How: foldTick(bucket, tick) mutating open/high/low/close/volume, initializing OHLC from the first trade.
+- [x] **T11.7.4 - createAggregator** - What: One object tracks open 1s/5s/1m buckets per instrument. How: Factory holding three current buckets per canonId and routing each tick through foldTick.
+- [x] **T11.7.5 - Boundary close** - What: Finished candles reach charts the instant their interval ends. How: When a tick crosses bucketStart, close the old bucket and bus.publish('candle:<id>:<tf>').
+- [x] **T11.7.6 - Gap fill** - What: Quiet instruments still render continuous candle series. How: gapFill emitting flat candles (carry close, zero volume) for every skipped interval.
+- [x] **T11.7.7 - Idle sweeper** - What: Candles close on time even when no trade crosses the boundary. How: A 250ms setInterval sweep closing any bucket whose interval has elapsed.
+- [x] **T11.7.8 - Ring persistence and wiring** - What: Closed candles stored hot for sparklines and micro-charts. How: Subscribe aggregator to 'tick:*' and append closed candles into the F11.3 candle rings.
+- [x] **T11.7.9 - Single unit tests** - What: bucketStart, foldTick and gapFill each proven by one test. How: tests/candles.test.js with fixed timestamps, run individually via npx vitest run -t.
+- [x] **T11.7.10 - Merge aggregator** - What: Homegrown candles feeding phases 13 and 27. How: ESLint pass, targeted tests green, merge feature/f11-7-candle-aggregator into main.
 
 ### F11.8 - Stale-Feed Detector and Status LEDs
 

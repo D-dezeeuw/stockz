@@ -19,6 +19,13 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 - **Fixed memory under load** — buffers have a hard capacity and O(1) writes, so a long
   session cannot degrade into GC pauses exactly when the market gets busy. Drop counts are
   reported rather than hidden. (F11.3, F11.9)
+- **Candles built locally at scalping timeframes** — 1s, 5s and 1m folded from raw prints
+  rather than requested from the venue: the venue's smallest bar is usually too coarse to
+  scalp, and a local bar closes the instant the clock does with no round-trip. Buckets
+  align to the wall clock so two instruments produce bars that line up, and a print inside
+  the open bar updates it in place instead of drawing hundreds of one-print bars a second.
+  Adds VWAP, the reference a mean-reversion scalp measures deviation from. (F11.1, F11.6,
+  F11.7)
 
 ## [0.10.0] — 2026-08-03 — Phase 10: EToro Connectivity
 
