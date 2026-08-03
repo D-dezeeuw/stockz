@@ -5,11 +5,24 @@ in `masterplan.md`, and knows where the project stands. Rewritten at every phase
 
 ---
 
-## Status: Phase 9 closed (v0.9.0) · Phase 10 next
+## Status: Phase 10 closed (v0.10.0) · Phase 11 next
 
 **Live:** https://d-dezeeuw.github.io/stockz/ (Pages serves `main` root — pushing is deploying)
-**Tests:** 191, one per function, all passing individually. Every gated file ≥85% branches.
+**Tests:** 211, one per function, all passing individually. Every gated file ≥85% branches.
 **Branch model:** everything merges to `main`; no feature branches outstanding.
+
+## Phase 10 — EToro Connectivity (closed)
+
+| Feature | What now exists | Where |
+| --- | --- | --- |
+| F10.1–F10.4 | `etoroHeaders`, `etoroRequest`, `fetchInstruments`, `fetchQuotes`, `fetchPortfolio`, `pollIntervalFor`, `createQuotePoller` | `src/venues/etoro/rest.js` |
+| F10.7 | `mapQuote`, `mapPosition`, `mapOrder`, `mapOrderState`, `mapError`, `learnInstruments`, `symbolFor`, `toEpoch` | `src/venues/etoro/map.js` |
+| F10.9 | `createMockFetch`, `seededRandom`, `mockQuote`, `primeMockInstruments` | `src/venues/etoro/mock.js` |
+| F10.6 | CORS position: dev proxy, mock offline, relay-or-off in production | `docs/etoro-cors.md` |
+
+**Shape parity is enforced by test** — `mapQuote` must produce the same keys as OKX's
+`mapTicker`. Nothing downstream may branch on venue.
+**A public CORS proxy is off the table**: it would see the API keys in every header.
 
 ## Phase 9 — OKX Connectivity (closed)
 
@@ -134,21 +147,21 @@ go stale, and faults that reach the trader instead of the console.
 | F2.9 | `pushToast`, `dismissToast`, `expireToasts`, `describeEngineError`, `wireEngineErrors` | `src/ui/toast.js` |
 | F2.10 | `collectExpressions`, `renderPrecompileModule`, `cspMeta`, `npm run build:csp` | `src/app/csp.js`, `docs/csp.md` |
 
-## Next up: Phase 10 — EToro Connectivity
+## Next up: Phase 11 — Real-Time Market Data Pipeline
 
-First feature **F10.1**. Mirror the OKX shape (`src/venues/okx/`) into `src/venues/etoro/`:
+First feature **F11.1**. Both venues now produce internal ticks, but **nothing consumes
+them yet** — the venues are not wired into state. Phase 11 builds the path between:
 
-- REST only — no public stream — so quotes come from an **adaptive poller**: fast for the
-  focused instrument, slow for watchlist rows, paused when the tab is hidden.
-- Keys are `apiKey` + `userKey`, already in the vault (`getKey('etoro', …)`), sent as
-  headers rather than signed.
-- Mappers must emit the *same* internal schema as OKX's, so nothing downstream branches on
-  venue. Reuse the tick/order/position shapes in `src/venues/okx/map.js` as the contract.
-- Feature-flagged (`settings` has no flag yet — add one) so the desk runs clean OKX-only.
-- Mock mode with canned data for offline dev; the container has no network, so the mock
-  path is what tests exercise.
-- CORS is a real risk from a browser; document the dev-proxy strategy rather than baking
-  in a third-party CORS proxy.
+- A tick bus decoupling feeds from the UI, ring buffers with fixed memory for trades and
+  candles, and a **rAF-batched flush**: one `setValue` per namespace per frame, never one
+  per tick. This is the phase that decides whether the desk survives a busy tape.
+- Candle aggregation (1s/5s/1m) from raw trades.
+- Derived metrics already exist for mid/spread (`src/state/derived.js`); tick velocity and
+  VWAP belong here.
+- A stale-feed detector — `isStale` already exists in `src/venues/okx/socket.js`; blocks
+  need it reflected as block status.
+- Throughput and drop counters for the HUD (phase 19).
+- `market.venues.<venue>.state` drives the header LEDs and is already bound in the markup.
 
 ## Gotchas (learned the hard way — do not rediscover)
 
