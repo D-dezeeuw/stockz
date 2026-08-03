@@ -44,6 +44,14 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
   `:class="fmt.cls(trade.dayPnl)"` format and colour a cell in one place. Exposed as one
   frozen global rather than through state, which is recorded into history and journal
   exports where functions have no business. (F3.8)
+- **Utility classes** — a small closed set for text, surface, border, spacing, type and
+  layout, every one resolving through tokens so it is correct in both themes without an
+  override. (F3.9)
+- **Contrast is asserted, not eyeballed** — the WCAG luminance and ratio maths ship as
+  tested functions, and one test audits the whole shipped palette in both themes. It
+  immediately caught the day-theme orange at 4.17:1 on white, below AA; the token is now
+  `#b84600` and passes on both day surfaces. A token that regresses now fails a test
+  rather than a trader squinting at a price. (F3.10)
 
 ## [0.2.0] — 2026-08-03 — Phase 2: Spektrum Core Integration
 
