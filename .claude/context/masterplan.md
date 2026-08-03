@@ -1398,48 +1398,48 @@
 **What:** An OKX link that reconnects itself, so the price stream never dies mid-scalp.
 **How:** Wrap native browser WebSocket in src/venues/okx/ws.js with a connection state machine, exponential backoff with jitter, and auto-resubscribe on reopen.
 
-- [ ] **T9.1.1 - Branch and socket scaffold** - What: A clean isolated workspace for the OKX socket layer. How: git checkout -b feature/okx-ws-core from main; create src/venues/okx/ws.js and tests/okx/.
-- [ ] **T9.1.2 - createOkxSocket factory** - What: One call opens wss://ws.okx.com:8443/ws/v5/public reliably. How: Implement createOkxSocket(url) wrapping native WebSocket with connect/send/close helpers.
-- [ ] **T9.1.3 - Connection state machine** - What: The desk always knows if the OKX link is up. How: Implement transitions idle/connecting/open/backoff, published via Spektrum setValue('okx.ws.state', s).
-- [ ] **T9.1.4 - Backoff scheduler** - What: Fast recovery after drops without hammering OKX. How: Implement reconnectDelay(attempt) exponential from 500ms capped at 30s with 20% jitter; call it in onclose.
-- [ ] **T9.1.5 - Auto-resubscribe queue** - What: Subscribed channels come back on their own after a reconnect. How: Keep active subscription args in a Map and replay their subscribe frames on socket reopen.
-- [ ] **T9.1.6 - Frame dispatcher** - What: Every OKX message reaches the right handler instantly. How: Implement parseOkxFrame(raw) with guarded JSON.parse, routing by arg.channel to registered callbacks.
-- [ ] **T9.1.7 - Wire connection LED block** - What: At-a-glance OKX link health on the dashboard grid. How: bindDOM a status block rendering {{okx.ws.state}} with data-if variants per state.
-- [ ] **T9.1.8 - Style LED states** - What: Instant color read of link status in day and night themes. How: CSS classes on money-hacker tokens: green for open, orange for backoff, dim for idle.
-- [ ] **T9.1.9 - Single unit tests for socket fns** - What: reconnectDelay and parseOkxFrame provably correct. How: One Vitest test each; run vitest run tests/okx/ws.test.js -t reconnectDelay, then -t parseOkxFrame.
-- [ ] **T9.1.10 - Merge socket core when green** - What: The reconnecting socket lands on main. How: Run ESLint and the two targeted Vitest runs, then merge feature/okx-ws-core into main.
+- [x] **T9.1.1 - Branch and socket scaffold** - What: A clean isolated workspace for the OKX socket layer. How: git checkout -b feature/okx-ws-core from main; create src/venues/okx/ws.js and tests/okx/.
+- [x] **T9.1.2 - createOkxSocket factory** - What: One call opens wss://ws.okx.com:8443/ws/v5/public reliably. How: Implement createOkxSocket(url) wrapping native WebSocket with connect/send/close helpers.
+- [x] **T9.1.3 - Connection state machine** - What: The desk always knows if the OKX link is up. How: Implement transitions idle/connecting/open/backoff, published via Spektrum setValue('okx.ws.state', s).
+- [x] **T9.1.4 - Backoff scheduler** - What: Fast recovery after drops without hammering OKX. How: Implement reconnectDelay(attempt) exponential from 500ms capped at 30s with 20% jitter; call it in onclose.
+- [x] **T9.1.5 - Auto-resubscribe queue** - What: Subscribed channels come back on their own after a reconnect. How: Keep active subscription args in a Map and replay their subscribe frames on socket reopen.
+- [x] **T9.1.6 - Frame dispatcher** - What: Every OKX message reaches the right handler instantly. How: Implement parseOkxFrame(raw) with guarded JSON.parse, routing by arg.channel to registered callbacks.
+- [x] **T9.1.7 - Wire connection LED block** - What: At-a-glance OKX link health on the dashboard grid. How: bindDOM a status block rendering {{okx.ws.state}} with data-if variants per state.
+- [x] **T9.1.8 - Style LED states** - What: Instant color read of link status in day and night themes. How: CSS classes on money-hacker tokens: green for open, orange for backoff, dim for idle.
+- [x] **T9.1.9 - Single unit tests for socket fns** - What: reconnectDelay and parseOkxFrame provably correct. How: One Vitest test each; run vitest run tests/okx/ws.test.js -t reconnectDelay, then -t parseOkxFrame.
+- [x] **T9.1.10 - Merge socket core when green** - What: The reconnecting socket lands on main. How: Run ESLint and the two targeted Vitest runs, then merge feature/okx-ws-core into main.
 
 ### F9.2 - Tickers and Trades Channels
 
 **What:** Live last price, bid/ask and prints for every instrument the scalper watches.
 **How:** Subscribe OKX tickers and trades public channels and stream parsed updates into Spektrum state for downstream blocks.
 
-- [ ] **T9.2.1 - Branch public feeds** - What: Isolated work on market data channels. How: git checkout -b feature/okx-public-feeds from main; add src/venues/okx/channels.js.
-- [ ] **T9.2.2 - buildSubscribeMsg helper** - What: Correct frames for any channel/instId pair. How: Implement buildSubscribeMsg(op, channel, instId) emitting the OKX v5 {op, args} JSON envelope.
-- [ ] **T9.2.3 - Ticker parser** - What: Clean price objects instead of raw venue payloads. How: Implement parseTickerMsg(msg) mapping data[0] to {instId, last, bid, ask, ts} numbers.
-- [ ] **T9.2.4 - Trades parser** - What: A readable stream of executed prints for the tape. How: Implement parseTradeMsg(msg) mapping each fill to {instId, side, px, sz, ts}.
-- [ ] **T9.2.5 - Publish ticks to Spektrum** - What: Any block can react to fresh prices instantly. How: Push parsed objects with addValue('okx.ticks', tick) and watch() consumers can subscribe.
-- [ ] **T9.2.6 - Unsubscribe lifecycle** - What: No wasted bandwidth on instruments nobody watches. How: Send unsubscribe frames from a data-action teardown hook when a grid block closes.
-- [ ] **T9.2.7 - Staleness guard** - What: Out-of-order frames never paint a wrong price. How: Compare incoming ts against last stored tick per instId and drop older frames before publishing.
-- [ ] **T9.2.8 - Live feed smoke page** - What: Proof real BTC-USDT frames flow end to end. How: A Vite dev-only page subscribing tickers/trades and inspecting the stream with spektrum/devtools.
-- [ ] **T9.2.9 - Single unit tests for channel fns** - What: buildSubscribeMsg, parseTickerMsg, parseTradeMsg each verified. How: One Vitest test per function, run individually via vitest -t name.
-- [ ] **T9.2.10 - Merge public feeds** - What: Live tickers and trades available on main. How: ESLint clean plus the three targeted tests green, then merge feature/okx-public-feeds to main.
+- [x] **T9.2.1 - Branch public feeds** - What: Isolated work on market data channels. How: git checkout -b feature/okx-public-feeds from main; add src/venues/okx/channels.js.
+- [x] **T9.2.2 - buildSubscribeMsg helper** - What: Correct frames for any channel/instId pair. How: Implement buildSubscribeMsg(op, channel, instId) emitting the OKX v5 {op, args} JSON envelope.
+- [x] **T9.2.3 - Ticker parser** - What: Clean price objects instead of raw venue payloads. How: Implement parseTickerMsg(msg) mapping data[0] to {instId, last, bid, ask, ts} numbers.
+- [x] **T9.2.4 - Trades parser** - What: A readable stream of executed prints for the tape. How: Implement parseTradeMsg(msg) mapping each fill to {instId, side, px, sz, ts}.
+- [x] **T9.2.5 - Publish ticks to Spektrum** - What: Any block can react to fresh prices instantly. How: Push parsed objects with addValue('okx.ticks', tick) and watch() consumers can subscribe.
+- [x] **T9.2.6 - Unsubscribe lifecycle** - What: No wasted bandwidth on instruments nobody watches. How: Send unsubscribe frames from a data-action teardown hook when a grid block closes.
+- [x] **T9.2.7 - Staleness guard** - What: Out-of-order frames never paint a wrong price. How: Compare incoming ts against last stored tick per instId and drop older frames before publishing.
+- [x] **T9.2.8 - Live feed smoke page** - What: Proof real BTC-USDT frames flow end to end. How: A Vite dev-only page subscribing tickers/trades and inspecting the stream with spektrum/devtools.
+- [x] **T9.2.9 - Single unit tests for channel fns** - What: buildSubscribeMsg, parseTickerMsg, parseTradeMsg each verified. How: One Vitest test per function, run individually via vitest -t name.
+- [x] **T9.2.10 - Merge public feeds** - What: Live tickers and trades available on main. How: ESLint clean plus the three targeted tests green, then merge feature/okx-public-feeds to main.
 
 ### F9.3 - Order Book Streams and Checksum
 
 **What:** A trustworthy live order book: depth that provably matches what OKX holds.
 **How:** Subscribe books5 and books-l2-tbt, merge deltas in place, validate the OKX CRC32 checksum, and resync automatically on mismatch.
 
-- [ ] **T9.3.1 - Branch book streams** - What: Isolated depth-feed work. How: git checkout -b feature/okx-books from main; add src/venues/okx/book.js with bid/ask array structures.
-- [ ] **T9.3.2 - books5 subscription** - What: A light 5-level book for compact grid blocks. How: Subscribe books5 via buildSubscribeMsg and store snapshots keyed by instId.
-- [ ] **T9.3.3 - books-l2-tbt handler** - What: Tick-by-tick full depth for the order book block. How: Branch on action snapshot vs update in the frame and route to seed or merge paths.
-- [ ] **T9.3.4 - applyBookUpdate merge fn** - What: Deltas fold into the book correctly at tbt speed. How: Implement applyBookUpdate(book, delta) with sorted insert, size replace, and zero-size delete.
-- [ ] **T9.3.5 - CRC32 checksum fn** - What: Cryptographic-style proof the local book matches OKX. How: Implement computeBookChecksum(book) joining top 25 bid:ask px:sz per spec, CRC32 to signed int32.
-- [ ] **T9.3.6 - Resync on mismatch** - What: A corrupted book heals itself in one round trip. How: On checksum fail, mark okx.books stale via setValue, unsubscribe and resubscribe the channel.
-- [ ] **T9.3.7 - Expose book state** - What: Phase 14 order book blocks get a ready data source. How: Publish per-instrument books under setValue('okx.book.' + instId) with a seq counter.
-- [ ] **T9.3.8 - Allocation-free merge pass** - What: No GC stutter during depth bursts. How: Refactor applyBookUpdate to mutate preallocated arrays in place, verified with a 10k-delta timing loop.
-- [ ] **T9.3.9 - Single unit tests for book fns** - What: applyBookUpdate and computeBookChecksum locked in. How: One Vitest test each using an OKX doc example book; targeted vitest -t runs only.
-- [ ] **T9.3.10 - Merge book streams** - What: Verified depth data lands on main. How: Run ESLint and both targeted tests, then merge feature/okx-books into main.
+- [x] **T9.3.1 - Branch book streams** - What: Isolated depth-feed work. How: git checkout -b feature/okx-books from main; add src/venues/okx/book.js with bid/ask array structures.
+- [x] **T9.3.2 - books5 subscription** - What: A light 5-level book for compact grid blocks. How: Subscribe books5 via buildSubscribeMsg and store snapshots keyed by instId.
+- [x] **T9.3.3 - books-l2-tbt handler** - What: Tick-by-tick full depth for the order book block. How: Branch on action snapshot vs update in the frame and route to seed or merge paths.
+- [x] **T9.3.4 - applyBookUpdate merge fn** - What: Deltas fold into the book correctly at tbt speed. How: Implement applyBookUpdate(book, delta) with sorted insert, size replace, and zero-size delete.
+- [x] **T9.3.5 - CRC32 checksum fn** - What: Cryptographic-style proof the local book matches OKX. How: Implement computeBookChecksum(book) joining top 25 bid:ask px:sz per spec, CRC32 to signed int32.
+- [x] **T9.3.6 - Resync on mismatch** - What: A corrupted book heals itself in one round trip. How: On checksum fail, mark okx.books stale via setValue, unsubscribe and resubscribe the channel.
+- [x] **T9.3.7 - Expose book state** - What: Phase 14 order book blocks get a ready data source. How: Publish per-instrument books under setValue('okx.book.' + instId) with a seq counter.
+- [x] **T9.3.8 - Allocation-free merge pass** - What: No GC stutter during depth bursts. How: Refactor applyBookUpdate to mutate preallocated arrays in place, verified with a 10k-delta timing loop.
+- [x] **T9.3.9 - Single unit tests for book fns** - What: applyBookUpdate and computeBookChecksum locked in. How: One Vitest test each using an OKX doc example book; targeted vitest -t runs only.
+- [x] **T9.3.10 - Merge book streams** - What: Verified depth data lands on main. How: Run ESLint and both targeted tests, then merge feature/okx-books into main.
 
 ### F9.4 - Private WebSocket Login
 
@@ -1478,32 +1478,32 @@
 **What:** Orders fired, pulled and reshaped at OKX in a single keystroke's worth of code.
 **How:** Wrap OKX v5 trade REST endpoints with client order IDs and normalize acks into the internal order shape used by the execution engine.
 
-- [ ] **T9.6.1 - Branch order calls** - What: Isolated trading-endpoint work. How: git checkout -b feature/okx-orders from main; add src/venues/okx/orders.js.
-- [ ] **T9.6.2 - makeClOrdId fn** - What: Every order is traceable back to this desk. How: Implement makeClOrdId() producing a stockz-prefixed alphanumeric id within the OKX 32-char limit.
-- [ ] **T9.6.3 - buildOrderBody fn** - What: Internal order intent translates exactly to OKX fields. How: Implement buildOrderBody(intent) mapping side/type/px/sz to instId, tdMode, ordType, px, sz.
-- [ ] **T9.6.4 - placeOkxOrder call** - What: Live order entry to the venue. How: POST /api/v5/trade/order via okxFetch with buildOrderBody output plus makeClOrdId.
-- [ ] **T9.6.5 - cancelOkxOrder call** - What: Instant pull of a working order by desk id. How: POST /api/v5/trade/cancel-order via okxFetch addressed by clOrdId and instId.
-- [ ] **T9.6.6 - amendOkxOrder call** - What: Reprice without cancel/replace latency. How: POST /api/v5/trade/amend-order via okxFetch carrying newPx/newSz keyed by clOrdId.
-- [ ] **T9.6.7 - normalizeOrderAck fn** - What: One ack shape for phase 17 regardless of venue. How: Implement normalizeOrderAck(res) mapping ordId/clOrdId/sCode into {id, clOrdId, status, reason}.
-- [ ] **T9.6.8 - Live order event wiring** - What: Fills appear the moment OKX reports them. How: Route private orders-channel frames through normalizeOrderAck into trigger('okx.orderUpdate', o).
-- [ ] **T9.6.9 - Single unit tests for order fns** - What: makeClOrdId, buildOrderBody, normalizeOrderAck each proven. How: One Vitest test per function with doc-sample payloads; vitest -t per run.
-- [ ] **T9.6.10 - Merge order calls** - What: Full order lifecycle lands on main. How: ESLint plus the three targeted tests green, then merge feature/okx-orders into main.
+- [x] **T9.6.1 - Branch order calls** - What: Isolated trading-endpoint work. How: git checkout -b feature/okx-orders from main; add src/venues/okx/orders.js.
+- [x] **T9.6.2 - makeClOrdId fn** - What: Every order is traceable back to this desk. How: Implement makeClOrdId() producing a stockz-prefixed alphanumeric id within the OKX 32-char limit.
+- [x] **T9.6.3 - buildOrderBody fn** - What: Internal order intent translates exactly to OKX fields. How: Implement buildOrderBody(intent) mapping side/type/px/sz to instId, tdMode, ordType, px, sz.
+- [x] **T9.6.4 - placeOkxOrder call** - What: Live order entry to the venue. How: POST /api/v5/trade/order via okxFetch with buildOrderBody output plus makeClOrdId.
+- [x] **T9.6.5 - cancelOkxOrder call** - What: Instant pull of a working order by desk id. How: POST /api/v5/trade/cancel-order via okxFetch addressed by clOrdId and instId.
+- [x] **T9.6.6 - amendOkxOrder call** - What: Reprice without cancel/replace latency. How: POST /api/v5/trade/amend-order via okxFetch carrying newPx/newSz keyed by clOrdId.
+- [x] **T9.6.7 - normalizeOrderAck fn** - What: One ack shape for phase 17 regardless of venue. How: Implement normalizeOrderAck(res) mapping ordId/clOrdId/sCode into {id, clOrdId, status, reason}.
+- [x] **T9.6.8 - Live order event wiring** - What: Fills appear the moment OKX reports them. How: Route private orders-channel frames through normalizeOrderAck into trigger('okx.orderUpdate', o).
+- [x] **T9.6.9 - Single unit tests for order fns** - What: makeClOrdId, buildOrderBody, normalizeOrderAck each proven. How: One Vitest test per function with doc-sample payloads; vitest -t per run.
+- [x] **T9.6.10 - Merge order calls** - What: Full order lifecycle lands on main. How: ESLint plus the three targeted tests green, then merge feature/okx-orders into main.
 
 ### F9.7 - Heartbeat and Latency Meter
 
 **What:** A live round-trip latency number so the scalper knows exactly how fast the wire is.
 **How:** OKX ping/pong keepalive on a timer with a pong watchdog and a rolling latency ring buffer computed into p50/p95 stats.
 
-- [ ] **T9.7.1 - Branch heartbeat** - What: Isolated keepalive work. How: git checkout -b feature/okx-heartbeat from main; add src/venues/okx/heartbeat.js.
-- [ ] **T9.7.2 - Ping timer** - What: The socket never dies from OKX's 30s idle cutoff. How: Send the literal ping string every 25s of send-inactivity, tracking the send timestamp.
-- [ ] **T9.7.3 - Pong watchdog** - What: A dead link is detected in seconds, not minutes. How: If no pong arrives within 5s, force-close the socket so the F9.1 backoff path takes over.
-- [ ] **T9.7.4 - computeLatency fn** - What: An honest round-trip measure per heartbeat. How: Implement computeLatency(sentTs, recvTs) returning ms delta from performance.now() stamps.
-- [ ] **T9.7.5 - pushLatencySample fn** - What: Stable stats instead of a jumpy single number. How: Implement pushLatencySample(ring, ms) as a fixed 60-slot ring buffer with overwrite semantics.
-- [ ] **T9.7.6 - Percentile computeds** - What: p50 and p95 latency always current with zero polling. How: Define Spektrum computed('okx.latency.p50'/'p95') over the ring buffer state.
-- [ ] **T9.7.7 - Server clock offset check** - What: Signing never fails from local clock drift. How: Compare GET /api/v5/public/time against Date.now() on boot and store the offset for isoTimestamp.
-- [ ] **T9.7.8 - HUD latency readout** - What: Wire speed visible in the corner of the eye. How: Bind {{okx.latency.p50}}ms into the status block, green under 150ms and orange above via tokens.
-- [ ] **T9.7.9 - Single unit tests for latency fns** - What: computeLatency and pushLatencySample verified. How: One Vitest test each covering wraparound and delta math; targeted vitest -t runs.
-- [ ] **T9.7.10 - Merge heartbeat** - What: Self-monitoring keepalive lands on main. How: ESLint clean plus both targeted tests green, then merge feature/okx-heartbeat into main.
+- [x] **T9.7.1 - Branch heartbeat** - What: Isolated keepalive work. How: git checkout -b feature/okx-heartbeat from main; add src/venues/okx/heartbeat.js.
+- [x] **T9.7.2 - Ping timer** - What: The socket never dies from OKX's 30s idle cutoff. How: Send the literal ping string every 25s of send-inactivity, tracking the send timestamp.
+- [x] **T9.7.3 - Pong watchdog** - What: A dead link is detected in seconds, not minutes. How: If no pong arrives within 5s, force-close the socket so the F9.1 backoff path takes over.
+- [x] **T9.7.4 - computeLatency fn** - What: An honest round-trip measure per heartbeat. How: Implement computeLatency(sentTs, recvTs) returning ms delta from performance.now() stamps.
+- [x] **T9.7.5 - pushLatencySample fn** - What: Stable stats instead of a jumpy single number. How: Implement pushLatencySample(ring, ms) as a fixed 60-slot ring buffer with overwrite semantics.
+- [x] **T9.7.6 - Percentile computeds** - What: p50 and p95 latency always current with zero polling. How: Define Spektrum computed('okx.latency.p50'/'p95') over the ring buffer state.
+- [x] **T9.7.7 - Server clock offset check** - What: Signing never fails from local clock drift. How: Compare GET /api/v5/public/time against Date.now() on boot and store the offset for isoTimestamp.
+- [x] **T9.7.8 - HUD latency readout** - What: Wire speed visible in the corner of the eye. How: Bind {{okx.latency.p50}}ms into the status block, green under 150ms and orange above via tokens.
+- [x] **T9.7.9 - Single unit tests for latency fns** - What: computeLatency and pushLatencySample verified. How: One Vitest test each covering wraparound and delta math; targeted vitest -t runs.
+- [x] **T9.7.10 - Merge heartbeat** - What: Self-monitoring keepalive lands on main. How: ESLint clean plus both targeted tests green, then merge feature/okx-heartbeat into main.
 
 ### F9.8 - Rate-Limit Budget Tracker
 
@@ -1542,16 +1542,16 @@
 **What:** OKX rejections explained in plain words the instant they happen, never a modal in the way.
 **How:** A curated OKX v5 error-code table mapped through mapOkxError into lean auto-dismissing toasts styled in the money-hacker palette.
 
-- [ ] **T9.10.1 - Branch error mapping** - What: Isolated failure-surface work. How: git checkout -b feature/okx-errors from main; add src/venues/okx/errors.js and a toast module stub.
-- [ ] **T9.10.2 - Error code table** - What: The codes scalpers actually hit, pre-translated. How: Curate OKX v5 codes (51008 insufficient balance, 50011 rate limited, 51400 cancel failed, etc.) to short texts.
-- [ ] **T9.10.3 - mapOkxError fn** - What: Any sCode becomes an actionable message. How: Implement mapOkxError(code) returning {severity, text} with an unknown-code fallback including the raw code.
-- [ ] **T9.10.4 - Lean toast component** - What: Feedback that never steals focus or blocks a trade. How: A stacked corner container rendered with data-each over toast state, auto-dismiss after 4s.
-- [ ] **T9.10.5 - dedupeToast fn** - What: A burst of identical rejections reads as one message. How: Implement dedupeToast(list, next) collapsing same-code toasts within a 2s window into a count badge.
-- [ ] **T9.10.6 - REST error wiring** - What: Every failed signed call self-reports. How: Catch OkxError from unwrapOkxResponse and push mapped toasts via trigger('toast.push', t).
-- [ ] **T9.10.7 - WS error wiring** - What: Socket-level rejects surface identically. How: Route event error frames from the F9.1 dispatcher through mapOkxError into the same toast path.
-- [ ] **T9.10.8 - Toast styling** - What: Severity readable at a glance in both themes. How: Green info and orange error styles from design tokens, with day/night CSS custom properties.
-- [ ] **T9.10.9 - Single unit tests for error fns** - What: mapOkxError and dedupeToast pinned down. How: One Vitest test each covering known, unknown and burst cases; run via vitest -t per function.
-- [ ] **T9.10.10 - Merge error mapping** - What: Human-readable venue errors land on main. How: ESLint plus both targeted tests green, then merge feature/okx-errors into main.
+- [x] **T9.10.1 - Branch error mapping** - What: Isolated failure-surface work. How: git checkout -b feature/okx-errors from main; add src/venues/okx/errors.js and a toast module stub.
+- [x] **T9.10.2 - Error code table** - What: The codes scalpers actually hit, pre-translated. How: Curate OKX v5 codes (51008 insufficient balance, 50011 rate limited, 51400 cancel failed, etc.) to short texts.
+- [x] **T9.10.3 - mapOkxError fn** - What: Any sCode becomes an actionable message. How: Implement mapOkxError(code) returning {severity, text} with an unknown-code fallback including the raw code.
+- [x] **T9.10.4 - Lean toast component** - What: Feedback that never steals focus or blocks a trade. How: A stacked corner container rendered with data-each over toast state, auto-dismiss after 4s.
+- [x] **T9.10.5 - dedupeToast fn** - What: A burst of identical rejections reads as one message. How: Implement dedupeToast(list, next) collapsing same-code toasts within a 2s window into a count badge.
+- [x] **T9.10.6 - REST error wiring** - What: Every failed signed call self-reports. How: Catch OkxError from unwrapOkxResponse and push mapped toasts via trigger('toast.push', t).
+- [x] **T9.10.7 - WS error wiring** - What: Socket-level rejects surface identically. How: Route event error frames from the F9.1 dispatcher through mapOkxError into the same toast path.
+- [x] **T9.10.8 - Toast styling** - What: Severity readable at a glance in both themes. How: Green info and orange error styles from design tokens, with day/night CSS custom properties.
+- [x] **T9.10.9 - Single unit tests for error fns** - What: mapOkxError and dedupeToast pinned down. How: One Vitest test each covering known, unknown and burst cases; run via vitest -t per function.
+- [x] **T9.10.10 - Merge error mapping** - What: Human-readable venue errors land on main. How: ESLint plus both targeted tests green, then merge feature/okx-errors into main.
 
 ---
 
