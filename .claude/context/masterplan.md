@@ -1565,64 +1565,64 @@
 **What:** A working authenticated line to EToro from the browser with zero dependencies.
 **How:** Build src/venues/etoro/rest.js around fetch with key headers from the phase 8 store and STOCKZ_ETORO_* env fallback for local dev.
 
-- [ ] **T10.1.1 - Branch REST core** - What: A clean start for the EToro layer. How: git checkout -b feature/etoro-rest-core from main; scaffold src/venues/etoro/ and tests/etoro/.
-- [ ] **T10.1.2 - buildEtoroHeaders fn** - What: Every call carries both required keys correctly. How: Implement buildEtoroHeaders(apiKey, userKey) returning the subscription-key and user-key header pair.
-- [ ] **T10.1.3 - etoroFetch wrapper** - What: One-line JSON calls against the EToro base URL. How: Implement etoroFetch(path, opts) over fetch, merging headers and parsing JSON with content-type checks.
-- [ ] **T10.1.4 - Credential wiring** - What: Keys come from URL params or the key modal, never source code. How: getEtoroCreds() reads the phase 8 store with import.meta.env.STOCKZ_ETORO_API_KEY/USER_KEY dev fallback.
-- [ ] **T10.1.5 - parseEtoroError fn** - What: Failures arrive as typed objects, not raw bodies. How: Implement parseEtoroError(status, body) producing an EtoroError with code, message and retryable flag.
-- [ ] **T10.1.6 - Slow-call abort** - What: A hung EToro request can never freeze the desk. How: Wire an AbortController with a 6s timeout into etoroFetch, mapping aborts to retryable EtoroError.
-- [ ] **T10.1.7 - Dev request log** - What: Every call inspectable while building. How: In Vite dev mode only, mirror request/response summaries into a ring visible in spektrum/devtools.
-- [ ] **T10.1.8 - Venue status flag** - What: The dashboard shows EToro reachability next to OKX. How: Ping a cheap metadata endpoint on boot and setValue('etoro.status', 'up'/'down'/'auth').
-- [ ] **T10.1.9 - Single unit tests for client fns** - What: buildEtoroHeaders and parseEtoroError verified. How: One Vitest test each with fixture responses; run via vitest run tests/etoro/rest.test.js -t name.
-- [ ] **T10.1.10 - Merge REST core** - What: The EToro client lands on main. How: ESLint clean plus both targeted tests green, then merge feature/etoro-rest-core into main.
+- [x] **T10.1.1 - Branch REST core** - What: A clean start for the EToro layer. How: git checkout -b feature/etoro-rest-core from main; scaffold src/venues/etoro/ and tests/etoro/.
+- [x] **T10.1.2 - buildEtoroHeaders fn** - What: Every call carries both required keys correctly. How: Implement buildEtoroHeaders(apiKey, userKey) returning the subscription-key and user-key header pair.
+- [x] **T10.1.3 - etoroFetch wrapper** - What: One-line JSON calls against the EToro base URL. How: Implement etoroFetch(path, opts) over fetch, merging headers and parsing JSON with content-type checks.
+- [x] **T10.1.4 - Credential wiring** - What: Keys come from URL params or the key modal, never source code. How: getEtoroCreds() reads the phase 8 store with import.meta.env.STOCKZ_ETORO_API_KEY/USER_KEY dev fallback.
+- [x] **T10.1.5 - parseEtoroError fn** - What: Failures arrive as typed objects, not raw bodies. How: Implement parseEtoroError(status, body) producing an EtoroError with code, message and retryable flag.
+- [x] **T10.1.6 - Slow-call abort** - What: A hung EToro request can never freeze the desk. How: Wire an AbortController with a 6s timeout into etoroFetch, mapping aborts to retryable EtoroError.
+- [x] **T10.1.7 - Dev request log** - What: Every call inspectable while building. How: In Vite dev mode only, mirror request/response summaries into a ring visible in spektrum/devtools.
+- [x] **T10.1.8 - Venue status flag** - What: The dashboard shows EToro reachability next to OKX. How: Ping a cheap metadata endpoint on boot and setValue('etoro.status', 'up'/'down'/'auth').
+- [x] **T10.1.9 - Single unit tests for client fns** - What: buildEtoroHeaders and parseEtoroError verified. How: One Vitest test each with fixture responses; run via vitest run tests/etoro/rest.test.js -t name.
+- [x] **T10.1.10 - Merge REST core** - What: The EToro client lands on main. How: ESLint clean plus both targeted tests green, then merge feature/etoro-rest-core into main.
 
 ### F10.2 - Instrument Metadata and Search
 
 **What:** Find any EToro stock or CFD by name in a keystroke and get its exact trading specs.
 **How:** Fetch the EToro instrument metadata endpoint, normalize to the shared internal schema, and index it for instant client-side search.
 
-- [ ] **T10.2.1 - Branch instruments** - What: Isolated reference-data work. How: git checkout -b feature/etoro-instruments from main; add src/venues/etoro/instruments.js.
-- [ ] **T10.2.2 - fetchEtoroInstruments call** - What: The tradable universe pulled once per session. How: GET the instruments metadata endpoint via etoroFetch and store the raw list.
-- [ ] **T10.2.3 - normalizeEtoroInstrument fn** - What: EToro rows fit the same schema as OKX pairs. How: Map instrumentId/symbol/displayName/precision to {venue:'etoro', id, symbol, name, tick, lot}.
-- [ ] **T10.2.4 - buildSearchIndex fn** - What: Sub-millisecond symbol lookup while typing. How: Implement buildSearchIndex(list) as a lowercase prefix map over symbol and display name.
-- [ ] **T10.2.5 - searchInstruments fn** - What: Ranked matches as the scalper types. How: Implement searchInstruments(index, query) returning exact-symbol hits first, then prefix, then substring.
-- [ ] **T10.2.6 - Metadata cache** - What: Instant boot on repeat visits. How: Persist the normalized list via spektrum/persist to localStorage with a 24h fetchedAt TTL and lazy refresh.
-- [ ] **T10.2.7 - Asset-class tagging** - What: Stocks, CFDs and crypto distinguishable at a glance. How: Carry the EToro asset-class field through normalization and expose it for badge rendering.
-- [ ] **T10.2.8 - Watchlist hookup** - What: Search results add straight to the phase 12 watchlist. How: Fire trigger('watchlist.add', instrument) from a data-action on each search result row.
-- [ ] **T10.2.9 - Single unit tests for metadata fns** - What: normalizeEtoroInstrument, buildSearchIndex, searchInstruments each proven. How: One Vitest test per function via targeted vitest -t runs.
-- [ ] **T10.2.10 - Merge instruments** - What: Searchable EToro universe lands on main. How: ESLint plus the three targeted tests green, then merge feature/etoro-instruments into main.
+- [x] **T10.2.1 - Branch instruments** - What: Isolated reference-data work. How: git checkout -b feature/etoro-instruments from main; add src/venues/etoro/instruments.js.
+- [x] **T10.2.2 - fetchEtoroInstruments call** - What: The tradable universe pulled once per session. How: GET the instruments metadata endpoint via etoroFetch and store the raw list.
+- [x] **T10.2.3 - normalizeEtoroInstrument fn** - What: EToro rows fit the same schema as OKX pairs. How: Map instrumentId/symbol/displayName/precision to {venue:'etoro', id, symbol, name, tick, lot}.
+- [x] **T10.2.4 - buildSearchIndex fn** - What: Sub-millisecond symbol lookup while typing. How: Implement buildSearchIndex(list) as a lowercase prefix map over symbol and display name.
+- [x] **T10.2.5 - searchInstruments fn** - What: Ranked matches as the scalper types. How: Implement searchInstruments(index, query) returning exact-symbol hits first, then prefix, then substring.
+- [x] **T10.2.6 - Metadata cache** - What: Instant boot on repeat visits. How: Persist the normalized list via spektrum/persist to localStorage with a 24h fetchedAt TTL and lazy refresh.
+- [x] **T10.2.7 - Asset-class tagging** - What: Stocks, CFDs and crypto distinguishable at a glance. How: Carry the EToro asset-class field through normalization and expose it for badge rendering.
+- [x] **T10.2.8 - Watchlist hookup** - What: Search results add straight to the phase 12 watchlist. How: Fire trigger('watchlist.add', instrument) from a data-action on each search result row.
+- [x] **T10.2.9 - Single unit tests for metadata fns** - What: normalizeEtoroInstrument, buildSearchIndex, searchInstruments each proven. How: One Vitest test per function via targeted vitest -t runs.
+- [x] **T10.2.10 - Merge instruments** - What: Searchable EToro universe lands on main. How: ESLint plus the three targeted tests green, then merge feature/etoro-instruments into main.
 
 ### F10.3 - Adaptive Quotes Polling
 
 **What:** EToro prices that feel live: fast when you are watching, gentle on quota when you are not.
 **How:** A setTimeout-chained polling loop whose interval adapts to Page Visibility and market hours, batching all watched instruments per request.
 
-- [ ] **T10.3.1 - Branch polling** - What: Isolated quote-loop work. How: git checkout -b feature/etoro-polling from main; add src/venues/etoro/poll.js.
-- [ ] **T10.3.2 - createPollLoop fn** - What: A drift-free loop that can never stack requests. How: Implement createPollLoop(fn, intervalFn) chaining setTimeout after each completion, with start/stop handles.
-- [ ] **T10.3.3 - computePollInterval fn** - What: The right cadence for every situation. How: Implement computePollInterval(focused, marketOpen) returning 1s focused, 5s blurred, 30s when closed.
-- [ ] **T10.3.4 - Visibility hookup** - What: Full speed the instant the tab regains focus. How: Listen to document visibilitychange, refresh the interval and fire one immediate poll on focus.
-- [ ] **T10.3.5 - Batched quote fetch** - What: All watched symbols in one request, not N. How: Collect watched EToro instrumentIds from state and pass them as one comma-joined quotes call.
-- [ ] **T10.3.6 - quotesChanged fn** - What: Zero wasted renders on unchanged prices. How: Implement quotesChanged(prev, next) comparing bid/ask/last so identical quotes skip Spektrum writes.
-- [ ] **T10.3.7 - Interval jitter** - What: No synchronized request storms across open tabs. How: Add a random 0-150ms offset to each scheduled poll inside createPollLoop.
-- [ ] **T10.3.8 - Poll health indicator** - What: Confidence the feed is alive despite being poll-based. How: Show last-poll age in the EToro block via a computed over a lastPollTs value, orange past 3 intervals.
-- [ ] **T10.3.9 - Single unit tests for poll fns** - What: createPollLoop, computePollInterval, quotesChanged verified. How: One Vitest test per function using vi.useFakeTimers(); vitest -t per run.
-- [ ] **T10.3.10 - Merge polling** - What: Adaptive live quotes land on main. How: ESLint plus the three targeted tests green, then merge feature/etoro-polling into main.
+- [x] **T10.3.1 - Branch polling** - What: Isolated quote-loop work. How: git checkout -b feature/etoro-polling from main; add src/venues/etoro/poll.js.
+- [x] **T10.3.2 - createPollLoop fn** - What: A drift-free loop that can never stack requests. How: Implement createPollLoop(fn, intervalFn) chaining setTimeout after each completion, with start/stop handles.
+- [x] **T10.3.3 - computePollInterval fn** - What: The right cadence for every situation. How: Implement computePollInterval(focused, marketOpen) returning 1s focused, 5s blurred, 30s when closed.
+- [x] **T10.3.4 - Visibility hookup** - What: Full speed the instant the tab regains focus. How: Listen to document visibilitychange, refresh the interval and fire one immediate poll on focus.
+- [x] **T10.3.5 - Batched quote fetch** - What: All watched symbols in one request, not N. How: Collect watched EToro instrumentIds from state and pass them as one comma-joined quotes call.
+- [x] **T10.3.6 - quotesChanged fn** - What: Zero wasted renders on unchanged prices. How: Implement quotesChanged(prev, next) comparing bid/ask/last so identical quotes skip Spektrum writes.
+- [x] **T10.3.7 - Interval jitter** - What: No synchronized request storms across open tabs. How: Add a random 0-150ms offset to each scheduled poll inside createPollLoop.
+- [x] **T10.3.8 - Poll health indicator** - What: Confidence the feed is alive despite being poll-based. How: Show last-poll age in the EToro block via a computed over a lastPollTs value, orange past 3 intervals.
+- [x] **T10.3.9 - Single unit tests for poll fns** - What: createPollLoop, computePollInterval, quotesChanged verified. How: One Vitest test per function using vi.useFakeTimers(); vitest -t per run.
+- [x] **T10.3.10 - Merge polling** - What: Adaptive live quotes land on main. How: ESLint plus the three targeted tests green, then merge feature/etoro-polling into main.
 
 ### F10.4 - Portfolio and Positions Mapping
 
 **What:** Real EToro holdings on the desk, shaped exactly like every other position.
 **How:** Fetch the EToro portfolio endpoint and map positions and equity through pure mapper functions into the internal schema phase 18 consumes.
 
-- [ ] **T10.4.1 - Branch portfolio** - What: Isolated account-data work. How: git checkout -b feature/etoro-portfolio from main; add src/venues/etoro/portfolio.js.
-- [ ] **T10.4.2 - fetchPortfolio call** - What: The full account snapshot on demand. How: GET the portfolio/positions endpoint via etoroFetch with the credentialed headers.
-- [ ] **T10.4.3 - mapEtoroPosition fn** - What: Each holding fits the internal position shape. How: Implement mapEtoroPosition(raw) producing {venue:'etoro', instrumentId, side, qty, avgPx, upl, openTs}.
-- [ ] **T10.4.4 - mapEtoroEquity fn** - What: Cash, equity and margin as one clean summary. How: Implement mapEtoroEquity(raw) mapping account totals into {cash, equity, marginUsed} numbers.
-- [ ] **T10.4.5 - Slow-lane refresh** - What: Positions stay fresh without burning quote budget. How: Register a portfolio fetch on the F10.3 loop at a 10x multiple of the quote interval.
-- [ ] **T10.4.6 - Positions state publish** - What: Any block can list EToro holdings reactively. How: setValue('etoro.positions', mapped) and render rows with data-each in the positions block.
-- [ ] **T10.4.7 - Venue badge on rows** - What: EToro rows unmistakable beside OKX rows. How: Add a small venue tag styled with money-hacker tokens to each rendered position row.
-- [ ] **T10.4.8 - Post-trade reconcile** - What: The book is correct seconds after any fill. How: Watch('etoro.orderUpdate') and schedule one immediate portfolio refetch on each fill event.
-- [ ] **T10.4.9 - Single unit tests for mapper fns** - What: mapEtoroPosition and mapEtoroEquity locked in. How: One Vitest test each against captured fixture JSON; targeted vitest -t runs only.
-- [ ] **T10.4.10 - Merge portfolio** - What: Live EToro holdings land on main. How: ESLint plus both targeted tests green, then merge feature/etoro-portfolio into main.
+- [x] **T10.4.1 - Branch portfolio** - What: Isolated account-data work. How: git checkout -b feature/etoro-portfolio from main; add src/venues/etoro/portfolio.js.
+- [x] **T10.4.2 - fetchPortfolio call** - What: The full account snapshot on demand. How: GET the portfolio/positions endpoint via etoroFetch with the credentialed headers.
+- [x] **T10.4.3 - mapEtoroPosition fn** - What: Each holding fits the internal position shape. How: Implement mapEtoroPosition(raw) producing {venue:'etoro', instrumentId, side, qty, avgPx, upl, openTs}.
+- [x] **T10.4.4 - mapEtoroEquity fn** - What: Cash, equity and margin as one clean summary. How: Implement mapEtoroEquity(raw) mapping account totals into {cash, equity, marginUsed} numbers.
+- [x] **T10.4.5 - Slow-lane refresh** - What: Positions stay fresh without burning quote budget. How: Register a portfolio fetch on the F10.3 loop at a 10x multiple of the quote interval.
+- [x] **T10.4.6 - Positions state publish** - What: Any block can list EToro holdings reactively. How: setValue('etoro.positions', mapped) and render rows with data-each in the positions block.
+- [x] **T10.4.7 - Venue badge on rows** - What: EToro rows unmistakable beside OKX rows. How: Add a small venue tag styled with money-hacker tokens to each rendered position row.
+- [x] **T10.4.8 - Post-trade reconcile** - What: The book is correct seconds after any fill. How: Watch('etoro.orderUpdate') and schedule one immediate portfolio refetch on each fill event.
+- [x] **T10.4.9 - Single unit tests for mapper fns** - What: mapEtoroPosition and mapEtoroEquity locked in. How: One Vitest test each against captured fixture JSON; targeted vitest -t runs only.
+- [x] **T10.4.10 - Merge portfolio** - What: Live EToro holdings land on main. How: ESLint plus both targeted tests green, then merge feature/etoro-portfolio into main.
 
 ### F10.5 - Orders and Trades Wrappers
 
@@ -1661,32 +1661,32 @@
 **What:** EToro quotes flow into the exact same tick stream as OKX, so every chart and block just works.
 **How:** Pure normalizers convert polled quotes into the unified tick format inside the feed Worker and publish onto the shared Spektrum tick stream.
 
-- [ ] **T10.7.1 - Branch tick normalization** - What: Isolated feed-unification work. How: git checkout -b feature/etoro-ticks from main; add src/venues/etoro/ticks.js.
-- [ ] **T10.7.2 - toUnifiedTick fn** - What: One tick shape regardless of venue. How: Implement toUnifiedTick(quote) mapping to {venue:'etoro', instId, bid, ask, last, ts} with numeric coercion.
-- [ ] **T10.7.3 - Poll-time stamping** - What: Honest timestamps for a poll-based feed. How: Stamp ts from the poll completion time and carry the instrument's server quote time when present.
-- [ ] **T10.7.4 - isStaleTick fn** - What: Old prices are visibly old, never silently trusted. How: Implement isStaleTick(tick, intervalMs) flagging ticks older than two poll intervals.
-- [ ] **T10.7.5 - computeSpreadBps fn** - What: Spread cost visible per instrument before entry. How: Implement computeSpreadBps(bid, ask) returning basis points with divide-by-zero guards.
-- [ ] **T10.7.6 - Worker offload** - What: Quote parsing never steals a frame from rendering. How: Move payload parsing and toUnifiedTick mapping into the phase 11 feed Worker via postMessage.
-- [ ] **T10.7.7 - Shared stream publish** - What: Downstream consumers cannot tell venues apart. How: addValue('ticks', tick) onto the same stream OKX uses, keyed by venue-qualified instId.
-- [ ] **T10.7.8 - Blended stream check** - What: Proof crypto and stocks interleave correctly. How: A Vite dev page rendering the merged stream with venue badges and stale styling via data-if.
-- [ ] **T10.7.9 - Single unit tests for tick fns** - What: toUnifiedTick, isStaleTick, computeSpreadBps each proven. How: One Vitest test per function with edge quotes; vitest -t per run.
-- [ ] **T10.7.10 - Merge tick normalization** - What: A unified two-venue feed lands on main. How: ESLint plus the three targeted tests green, then merge feature/etoro-ticks into main.
+- [x] **T10.7.1 - Branch tick normalization** - What: Isolated feed-unification work. How: git checkout -b feature/etoro-ticks from main; add src/venues/etoro/ticks.js.
+- [x] **T10.7.2 - toUnifiedTick fn** - What: One tick shape regardless of venue. How: Implement toUnifiedTick(quote) mapping to {venue:'etoro', instId, bid, ask, last, ts} with numeric coercion.
+- [x] **T10.7.3 - Poll-time stamping** - What: Honest timestamps for a poll-based feed. How: Stamp ts from the poll completion time and carry the instrument's server quote time when present.
+- [x] **T10.7.4 - isStaleTick fn** - What: Old prices are visibly old, never silently trusted. How: Implement isStaleTick(tick, intervalMs) flagging ticks older than two poll intervals.
+- [x] **T10.7.5 - computeSpreadBps fn** - What: Spread cost visible per instrument before entry. How: Implement computeSpreadBps(bid, ask) returning basis points with divide-by-zero guards.
+- [x] **T10.7.6 - Worker offload** - What: Quote parsing never steals a frame from rendering. How: Move payload parsing and toUnifiedTick mapping into the phase 11 feed Worker via postMessage.
+- [x] **T10.7.7 - Shared stream publish** - What: Downstream consumers cannot tell venues apart. How: addValue('ticks', tick) onto the same stream OKX uses, keyed by venue-qualified instId.
+- [x] **T10.7.8 - Blended stream check** - What: Proof crypto and stocks interleave correctly. How: A Vite dev page rendering the merged stream with venue badges and stale styling via data-if.
+- [x] **T10.7.9 - Single unit tests for tick fns** - What: toUnifiedTick, isStaleTick, computeSpreadBps each proven. How: One Vitest test per function with edge quotes; vitest -t per run.
+- [x] **T10.7.10 - Merge tick normalization** - What: A unified two-venue feed lands on main. How: ESLint plus the three targeted tests green, then merge feature/etoro-ticks into main.
 
 ### F10.8 - Rate Limits and Error Backoff
 
 **What:** EToro throttling never breaks the desk: polling bends, recovers and keeps going alone.
 **How:** Classify failures, honor Retry-After on 429s, stretch the poll interval under pressure and cap concurrent requests with a small semaphore.
 
-- [ ] **T10.8.1 - Branch backoff** - What: Isolated resilience work. How: git checkout -b feature/etoro-backoff from main; add src/venues/etoro/backoff.js.
-- [ ] **T10.8.2 - classifyEtoroFailure fn** - What: Transient and fatal errors take different paths. How: Implement classifyEtoroFailure(status) mapping 429/5xx to transient and 401/403 to auth-fatal.
-- [ ] **T10.8.3 - computeBackoff fn** - What: Recovery pacing that respects the venue. How: Implement computeBackoff(attempt, retryAfterMs) preferring the Retry-After header else doubling from 2s to 60s.
-- [ ] **T10.8.4 - Poll loop integration** - What: Throttling slows the feed instead of killing it. How: Feed computeBackoff output into the F10.3 intervalFn and decay back to normal over 5 clean polls.
-- [ ] **T10.8.5 - Concurrency semaphore** - What: The desk never floods EToro with parallel calls. How: Implement acquireSlot() capping in-flight etoroFetch requests at 2 with a FIFO waiter queue.
-- [ ] **T10.8.6 - Auth failure path** - What: Expired keys reopen the key modal, the desk keeps running. How: On auth-fatal class, pause EToro polling and fire trigger('keys.open') with an etoro hint.
-- [ ] **T10.8.7 - Throttled state chip** - What: Degraded mode is visible, not mysterious. How: Show an orange throttled chip on the EToro block bound to a backoff-active Spektrum value.
-- [ ] **T10.8.8 - Recovery logging** - What: Postmortems know when and why the feed bent. How: Record backoff enter/exit events with timestamps into a small ring readable via spektrum/inspect.
-- [ ] **T10.8.9 - Single unit tests for backoff fns** - What: classifyEtoroFailure, computeBackoff, acquireSlot verified. How: One Vitest test per function with fake timers; vitest -t per run.
-- [ ] **T10.8.10 - Merge backoff** - What: Self-healing EToro calls land on main. How: ESLint plus the three targeted tests green, then merge feature/etoro-backoff into main.
+- [x] **T10.8.1 - Branch backoff** - What: Isolated resilience work. How: git checkout -b feature/etoro-backoff from main; add src/venues/etoro/backoff.js.
+- [x] **T10.8.2 - classifyEtoroFailure fn** - What: Transient and fatal errors take different paths. How: Implement classifyEtoroFailure(status) mapping 429/5xx to transient and 401/403 to auth-fatal.
+- [x] **T10.8.3 - computeBackoff fn** - What: Recovery pacing that respects the venue. How: Implement computeBackoff(attempt, retryAfterMs) preferring the Retry-After header else doubling from 2s to 60s.
+- [x] **T10.8.4 - Poll loop integration** - What: Throttling slows the feed instead of killing it. How: Feed computeBackoff output into the F10.3 intervalFn and decay back to normal over 5 clean polls.
+- [x] **T10.8.5 - Concurrency semaphore** - What: The desk never floods EToro with parallel calls. How: Implement acquireSlot() capping in-flight etoroFetch requests at 2 with a FIFO waiter queue.
+- [x] **T10.8.6 - Auth failure path** - What: Expired keys reopen the key modal, the desk keeps running. How: On auth-fatal class, pause EToro polling and fire trigger('keys.open') with an etoro hint.
+- [x] **T10.8.7 - Throttled state chip** - What: Degraded mode is visible, not mysterious. How: Show an orange throttled chip on the EToro block bound to a backoff-active Spektrum value.
+- [x] **T10.8.8 - Recovery logging** - What: Postmortems know when and why the feed bent. How: Record backoff enter/exit events with timestamps into a small ring readable via spektrum/inspect.
+- [x] **T10.8.9 - Single unit tests for backoff fns** - What: classifyEtoroFailure, computeBackoff, acquireSlot verified. How: One Vitest test per function with fake timers; vitest -t per run.
+- [x] **T10.8.10 - Merge backoff** - What: Self-healing EToro calls land on main. How: ESLint plus the three targeted tests green, then merge feature/etoro-backoff into main.
 
 ### F10.9 - EToro Feature Flag
 
@@ -1709,16 +1709,16 @@
 **What:** The full EToro experience offline: build, demo and test with no keys and no network.
 **How:** A swappable mock transport serving canned JSON fixtures with random-walk quotes and simulated fills, activated by ?etoro=mock.
 
-- [ ] **T10.10.1 - Branch mock mode** - What: Isolated offline-dev work. How: git checkout -b feature/etoro-mock from main; add src/venues/etoro/mock/ with a fixtures folder.
-- [ ] **T10.10.2 - Canned fixtures** - What: Realistic data for every EToro endpoint. How: Author JSON fixtures for instruments, quotes, portfolio and order acks from sanitized real captures.
-- [ ] **T10.10.3 - matchMockRoute fn** - What: Any request path finds its fixture deterministically. How: Implement matchMockRoute(path) mapping path patterns to fixture keys with a 404 fallback.
-- [ ] **T10.10.4 - mockEtoroFetch transport** - What: The whole client runs against fixtures unchanged. How: Implement mockEtoroFetch(path, opts) resolving matched fixtures after a simulated 80-200ms delay.
-- [ ] **T10.10.5 - Transport injection** - What: One switch flips real to mock with no code edits. How: Make etoroFetch delegate to mockEtoroFetch when ?etoro=mock or import.meta.env dev flag is set.
-- [ ] **T10.10.6 - nextMockQuote fn** - What: Offline charts still move like a market. How: Implement nextMockQuote(prev) applying a small bounded random walk to bid/ask/last per poll.
-- [ ] **T10.10.7 - Simulated fills** - What: The whole order flow testable offline. How: Make mock order posts return normalized acks and mutate the fixture portfolio so positions update.
-- [ ] **T10.10.8 - MOCK badge** - What: Nobody ever mistakes fixture prices for real money. How: Render a persistent orange MOCK tag on every EToro block via data-if on the mock flag.
-- [ ] **T10.10.9 - Single unit tests for mock fns** - What: matchMockRoute and nextMockQuote verified. How: One Vitest test each covering route misses and walk bounds; vitest -t per function.
-- [ ] **T10.10.10 - Merge mock mode** - What: Keyless offline dev lands on main. How: ESLint plus both targeted tests green, document usage in README, then merge feature/etoro-mock into main.
+- [x] **T10.10.1 - Branch mock mode** - What: Isolated offline-dev work. How: git checkout -b feature/etoro-mock from main; add src/venues/etoro/mock/ with a fixtures folder.
+- [x] **T10.10.2 - Canned fixtures** - What: Realistic data for every EToro endpoint. How: Author JSON fixtures for instruments, quotes, portfolio and order acks from sanitized real captures.
+- [x] **T10.10.3 - matchMockRoute fn** - What: Any request path finds its fixture deterministically. How: Implement matchMockRoute(path) mapping path patterns to fixture keys with a 404 fallback.
+- [x] **T10.10.4 - mockEtoroFetch transport** - What: The whole client runs against fixtures unchanged. How: Implement mockEtoroFetch(path, opts) resolving matched fixtures after a simulated 80-200ms delay.
+- [x] **T10.10.5 - Transport injection** - What: One switch flips real to mock with no code edits. How: Make etoroFetch delegate to mockEtoroFetch when ?etoro=mock or import.meta.env dev flag is set.
+- [x] **T10.10.6 - nextMockQuote fn** - What: Offline charts still move like a market. How: Implement nextMockQuote(prev) applying a small bounded random walk to bid/ask/last per poll.
+- [x] **T10.10.7 - Simulated fills** - What: The whole order flow testable offline. How: Make mock order posts return normalized acks and mutate the fixture portfolio so positions update.
+- [x] **T10.10.8 - MOCK badge** - What: Nobody ever mistakes fixture prices for real money. How: Render a persistent orange MOCK tag on every EToro block via data-if on the mock flag.
+- [x] **T10.10.9 - Single unit tests for mock fns** - What: matchMockRoute and nextMockQuote verified. How: One Vitest test each covering route misses and walk bounds; vitest -t per function.
+- [x] **T10.10.10 - Merge mock mode** - What: Keyless offline dev lands on main. How: ESLint plus both targeted tests green, document usage in README, then merge feature/etoro-mock into main.
 
 ---
 
