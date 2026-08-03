@@ -63,6 +63,22 @@ export function createRing(capacity = 512) {
       return count === 0 ? undefined : items[(head - 1 + max) % max]
     },
 
+    /**
+     * Overwrite the newest entry.
+     *
+     * The candle aggregator needs this: a print inside the current bucket updates the
+     * open candle rather than appending a second one, and appending would leave the chart
+     * drawing hundreds of one-print bars per second.
+     *
+     * @param {unknown} item - replacement entry.
+     * @returns {boolean} true when something was replaced.
+     */
+    replaceLast(item) {
+      if (count === 0) return false
+      items[(head - 1 + max) % max] = item
+      return true
+    },
+
     /** @returns {number} entries currently held. */
     size() {
       return count
