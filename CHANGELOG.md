@@ -35,6 +35,15 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 - **Motion budget** — 100–150ms, colour and opacity only, nothing on the order path waits
   for an animation, and `prefers-reduced-motion` stops the movement while the numbers keep
   updating at full speed. (F3.6)
+- **Inline SVG icons** — arrows, bolt, kill-switch skull, gear, sun/moon, chart, clock and
+  keyboard, drawn on one 16px grid and filled with `currentColor`, so a sell arrow turns
+  orange from its container rather than hard-coding a colour. No extra request, no flash
+  of missing glyph; icon titles are escaped because venue data is not trusted input.
+  (F3.7)
+- **Formatters inside bindings** — `{{fmt.signed(trade.dayPnl)}}` and
+  `:class="fmt.cls(trade.dayPnl)"` format and colour a cell in one place. Exposed as one
+  frozen global rather than through state, which is recorded into history and journal
+  exports where functions have no business. (F3.8)
 
 ## [0.2.0] — 2026-08-03 — Phase 2: Spektrum Core Integration
 

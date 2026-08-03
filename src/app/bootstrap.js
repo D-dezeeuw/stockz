@@ -5,6 +5,7 @@ import { registerDerived } from '../state/derived.js'
 import { registerSystems } from '../state/systems.js'
 import { mountDevtools } from './devtools.js'
 import { wireEngineErrors } from '../ui/toast.js'
+import { registerFormatters } from '../ui/format-bindings.js'
 import { appVersion } from './version.js'
 
 /**
@@ -35,6 +36,9 @@ export function bootstrap(options = {}) {
 
   // Actions and derivations must exist before bindDOM: data-fn attributes would bind to
   // nothing, and derived paths would render as blanks on the first paint.
+  // Formatters must exist before bindDOM: a binding calling fmt.price() would otherwise
+  // throw on the first paint.
+  registerFormatters()
   registerCoreActions()
   const derived = registerDerived()
   wireEngineErrors()
