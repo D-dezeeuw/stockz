@@ -524,32 +524,32 @@
 **What:** Fast composition of text, background and border styles that automatically follow the day/night theme.
 **How:** sz- prefixed utility classes that reference only var() tokens, so a data-theme swap restyles them with zero extra classes.
 
-- [ ] **T3.9.1 - Cut theme-utilities branch** - What: Utility layer isolated from main. How: git checkout -b feat/theme-utilities from main.
-- [ ] **T3.9.2 - Text color utilities** - What: One class colors any text semantically. How: Add .sz-text-green/.sz-text-orange/.sz-text-dim/.sz-text-faint referencing ink and ramp tokens.
-- [ ] **T3.9.3 - Background utilities** - What: Surfaces switch depth with one class. How: Add .sz-bg-0/.sz-bg-1/.sz-bg-2 plus .sz-bg-profit/.sz-bg-loss tints from status tokens.
-- [ ] **T3.9.4 - Border utilities** - What: Hairline edges applied in one class. How: Add .sz-border, .sz-border-green and .sz-border-orange using --sz-border-hair and ramp tokens.
-- [ ] **T3.9.5 - Composite state utilities** - What: Common state looks become single classes. How: Add .sz-cell-profit/.sz-cell-loss combining text, tint and glow tokens for data cells.
-- [ ] **T3.9.6 - Theme resolution check** - What: Utilities restyle instantly when the theme flips. How: Toggle data-theme between day and night in DevTools and confirm every utility follows via var() only.
-- [ ] **T3.9.7 - Utility cheat-sheet block** - What: Developers see every utility rendered live. How: Dev-only block iterating a utility-name array with Spektrum data-each, each row styled by its own class.
-- [ ] **T3.9.8 - Naming convention header** - What: The utility layer stays predictable as it grows. How: Document the sz- prefix and element-modifier ordering in a comment atop utilities.css.
-- [ ] **T3.9.9 - Bundle size and lint check** - What: Utilities stay featherweight. How: Run npm run build, confirm the CSS chunk stays small in Vite output, and run npx eslint . clean.
-- [ ] **T3.9.10 - Merge utilities to main** - What: Every phase composes styling from shared classes. How: Merge feat/theme-utilities into main when checks are green.
+- [x] **T3.9.1 - Cut theme-utilities branch** - What: Utility layer isolated from main. How: git checkout -b feat/theme-utilities from main.
+- [x] **T3.9.2 - Text color utilities** - What: One class colors any text semantically. How: Add .sz-text-green/.sz-text-orange/.sz-text-dim/.sz-text-faint referencing ink and ramp tokens.
+- [x] **T3.9.3 - Background utilities** - What: Surfaces switch depth with one class. How: Add .sz-bg-0/.sz-bg-1/.sz-bg-2 plus .sz-bg-profit/.sz-bg-loss tints from status tokens.
+- [x] **T3.9.4 - Border utilities** - What: Hairline edges applied in one class. How: Add .sz-border, .sz-border-green and .sz-border-orange using --sz-border-hair and ramp tokens.
+- [x] **T3.9.5 - Composite state utilities** - What: Common state looks become single classes. How: Add .sz-cell-profit/.sz-cell-loss combining text, tint and glow tokens for data cells.
+- [x] **T3.9.6 - Theme resolution check** - What: Utilities restyle instantly when the theme flips. How: Toggle data-theme between day and night in DevTools and confirm every utility follows via var() only.
+- [x] **T3.9.7 - Utility cheat-sheet block** - What: Developers see every utility rendered live. How: Dev-only block iterating a utility-name array with Spektrum data-each, each row styled by its own class.
+- [x] **T3.9.8 - Naming convention header** - What: The utility layer stays predictable as it grows. How: Document the sz- prefix and element-modifier ordering in a comment atop utilities.css.
+- [x] **T3.9.9 - Bundle size and lint check** - What: Utilities stay featherweight. How: Run npm run build, confirm the CSS chunk stays small in Vite output, and run npx eslint . clean.
+- [x] **T3.9.10 - Merge utilities to main** - What: Every phase composes styling from shared classes. How: Merge feat/theme-utilities into main when checks are green.
 
 ### F3.10 - Palette Contrast Verification
 
 **What:** Guaranteed readable text in both day and night variants, so no trade info ever disappears into the background.
 **How:** WCAG contrast functions in src/lib/contrast.js, a Node 22 check script over a token-pair manifest, wired as an npm script.
 
-- [ ] **T3.10.1 - Cut contrast-audit branch** - What: The audit runs without disturbing main. How: git checkout -b feat/contrast-audit from main.
-- [ ] **T3.10.2 - relativeLuminance function** - What: A correct luminance base for all contrast math. How: Implement relativeLuminance(hex) in src/lib/contrast.js per the WCAG sRGB formula.
-- [ ] **T3.10.3 - contrastRatio function** - What: Any two colors get a trustworthy ratio. How: Implement contrastRatio(fgHex, bgHex) as (L1+0.05)/(L2+0.05) over relativeLuminance.
-- [ ] **T3.10.4 - Single unit tests for contrast math** - What: Both functions locked by one test each. How: Write one Vitest test per function and run npx vitest run tests/contrast.test.js -t contrastRatio and -t relativeLuminance.
-- [ ] **T3.10.5 - Token pair manifest** - What: The exact combinations that must stay readable are explicit. How: Create scripts/contrast-pairs.json listing ink-on-bg and status-on-bg pairs for day and night.
-- [ ] **T3.10.6 - Contrast check script** - What: One command audits the whole palette. How: Write scripts/check-contrast.mjs (Node 22) that evaluates every pair and exits non-zero below 4.5:1 (3:1 for large text).
-- [ ] **T3.10.7 - npm run check:contrast** - What: The audit is one keystroke for any developer. How: Add a check:contrast script entry to package.json invoking the Node script.
-- [ ] **T3.10.8 - Fix night-variant failures** - What: Night mode passes every pair. How: Nudge failing night token values in tokens.css and re-run npm run check:contrast until green.
-- [ ] **T3.10.9 - Fix day-variant failures** - What: Day mode passes every pair too. How: Adjust day-scope token overrides and re-run the check plus a visual pass on the Vite dev server.
-- [ ] **T3.10.10 - Merge contrast audit to main** - What: The palette ships proven readable and stays checkable forever. How: Merge feat/contrast-audit into main with targeted tests and the check green.
+- [x] **T3.10.1 - Cut contrast-audit branch** - What: The audit runs without disturbing main. How: git checkout -b feat/contrast-audit from main.
+- [x] **T3.10.2 - relativeLuminance function** - What: A correct luminance base for all contrast math. How: Implement relativeLuminance(hex) in src/lib/contrast.js per the WCAG sRGB formula.
+- [x] **T3.10.3 - contrastRatio function** - What: Any two colors get a trustworthy ratio. How: Implement contrastRatio(fgHex, bgHex) as (L1+0.05)/(L2+0.05) over relativeLuminance.
+- [x] **T3.10.4 - Single unit tests for contrast math** - What: Both functions locked by one test each. How: Write one Vitest test per function and run npx vitest run tests/contrast.test.js -t contrastRatio and -t relativeLuminance.
+- [x] **T3.10.5 - Token pair manifest** - What: The exact combinations that must stay readable are explicit. How: Create scripts/contrast-pairs.json listing ink-on-bg and status-on-bg pairs for day and night.
+- [x] **T3.10.6 - Contrast check script** - What: One command audits the whole palette. How: Write scripts/check-contrast.mjs (Node 22) that evaluates every pair and exits non-zero below 4.5:1 (3:1 for large text).
+- [x] **T3.10.7 - npm run check:contrast** - What: The audit is one keystroke for any developer. How: Add a check:contrast script entry to package.json invoking the Node script.
+- [x] **T3.10.8 - Fix night-variant failures** - What: Night mode passes every pair. How: Nudge failing night token values in tokens.css and re-run npm run check:contrast until green.
+- [x] **T3.10.9 - Fix day-variant failures** - What: Day mode passes every pair too. How: Adjust day-scope token overrides and re-run the check plus a visual pass on the Vite dev server.
+- [x] **T3.10.10 - Merge contrast audit to main** - What: The palette ships proven readable and stays checkable forever. How: Merge feat/contrast-audit into main with targeted tests and the check green.
 
 ---
 

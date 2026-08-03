@@ -1,0 +1,74 @@
+/*
+ * Theme-aware utility classes.
+ *
+ * A small, closed set — not a utility framework. Each one exists because a real block
+ * needs it, and each resolves through tokens so it is automatically correct in both
+ * themes. If a utility would need a theme-specific override, it belongs in a component.
+ */
+
+/* Text colour */
+.t-ink { color: var(--ink); }
+.t-strong { color: var(--ink-strong); }
+.t-muted { color: var(--ink-muted); }
+.t-faint { color: var(--ink-faint); }
+.t-green { color: var(--green); }
+.t-orange { color: var(--orange); }
+.t-danger { color: var(--orange-hot); }
+
+/* Surfaces */
+.bg-page { background: var(--bg); }
+.bg-block { background: var(--bg-block); }
+.bg-raised { background: var(--bg-raised); }
+.bg-inset { background: var(--bg-inset); }
+
+/* Borders */
+.b { border: var(--border); }
+.b-strong { border: var(--border-strong); }
+.b-green { border: var(--border-1) solid var(--green); }
+.b-orange { border: var(--border-1) solid var(--orange); }
+.b-none { border: 0; }
+.r-1 { border-radius: var(--radius-1); }
+.r-2 { border-radius: var(--radius-2); }
+
+/* Spacing — the 4px step, nothing off-grid */
+.p-0 { padding: var(--sp-0); }
+.p-1 { padding: var(--sp-1); }
+.p-2 { padding: var(--sp-2); }
+.p-3 { padding: var(--sp-3); }
+.px-2 { padding-inline: var(--sp-2); }
+.py-1 { padding-block: var(--sp-1); }
+.m-0 { margin: var(--sp-0); }
+.mt-1 { margin-block-start: var(--sp-1); }
+.mt-2 { margin-block-start: var(--sp-2); }
+
+/* Type */
+.fs-0 { font-size: var(--fs-0); }
+.fs-1 { font-size: var(--fs-1); }
+.fs-2 { font-size: var(--fs-2); }
+.fs-3 { font-size: var(--fs-3); }
+.fs-4 { font-size: var(--fs-4); }
+.fw-bold { font-weight: var(--fw-bold); }
+.upper { text-transform: uppercase; letter-spacing: var(--tracking-wide); }
+.nowrap { white-space: nowrap; }
+.truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* Layout */
+.flex { display: flex; }
+.grid { display: grid; }
+.items-center { align-items: center; }
+.justify-between { justify-content: space-between; }
+.gap-1 { gap: var(--sp-1); }
+.gap-2 { gap: var(--sp-2); }
+.grow { flex: 1 1 auto; min-inline-size: 0; }
+.hidden { display: none; }
+
+/* Right-aligned numeric columns: decimals line up down the column. */
+.tnum { font-variant-numeric: tabular-nums; text-align: right; }
+
+/*
+ * data-cloak hides an element until the bootstrap has bound real values, so a slow load
+ * never shows raw {{mustaches}}. bootstrap.revealApp() removes the attribute.
+ */
+[data-cloak] {
+  visibility: hidden;
+}

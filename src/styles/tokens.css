@@ -68,7 +68,7 @@
   --orange-100: #4a2600;
   --orange-200: #7a3f00;
   --orange-300: #b35c00;
-  --orange: #d35400;
+  --orange: #b84600; /* AA on both day surfaces; #d35400 measured 4.17 and failed */
   --orange-600: #a84300;
   --orange-700: #7a3100;
   --orange-dim: #f5d9be;
