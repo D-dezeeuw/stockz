@@ -5,11 +5,24 @@ in `masterplan.md`, and knows where the project stands. Rewritten at every phase
 
 ---
 
-## Status: Phase 10 closed (v0.10.0) · Phase 11 next
+## Status: Phase 11 closed (v0.11.0) · Phase 12 next
 
 **Live:** https://d-dezeeuw.github.io/stockz/ (Pages serves `main` root — pushing is deploying)
-**Tests:** 211, one per function, all passing individually. Every gated file ≥85% branches.
+**Tests:** 234, one per function, all passing individually. Every gated file ≥85% branches.
 **Branch model:** everything merges to `main`; no feature branches outstanding.
+
+## Phase 11 — Real-Time Market Data Pipeline (closed)
+
+| Feature | What now exists | Where |
+| --- | --- | --- |
+| F11.3 | `createRing` (fixed capacity, O(1), `replaceLast`), `arrivalRate` | `src/pipeline/ring.js` |
+| F11.2, F11.4 | `publishTick`, `onTick`, `latestTick`, `recentTrades`, `flushToState`, `scheduleFlush`, `busStats` | `src/pipeline/bus.js` |
+| F11.1, F11.6, F11.7 | `bucketStart`, `foldTrade`, `addTrade`, `candles`, `vwap` (1s/5s/1m) | `src/pipeline/candles.js` |
+| F11.5, F11.8 | `ingest` (the one feed door), `setVenueState`, `markStaleFeeds`, `feedStats` | `src/pipeline/feed.js` |
+
+**The rule: nothing between a socket and `bus.js` may call `setValue`.** One rAF flush
+writes one value per path per frame. Candle buckets align to the wall clock; a print
+inside the open bucket replaces the open candle (`ring.replaceLast`).
 
 ## Phase 10 — EToro Connectivity (closed)
 
@@ -147,21 +160,22 @@ go stale, and faults that reach the trader instead of the console.
 | F2.9 | `pushToast`, `dismissToast`, `expireToasts`, `describeEngineError`, `wireEngineErrors` | `src/ui/toast.js` |
 | F2.10 | `collectExpressions`, `renderPrecompileModule`, `cspMeta`, `npm run build:csp` | `src/app/csp.js`, `docs/csp.md` |
 
-## Next up: Phase 11 — Real-Time Market Data Pipeline
+## Next up: Phase 12 — Watchlists & Instruments
 
-First feature **F11.1**. Both venues now produce internal ticks, but **nothing consumes
-them yet** — the venues are not wired into state. Phase 11 builds the path between:
+First feature **F12.1**. The pipeline is complete but **no venue client is started at
+boot** — `bootstrap.js` never calls `createOkxSocket` or the EToro poller, so the desk
+runs on seeded state only. Phase 12 (or the first feature that needs live data) should
+wire that: create the socket, `setVenueState`, subscribe, and route frames through
+`ingest`.
 
-- A tick bus decoupling feeds from the UI, ring buffers with fixed memory for trades and
-  candles, and a **rAF-batched flush**: one `setValue` per namespace per frame, never one
-  per tick. This is the phase that decides whether the desk survives a busy tape.
-- Candle aggregation (1s/5s/1m) from raw trades.
-- Derived metrics already exist for mid/spread (`src/state/derived.js`); tick velocity and
-  VWAP belong here.
-- A stale-feed detector — `isStale` already exists in `src/venues/okx/socket.js`; blocks
-  need it reflected as block status.
-- Throughput and drop counters for the HUD (phase 19).
-- `market.venues.<venue>.state` drives the header LEDs and is already bound in the markup.
+For phase 12 itself:
+
+- Watchlist CRUD in `settings.*` (persisted), rendered with `data-each` — remember
+  Spektrum's container-not-template rule.
+- Fuzzy symbol search across both venues; OKX has no catalogue fetch yet, EToro has
+  `learnInstruments`/`symbolFor`.
+- `market.focus` already exists and drives what the pipeline flushes.
+- Row cells want `latestTick`/`recentTrades` from the bus, and `fmt.*` for display.
 
 ## Gotchas (learned the hard way — do not rediscover)
 
