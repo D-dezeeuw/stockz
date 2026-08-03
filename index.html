@@ -35,6 +35,10 @@
       {{app.name}} v{{app.version}} · engine spektrum@{{app.engine}} · {{ui.status}}
     </p>
     <p class="status-line">{{ui.statusLine}}</p>
+    <!-- Toast stack: the desk speaking up, rendered straight from state. -->
+    <ul class="toasts" data-each="toast in ui.toasts">
+      <li :class="'toast toast--' + toast.level">{{toast.message}}</li>
+    </ul>
     <!-- Dispatch proof: HTML calls a registered action by name, no glue code. -->
     <button type="button" data-action="click" data-fn="ui.setStatus" data-status="armed">
       set status: armed

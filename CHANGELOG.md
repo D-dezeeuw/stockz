@@ -52,6 +52,11 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
   trade journal will use, plus `devDumpState()` for bug reports. Production loads none
   of it: the gate is an explicit flag, not a build-time mystery, and a companion that
   fails to load can never stop the desk booting. (F2.8)
+- **Toasts instead of console noise** — engine faults, and anything else that changes
+  what the trader can do, appear on the page in their own language ('display is falling
+  behind the feed', not `E_TICK_OVERFLOW`). The stack is capped at four and newest-first,
+  so a venue erroring dozens of times a second cannot bury the prices, and toasts age out
+  on the clock tick rather than on per-toast timers. (F2.9)
 
 ## [0.1.0] — 2026-08-03 — Phase 1: Foundation & Tooling
 

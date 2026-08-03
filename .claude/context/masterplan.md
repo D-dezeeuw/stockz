@@ -357,16 +357,16 @@
 **What:** Engine and action failures surface as instant on-screen toasts instead of silent console noise.
 **How:** Wrap dispatch in Spektrum attempt(), register a global onError hook, and render ui.toasts via data-each.
 
-- [ ] **T2.9.1 - Cut error-toasts feature branch** - What: Error UX merges as one tested unit. How: Run git checkout -b feature/error-toasts from main.
-- [ ] **T2.9.2 - Implement pushToast** - What: Any module can raise a user-visible notice in one call. How: Write pushToast(message, level) in src/app/toasts.js using addValue to append {message, level, at} onto ui.toasts.
-- [ ] **T2.9.3 - Render the toast stack** - What: Users see errors where they are looking, over the grid. How: Add a data-each="ui.toasts" block in index.html rendering level-classed toast divs in a fixed corner.
-- [ ] **T2.9.4 - Implement expireToasts system** - What: Toasts clear themselves so the desk never clutters. How: Write expireToasts() removing entries older than 4 seconds and register it via addSystem('toast-expiry').
-- [ ] **T2.9.5 - Wrap dispatch in attempt** - What: A throwing action can never kill the engine loop. How: Change dispatchAction in actions.js to invoke handlers through attempt() and pushToast on failure.
-- [ ] **T2.9.6 - Register the onError hook** - What: Even non-action engine faults become visible toasts. How: Write onEngineError(err) mapping name and message into pushToast('error') and register it as the engine's global error handler in bootstrap.
-- [ ] **T2.9.7 - Bridge to the logger** - What: Every toast also lands in the phase 1 overlay and ring buffer. How: Call createLogger('engine').error from onEngineError alongside the toast.
-- [ ] **T2.9.8 - Write the three single unit tests** - What: pushToast, expireToasts and onEngineError each locked by one test. How: Add targeted tests under tests/app/ and run each with vitest run -t by name.
-- [ ] **T2.9.9 - Verify the failure path** - What: Proof a crash becomes a toast, then disappears. How: Add a dev-only 'app.crashTest' action that throws, click it, and watch the toast appear and expire within 4 seconds.
-- [ ] **T2.9.10 - Merge error-toasts branch** - What: Fault visibility ships before any real-money phase begins. How: Merge feature/error-toasts into main after the crash-test verification.
+- [x] **T2.9.1 - Cut error-toasts feature branch** - What: Error UX merges as one tested unit. How: Run git checkout -b feature/error-toasts from main.
+- [x] **T2.9.2 - Implement pushToast** - What: Any module can raise a user-visible notice in one call. How: Write pushToast(message, level) in src/app/toasts.js using addValue to append {message, level, at} onto ui.toasts.
+- [x] **T2.9.3 - Render the toast stack** - What: Users see errors where they are looking, over the grid. How: Add a data-each="ui.toasts" block in index.html rendering level-classed toast divs in a fixed corner.
+- [x] **T2.9.4 - Implement expireToasts system** - What: Toasts clear themselves so the desk never clutters. How: Write expireToasts() removing entries older than 4 seconds and register it via addSystem('toast-expiry').
+- [x] **T2.9.5 - Wrap dispatch in attempt** - What: A throwing action can never kill the engine loop. How: Change dispatchAction in actions.js to invoke handlers through attempt() and pushToast on failure.
+- [x] **T2.9.6 - Register the onError hook** - What: Even non-action engine faults become visible toasts. How: Write onEngineError(err) mapping name and message into pushToast('error') and register it as the engine's global error handler in bootstrap.
+- [x] **T2.9.7 - Bridge to the logger** - What: Every toast also lands in the phase 1 overlay and ring buffer. How: Call createLogger('engine').error from onEngineError alongside the toast.
+- [x] **T2.9.8 - Write the three single unit tests** - What: pushToast, expireToasts and onEngineError each locked by one test. How: Add targeted tests under tests/app/ and run each with vitest run -t by name.
+- [x] **T2.9.9 - Verify the failure path** - What: Proof a crash becomes a toast, then disappears. How: Add a dev-only 'app.crashTest' action that throws, click it, and watch the toast appear and expire within 4 seconds.
+- [x] **T2.9.10 - Merge error-toasts branch** - What: Fault visibility ships before any real-money phase begins. How: Merge feature/error-toasts into main after the crash-test verification.
 
 ### F2.10 - CSP Readiness via spektrum/compile
 
