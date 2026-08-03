@@ -22,6 +22,16 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
   would aim the order ticket at an instrument nobody is looking at. (F12.5, F12.10)
 - **A list can never be lost by mis-click** — the last list is undeletable, and a stale
   active id falls back to the first list rather than blanking the block. (F12.1)
+- **Live rows** — last, % change, spread and volume per row, with a tick pulse that
+  compares against the *previous frame* rather than the previous tick, so a page load
+  never flashes and a fast tape does not strobe. A symbol with no data says stale instead
+  of showing a confident zero. (F12.6)
+- **Inline sparklines** — recent prints scaled into ratios rather than pixels, so one
+  series renders at any row height; a flat series draws a centred line instead of dividing
+  by zero. (F12.7)
+- **Fuzzy instrument search** — subsequence matching, so `btu` finds `BTC-USDT`, ranked
+  exact → prefix → scattered because that is what someone typing three fast letters meant.
+  One box searches both venues. (F12.4)
 
 ## [0.11.0] — 2026-08-03 — Phase 11: Real-Time Market Data Pipeline
 
