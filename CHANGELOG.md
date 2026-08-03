@@ -10,7 +10,21 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ## [Unreleased]
 
-_Nothing yet — next entries land with phase 9 (OKX Connectivity)._
+### Added
+
+- **OKX request signing** — HMAC-SHA256 via Web Crypto, with the secret read from the
+  vault at call time rather than cached (a cached key would outlive `keys.lock`). The
+  prehash string is pinned by test, including the empty-body rule for GETs and the WS
+  login's seconds timestamp, which differs from REST's ISO form — a venue inconsistency
+  that otherwise surfaces as an unauthorised socket. (F9.3, F9.4)
+- **Reconnecting WebSocket** — exponential backoff forever, and **resubscribe on
+  recovery**: a socket that reconnects but forgets its channels shows a frozen book, which
+  reads as a quiet market rather than as missing data. A malformed frame is dropped, never
+  the session, and `isStale` catches the open-but-silent socket. (F9.1, F9.2)
+- **OKX payload mappers** — tickers, trades, books, orders, positions and error codes,
+  each a pure function so no venue quirk escapes into the app: `''` becomes `0` rather
+  than `NaN`, a signed position size becomes an explicit side, and error codes become
+  sentences a trader can act on. (F9.6, F9.10)
 
 ## [0.8.0] — 2026-08-03 — Phase 8: API Key Access Layer
 
