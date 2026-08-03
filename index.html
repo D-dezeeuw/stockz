@@ -40,6 +40,8 @@
       {{app.name}} v{{app.version}} · engine spektrum@{{app.engine}} · {{ui.status}}
     </p>
     <p class="status-line num">{{ui.statusLine}}</p>
+    <!-- Formatters called straight from the binding, colour and value in one place. -->
+    <p class="price" :class="fmt.cls(trade.dayPnl)">{{fmt.signed(trade.dayPnl)}}</p>
     <!-- Palette proof: every swatch reads its colour from a token, nothing hard-coded. -->
     <div class="swatches">
       <span class="swatch" style="background: var(--green)">profit</span>

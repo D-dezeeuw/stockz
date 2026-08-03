@@ -492,32 +492,32 @@
 **What:** Sharp terminal icons (arrows, bolt, skull kill-switch, gear) that inherit status colors automatically.
 **How:** An inline SVG symbol sprite plus an icon(name) helper registered with Spektrum defineFn for template use.
 
-- [ ] **T3.7.1 - Cut icon-set branch** - What: Icon work isolated from main. How: git checkout -b feat/icon-set from main.
-- [ ] **T3.7.2 - Sprite scaffold** - What: One inline sprite serves every icon with zero requests. How: Create src/assets/sprite.svg with <symbol> defs and inject it into index.html at startup.
-- [ ] **T3.7.3 - Arrow up/down symbols** - What: Directional icons for price and order moves. How: Draw 24px-grid arrow-up and arrow-down symbols with stroke="currentColor".
-- [ ] **T3.7.4 - Bolt and gear symbols** - What: Icons for fast actions and settings entry. How: Draw bolt and gear symbols on the same 24px grid and stroke style.
-- [ ] **T3.7.5 - Skull kill-switch symbol** - What: An unmistakable mark for the phase 24 circuit breaker. How: Draw a skull symbol with heavier stroke weight so it reads at 16px.
-- [ ] **T3.7.6 - icon helper function** - What: Templates get icons from a name string. How: Write icon(name, size) in src/lib/icons.js returning an <svg><use href="#sz-name"> markup string.
-- [ ] **T3.7.7 - Register icon with Spektrum** - What: Any binding can render an icon inline. How: Call defineFn('icon', icon) so {{ icon('bolt') }} and data-fn work in templates.
-- [ ] **T3.7.8 - Icon sizing CSS** - What: Icons scale with text and inherit state color. How: Add .sz-icon at 1em square with fill/stroke currentColor and vertical-align middle.
-- [ ] **T3.7.9 - Single unit test for icon** - What: The helper is locked by exactly one test. How: Write its one Vitest test asserting the use href and run npx vitest run tests/icons.test.js -t icon.
-- [ ] **T3.7.10 - Merge icon set to main** - What: Chrome, footer and HUD phases can drop in icons. How: Merge feat/icon-set into main when the targeted test and lint are green.
+- [x] **T3.7.1 - Cut icon-set branch** - What: Icon work isolated from main. How: git checkout -b feat/icon-set from main.
+- [x] **T3.7.2 - Sprite scaffold** - What: One inline sprite serves every icon with zero requests. How: Create src/assets/sprite.svg with <symbol> defs and inject it into index.html at startup.
+- [x] **T3.7.3 - Arrow up/down symbols** - What: Directional icons for price and order moves. How: Draw 24px-grid arrow-up and arrow-down symbols with stroke="currentColor".
+- [x] **T3.7.4 - Bolt and gear symbols** - What: Icons for fast actions and settings entry. How: Draw bolt and gear symbols on the same 24px grid and stroke style.
+- [x] **T3.7.5 - Skull kill-switch symbol** - What: An unmistakable mark for the phase 24 circuit breaker. How: Draw a skull symbol with heavier stroke weight so it reads at 16px.
+- [x] **T3.7.6 - icon helper function** - What: Templates get icons from a name string. How: Write icon(name, size) in src/lib/icons.js returning an <svg><use href="#sz-name"> markup string.
+- [x] **T3.7.7 - Register icon with Spektrum** - What: Any binding can render an icon inline. How: Call defineFn('icon', icon) so {{ icon('bolt') }} and data-fn work in templates.
+- [x] **T3.7.8 - Icon sizing CSS** - What: Icons scale with text and inherit state color. How: Add .sz-icon at 1em square with fill/stroke currentColor and vertical-align middle.
+- [x] **T3.7.9 - Single unit test for icon** - What: The helper is locked by exactly one test. How: Write its one Vitest test asserting the use href and run npx vitest run tests/icons.test.js -t icon.
+- [x] **T3.7.10 - Merge icon set to main** - What: Chrome, footer and HUD phases can drop in icons. How: Merge feat/icon-set into main when the targeted test and lint are green.
 
 ### F3.8 - Price and Number Format Helpers
 
 **What:** Every price, PnL and size renders with correct sign, decimals and compact notation, everywhere the same.
 **How:** Pure functions in src/lib/format.js using Intl.NumberFormat, registered via Spektrum defineFn, each with a single Vitest test.
 
-- [ ] **T3.8.1 - Cut number-format branch** - What: Formatting helpers isolated from main. How: git checkout -b feat/number-format from main.
-- [ ] **T3.8.2 - Scaffold format module** - What: One ES module owns all number rendering. How: Create src/lib/format.js exporting named pure functions, no side effects.
-- [ ] **T3.8.3 - formatPrice function** - What: Prices show a fixed, instrument-appropriate decimal count. How: Implement formatPrice(value, decimals) with toFixed and a NaN guard returning '-'.
-- [ ] **T3.8.4 - formatSigned function** - What: Gains always show an explicit plus sign. How: Implement formatSigned(value, decimals) prefixing + for positives on top of formatPrice.
-- [ ] **T3.8.5 - formatCompact function** - What: Big sizes read as 1.2K or 3.4M in tight cells. How: Implement formatCompact(value) with Intl.NumberFormat notation 'compact', maximumFractionDigits 1.
-- [ ] **T3.8.6 - formatPct function** - What: PnL percentages read with sign and two decimals. How: Implement formatPct(value) composing formatSigned with a trailing % suffix.
-- [ ] **T3.8.7 - Register formatters with Spektrum** - What: Templates format numbers inline without imports. How: defineFn each of the four so {{ formatSigned(price) }} works in bindings.
-- [ ] **T3.8.8 - Single unit tests per formatter** - What: Each function locked by exactly one test. How: Write one Vitest test per function in tests/format.test.js and run each via npx vitest run -t formatPrice etc.
-- [ ] **T3.8.9 - Demo price cell verify** - What: Formatting proven live in a bound cell. How: Bind a dev block cell to {{ formatSigned(price) }} with .sz-num and check alignment on Vite dev.
-- [ ] **T3.8.10 - Merge formatters to main** - What: All data phases share one formatting brain. How: Merge feat/number-format into main when targeted tests and lint pass.
+- [x] **T3.8.1 - Cut number-format branch** - What: Formatting helpers isolated from main. How: git checkout -b feat/number-format from main.
+- [x] **T3.8.2 - Scaffold format module** - What: One ES module owns all number rendering. How: Create src/lib/format.js exporting named pure functions, no side effects.
+- [x] **T3.8.3 - formatPrice function** - What: Prices show a fixed, instrument-appropriate decimal count. How: Implement formatPrice(value, decimals) with toFixed and a NaN guard returning '-'.
+- [x] **T3.8.4 - formatSigned function** - What: Gains always show an explicit plus sign. How: Implement formatSigned(value, decimals) prefixing + for positives on top of formatPrice.
+- [x] **T3.8.5 - formatCompact function** - What: Big sizes read as 1.2K or 3.4M in tight cells. How: Implement formatCompact(value) with Intl.NumberFormat notation 'compact', maximumFractionDigits 1.
+- [x] **T3.8.6 - formatPct function** - What: PnL percentages read with sign and two decimals. How: Implement formatPct(value) composing formatSigned with a trailing % suffix.
+- [x] **T3.8.7 - Register formatters with Spektrum** - What: Templates format numbers inline without imports. How: defineFn each of the four so {{ formatSigned(price) }} works in bindings.
+- [x] **T3.8.8 - Single unit tests per formatter** - What: Each function locked by exactly one test. How: Write one Vitest test per function in tests/format.test.js and run each via npx vitest run -t formatPrice etc.
+- [x] **T3.8.9 - Demo price cell verify** - What: Formatting proven live in a bound cell. How: Bind a dev block cell to {{ formatSigned(price) }} with .sz-num and check alignment on Vite dev.
+- [x] **T3.8.10 - Merge formatters to main** - What: All data phases share one formatting brain. How: Merge feat/number-format into main when targeted tests and lint pass.
 
 ### F3.9 - Theme-Aware Utility Classes
 
