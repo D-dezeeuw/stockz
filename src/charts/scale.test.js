@@ -1,5 +1,20 @@
 import { describe, it, expect } from 'vitest'
-import { mapRange, priceRange, priceToY, indexToX, candleGeometry, gridLines } from './scale.js'
+import {
+  mapRange,
+  priceRange,
+  priceToY,
+  yToPrice,
+  timeToX,
+  xToTime,
+  autoRange,
+  formatPrice,
+  decimalsOf,
+  composeTransform,
+  applyTransform,
+  indexToX,
+  candleGeometry,
+  gridLines,
+} from './scale.js'
 
 describe('mapRange', () => {
   it('maps between ranges and centres when the input has no span', () => {
@@ -33,6 +48,113 @@ describe('priceToY', () => {
     expect(priceToY(200, range, 50)).toBe(0)
     expect(priceToY(100, range, 50)).toBe(50)
     expect(priceToY(150, range, 50)).toBe(25)
+  })
+})
+
+describe('yToPrice', () => {
+  it('reads a price back off a pixel, inverting priceToY exactly', () => {
+    const range = { min: 100, max: 200 }
+
+    expect(yToPrice(0, range, 50)).toBe(200)
+    expect(yToPrice(50, range, 50)).toBe(100)
+    expect(yToPrice(25, range, 50)).toBe(150)
+
+    // A zero-height plot has no pixels to read; the floor is the honest answer.
+    expect(yToPrice(10, range, 0)).toBe(100)
+
+    // A missing range falls back to the unit band, matching priceToY's default.
+    expect(yToPrice(10, null, 50)).toBeCloseTo(0.8, 10)
+  })
+})
+
+describe('timeToX', () => {
+  it('pins the newest edge of the window to the right of the plot', () => {
+    const window = { from: 1000, to: 2000 }
+
+    expect(timeToX(1000, window, 200)).toBe(0)
+    expect(timeToX(2000, window, 200)).toBe(200)
+    expect(timeToX(1500, window, 200)).toBe(100)
+
+    // A collapsed or missing window means "now", which lives at the right edge.
+    expect(timeToX(1500, { from: 2000, to: 2000 }, 200)).toBe(200)
+    expect(timeToX(1500, null, 200)).toBe(200)
+  })
+})
+
+describe('xToTime', () => {
+  it('maps a cursor column back to the millisecond it covers', () => {
+    const window = { from: 1000, to: 2000 }
+
+    expect(xToTime(0, window, 200)).toBe(1000)
+    expect(xToTime(200, window, 200)).toBe(2000)
+    expect(xToTime(50, window, 200)).toBe(1250)
+
+    // Without a plot to measure, the cursor can only be at the present.
+    expect(xToTime(50, window, 0)).toBe(2000)
+    expect(xToTime(50, null, 200)).toBe(0)
+  })
+})
+
+describe('autoRange', () => {
+  it('frames the slice and snaps the edges onto tradable prices', () => {
+    const snapped = autoRange([100, 110], 1)
+    expect(snapped.min).toBe(99)
+    expect(snapped.max).toBe(111)
+
+    // Every snapped edge must still contain the padded range it came from.
+    const padded = priceRange([100, 110])
+    expect(snapped.min).toBeLessThanOrEqual(padded.min)
+    expect(snapped.max).toBeGreaterThanOrEqual(padded.max)
+
+    // No tick size to snap to leaves the padded range untouched.
+    expect(autoRange([100, 110], 0)).toEqual(padded)
+    expect(autoRange([], 1)).toEqual({ min: 0, max: 1 })
+  })
+})
+
+describe('formatPrice', () => {
+  it('derives decimals from the tick size so no impossible price renders', () => {
+    expect(formatPrice(63421.0374, 0.1)).toBe('63421.0')
+    expect(formatPrice(63421.0374, 0.001)).toBe('63421.037')
+    expect(formatPrice(63421.0374, 1)).toBe('63421')
+
+    // No usable tick size falls back to cents rather than to full float noise.
+    expect(formatPrice(1.23456, 0)).toBe('1.23')
+    expect(formatPrice(NaN, 0.1)).toBe('—')
+  })
+})
+
+describe('decimalsOf', () => {
+  it('counts decimals in both plain and exponential tick sizes', () => {
+    expect(decimalsOf(0.001)).toBe(3)
+    expect(decimalsOf(1)).toBe(0)
+    expect(decimalsOf(0.5)).toBe(1)
+
+    // Small ticks arrive from JSON in exponential form; the exponent is the answer.
+    expect(decimalsOf(1e-8)).toBe(8)
+  })
+})
+
+describe('composeTransform', () => {
+  it('nests pan inside zoom, so a drag after a zoom moves by the zoomed distance', () => {
+    expect(composeTransform({ offset: 10, scale: 2 }, { offset: 5, scale: 3 })).toEqual({
+      offset: 20,
+      scale: 6,
+    })
+
+    // Identity in either slot leaves the other untouched.
+    expect(composeTransform({ offset: 10, scale: 2 }, {})).toEqual({ offset: 10, scale: 2 })
+    expect(composeTransform(null, null)).toEqual({ offset: 0, scale: 1 })
+  })
+})
+
+describe('applyTransform', () => {
+  it('scales then offsets, and treats a missing transform as identity', () => {
+    expect(applyTransform(10, { offset: 5, scale: 2 })).toBe(25)
+    expect(applyTransform(10, { scale: 0.5 })).toBe(5)
+
+    expect(applyTransform(10, null)).toBe(10)
+    expect(applyTransform(NaN, { scale: 2 })).toBe(0)
   })
 })
 

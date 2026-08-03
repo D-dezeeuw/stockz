@@ -2082,16 +2082,16 @@
 **What:** Exact price/time-to-pixel mapping so every tick lands where it actually traded.
 **How:** Pure functions in src/charts/scales.js (linear scales, nice ticks, auto-range, pan/zoom transforms), each locked by its single Vitest test.
 
-- [ ] **T13.2.1 - Branch scale math work** - What: Geometry work sealed off from renderer churn. How: git checkout -b feature/13-2-chart-scales from main.
-- [ ] **T13.2.2 - Implement priceToY and yToPrice** - What: Vertical placement of every tick and level. How: Pure linear fns over a min/max price domain and pixel range in src/charts/scales.js.
-- [ ] **T13.2.3 - Implement timeToX and xToTime** - What: Horizontal placement over a sliding window. How: Linear fns over a windowMs domain with configurable msPerPixel, newest tick pinned at the right edge.
-- [ ] **T13.2.4 - Implement niceTicks** - What: Readable round-number axis labels. How: 1-2-5 stepping fn returning tick values for a given domain and target label count.
-- [ ] **T13.2.5 - Implement autoRange** - What: The chart auto-frames the recent action. How: Fn scanning a ring-buffer slice for min/max plus percentage padding, snapped to instrument tickSize.
-- [ ] **T13.2.6 - Implement formatPrice** - What: Venue-correct decimals everywhere prices render. How: Fn deriving decimal places from the tickSize supplied by the phase 12 instrument store.
-- [ ] **T13.2.7 - Add pan and zoom transforms** - What: The scalper can drag back to inspect a recent wiggle. How: Pure composeTransform and applyTransform fns for x offset and scale factor.
-- [ ] **T13.2.8 - Render a debug axis grid** - What: Visual proof the mapping math is right. How: Draw niceTicks gridlines on a scratch surface behind a Spektrum data-if debugCharts flag.
-- [ ] **T13.2.9 - Write single unit tests for scale fns** - What: Every mapping fn guarded by exactly one test. How: One Vitest test per exported fn in scales.test.js, each run with vitest run -t on its name.
-- [ ] **T13.2.10 - Verify and merge scale math** - What: Trustworthy geometry for all renderers downstream. How: Green targeted test runs plus ESLint, then merge feature/13-2-chart-scales into main.
+- [x] **T13.2.1 - Branch scale math work** - What: Geometry work sealed off from renderer churn. How: git checkout -b feature/13-2-chart-scales from main.
+- [x] **T13.2.2 - Implement priceToY and yToPrice** - What: Vertical placement of every tick and level. How: Pure linear fns over a min/max price domain and pixel range in src/charts/scales.js.
+- [x] **T13.2.3 - Implement timeToX and xToTime** - What: Horizontal placement over a sliding window. How: Linear fns over a windowMs domain with configurable msPerPixel, newest tick pinned at the right edge.
+- [x] **T13.2.4 - Implement niceTicks** - What: Readable round-number axis labels. How: 1-2-5 stepping fn returning tick values for a given domain and target label count.
+- [x] **T13.2.5 - Implement autoRange** - What: The chart auto-frames the recent action. How: Fn scanning a ring-buffer slice for min/max plus percentage padding, snapped to instrument tickSize.
+- [x] **T13.2.6 - Implement formatPrice** - What: Venue-correct decimals everywhere prices render. How: Fn deriving decimal places from the tickSize supplied by the phase 12 instrument store.
+- [x] **T13.2.7 - Add pan and zoom transforms** - What: The scalper can drag back to inspect a recent wiggle. How: Pure composeTransform and applyTransform fns for x offset and scale factor.
+- [x] **T13.2.8 - Render a debug axis grid** - What: Visual proof the mapping math is right. How: Draw niceTicks gridlines on a scratch surface behind a Spektrum data-if debugCharts flag.
+- [x] **T13.2.9 - Write single unit tests for scale fns** - What: Every mapping fn guarded by exactly one test. How: One Vitest test per exported fn in scales.test.js, each run with vitest run -t on its name.
+- [x] **T13.2.10 - Verify and merge scale math** - What: Trustworthy geometry for all renderers downstream. How: Green targeted test runs plus ESLint, then merge feature/13-2-chart-scales into main.
 
 ### F13.3 - Tick Line Chart
 

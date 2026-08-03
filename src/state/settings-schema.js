@@ -86,6 +86,13 @@ export const SETTINGS_SCHEMA = Object.freeze([
     default: 1,
   },
   {
+    key: 'debugCharts',
+    group: 'appearance',
+    label: 'Chart debug grid',
+    kind: 'toggle',
+    default: false,
+  },
+  {
     key: 'favourites',
     group: 'instruments',
     label: 'Favourite instruments',
