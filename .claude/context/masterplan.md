@@ -1899,32 +1899,32 @@
 **What:** Users create, rename and delete personal symbol lists that survive reloads without any account backend.
 **How:** Pure list-operation functions over a watchlists array in Spektrum state, synced to localStorage via spektrum/persist.
 
-- [ ] **T12.1.1 - Cut CRUD branch** - What: List operations land on main only when green. How: git checkout -b feature/f12-1-watchlist-crud from main per the feature-cycle skill.
-- [ ] **T12.1.2 - Model shape** - What: A predictable structure every watchlist feature builds on. How: Seed Spektrum state with watchlists [{id, name, symbols[]}] and activeListId in src/lists/state.js.
-- [ ] **T12.1.3 - createList fn** - What: New empty lists with collision-free ids. How: Pure createList(lists, name) appending {id: crypto.randomUUID(), name, symbols: []} in src/lists/ops.js.
-- [ ] **T12.1.4 - renameList fn** - What: Lists renamed inline without dialogs. How: Pure renameList(lists, id, name) returning a new array, trimmed and capped at 24 chars.
-- [ ] **T12.1.5 - deleteList fn** - What: Deletion that is instantly reversible. How: deleteList(lists, id) returning {lists, removed} so the removed list can be restored by undo.
-- [ ] **T12.1.6 - Undo toast** - What: Speed-first deletes - no confirm dialog, just a 5s escape hatch. How: Toast markup with data-if and data-action="undoDelete" reinserting the stashed list via setValue.
-- [ ] **T12.1.7 - Symbol add/remove fns** - What: Symbols managed per list with no duplicates. How: addSymbol deduping by canonId and removeSymbol filtering, both pure in src/lists/ops.js.
-- [ ] **T12.1.8 - Persist wiring** - What: Lists identical after every reload. How: Register the watchlists path with spektrum/persist under localStorage key 'stockz.watchlists'.
-- [ ] **T12.1.9 - Single unit tests** - What: Every list op proven by exactly one Vitest test. How: Per the single-test skill, tests/lists-ops.test.js run per function with npx vitest run -t.
-- [ ] **T12.1.10 - Lint and merge** - What: A stable CRUD core for the rest of the phase. How: npx eslint src/lists, targeted tests green, merge feature/f12-1-watchlist-crud into main.
+- [x] **T12.1.1 - Cut CRUD branch** - What: List operations land on main only when green. How: git checkout -b feature/f12-1-watchlist-crud from main per the feature-cycle skill.
+- [x] **T12.1.2 - Model shape** - What: A predictable structure every watchlist feature builds on. How: Seed Spektrum state with watchlists [{id, name, symbols[]}] and activeListId in src/lists/state.js.
+- [x] **T12.1.3 - createList fn** - What: New empty lists with collision-free ids. How: Pure createList(lists, name) appending {id: crypto.randomUUID(), name, symbols: []} in src/lists/ops.js.
+- [x] **T12.1.4 - renameList fn** - What: Lists renamed inline without dialogs. How: Pure renameList(lists, id, name) returning a new array, trimmed and capped at 24 chars.
+- [x] **T12.1.5 - deleteList fn** - What: Deletion that is instantly reversible. How: deleteList(lists, id) returning {lists, removed} so the removed list can be restored by undo.
+- [x] **T12.1.6 - Undo toast** - What: Speed-first deletes - no confirm dialog, just a 5s escape hatch. How: Toast markup with data-if and data-action="undoDelete" reinserting the stashed list via setValue.
+- [x] **T12.1.7 - Symbol add/remove fns** - What: Symbols managed per list with no duplicates. How: addSymbol deduping by canonId and removeSymbol filtering, both pure in src/lists/ops.js.
+- [x] **T12.1.8 - Persist wiring** - What: Lists identical after every reload. How: Register the watchlists path with spektrum/persist under localStorage key 'stockz.watchlists'.
+- [x] **T12.1.9 - Single unit tests** - What: Every list op proven by exactly one Vitest test. How: Per the single-test skill, tests/lists-ops.test.js run per function with npx vitest run -t.
+- [x] **T12.1.10 - Lint and merge** - What: A stable CRUD core for the rest of the phase. How: npx eslint src/lists, targeted tests green, merge feature/f12-1-watchlist-crud into main.
 
 ### F12.2 - Default Starter Lists
 
 **What:** First-run users see OKX majors and EToro populars immediately instead of an empty desk.
 **How:** Seed constants in src/lists/defaults.js written into state on boot only when the persisted store is empty.
 
-- [ ] **T12.2.1 - Defaults branch** - What: Seed data isolated until verified. How: Branch feature/f12-2-default-lists off main.
-- [ ] **T12.2.2 - OKX majors constant** - What: The liquid crypto pairs scalpers actually trade, ready on day one. How: Export OKX_MAJORS with okx:BTC-USDT, ETH-USDT, SOL-USDT, XRP-USDT, DOGE-USDT ids.
-- [ ] **T12.2.3 - EToro populars constant** - What: A stocks list covering the fast movers. How: Export ETORO_POPULARS with etoro:AAPL, TSLA, NVDA, AMZN, META style canonIds in src/lists/defaults.js.
-- [ ] **T12.2.4 - seedDefaults fn** - What: Defaults appear once and never clobber user edits. How: Pure seedDefaults(persisted) returning both lists only when the persisted watchlists array is empty.
-- [ ] **T12.2.5 - Version stamp** - What: Future default upgrades migrate cleanly. How: Store watchlistsVersion alongside the lists and branch seeding logic on it.
-- [ ] **T12.2.6 - Boot integration** - What: Starter lists exist before the first paint. How: Call seedDefaults during Spektrum run() setup, before bindDOM mounts the watchlist block.
-- [ ] **T12.2.7 - Restore action** - What: One click brings seed lists back after deletion. How: data-action="restoreDefaults" re-adding OKX_MAJORS/ETORO_POPULARS without touching custom lists.
-- [ ] **T12.2.8 - Venue badges** - What: Instant visual split between crypto and stock rows. How: Tiny OKX/EToro glyph per row derived from the canonId prefix, styled green vs orange.
-- [ ] **T12.2.9 - Single unit tests** - What: seedDefaults and the version branch each proven once. How: tests/defaults.test.js covering empty and populated stores, run via npx vitest run -t.
-- [ ] **T12.2.10 - Merge defaults** - What: A never-empty first launch on main. How: ESLint pass, targeted tests green, merge feature/f12-2-default-lists into main.
+- [x] **T12.2.1 - Defaults branch** - What: Seed data isolated until verified. How: Branch feature/f12-2-default-lists off main.
+- [x] **T12.2.2 - OKX majors constant** - What: The liquid crypto pairs scalpers actually trade, ready on day one. How: Export OKX_MAJORS with okx:BTC-USDT, ETH-USDT, SOL-USDT, XRP-USDT, DOGE-USDT ids.
+- [x] **T12.2.3 - EToro populars constant** - What: A stocks list covering the fast movers. How: Export ETORO_POPULARS with etoro:AAPL, TSLA, NVDA, AMZN, META style canonIds in src/lists/defaults.js.
+- [x] **T12.2.4 - seedDefaults fn** - What: Defaults appear once and never clobber user edits. How: Pure seedDefaults(persisted) returning both lists only when the persisted watchlists array is empty.
+- [x] **T12.2.5 - Version stamp** - What: Future default upgrades migrate cleanly. How: Store watchlistsVersion alongside the lists and branch seeding logic on it.
+- [x] **T12.2.6 - Boot integration** - What: Starter lists exist before the first paint. How: Call seedDefaults during Spektrum run() setup, before bindDOM mounts the watchlist block.
+- [x] **T12.2.7 - Restore action** - What: One click brings seed lists back after deletion. How: data-action="restoreDefaults" re-adding OKX_MAJORS/ETORO_POPULARS without touching custom lists.
+- [x] **T12.2.8 - Venue badges** - What: Instant visual split between crypto and stock rows. How: Tiny OKX/EToro glyph per row derived from the canonId prefix, styled green vs orange.
+- [x] **T12.2.9 - Single unit tests** - What: seedDefaults and the version branch each proven once. How: tests/defaults.test.js covering empty and populated stores, run via npx vitest run -t.
+- [x] **T12.2.10 - Merge defaults** - What: A never-empty first launch on main. How: ESLint pass, targeted tests green, merge feature/f12-2-default-lists into main.
 
 ### F12.3 - Watchlist Block UI
 
@@ -1963,16 +1963,16 @@
 **What:** Clicking a row makes that instrument the desk-wide subject - charts, order entry and HUD follow instantly.
 **How:** A focus.instId Spektrum state key set by row data-action, watched to drive subscriptions and a focus:changed trigger.
 
-- [ ] **T12.5.1 - Focus branch** - What: Focus plumbing isolated until stable. How: Create feature/f12-5-instrument-focus from main.
-- [ ] **T12.5.2 - Focus state and action** - What: One authoritative 'current instrument' the whole app agrees on. How: Add focus.instId to state plus a setFocus(instId) action fn in src/lists/focus.js.
-- [ ] **T12.5.3 - Row click wiring** - What: Single click switches focus - no double-click, no confirm. How: data-action="setFocus" on the row root passing the row's canonId from data-each scope.
-- [ ] **T12.5.4 - Focused row style** - What: The active row unmistakable in peripheral vision. How: Orange left bar and brightened text via a :class binding comparing row id to focus.instId.
-- [ ] **T12.5.5 - Feed follow** - What: Focused instruments always stream at full depth. How: Spektrum watch('focus.instId') acquiring book+trade channels on the F11.5 subs manager, releasing the previous.
-- [ ] **T12.5.6 - Broadcast contract** - What: Trade, chart and HUD blocks react to focus without coupling to lists. How: Fire Spektrum trigger('focus:changed', instId) that phases 13-19 subscribe to.
-- [ ] **T12.5.7 - Persist last focus** - What: The desk reopens on yesterday's instrument. How: Register focus.instId with spektrum/persist and restore it during boot after seeding.
-- [ ] **T12.5.8 - Removal fallback fn** - What: Deleting the focused symbol never leaves a dead desk. How: Pure nextFocusAfterRemoval(lists, removedId) picking the nearest remaining symbol.
-- [ ] **T12.5.9 - Single unit tests** - What: setFocus and nextFocusAfterRemoval each proven once. How: tests/focus.test.js, one Vitest test per function run via npx vitest run -t.
-- [ ] **T12.5.10 - Merge focus** - What: One-click desk-wide context switching on main. How: ESLint clean, targeted tests green, merge feature/f12-5-instrument-focus into main.
+- [x] **T12.5.1 - Focus branch** - What: Focus plumbing isolated until stable. How: Create feature/f12-5-instrument-focus from main.
+- [x] **T12.5.2 - Focus state and action** - What: One authoritative 'current instrument' the whole app agrees on. How: Add focus.instId to state plus a setFocus(instId) action fn in src/lists/focus.js.
+- [x] **T12.5.3 - Row click wiring** - What: Single click switches focus - no double-click, no confirm. How: data-action="setFocus" on the row root passing the row's canonId from data-each scope.
+- [x] **T12.5.4 - Focused row style** - What: The active row unmistakable in peripheral vision. How: Orange left bar and brightened text via a :class binding comparing row id to focus.instId.
+- [x] **T12.5.5 - Feed follow** - What: Focused instruments always stream at full depth. How: Spektrum watch('focus.instId') acquiring book+trade channels on the F11.5 subs manager, releasing the previous.
+- [x] **T12.5.6 - Broadcast contract** - What: Trade, chart and HUD blocks react to focus without coupling to lists. How: Fire Spektrum trigger('focus:changed', instId) that phases 13-19 subscribe to.
+- [x] **T12.5.7 - Persist last focus** - What: The desk reopens on yesterday's instrument. How: Register focus.instId with spektrum/persist and restore it during boot after seeding.
+- [x] **T12.5.8 - Removal fallback fn** - What: Deleting the focused symbol never leaves a dead desk. How: Pure nextFocusAfterRemoval(lists, removedId) picking the nearest remaining symbol.
+- [x] **T12.5.9 - Single unit tests** - What: setFocus and nextFocusAfterRemoval each proven once. How: tests/focus.test.js, one Vitest test per function run via npx vitest run -t.
+- [x] **T12.5.10 - Merge focus** - What: One-click desk-wide context switching on main. How: ESLint clean, targeted tests green, merge feature/f12-5-instrument-focus into main.
 
 ### F12.6 - Live Row Cells with Tick Pulse
 
@@ -2011,48 +2011,48 @@
 **What:** Rows arranged by personal priority with a quick drag, and the order sticks across sessions.
 **How:** Native HTML5 drag events computing insertion index, a pure moveSymbol fn committed via setValue so spektrum/persist saves it.
 
-- [ ] **T12.8.1 - Reorder branch** - What: Drag mechanics developed without risking the block. How: Branch feature/f12-8-drag-reorder from main.
-- [ ] **T12.8.2 - Drag handles** - What: An obvious grip that starts a drag without hijacking row clicks. How: Add a draggable=true grip cell with grab cursor, leaving the rest of the row click-focusable.
-- [ ] **T12.8.3 - moveSymbol fn** - What: One pure reorder operation shared by mouse and keyboard. How: moveSymbol(symbols, from, to) splicing immutably in src/lists/ops.js.
-- [ ] **T12.8.4 - Drag listeners** - What: Drops land exactly where the user aims. How: dragstart/dragover/drop handlers resolving the target index from the hovered row's data-ref and midpoint.
-- [ ] **T12.8.5 - Drop indicator** - What: The insertion point visible while dragging. How: A 2px orange line element positioned above or below the hovered row during dragover.
-- [ ] **T12.8.6 - Commit and persist** - What: New order saved the moment the row lands. How: Drop applies moveSymbol via setValue on the list path, letting spektrum/persist write localStorage.
-- [ ] **T12.8.7 - Keyboard fallback** - What: Reordering without a mouse for keyboard-first scalpers. How: Alt+ArrowUp/Down on the focused row calling moveSymbol one step.
-- [ ] **T12.8.8 - Custom drag ghost** - What: A slim styled ghost instead of the default row screenshot. How: setDragImage with a cloned, styled single-cell element on dragstart.
-- [ ] **T12.8.9 - Single unit test** - What: moveSymbol proven by one test covering edges and no-ops. How: tests/move-symbol.test.js run with npx vitest run -t moveSymbol.
-- [ ] **T12.8.10 - Merge reorder** - What: Personal row order that sticks, on main. How: ESLint pass, targeted test green, merge feature/f12-8-drag-reorder into main.
+- [x] **T12.8.1 - Reorder branch** - What: Drag mechanics developed without risking the block. How: Branch feature/f12-8-drag-reorder from main.
+- [x] **T12.8.2 - Drag handles** - What: An obvious grip that starts a drag without hijacking row clicks. How: Add a draggable=true grip cell with grab cursor, leaving the rest of the row click-focusable.
+- [x] **T12.8.3 - moveSymbol fn** - What: One pure reorder operation shared by mouse and keyboard. How: moveSymbol(symbols, from, to) splicing immutably in src/lists/ops.js.
+- [x] **T12.8.4 - Drag listeners** - What: Drops land exactly where the user aims. How: dragstart/dragover/drop handlers resolving the target index from the hovered row's data-ref and midpoint.
+- [x] **T12.8.5 - Drop indicator** - What: The insertion point visible while dragging. How: A 2px orange line element positioned above or below the hovered row during dragover.
+- [x] **T12.8.6 - Commit and persist** - What: New order saved the moment the row lands. How: Drop applies moveSymbol via setValue on the list path, letting spektrum/persist write localStorage.
+- [x] **T12.8.7 - Keyboard fallback** - What: Reordering without a mouse for keyboard-first scalpers. How: Alt+ArrowUp/Down on the focused row calling moveSymbol one step.
+- [x] **T12.8.8 - Custom drag ghost** - What: A slim styled ghost instead of the default row screenshot. How: setDragImage with a cloned, styled single-cell element on dragstart.
+- [x] **T12.8.9 - Single unit test** - What: moveSymbol proven by one test covering edges and no-ops. How: tests/move-symbol.test.js run with npx vitest run -t moveSymbol.
+- [x] **T12.8.10 - Merge reorder** - What: Personal row order that sticks, on main. How: ESLint pass, targeted test green, merge feature/f12-8-drag-reorder into main.
 
 ### F12.9 - Multi-List Tabs
 
 **What:** Several watchlists live in one block as tabs - crypto, stocks and session-specific lists one click apart.
 **How:** A tab bar rendered with data-each over the watchlists array, activeListId switching which list the rows below render.
 
-- [ ] **T12.9.1 - Tabs branch** - What: Tab UI merged only once switching is solid. How: Create feature/f12-9-list-tabs from main.
-- [ ] **T12.9.2 - Tab bar markup** - What: Every list reachable in one click from the block header. How: data-each over watchlists rendering name plus symbol-count badge per tab above the rows.
-- [ ] **T12.9.3 - switchList action** - What: Instant tab switching with zero flicker. How: data-action="switchList" setting activeListId; the row data-each re-renders from the new list.
-- [ ] **T12.9.4 - New-list tab** - What: Creating a list without leaving the block. How: A '+' tab revealing an inline input bound data-model, Enter calling the F12.1 createList op.
-- [ ] **T12.9.5 - Close affordance** - What: Lists removed as fast as they are made, still undoable. How: An x on tab hover calling deleteList and surfacing the F12.1 undo toast.
-- [ ] **T12.9.6 - nextActiveAfterDelete fn** - What: Deleting the active tab lands on a sane neighbor. How: Pure nextActiveAfterDelete(lists, deletedId) preferring the left neighbor in src/lists/tabs.js.
-- [ ] **T12.9.7 - Tab overflow** - What: Ten lists still fit a single block width. How: Horizontal scroll on the tab strip with CSS mask-image fade edges signaling more tabs.
-- [ ] **T12.9.8 - Active styling and persistence** - What: The desk reopens on the tab you left. How: Underline the active tab with the orange accent and persist activeListId via spektrum/persist.
-- [ ] **T12.9.9 - Single unit test** - What: nextActiveAfterDelete proven by one test including last-tab deletion. How: tests/tabs.test.js run via npx vitest run -t nextActiveAfterDelete.
-- [ ] **T12.9.10 - Merge tabs** - What: Multi-list organization live on main. How: ESLint pass, targeted test green, merge feature/f12-9-list-tabs into main.
+- [x] **T12.9.1 - Tabs branch** - What: Tab UI merged only once switching is solid. How: Create feature/f12-9-list-tabs from main.
+- [x] **T12.9.2 - Tab bar markup** - What: Every list reachable in one click from the block header. How: data-each over watchlists rendering name plus symbol-count badge per tab above the rows.
+- [x] **T12.9.3 - switchList action** - What: Instant tab switching with zero flicker. How: data-action="switchList" setting activeListId; the row data-each re-renders from the new list.
+- [x] **T12.9.4 - New-list tab** - What: Creating a list without leaving the block. How: A '+' tab revealing an inline input bound data-model, Enter calling the F12.1 createList op.
+- [x] **T12.9.5 - Close affordance** - What: Lists removed as fast as they are made, still undoable. How: An x on tab hover calling deleteList and surfacing the F12.1 undo toast.
+- [x] **T12.9.6 - nextActiveAfterDelete fn** - What: Deleting the active tab lands on a sane neighbor. How: Pure nextActiveAfterDelete(lists, deletedId) preferring the left neighbor in src/lists/tabs.js.
+- [x] **T12.9.7 - Tab overflow** - What: Ten lists still fit a single block width. How: Horizontal scroll on the tab strip with CSS mask-image fade edges signaling more tabs.
+- [x] **T12.9.8 - Active styling and persistence** - What: The desk reopens on the tab you left. How: Underline the active tab with the orange accent and persist activeListId via spektrum/persist.
+- [x] **T12.9.9 - Single unit test** - What: nextActiveAfterDelete proven by one test including last-tab deletion. How: tests/tabs.test.js run via npx vitest run -t nextActiveAfterDelete.
+- [x] **T12.9.10 - Merge tabs** - What: Multi-list organization live on main. How: ESLint pass, targeted test green, merge feature/f12-9-list-tabs into main.
 
 ### F12.10 - Row Context Actions
 
 **What:** Trade, chart or alert on any symbol straight from its row - two clicks from list to order ticket.
 **How:** Hover icon cluster plus a right-click popover firing Spektrum triggers consumed by the order-entry, chart and alert phases.
 
-- [ ] **T12.10.1 - Actions branch** - What: Cross-block wiring isolated until contracts hold. How: Branch feature/f12-10-row-actions from main.
-- [ ] **T12.10.2 - Hover cluster** - What: The three actions visible the moment a row is hovered. How: Right-aligned trade/chart/alert icon buttons in the row template revealed via a hover class.
-- [ ] **T12.10.3 - Context popover** - What: The same actions on right-click at the cursor. How: contextmenu handler with preventDefault opening a data-if popover positioned at clientX/clientY.
-- [ ] **T12.10.4 - clampMenuPos fn** - What: The popover never clips off screen near edges. How: Pure clampMenuPos(x, y, w, h, viewport) shifting coordinates inside bounds in src/lists/menu.js.
-- [ ] **T12.10.5 - Trade action** - What: List to armed order ticket in one gesture. How: Action calls setFocus then Spektrum trigger('orderEntry:open', instId) for the phase 15 rapid entry block.
-- [ ] **T12.10.6 - Chart action** - What: Any row's chart loaded without hunting. How: Fire trigger('chart:load', instId), the contract the phase 13 micro-chart block subscribes to.
-- [ ] **T12.10.7 - Alert action** - What: A price alert drafted with the symbol pre-filled. How: Fire trigger('alert:draft', instId) feeding the phase 22 alert composer with current last price.
-- [ ] **T12.10.8 - Fast dismissal** - What: The popover vanishes the instant attention moves - no confirms. How: Close on outside pointerdown, Escape, or any action fire via a document-level listener.
-- [ ] **T12.10.9 - Single unit test** - What: clampMenuPos proven by one test across all four edges. How: tests/menu.test.js run with npx vitest run -t clampMenuPos.
-- [ ] **T12.10.10 - Merge actions** - What: Row-level command launch on main, closing the phase. How: ESLint pass, targeted test green, merge feature/f12-10-row-actions into main.
+- [x] **T12.10.1 - Actions branch** - What: Cross-block wiring isolated until contracts hold. How: Branch feature/f12-10-row-actions from main.
+- [x] **T12.10.2 - Hover cluster** - What: The three actions visible the moment a row is hovered. How: Right-aligned trade/chart/alert icon buttons in the row template revealed via a hover class.
+- [x] **T12.10.3 - Context popover** - What: The same actions on right-click at the cursor. How: contextmenu handler with preventDefault opening a data-if popover positioned at clientX/clientY.
+- [x] **T12.10.4 - clampMenuPos fn** - What: The popover never clips off screen near edges. How: Pure clampMenuPos(x, y, w, h, viewport) shifting coordinates inside bounds in src/lists/menu.js.
+- [x] **T12.10.5 - Trade action** - What: List to armed order ticket in one gesture. How: Action calls setFocus then Spektrum trigger('orderEntry:open', instId) for the phase 15 rapid entry block.
+- [x] **T12.10.6 - Chart action** - What: Any row's chart loaded without hunting. How: Fire trigger('chart:load', instId), the contract the phase 13 micro-chart block subscribes to.
+- [x] **T12.10.7 - Alert action** - What: A price alert drafted with the symbol pre-filled. How: Fire trigger('alert:draft', instId) feeding the phase 22 alert composer with current last price.
+- [x] **T12.10.8 - Fast dismissal** - What: The popover vanishes the instant attention moves - no confirms. How: Close on outside pointerdown, Escape, or any action fire via a document-level listener.
+- [x] **T12.10.9 - Single unit test** - What: clampMenuPos proven by one test across all four edges. How: tests/menu.test.js run with npx vitest run -t clampMenuPos.
+- [x] **T12.10.10 - Merge actions** - What: Row-level command launch on main, closing the phase. How: ESLint pass, targeted test green, merge feature/f12-10-row-actions into main.
 
 ---
 

@@ -6,6 +6,7 @@ import { registerHeaderActions } from '../ui/header.js'
 import { registerThemeActions } from '../ui/theme.js'
 import { registerSettingsActions } from '../ui/settings.js'
 import { registerKeyActions } from '../ui/keys.js'
+import { registerListActions } from '../lists/state.js'
 
 beforeEach(() => {
   clearActions()
@@ -20,6 +21,12 @@ describe('allActionNames', () => {
       'ui.toggleOverlay',
       'ui.setTheme',
       'app.reset',
+      'lists.focus',
+      'lists.add',
+      'lists.remove',
+      'lists.move',
+      'lists.setActive',
+      'lists.manage',
       'keys.submit',
       'keys.lock',
       'settings.update',
@@ -34,6 +41,7 @@ describe('allActionNames', () => {
     registerThemeActions()
     registerSettingsActions()
     registerKeyActions()
+    registerListActions()
     expect(actionNames().sort()).toEqual(allActionNames().sort())
 
     // Every name follows <namespace>.<verb>, which is what registerAction enforces.

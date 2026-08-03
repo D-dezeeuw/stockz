@@ -13,6 +13,7 @@ import { registerThemeActions, applyTheme, preferredTheme } from '../ui/theme.js
 import { restoreSettings, persistSettings } from '../state/persist.js'
 import { registerSettingsActions } from '../ui/settings.js'
 import { registerKeyActions, adoptKeys } from '../ui/keys.js'
+import { registerListActions, seedLists } from '../lists/state.js'
 import { appVersion } from './version.js'
 
 /**
@@ -57,6 +58,7 @@ export function bootstrap(options = {}) {
   registerThemeActions()
   registerSettingsActions()
   registerKeyActions()
+  registerListActions()
   adoptKeys()
   applyTheme(doc?.documentElement?.getAttribute?.('data-theme') || preferredTheme(), doc)
   const derived = registerDerived()
@@ -64,6 +66,7 @@ export function bootstrap(options = {}) {
 
   registerSystems({ now: makeBootClock(now) })
   seedBlocks()
+  seedLists()
 
   const cleanup = bindDOM(doc)
   tick()

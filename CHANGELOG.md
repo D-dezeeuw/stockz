@@ -10,7 +10,18 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ## [Unreleased]
 
-_Nothing yet — next entries land with phase 12 (Watchlists & Instruments)._
+### Added
+
+- **Watchlists** — create, rename, delete, add, remove and reorder, persisted with the
+  rest of your settings so a list is never rebuilt in the morning. Symbols are
+  venue-qualified (`okx:BTC-USDT`), so the same ticker on two venues stays two rows and
+  the spread between them is visible rather than merged away. (F12.1, F12.2, F12.8,
+  F12.9)
+- **Focus follows the list** — clicking a row sets `market.focus`, which the ticket, chart
+  and book all follow. Focus is deliberately *not* persisted: restoring yesterday's focus
+  would aim the order ticket at an instrument nobody is looking at. (F12.5, F12.10)
+- **A list can never be lost by mis-click** — the last list is undeletable, and a stale
+  active id falls back to the first list rather than blanking the block. (F12.1)
 
 ## [0.11.0] — 2026-08-03 — Phase 11: Real-Time Market Data Pipeline
 
