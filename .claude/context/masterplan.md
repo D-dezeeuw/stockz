@@ -563,48 +563,48 @@
 **What:** Every dashboard block gets the exact same footprint, so the eye finds anything in one sweep.
 **How:** A page frame of grid-template-rows auto/1fr/auto over 100dvh with a repeat(auto-fill, minmax()) main grid and fixed grid-auto-rows.
 
-- [ ] **T4.1.1 - Cut grid-shell branch** - What: Layout work isolated from main. How: git checkout -b feat/grid-shell from an up-to-date main.
-- [ ] **T4.1.2 - Page frame rows** - What: Header and footer stay pinned while blocks own the middle. How: In src/styles/layout.css set the body wrapper to display grid, grid-template-rows auto 1fr auto over 100dvh.
-- [ ] **T4.1.3 - Auto-fill cell columns** - What: Cells fill any screen edge-to-edge with equal widths. How: Give .sz-grid grid-template-columns repeat(auto-fill, minmax(var(--sz-cell-min), 1fr)).
-- [ ] **T4.1.4 - Uniform cell height** - What: Every block is the same height as its neighbors. How: Set grid-auto-rows to a fixed --sz-cell-h token so rows never stretch to content.
-- [ ] **T4.1.5 - Token-driven gaps** - What: Grid spacing matches the phase 3 density system. How: Apply gap and padding on .sz-grid from --sz-gap and --sz-space tokens only.
-- [ ] **T4.1.6 - Placeholder cell fixture** - What: The wrap behavior is visible before real blocks exist. How: Render eight dummy .sz-block divs in index.html to exercise multi-row wrapping.
-- [ ] **T4.1.7 - Partial-row equality check** - What: A last row of two blocks matches the size of full rows. How: Verify auto-fill keeps orphan cells identical and pin minmax values if they drift.
-- [ ] **T4.1.8 - Resize sweep** - What: The grid stays uniform from narrow to ultrawide. How: Drag the Vite dev server window across widths and confirm no cell ever differs in size.
-- [ ] **T4.1.9 - Lint and build verify** - What: The shell ships clean. How: Run npx eslint . and npm run build (Vite) with zero warnings.
-- [ ] **T4.1.10 - Merge grid shell to main** - What: All block features build on a proven frame. How: Merge feat/grid-shell into main once checks are green.
+- [x] **T4.1.1 - Cut grid-shell branch** - What: Layout work isolated from main. How: git checkout -b feat/grid-shell from an up-to-date main.
+- [x] **T4.1.2 - Page frame rows** - What: Header and footer stay pinned while blocks own the middle. How: In src/styles/layout.css set the body wrapper to display grid, grid-template-rows auto 1fr auto over 100dvh.
+- [x] **T4.1.3 - Auto-fill cell columns** - What: Cells fill any screen edge-to-edge with equal widths. How: Give .sz-grid grid-template-columns repeat(auto-fill, minmax(var(--sz-cell-min), 1fr)).
+- [x] **T4.1.4 - Uniform cell height** - What: Every block is the same height as its neighbors. How: Set grid-auto-rows to a fixed --sz-cell-h token so rows never stretch to content.
+- [x] **T4.1.5 - Token-driven gaps** - What: Grid spacing matches the phase 3 density system. How: Apply gap and padding on .sz-grid from --sz-gap and --sz-space tokens only.
+- [x] **T4.1.6 - Placeholder cell fixture** - What: The wrap behavior is visible before real blocks exist. How: Render eight dummy .sz-block divs in index.html to exercise multi-row wrapping.
+- [x] **T4.1.7 - Partial-row equality check** - What: A last row of two blocks matches the size of full rows. How: Verify auto-fill keeps orphan cells identical and pin minmax values if they drift.
+- [x] **T4.1.8 - Resize sweep** - What: The grid stays uniform from narrow to ultrawide. How: Drag the Vite dev server window across widths and confirm no cell ever differs in size.
+- [x] **T4.1.9 - Lint and build verify** - What: The shell ships clean. How: Run npx eslint . and npm run build (Vite) with zero warnings.
+- [x] **T4.1.10 - Merge grid shell to main** - What: All block features build on a proven frame. How: Merge feat/grid-shell into main once checks are green.
 
 ### F4.2 - Spektrum Block Registry
 
 **What:** The set of dashboard blocks lives in one data structure, so the desk renders and reshapes from state alone.
 **How:** A blocks array in Spektrum state (setValue) rendered through a data-each template, with a pure selectVisible filter behind a computed.
 
-- [ ] **T4.2.1 - Cut block-registry branch** - What: Registry work isolated from main. How: git checkout -b feat/block-registry from main.
-- [ ] **T4.2.2 - Registry state module** - What: One authoritative list of blocks. How: Create src/state/blocks.js calling setValue('blocks', []) with entries shaped {id, type, title, status, visible}.
-- [ ] **T4.2.3 - Seed default blocks** - What: A fresh desk opens with a sensible starter layout. How: Seed placeholder entries (watchlist, chart, tape, orders) in blocks.js for later phases to claim.
-- [ ] **T4.2.4 - selectVisible pure function** - What: Visibility filtering has one testable source of truth. How: Write selectVisible(blocks) in src/lib/blocks-util.js returning only entries with visible true.
-- [ ] **T4.2.5 - visibleBlocks computed** - What: The grid reacts automatically when visibility changes. How: Register computed('visibleBlocks') deriving from the blocks state via selectVisible.
-- [ ] **T4.2.6 - data-each block template** - What: Blocks appear on screen straight from state. How: Add a data-each="visibleBlocks" template stamping one .sz-block per entry, wired with bindDOM and run in main.js.
-- [ ] **T4.2.7 - Cloak and refs** - What: No flash of raw templates, and each block is addressable. How: Put data-cloak on the grid container and data-ref="block-{{block.id}}" on each cell.
-- [ ] **T4.2.8 - Single unit test for selectVisible** - What: The filter is locked by exactly one test. How: Write its one Vitest test and run npx vitest run tests/blocks-util.test.js -t selectVisible.
-- [ ] **T4.2.9 - Devtools reactivity check** - What: Registry edits repaint the grid instantly. How: Load spektrum/devtools, mutate the blocks state live and watch the data-each re-render.
-- [ ] **T4.2.10 - Merge registry to main** - What: Every later block plugs into one registry. How: Merge feat/block-registry into main when the targeted test and lint pass.
+- [x] **T4.2.1 - Cut block-registry branch** - What: Registry work isolated from main. How: git checkout -b feat/block-registry from main.
+- [x] **T4.2.2 - Registry state module** - What: One authoritative list of blocks. How: Create src/state/blocks.js calling setValue('blocks', []) with entries shaped {id, type, title, status, visible}.
+- [x] **T4.2.3 - Seed default blocks** - What: A fresh desk opens with a sensible starter layout. How: Seed placeholder entries (watchlist, chart, tape, orders) in blocks.js for later phases to claim.
+- [x] **T4.2.4 - selectVisible pure function** - What: Visibility filtering has one testable source of truth. How: Write selectVisible(blocks) in src/lib/blocks-util.js returning only entries with visible true.
+- [x] **T4.2.5 - visibleBlocks computed** - What: The grid reacts automatically when visibility changes. How: Register computed('visibleBlocks') deriving from the blocks state via selectVisible.
+- [x] **T4.2.6 - data-each block template** - What: Blocks appear on screen straight from state. How: Add a data-each="visibleBlocks" template stamping one .sz-block per entry, wired with bindDOM and run in main.js.
+- [x] **T4.2.7 - Cloak and refs** - What: No flash of raw templates, and each block is addressable. How: Put data-cloak on the grid container and data-ref="block-{{block.id}}" on each cell.
+- [x] **T4.2.8 - Single unit test for selectVisible** - What: The filter is locked by exactly one test. How: Write its one Vitest test and run npx vitest run tests/blocks-util.test.js -t selectVisible.
+- [x] **T4.2.9 - Devtools reactivity check** - What: Registry edits repaint the grid instantly. How: Load spektrum/devtools, mutate the blocks state live and watch the data-each re-render.
+- [x] **T4.2.10 - Merge registry to main** - What: Every later block plugs into one registry. How: Merge feat/block-registry into main when the targeted test and lint pass.
 
 ### F4.3 - Block Chrome Component
 
 **What:** Every block wears the same slim title bar with a status LED and action icons, so state reads at a glance.
 **How:** A shared chrome partial inside the data-each template using {{block.title}}, a status-token LED via :class, and sprite icons.
 
-- [ ] **T4.3.1 - Cut block-chrome branch** - What: Chrome work isolated from main. How: git checkout -b feat/block-chrome from main.
-- [ ] **T4.3.2 - Chrome markup partial** - What: Title bar, LED slot, actions slot and body slot in every block. How: Extend the block template with .sz-block-head ({{block.title}}, LED, actions) above .sz-block-body.
-- [ ] **T4.3.3 - Status LED binding** - What: A glance at the LED tells each block's health. How: Bind :class on the LED span mapping block.status to .sz-led-profit/.sz-led-warn/.sz-led-loss/.sz-led-neutral from status tokens.
-- [ ] **T4.3.4 - Action icons from sprite** - What: Gear and bolt actions sit ready in every title bar. How: Render {{ icon('gear') }} and {{ icon('bolt') }} via the phase 3 defineFn icon helper.
-- [ ] **T4.3.5 - Action event stubs** - What: Icon clicks emit events later features can catch. How: Add data-action="block:menu" and data-action="block:quick" firing Spektrum trigger with the block id payload.
-- [ ] **T4.3.6 - Hover reveal of actions** - What: Chrome stays quiet until the cursor arrives. How: Fade action icons in on .sz-block:hover using the --sz-motion-fast transition token.
-- [ ] **T4.3.7 - Chrome density styling** - What: The bar costs minimal vertical space. How: Style head height, --sz-block-pad padding and a --sz-border-hair divider from density tokens.
-- [ ] **T4.3.8 - Day/night chrome check** - What: Chrome stays crisp in both themes. How: Toggle data-theme in DevTools and verify LED, icons and divider contrast in each variant.
-- [ ] **T4.3.9 - Lint and build verify** - What: Chrome ships clean. How: Run npx eslint . plus npm run build and inspect chrome on the Vite dev server.
-- [ ] **T4.3.10 - Merge chrome to main** - What: All feature blocks inherit uniform chrome for free. How: Merge feat/block-chrome into main when green.
+- [x] **T4.3.1 - Cut block-chrome branch** - What: Chrome work isolated from main. How: git checkout -b feat/block-chrome from main.
+- [x] **T4.3.2 - Chrome markup partial** - What: Title bar, LED slot, actions slot and body slot in every block. How: Extend the block template with .sz-block-head ({{block.title}}, LED, actions) above .sz-block-body.
+- [x] **T4.3.3 - Status LED binding** - What: A glance at the LED tells each block's health. How: Bind :class on the LED span mapping block.status to .sz-led-profit/.sz-led-warn/.sz-led-loss/.sz-led-neutral from status tokens.
+- [x] **T4.3.4 - Action icons from sprite** - What: Gear and bolt actions sit ready in every title bar. How: Render {{ icon('gear') }} and {{ icon('bolt') }} via the phase 3 defineFn icon helper.
+- [x] **T4.3.5 - Action event stubs** - What: Icon clicks emit events later features can catch. How: Add data-action="block:menu" and data-action="block:quick" firing Spektrum trigger with the block id payload.
+- [x] **T4.3.6 - Hover reveal of actions** - What: Chrome stays quiet until the cursor arrives. How: Fade action icons in on .sz-block:hover using the --sz-motion-fast transition token.
+- [x] **T4.3.7 - Chrome density styling** - What: The bar costs minimal vertical space. How: Style head height, --sz-block-pad padding and a --sz-border-hair divider from density tokens.
+- [x] **T4.3.8 - Day/night chrome check** - What: Chrome stays crisp in both themes. How: Toggle data-theme in DevTools and verify LED, icons and divider contrast in each variant.
+- [x] **T4.3.9 - Lint and build verify** - What: Chrome ships clean. How: Run npx eslint . plus npm run build and inspect chrome on the Vite dev server.
+- [x] **T4.3.10 - Merge chrome to main** - What: All feature blocks inherit uniform chrome for free. How: Merge feat/block-chrome into main when green.
 
 ### F4.4 - Responsive Column Count
 
@@ -627,48 +627,48 @@
 **What:** Blocks waiting on data show a calm terminal shimmer instead of blank holes, so the desk never looks broken.
 **How:** A data-if skeleton template keyed on block.status 'loading' with an sz-shimmer gradient animation and an addAsync demo loader.
 
-- [ ] **T4.5.1 - Cut block-skeleton branch** - What: Loading-state work isolated from main. How: git checkout -b feat/block-skeleton from main.
-- [ ] **T4.5.2 - Loading status semantics** - What: One agreed lifecycle for block readiness. How: Document status values loading/ready/empty/error in a comment atop src/state/blocks.js and seed new blocks as loading.
-- [ ] **T4.5.3 - Skeleton template** - What: Loading blocks render placeholder bones. How: Add a data-if="block.status === 'loading'" branch in the block body template.
-- [ ] **T4.5.4 - Shimmer keyframes** - What: A moving sheen signals live loading. How: Add @keyframes sz-shimmer translating a dim-green linear-gradient across skeleton bars.
-- [ ] **T4.5.5 - Skeleton bone layout** - What: The skeleton previews the block's real shape. How: Style title-width and body-row bars with density tokens matching the chrome proportions.
-- [ ] **T4.5.6 - Reduced-motion skeleton** - What: Motion-sensitive users get a static placeholder. How: Under prefers-reduced-motion: reduce, freeze sz-shimmer to a flat tint.
-- [ ] **T4.5.7 - addAsync demo loader** - What: The full loading-to-ready flow is demonstrable now. How: Register a Spektrum addAsync fake fetch that flips a block's status to ready after a delay.
-- [ ] **T4.5.8 - Minimum display time** - What: Fast loads never strobe the skeleton. How: Keep the skeleton visible at least 150ms via a timestamp check before flipping to ready.
-- [ ] **T4.5.9 - Slow-loader verify** - What: Shimmer proven under throttled conditions. How: Set the demo loader delay to 3s on the Vite dev server and inspect the shimmer frame rate.
-- [ ] **T4.5.10 - Merge skeleton to main** - What: Every data block gets a loading look for free. How: Merge feat/block-skeleton into main when lint and build pass.
+- [x] **T4.5.1 - Cut block-skeleton branch** - What: Loading-state work isolated from main. How: git checkout -b feat/block-skeleton from main.
+- [x] **T4.5.2 - Loading status semantics** - What: One agreed lifecycle for block readiness. How: Document status values loading/ready/empty/error in a comment atop src/state/blocks.js and seed new blocks as loading.
+- [x] **T4.5.3 - Skeleton template** - What: Loading blocks render placeholder bones. How: Add a data-if="block.status === 'loading'" branch in the block body template.
+- [x] **T4.5.4 - Shimmer keyframes** - What: A moving sheen signals live loading. How: Add @keyframes sz-shimmer translating a dim-green linear-gradient across skeleton bars.
+- [x] **T4.5.5 - Skeleton bone layout** - What: The skeleton previews the block's real shape. How: Style title-width and body-row bars with density tokens matching the chrome proportions.
+- [x] **T4.5.6 - Reduced-motion skeleton** - What: Motion-sensitive users get a static placeholder. How: Under prefers-reduced-motion: reduce, freeze sz-shimmer to a flat tint.
+- [x] **T4.5.7 - addAsync demo loader** - What: The full loading-to-ready flow is demonstrable now. How: Register a Spektrum addAsync fake fetch that flips a block's status to ready after a delay.
+- [x] **T4.5.8 - Minimum display time** - What: Fast loads never strobe the skeleton. How: Keep the skeleton visible at least 150ms via a timestamp check before flipping to ready.
+- [x] **T4.5.9 - Slow-loader verify** - What: Shimmer proven under throttled conditions. How: Set the demo loader delay to 3s on the Vite dev server and inspect the shimmer frame rate.
+- [x] **T4.5.10 - Merge skeleton to main** - What: Every data block gets a loading look for free. How: Merge feat/block-skeleton into main when lint and build pass.
 
 ### F4.6 - Empty and Error States
 
 **What:** Blocks with no data or a failed feed say so in terse terminal language with a one-click retry, never a silent blank.
 **How:** data-if branches for status empty and error, Spektrum attempt() around loaders, and a block:retry data-action trigger.
 
-- [ ] **T4.6.1 - Cut block-states branch** - What: State-rendering work isolated from main. How: git checkout -b feat/block-states from main.
-- [ ] **T4.6.2 - Empty-state template** - What: An empty block explains itself instantly. How: Add a data-if="block.status === 'empty'" branch showing a dim icon plus a NO DATA line.
-- [ ] **T4.6.3 - Empty-state styling** - What: Empty reads as calm, not alarming. How: Style with --sz-ink-faint, centered layout, no glow, using density tokens.
-- [ ] **T4.6.4 - Error-state template** - What: A failed block is unmissable. How: Add a data-if="block.status === 'error'" branch with the skull sprite icon and --sz-status-loss orange accents.
-- [ ] **T4.6.5 - attempt() error capture** - What: Loader crashes become visible error states, not dead blocks. How: Wrap block loaders in Spektrum attempt() setting status error and storing the message on the entry.
-- [ ] **T4.6.6 - Retry action wiring** - What: One click re-runs a failed feed. How: Add data-action="block:retry" on the error branch firing trigger to re-invoke that block's addAsync loader.
-- [ ] **T4.6.7 - Terse microcopy pass** - What: Messages match the terminal voice and stay scannable. How: Write all-caps strings like FEED DOWN - RETRY and NO DATA, max one line each.
-- [ ] **T4.6.8 - Forced-failure verify** - What: The whole error path proven end to end. How: Throw inside the demo loader on the Vite dev server, see skull state, click retry, see recovery.
-- [ ] **T4.6.9 - Lint and build verify** - What: State branches ship clean. How: Run npx eslint . and npm run build with zero warnings.
-- [ ] **T4.6.10 - Merge block states to main** - What: Every future feed failure has a face and a fix. How: Merge feat/block-states into main when green.
+- [x] **T4.6.1 - Cut block-states branch** - What: State-rendering work isolated from main. How: git checkout -b feat/block-states from main.
+- [x] **T4.6.2 - Empty-state template** - What: An empty block explains itself instantly. How: Add a data-if="block.status === 'empty'" branch showing a dim icon plus a NO DATA line.
+- [x] **T4.6.3 - Empty-state styling** - What: Empty reads as calm, not alarming. How: Style with --sz-ink-faint, centered layout, no glow, using density tokens.
+- [x] **T4.6.4 - Error-state template** - What: A failed block is unmissable. How: Add a data-if="block.status === 'error'" branch with the skull sprite icon and --sz-status-loss orange accents.
+- [x] **T4.6.5 - attempt() error capture** - What: Loader crashes become visible error states, not dead blocks. How: Wrap block loaders in Spektrum attempt() setting status error and storing the message on the entry.
+- [x] **T4.6.6 - Retry action wiring** - What: One click re-runs a failed feed. How: Add data-action="block:retry" on the error branch firing trigger to re-invoke that block's addAsync loader.
+- [x] **T4.6.7 - Terse microcopy pass** - What: Messages match the terminal voice and stay scannable. How: Write all-caps strings like FEED DOWN - RETRY and NO DATA, max one line each.
+- [x] **T4.6.8 - Forced-failure verify** - What: The whole error path proven end to end. How: Throw inside the demo loader on the Vite dev server, see skull state, click retry, see recovery.
+- [x] **T4.6.9 - Lint and build verify** - What: State branches ship clean. How: Run npx eslint . and npm run build with zero warnings.
+- [x] **T4.6.10 - Merge block states to main** - What: Every future feed failure has a face and a fix. How: Merge feat/block-states into main when green.
 
 ### F4.7 - Footer Component
 
 **What:** A slim footer crediting Neko Media with LinkedIn, npm and GitHub links, closing the frame of the desk.
 **How:** A footer row in the page grid with wordmark plus inline SVG icon links from the sprite, glowing on hover.
 
-- [ ] **T4.7.1 - Cut footer branch** - What: Footer work isolated from main. How: git checkout -b feat/footer from main.
-- [ ] **T4.7.2 - Footer markup** - What: The desk is signed by its maker. How: Add a footer element in the page grid's bottom row with a Neko Media wordmark and current year.
-- [ ] **T4.7.3 - Social icons in sprite** - What: Recognizable LinkedIn, npm and GitHub marks. How: Draw the three symbols into src/assets/sprite.svg on the 24px currentColor grid.
-- [ ] **T4.7.4 - Icon link wiring** - What: One click reaches Neko Media's profiles safely. How: Wrap each {{ icon(name) }} in an anchor with href, target="_blank" and rel="noopener noreferrer".
-- [ ] **T4.7.5 - Footer layout** - What: Brand left, links right, never taller than one line. How: Flex row with space-between, --sz-space padding and a --sz-border-hair top divider.
-- [ ] **T4.7.6 - Hover glow accents** - What: Links respond with the terminal's signature flare. How: Apply .sz-glow-text on anchor hover with the --sz-motion-fast transition token.
-- [ ] **T4.7.7 - Accessible labels** - What: Screen readers announce each destination. How: Add aria-label="LinkedIn"/"npm"/"GitHub" to the icon anchors.
-- [ ] **T4.7.8 - Day/night footer check** - What: The footer holds contrast in both themes. How: Toggle data-theme and verify wordmark and icons against contrast expectations in each variant.
-- [ ] **T4.7.9 - Lint and build verify** - What: The footer ships clean. How: Run npx eslint . plus npm run build and review on the Vite dev server.
-- [ ] **T4.7.10 - Merge footer to main** - What: The page frame is complete top to bottom. How: Merge feat/footer into main when green.
+- [x] **T4.7.1 - Cut footer branch** - What: Footer work isolated from main. How: git checkout -b feat/footer from main.
+- [x] **T4.7.2 - Footer markup** - What: The desk is signed by its maker. How: Add a footer element in the page grid's bottom row with a Neko Media wordmark and current year.
+- [x] **T4.7.3 - Social icons in sprite** - What: Recognizable LinkedIn, npm and GitHub marks. How: Draw the three symbols into src/assets/sprite.svg on the 24px currentColor grid.
+- [x] **T4.7.4 - Icon link wiring** - What: One click reaches Neko Media's profiles safely. How: Wrap each {{ icon(name) }} in an anchor with href, target="_blank" and rel="noopener noreferrer".
+- [x] **T4.7.5 - Footer layout** - What: Brand left, links right, never taller than one line. How: Flex row with space-between, --sz-space padding and a --sz-border-hair top divider.
+- [x] **T4.7.6 - Hover glow accents** - What: Links respond with the terminal's signature flare. How: Apply .sz-glow-text on anchor hover with the --sz-motion-fast transition token.
+- [x] **T4.7.7 - Accessible labels** - What: Screen readers announce each destination. How: Add aria-label="LinkedIn"/"npm"/"GitHub" to the icon anchors.
+- [x] **T4.7.8 - Day/night footer check** - What: The footer holds contrast in both themes. How: Toggle data-theme and verify wordmark and icons against contrast expectations in each variant.
+- [x] **T4.7.9 - Lint and build verify** - What: The footer ships clean. How: Run npx eslint . plus npm run build and review on the Vite dev server.
+- [x] **T4.7.10 - Merge footer to main** - What: The page frame is complete top to bottom. How: Merge feat/footer into main when green.
 
 ### F4.8 - Block Visibility Toggles
 
@@ -691,32 +691,32 @@
 **What:** Content scrolls inside its own block while the page itself never scrolls sideways, keeping the desk rock solid.
 **How:** overflow auto plus overscroll-behavior contain on block bodies, min-width 0 on cells, and a styled thin terminal scrollbar.
 
-- [ ] **T4.9.1 - Cut scroll-containment branch** - What: Scroll work isolated from main. How: git checkout -b feat/scroll-containment from main.
-- [ ] **T4.9.2 - Block body scroll rules** - What: Long content scrolls privately per block. How: Set overflow auto and overscroll-behavior contain on .sz-block-body so wheel momentum never leaks to the page.
-- [ ] **T4.9.3 - Page overflow guard** - What: Horizontal page scroll becomes impossible. How: Set overflow-x hidden on html and body and keep the page frame at max-width 100%.
-- [ ] **T4.9.4 - min-width zero fix** - What: Wide tables can never stretch grid cells. How: Add min-width 0 (and min-height 0) to .sz-block so grid tracks stay authoritative.
-- [ ] **T4.9.5 - Terminal scrollbar styling** - What: Scrollbars match the money-hacker look. How: Style scrollbar-width thin and scrollbar-color green-on-black plus matching ::-webkit-scrollbar rules.
-- [ ] **T4.9.6 - Stable scrollbar gutter** - What: Content never shifts when a scrollbar appears. How: Apply scrollbar-gutter stable on .sz-block-body.
-- [ ] **T4.9.7 - Wide-content fixture** - What: The worst case is on hand for testing. How: Add a dev block containing an oversized pre table wider than any cell.
-- [ ] **T4.9.8 - Keyboard scroll access** - What: Blocks scroll without a mouse. How: Add tabindex="0" plus the --sz-focus outline token on scrollable block bodies.
-- [ ] **T4.9.9 - Breakpoint sweep verify** - What: Zero sideways page scroll at any width. How: Sweep DevTools responsive mode at all four column tiers with the wide fixture active.
-- [ ] **T4.9.10 - Merge containment to main** - What: Feeds and tables can grow without breaking the desk. How: Merge feat/scroll-containment into main when green.
+- [x] **T4.9.1 - Cut scroll-containment branch** - What: Scroll work isolated from main. How: git checkout -b feat/scroll-containment from main.
+- [x] **T4.9.2 - Block body scroll rules** - What: Long content scrolls privately per block. How: Set overflow auto and overscroll-behavior contain on .sz-block-body so wheel momentum never leaks to the page.
+- [x] **T4.9.3 - Page overflow guard** - What: Horizontal page scroll becomes impossible. How: Set overflow-x hidden on html and body and keep the page frame at max-width 100%.
+- [x] **T4.9.4 - min-width zero fix** - What: Wide tables can never stretch grid cells. How: Add min-width 0 (and min-height 0) to .sz-block so grid tracks stay authoritative.
+- [x] **T4.9.5 - Terminal scrollbar styling** - What: Scrollbars match the money-hacker look. How: Style scrollbar-width thin and scrollbar-color green-on-black plus matching ::-webkit-scrollbar rules.
+- [x] **T4.9.6 - Stable scrollbar gutter** - What: Content never shifts when a scrollbar appears. How: Apply scrollbar-gutter stable on .sz-block-body.
+- [x] **T4.9.7 - Wide-content fixture** - What: The worst case is on hand for testing. How: Add a dev block containing an oversized pre table wider than any cell.
+- [x] **T4.9.8 - Keyboard scroll access** - What: Blocks scroll without a mouse. How: Add tabindex="0" plus the --sz-focus outline token on scrollable block bodies.
+- [x] **T4.9.9 - Breakpoint sweep verify** - What: Zero sideways page scroll at any width. How: Sweep DevTools responsive mode at all four column tiers with the wide fixture active.
+- [x] **T4.9.10 - Merge containment to main** - What: Feeds and tables can grow without breaking the desk. How: Merge feat/scroll-containment into main when green.
 
 ### F4.10 - Registry Mutation API
 
 **What:** Blocks can be added, removed and reordered programmatically, powering settings screens and future drag features.
 **How:** Pure addBlock/removeBlock/reorderBlocks functions on the Spektrum registry, exposed via defineFn, each with a single Vitest test.
 
-- [ ] **T4.10.1 - Cut registry-api branch** - What: Mutation work isolated from main. How: git checkout -b feat/registry-api from main.
-- [ ] **T4.10.2 - addBlock function** - What: New blocks join the desk at runtime. How: Write addBlock(def) in src/state/blocks.js appending via addValue with a duplicate-id guard.
-- [ ] **T4.10.3 - removeBlock function** - What: Any block can be dismissed cleanly. How: Write removeBlock(id) replacing the array through setValue with the entry filtered out.
-- [ ] **T4.10.4 - reorderBlocks function** - What: The desk order becomes rearrangeable. How: Write reorderBlocks(from, to) producing a new array via splice and committing it with setValue.
-- [ ] **T4.10.5 - Bounds and id validation** - What: Bad calls can never corrupt the layout. How: Return the state unchanged for unknown ids or out-of-range indices in all three functions.
-- [ ] **T4.10.6 - Template-callable mutations** - What: Chrome menus and panels can mutate the registry directly. How: Register the three functions with Spektrum defineFn and route data-action events to them.
-- [ ] **T4.10.7 - Single unit tests per mutation** - What: Each mutation locked by exactly one test. How: Write one Vitest test per function in tests/blocks.test.js, run via npx vitest run -t addBlock, -t removeBlock, -t reorderBlocks.
-- [ ] **T4.10.8 - Persist interplay check** - What: Mutations survive a reload like toggles do. How: Add and reorder blocks on the Vite dev server, hard-reload, and confirm spektrum/persist restored the result.
-- [ ] **T4.10.9 - Lint and targeted test verify** - What: The API ships clean and covered. How: Run npx eslint . plus the three targeted vitest runs, all green.
-- [ ] **T4.10.10 - Merge registry API to main** - What: Later phases mount their blocks through one stable API. How: Merge feat/registry-api into main when checks pass.
+- [x] **T4.10.1 - Cut registry-api branch** - What: Mutation work isolated from main. How: git checkout -b feat/registry-api from main.
+- [x] **T4.10.2 - addBlock function** - What: New blocks join the desk at runtime. How: Write addBlock(def) in src/state/blocks.js appending via addValue with a duplicate-id guard.
+- [x] **T4.10.3 - removeBlock function** - What: Any block can be dismissed cleanly. How: Write removeBlock(id) replacing the array through setValue with the entry filtered out.
+- [x] **T4.10.4 - reorderBlocks function** - What: The desk order becomes rearrangeable. How: Write reorderBlocks(from, to) producing a new array via splice and committing it with setValue.
+- [x] **T4.10.5 - Bounds and id validation** - What: Bad calls can never corrupt the layout. How: Return the state unchanged for unknown ids or out-of-range indices in all three functions.
+- [x] **T4.10.6 - Template-callable mutations** - What: Chrome menus and panels can mutate the registry directly. How: Register the three functions with Spektrum defineFn and route data-action events to them.
+- [x] **T4.10.7 - Single unit tests per mutation** - What: Each mutation locked by exactly one test. How: Write one Vitest test per function in tests/blocks.test.js, run via npx vitest run -t addBlock, -t removeBlock, -t reorderBlocks.
+- [x] **T4.10.8 - Persist interplay check** - What: Mutations survive a reload like toggles do. How: Add and reorder blocks on the Vite dev server, hard-reload, and confirm spektrum/persist restored the result.
+- [x] **T4.10.9 - Lint and targeted test verify** - What: The API ships clean and covered. How: Run npx eslint . plus the three targeted vitest runs, all green.
+- [x] **T4.10.10 - Merge registry API to main** - What: Later phases mount their blocks through one stable API. How: Merge feat/registry-api into main when checks pass.
 
 ---
 
