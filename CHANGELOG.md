@@ -27,6 +27,12 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
   marking `settings.*` as the only branch that ever reaches localStorage. A lint rule
   rejects raw path literals, so a typo can no longer invent a silent branch that no
   binding reads. (F2.3)
+- **Action registry** — every user-triggerable behaviour registers under a
+  `<namespace>.<verb>` name, callable from HTML (`data-fn`) or programmatically via
+  `dispatchAction`, which is what hotkeys, the command palette and the bot runner will
+  all dispatch through. Ships `ui.setStatus` and `app.reset`; duplicate registration is a
+  hard error, and an unknown name warns instead of throwing so a stale keybinding cannot
+  take the desk down mid-session. (F2.4)
 
 ## [0.1.0] — 2026-08-03 — Phase 1: Foundation & Tooling
 
