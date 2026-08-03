@@ -85,9 +85,12 @@ Tell the user the phase is closed, share the link, then `/clear`.
 
 **A phase boundary is a checkpoint, not a stopping point.** Closing a phase means the
 state is durable enough to survive a context reset — it does not mean the work pauses for
-approval. Unless the user asked for a pause, start the next phase's first feature
-immediately. When running autonomously, never end a turn at a phase boundary while there
-is runway left: close the phase, then begin the next one in the same turn.
+approval.
+
+The last step of closing a phase is **cutting the next phase's first feature branch**. If
+your next message after a phase close is a summary with no tool call after it, you have
+stopped, whatever the summary says. Close the phase, then start phase N+1 in the same
+turn.
 
 The next context bootstraps by reading `CLAUDE.md` → `progress.md` → the next phase in
 `masterplan.md`. Nothing else carries over — if a fact matters beyond this phase, it

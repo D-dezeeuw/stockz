@@ -34,9 +34,10 @@ optimized for trades-per-hour.
 7. **Keep `CHANGELOG.md`.** Every feature adds a line under `[Unreleased]` in its merge;
    each closed phase cuts `0.<phase>.0` (phase 30 ships **1.0.0**). See `way-of-working.md`.
 8. **Never stop before phase 30 is done.** The masterplan is delivered end to end without
-   pausing for approval. A phase boundary, a green suite, a deploy — none of these are
-   stopping points; close out and start the next feature in the same session. Only an
-   explicit instruction from the owner stops the work.
+   pausing for approval. The failure mode is **ending a turn with a status summary** —
+   after a merge or a phase close, the next action is the next feature's branch, not a
+   recap. A green suite, a deploy, a closed phase are all mid-loop, not finish lines.
+   Only an explicit instruction from the owner stops the work. See `way-of-working.md`.
 9. **Clear the context after every phase.** When a phase's ten features are merged, close
    it (`phase-close` skill): update `.claude/context/progress.md`, then `/clear` and start
    the next phase fresh. Never clear mid-feature. See `way-of-working.md`.

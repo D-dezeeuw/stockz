@@ -29,7 +29,10 @@ Rules of engagement:
    tests or split functions — never add a second test, never merge below the bar.
 6. Report: branch name, files changed, functions + their single tests, and the merge
    commit hash. If blocked, report exactly which task and why — do not improvise scope.
-7. If this was the phase's **tenth** feature, close the phase: run the `phase-close`
+7. **Then start the next feature immediately.** Delivering one feature is not the end of
+   your task; stopping to summarise after a merge is the single most common way this
+   project stalls. Only stop when the owner says so or the context is exhausted.
+8. If this was the phase's **tenth** feature, close the phase: run the `phase-close`
    skill (verify no branches/uncommitted work/stray servers, update
    `.claude/context/progress.md`, push), then clear the context window before the next
    phase. Never clear mid-feature — an unmerged branch's reasoning exists only in the

@@ -7,11 +7,31 @@ dependency demands it.
 
 ## The prime directive: do not stop before phase 30
 
-Delivery runs from phase 1 to phase 30 without pausing for approval. Finishing a feature,
-closing a phase, going green, deploying — none of these are reasons to stop; each is a
-checkpoint you pass through on the way to the next feature. When running autonomously,
-end a turn only because the context is exhausted (having first made state durable), never
-because a natural-looking boundary arrived. Only the owner saying so stops the work.
+Delivery runs from phase 1 to phase 30 without pausing for approval. Only the owner
+saying so stops the work.
+
+**The failure mode is ending a turn with a status summary.** Every stop so far has looked
+like this: merge a feature, close a phase, write a tidy recap of what shipped — and the
+turn ends there, because a reply with no tool call after it *is* a stop. The recap feels
+like the natural end of a unit of work. It is not; it is the thing that ends the session
+while 26 phases are still unbuilt.
+
+So, concretely:
+
+- **After merging a feature, the next action is starting the next feature.** Not a
+  summary, not a check-in, not "shall I continue".
+- **After closing a phase, the next action is the next phase's first branch.** A phase
+  boundary is a checkpoint you pass through.
+- **Never end a turn with prose while masterplan work remains.** If a turn must end
+  (context exhausted), the last actions are: make state durable — everything merged,
+  pushed, `progress.md` current — and *then* say so in one or two lines.
+- **Green tests, a clean lint, a successful deploy, a verified live page: none of these
+  are finish lines.** They are the middle of the loop.
+- Report *while* working, not instead of working. Narration belongs between tool calls,
+  never as the final act of a turn that still has runway.
+
+None of this overrides an explicit instruction from the owner to stop, pause or change
+direction.
 
 ## The feature cycle (mandatory, every feature)
 
