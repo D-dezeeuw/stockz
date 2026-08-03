@@ -12,6 +12,10 @@ import { defineConfig } from 'vite'
 export default defineConfig(({ mode }) => ({
   base: mode === 'production' ? '/stockz/' : '/',
 
+  // Only STOCKZ_-prefixed vars reach import.meta.env — nothing else from the shell
+  // can leak into the bundle (see .claude/context/integrations.md).
+  envPrefix: 'STOCKZ_',
+
   server: {
     port: 5173,
     strictPort: true,
