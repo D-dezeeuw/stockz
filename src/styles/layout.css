@@ -1,0 +1,86 @@
+/*
+ * Density tokens: spacing, radius, borders and the grid metrics.
+ *
+ * A scalping desk trades whitespace for information. These values are deliberately
+ * tighter than a normal web app's — the goal is the most instruments, levels and fills
+ * on screen at once without the layout becoming unreadable.
+ *
+ * Every block on the dashboard is the SAME width and height (phase 4 builds the grid on
+ * these tokens); only the header and footer are exempt.
+ */
+
+:root {
+  /* 4px base step — everything is a multiple, so nothing lands off-grid */
+  --sp-0: 0;
+  --sp-1: 0.25rem; /* 4px  — inside a cell */
+  --sp-2: 0.5rem; /* 8px  — between cells */
+  --sp-3: 0.75rem; /* 12px — block padding */
+  --sp-4: 1rem; /* 16px — between blocks */
+  --sp-5: 1.5rem; /* 24px — section separation */
+  --sp-6: 2rem; /* 32px — page margins */
+
+  /* Terminal corners: nearly square. Rounded cards read as "web app", not "desk". */
+  --radius-0: 0;
+  --radius-1: 2px;
+  --radius-2: 4px;
+
+  --border-1: 1px;
+  --border-2: 2px;
+  --border: var(--border-1) solid var(--line);
+  --border-strong: var(--border-1) solid var(--line-strong);
+
+  /* Grid metrics — one source for the uniform-block rule */
+  --block-w: 22rem; /* minimum column width before a column is dropped */
+  --block-h: 15rem; /* every block is exactly this tall */
+  --grid-gap: var(--sp-2);
+  --header-h: 2.75rem;
+  --footer-h: 2rem;
+
+  /* Depth, used sparingly: a desk is flat, not layered */
+  --shadow-1: 0 1px 0 rgb(0 0 0 / 40%);
+  --shadow-2: 0 2px 8px rgb(0 0 0 / 45%);
+
+  --z-block: 1;
+  --z-header: 10;
+  --z-overlay: 100;
+  --z-toast: 200;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* The page itself never scrolls sideways — content scrolls inside its own block. */
+html,
+body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+.stack > * + * {
+  margin-top: var(--sp-2);
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+}
+
+.row--tight {
+  gap: var(--sp-1);
+}
+
+.row--between {
+  justify-content: space-between;
+}
+
+/* Scroll containment: a busy tape must not push the page around. */
+.scroll-y {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: var(--line-strong) transparent;
+}

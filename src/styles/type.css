@@ -1,0 +1,99 @@
+/*
+ * Terminal typography.
+ *
+ * Monospace everywhere, with one non-negotiable: every number renders with
+ * `font-variant-numeric: tabular-nums`. Proportional digits change width as prices
+ * change, so a column of quotes shivers on every tick and the eye has to re-find the
+ * decimal point. Tabular figures keep the decimal in the same pixel column, which is
+ * what makes a fast tape readable at all.
+ *
+ * No web fonts are loaded: a font request that blocks first paint is unacceptable on a
+ * page whose entire pitch is latency. The stack prefers whatever the trader already has.
+ */
+
+:root {
+  --font-mono:
+    'JetBrains Mono', 'Fira Code', 'SF Mono', 'Cascadia Mono', ui-monospace,
+    'DejaVu Sans Mono', Menlo, Consolas, monospace;
+
+  /* One scale, tuned for density: 11px is a legible floor for dense grids. */
+  --fs-0: 0.6875rem; /* 11px — dense table cells, tape rows */
+  --fs-1: 0.75rem; /* 12px — block body, the default */
+  --fs-2: 0.875rem; /* 14px — block titles, header */
+  --fs-3: 1.125rem; /* 18px — prices worth reading across the room */
+  --fs-4: 1.5rem; /* 24px — PnL, the number that matters most */
+
+  --lh-tight: 1.15;
+  --lh-normal: 1.4;
+
+  --fw-normal: 400;
+  --fw-bold: 600;
+
+  --tracking-wide: 0.06em; /* status words: ARMED, FLAT, KILL */
+}
+
+html {
+  font-family: var(--font-mono);
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-size: var(--fs-1);
+  line-height: var(--lh-normal);
+  font-weight: var(--fw-normal);
+}
+
+/*
+ * Tabular numerals as the default, not an opt-in. Anything that can hold a number gets
+ * them; opting in per component is how one table ends up shivering.
+ */
+body,
+input,
+select,
+button,
+table,
+.num {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum' 1;
+}
+
+/* Prices are the reason this app exists — never let them wrap or hyphenate. */
+.price {
+  font-size: var(--fs-3);
+  font-weight: var(--fw-bold);
+  line-height: var(--lh-tight);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.pnl {
+  font-size: var(--fs-4);
+  font-weight: var(--fw-bold);
+  line-height: var(--lh-tight);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Terminal voice: status words shout in caps, everything else stays lowercase. */
+.status-word {
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wide);
+  font-weight: var(--fw-bold);
+}
+
+.label {
+  font-size: var(--fs-0);
+  color: var(--ink-muted);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wide);
+}
+
+/* Block titles */
+h1,
+h2,
+h3 {
+  font-size: var(--fs-2);
+  font-weight: var(--fw-bold);
+  line-height: var(--lh-tight);
+  margin: 0;
+}

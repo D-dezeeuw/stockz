@@ -10,6 +10,8 @@
        /stockz/ on GitHub Pages. Absolute paths would resolve above that prefix. -->
   <link rel="icon" href="./favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="./src/styles/tokens.css">
+  <link rel="stylesheet" href="./src/styles/type.css">
+  <link rel="stylesheet" href="./src/styles/layout.css">
 
   <!-- The UI engine, straight from the CDN. Pinned to an exact version: the live page
        must never shift under a trader because unpkg published a new minor. The same
@@ -35,7 +37,7 @@
     <p class="boot-line">
       {{app.name}} v{{app.version}} · engine spektrum@{{app.engine}} · {{ui.status}}
     </p>
-    <p class="status-line">{{ui.statusLine}}</p>
+    <p class="status-line num">{{ui.statusLine}}</p>
     <!-- Palette proof: every swatch reads its colour from a token, nothing hard-coded. -->
     <div class="swatches">
       <span class="swatch" style="background: var(--green)">profit</span>
