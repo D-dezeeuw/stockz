@@ -1446,32 +1446,32 @@
 **What:** An authenticated OKX session so fills and balances stream in real time.
 **How:** Sign the OKX login payload with Web Crypto HMAC-SHA256 using key/secret/passphrase and authenticate the private WebSocket endpoint.
 
-- [ ] **T9.4.1 - Branch private login** - What: Isolated auth work away from public feeds. How: git checkout -b feature/okx-private-login from main; add src/venues/okx/auth.js.
-- [ ] **T9.4.2 - hmacSha256Base64 fn** - What: A reusable browser-native signer with no crypto dependency. How: Implement hmacSha256Base64(secret, msg) via crypto.subtle.importKey and crypto.subtle.sign.
-- [ ] **T9.4.3 - buildLoginArgs fn** - What: A correct OKX login frame every time. How: Implement buildLoginArgs(key, secret, passphrase, ts) signing ts + 'GET' + '/users/self/verify'.
-- [ ] **T9.4.4 - Credential source wiring** - What: Keys flow from the phase 8 access layer, never hardcoded. How: getOkxCreds() reads the URL-param/modal key store with import.meta.env.STOCKZ_OKX_* dev fallback.
-- [ ] **T9.4.5 - Login handshake flow** - What: A confirmed authenticated private socket. How: Connect wss://ws.okx.com:8443/ws/v5/private, send the login op, await event login with code 0.
-- [ ] **T9.4.6 - Login failure path** - What: Bad keys surface instantly without freezing the desk. How: Map codes like 60009 to a toast and fire trigger('keys.open') to reopen the key modal.
-- [ ] **T9.4.7 - Private channel subscriptions** - What: Orders and account updates stream live after auth. How: Subscribe orders and account channels post-login and route frames via the F9.1 dispatcher.
-- [ ] **T9.4.8 - Re-login on reconnect** - What: Auth survives every network blip unattended. How: Hook the F9.1 reopen event to re-run the login handshake before replaying private subscriptions.
-- [ ] **T9.4.9 - Single unit tests for auth fns** - What: hmacSha256Base64 and buildLoginArgs verified against a known vector. How: One Vitest test each with a fixed secret/timestamp; run each via vitest -t.
-- [ ] **T9.4.10 - Merge private login** - What: Authenticated streaming lands on main. How: ESLint plus both targeted tests green, then merge feature/okx-private-login into main.
+- [x] **T9.4.1 - Branch private login** - What: Isolated auth work away from public feeds. How: git checkout -b feature/okx-private-login from main; add src/venues/okx/auth.js.
+- [x] **T9.4.2 - hmacSha256Base64 fn** - What: A reusable browser-native signer with no crypto dependency. How: Implement hmacSha256Base64(secret, msg) via crypto.subtle.importKey and crypto.subtle.sign.
+- [x] **T9.4.3 - buildLoginArgs fn** - What: A correct OKX login frame every time. How: Implement buildLoginArgs(key, secret, passphrase, ts) signing ts + 'GET' + '/users/self/verify'.
+- [x] **T9.4.4 - Credential source wiring** - What: Keys flow from the phase 8 access layer, never hardcoded. How: getOkxCreds() reads the URL-param/modal key store with import.meta.env.STOCKZ_OKX_* dev fallback.
+- [x] **T9.4.5 - Login handshake flow** - What: A confirmed authenticated private socket. How: Connect wss://ws.okx.com:8443/ws/v5/private, send the login op, await event login with code 0.
+- [x] **T9.4.6 - Login failure path** - What: Bad keys surface instantly without freezing the desk. How: Map codes like 60009 to a toast and fire trigger('keys.open') to reopen the key modal.
+- [x] **T9.4.7 - Private channel subscriptions** - What: Orders and account updates stream live after auth. How: Subscribe orders and account channels post-login and route frames via the F9.1 dispatcher.
+- [x] **T9.4.8 - Re-login on reconnect** - What: Auth survives every network blip unattended. How: Hook the F9.1 reopen event to re-run the login handshake before replaying private subscriptions.
+- [x] **T9.4.9 - Single unit tests for auth fns** - What: hmacSha256Base64 and buildLoginArgs verified against a known vector. How: One Vitest test each with a fixed secret/timestamp; run each via vitest -t.
+- [x] **T9.4.10 - Merge private login** - What: Authenticated streaming lands on main. How: ESLint plus both targeted tests green, then merge feature/okx-private-login into main.
 
 ### F9.5 - Signed REST Client
 
 **What:** Trusted access to OKX account and trade endpoints straight from the browser.
 **How:** A fetch-based client that builds OKX v5 prehash strings and attaches OK-ACCESS-KEY/SIGN/TIMESTAMP/PASSPHRASE headers per request.
 
-- [ ] **T9.5.1 - Branch REST client** - What: Isolated signed-HTTP work. How: git checkout -b feature/okx-rest from main; add src/venues/okx/rest.js.
-- [ ] **T9.5.2 - isoTimestamp fn** - What: Millisecond-precision timestamps OKX accepts. How: Implement isoTimestamp() returning new Date().toISOString() shaped per OKX signing docs.
-- [ ] **T9.5.3 - signOkxRequest fn** - What: Every REST call is provably from this desk. How: Implement signOkxRequest(ts, method, path, body, secret) building the prehash and reusing hmacSha256Base64.
-- [ ] **T9.5.4 - okxFetch wrapper** - What: One-line signed calls to https://www.okx.com. How: Implement okxFetch(method, path, body) attaching the four OK-ACCESS-* headers to a fetch request.
-- [ ] **T9.5.5 - unwrapOkxResponse fn** - What: Venue envelopes never leak into desk code. How: Implement unwrapOkxResponse(json) returning data when code is 0 and throwing a typed OkxError otherwise.
-- [ ] **T9.5.6 - Balance endpoint helper** - What: Real account equity visible for the HUD. How: Add getBalance() calling GET /api/v5/account/balance and publishing via setValue('okx.balance').
-- [ ] **T9.5.7 - Abort on slow calls** - What: A stalled request can never block the desk. How: Wire an AbortController with a 5s timeout into okxFetch, converting aborts into OkxError timeouts.
-- [ ] **T9.5.8 - Dev credential hygiene** - What: Local dev works without ever committing secrets. How: Read STOCKZ_OKX_API_KEY/SECRET_KEY/PASSPHRASE via import.meta.env; assert .env stays in .gitignore.
-- [ ] **T9.5.9 - Single unit tests for REST fns** - What: signOkxRequest and unwrapOkxResponse locked to spec. How: One Vitest test each with fixture payloads; run only via vitest -t per function.
-- [ ] **T9.5.10 - Merge REST client** - What: Signed REST access lands on main. How: ESLint clean plus targeted tests green, then merge feature/okx-rest into main.
+- [x] **T9.5.1 - Branch REST client** - What: Isolated signed-HTTP work. How: git checkout -b feature/okx-rest from main; add src/venues/okx/rest.js.
+- [x] **T9.5.2 - isoTimestamp fn** - What: Millisecond-precision timestamps OKX accepts. How: Implement isoTimestamp() returning new Date().toISOString() shaped per OKX signing docs.
+- [x] **T9.5.3 - signOkxRequest fn** - What: Every REST call is provably from this desk. How: Implement signOkxRequest(ts, method, path, body, secret) building the prehash and reusing hmacSha256Base64.
+- [x] **T9.5.4 - okxFetch wrapper** - What: One-line signed calls to https://www.okx.com. How: Implement okxFetch(method, path, body) attaching the four OK-ACCESS-* headers to a fetch request.
+- [x] **T9.5.5 - unwrapOkxResponse fn** - What: Venue envelopes never leak into desk code. How: Implement unwrapOkxResponse(json) returning data when code is 0 and throwing a typed OkxError otherwise.
+- [x] **T9.5.6 - Balance endpoint helper** - What: Real account equity visible for the HUD. How: Add getBalance() calling GET /api/v5/account/balance and publishing via setValue('okx.balance').
+- [x] **T9.5.7 - Abort on slow calls** - What: A stalled request can never block the desk. How: Wire an AbortController with a 5s timeout into okxFetch, converting aborts into OkxError timeouts.
+- [x] **T9.5.8 - Dev credential hygiene** - What: Local dev works without ever committing secrets. How: Read STOCKZ_OKX_API_KEY/SECRET_KEY/PASSPHRASE via import.meta.env; assert .env stays in .gitignore.
+- [x] **T9.5.9 - Single unit tests for REST fns** - What: signOkxRequest and unwrapOkxResponse locked to spec. How: One Vitest test each with fixture payloads; run only via vitest -t per function.
+- [x] **T9.5.10 - Merge REST client** - What: Signed REST access lands on main. How: ESLint clean plus targeted tests green, then merge feature/okx-rest into main.
 
 ### F9.6 - Order Place, Cancel and Amend
 
@@ -1510,32 +1510,32 @@
 **What:** The desk never trips OKX rate limits, so orders are never rejected for pace.
 **How:** Per-endpoint token buckets sized from OKX v5 documented limits, with deferred flush of queued calls and a visible remaining-budget gauge.
 
-- [ ] **T9.8.1 - Branch rate limits** - What: Isolated throttling work. How: git checkout -b feature/okx-ratelimit from main; add src/venues/okx/budget.js.
-- [ ] **T9.8.2 - Endpoint limit table** - What: Real OKX ceilings encoded, not guessed. How: Encode documented limits (e.g. 60 req/2s trade order, 10 req/2s balance) as a static module map.
-- [ ] **T9.8.3 - createBudget factory** - What: A reusable bucket for any endpoint. How: Implement createBudget(limit, windowMs) returning a token bucket with monotonic-clock refill.
-- [ ] **T9.8.4 - takeBudget fn** - What: Callers learn instantly whether to send or wait. How: Implement takeBudget(endpoint) consuming a token or returning the ms until the next refill.
-- [ ] **T9.8.5 - Deferred call queue** - What: Bursts smooth out instead of erroring. How: Queue okxFetch calls when takeBudget declines and flush them on a refill setTimeout, FIFO order.
-- [ ] **T9.8.6 - Subscribe frame budgeting** - What: Mass watchlist loads never trip the WS conn limit. How: Route subscribe frames through their own bucket so channel bursts are paced.
-- [ ] **T9.8.7 - Budget gauge block** - What: Remaining headroom visible before it matters. How: bindDOM a bar in the OKX status block driven by a computed percent of tokens left.
-- [ ] **T9.8.8 - Low-budget warning** - What: An early nudge before throttling bites. How: Fire a non-blocking orange toast via trigger('toast.push') when any bucket drops under 20%.
-- [ ] **T9.8.9 - Single unit tests for budget fns** - What: createBudget and takeBudget proven under fake timers. How: One Vitest test each using vi.useFakeTimers(); run via vitest -t only.
-- [ ] **T9.8.10 - Merge rate limits** - What: Throttle-proof calling lands on main. How: ESLint plus targeted tests green, then merge feature/okx-ratelimit into main.
+- [x] **T9.8.1 - Branch rate limits** - What: Isolated throttling work. How: git checkout -b feature/okx-ratelimit from main; add src/venues/okx/budget.js.
+- [x] **T9.8.2 - Endpoint limit table** - What: Real OKX ceilings encoded, not guessed. How: Encode documented limits (e.g. 60 req/2s trade order, 10 req/2s balance) as a static module map.
+- [x] **T9.8.3 - createBudget factory** - What: A reusable bucket for any endpoint. How: Implement createBudget(limit, windowMs) returning a token bucket with monotonic-clock refill.
+- [x] **T9.8.4 - takeBudget fn** - What: Callers learn instantly whether to send or wait. How: Implement takeBudget(endpoint) consuming a token or returning the ms until the next refill.
+- [x] **T9.8.5 - Deferred call queue** - What: Bursts smooth out instead of erroring. How: Queue okxFetch calls when takeBudget declines and flush them on a refill setTimeout, FIFO order.
+- [x] **T9.8.6 - Subscribe frame budgeting** - What: Mass watchlist loads never trip the WS conn limit. How: Route subscribe frames through their own bucket so channel bursts are paced.
+- [x] **T9.8.7 - Budget gauge block** - What: Remaining headroom visible before it matters. How: bindDOM a bar in the OKX status block driven by a computed percent of tokens left.
+- [x] **T9.8.8 - Low-budget warning** - What: An early nudge before throttling bites. How: Fire a non-blocking orange toast via trigger('toast.push') when any bucket drops under 20%.
+- [x] **T9.8.9 - Single unit tests for budget fns** - What: createBudget and takeBudget proven under fake timers. How: One Vitest test each using vi.useFakeTimers(); run via vitest -t only.
+- [x] **T9.8.10 - Merge rate limits** - What: Throttle-proof calling lands on main. How: ESLint plus targeted tests green, then merge feature/okx-ratelimit into main.
 
 ### F9.9 - Instrument Catalog
 
 **What:** Every OKX pair with its exact tick and lot sizes, ready for instant order math.
 **How:** Fetch /api/v5/public/instruments for SPOT and SWAP, normalize to the internal schema, and cache with a TTL via spektrum/persist.
 
-- [ ] **T9.9.1 - Branch instrument catalog** - What: Isolated reference-data work. How: git checkout -b feature/okx-instruments from main; add src/venues/okx/instruments.js.
-- [ ] **T9.9.2 - fetchInstruments call** - What: The full tradable universe pulled from the venue. How: GET /api/v5/public/instruments?instType= for SPOT and SWAP via plain fetch (public, unsigned).
-- [ ] **T9.9.3 - normalizeOkxInstrument fn** - What: One instrument shape shared with phase 12. How: Map instId/tickSz/lotSz/minSz/ctVal into {venue:'okx', id, symbol, tick, lot, min} numbers.
-- [ ] **T9.9.4 - Catalog cache with TTL** - What: Instant boot without refetching thousands of rows. How: Persist the normalized catalog through spektrum/persist to localStorage with a fetchedAt stamp.
-- [ ] **T9.9.5 - Background refresh** - What: Listings stay current without blocking the UI. How: Use Spektrum addAsync to refetch when the 24h TTL lapses and swap the catalog atomically.
-- [ ] **T9.9.6 - getInstrument lookup** - What: O(1) access on the hot order-entry path. How: Build a Map index by instId at load and expose getInstrument(instId) from the module.
-- [ ] **T9.9.7 - roundToTick helper** - What: Prices always land on a valid venue increment. How: Implement roundToTick(px, tickSz) with decimal-safe integer math to avoid float drift.
-- [ ] **T9.9.8 - Catalog readiness gate** - What: Dependent blocks never render against an empty catalog. How: setValue('okx.catalog.ready', true) after load and gate consumers with data-if.
-- [ ] **T9.9.9 - Single unit tests for catalog fns** - What: normalizeOkxInstrument and roundToTick verified. How: One Vitest test each with edge-case tick sizes like 0.001; vitest -t per function.
-- [ ] **T9.9.10 - Merge instrument catalog** - What: Reference data lands on main. How: ESLint clean plus both targeted tests green, then merge feature/okx-instruments into main.
+- [x] **T9.9.1 - Branch instrument catalog** - What: Isolated reference-data work. How: git checkout -b feature/okx-instruments from main; add src/venues/okx/instruments.js.
+- [x] **T9.9.2 - fetchInstruments call** - What: The full tradable universe pulled from the venue. How: GET /api/v5/public/instruments?instType= for SPOT and SWAP via plain fetch (public, unsigned).
+- [x] **T9.9.3 - normalizeOkxInstrument fn** - What: One instrument shape shared with phase 12. How: Map instId/tickSz/lotSz/minSz/ctVal into {venue:'okx', id, symbol, tick, lot, min} numbers.
+- [x] **T9.9.4 - Catalog cache with TTL** - What: Instant boot without refetching thousands of rows. How: Persist the normalized catalog through spektrum/persist to localStorage with a fetchedAt stamp.
+- [x] **T9.9.5 - Background refresh** - What: Listings stay current without blocking the UI. How: Use Spektrum addAsync to refetch when the 24h TTL lapses and swap the catalog atomically.
+- [x] **T9.9.6 - getInstrument lookup** - What: O(1) access on the hot order-entry path. How: Build a Map index by instId at load and expose getInstrument(instId) from the module.
+- [x] **T9.9.7 - roundToTick helper** - What: Prices always land on a valid venue increment. How: Implement roundToTick(px, tickSz) with decimal-safe integer math to avoid float drift.
+- [x] **T9.9.8 - Catalog readiness gate** - What: Dependent blocks never render against an empty catalog. How: setValue('okx.catalog.ready', true) after load and gate consumers with data-if.
+- [x] **T9.9.9 - Single unit tests for catalog fns** - What: normalizeOkxInstrument and roundToTick verified. How: One Vitest test each with edge-case tick sizes like 0.001; vitest -t per function.
+- [x] **T9.9.10 - Merge instrument catalog** - What: Reference data lands on main. How: ESLint clean plus both targeted tests green, then merge feature/okx-instruments into main.
 
 ### F9.10 - Venue Error Mapping and Toasts
 
