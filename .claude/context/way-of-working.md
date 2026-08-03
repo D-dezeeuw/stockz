@@ -50,7 +50,9 @@ clearing, the phase must be **closeable**:
    onward this is the point of the phase — the user must be able to click the thing
    that was built.
 
-Then clear the context (`/clear`) and start the next phase fresh. The first act of the
+Then clear the context (`/clear`) and start the next phase fresh — **immediately**. The
+boundary exists to make state durable, not to pause for approval; closing a phase and
+starting the next one belong in the same working session. The first act of the
 new context is to read `CLAUDE.md`, `progress.md` and the next phase in `masterplan.md`
 — that trio is the entire handoff. Nothing else may be assumed to carry over.
 

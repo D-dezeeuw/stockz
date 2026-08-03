@@ -79,9 +79,15 @@ those phases without a working deploy and an explicit "try this" pointer.
 `verify:pages` must pass before you share the link — a push is not evidence the site
 loads. If it fails, fix it before closing the phase rather than sharing a broken URL.
 
-## 6. Clear the context
+## 6. Clear the context — then keep going
 
 Tell the user the phase is closed, share the link, then `/clear`.
+
+**A phase boundary is a checkpoint, not a stopping point.** Closing a phase means the
+state is durable enough to survive a context reset — it does not mean the work pauses for
+approval. Unless the user asked for a pause, start the next phase's first feature
+immediately. When running autonomously, never end a turn at a phase boundary while there
+is runway left: close the phase, then begin the next one in the same turn.
 
 The next context bootstraps by reading `CLAUDE.md` → `progress.md` → the next phase in
 `masterplan.md`. Nothing else carries over — if a fact matters beyond this phase, it
