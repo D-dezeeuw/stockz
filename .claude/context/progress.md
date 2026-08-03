@@ -5,11 +5,25 @@ in `masterplan.md`, and knows where the project stands. Rewritten at every phase
 
 ---
 
-## Status: Phase 7 closed (v0.7.0) · Phase 8 next
+## Status: Phase 8 closed (v0.8.0) · Phase 9 next
 
 **Live:** https://d-dezeeuw.github.io/stockz/ (Pages serves `main` root — pushing is deploying)
-**Tests:** 149, one per function, all passing individually. Every gated file ≥85% branches.
+**Tests:** 165, one per function, all passing individually. Every gated file ≥85% branches.
 **Branch model:** everything merges to `main`; no feature branches outstanding.
+
+## Phase 8 — API Key Access Layer (closed)
+
+| Feature | What now exists | Where |
+| --- | --- | --- |
+| F8.1–F8.2 | `parseKeyParams`, `scrubKeyParams`, `adoptKeysFromUrl` | `src/venues/vault.js` |
+| F8.4 | the vault: `setKeys`, `getKey`, `hasKeys`, `keyPresence`, `clearKeys` | `src/venues/vault.js` |
+| F8.3, F8.7 | key modal, `submitKeys`, `lockKeys`, `needsKeys`, `adoptKeys` | `src/ui/keys.js`, `index.html` |
+| F8.9 | `adoptKeysFromEnv` — dev fallback to `STOCKZ_*` | `src/venues/vault.js` |
+
+**THE RULE: credentials never enter Spektrum state.** State goes into history,
+`serialize()`, journal exports and devtools dumps. Only `ui.keysPresent` (booleans) is in
+state; `getKey(venue, field)` is the single way a full key leaves the vault, which keeps
+key handling greppable. The key modal uses plain DOM inputs, never `data-model`.
 
 ## Phase 7 — User Settings & Persistence (closed)
 
@@ -105,21 +119,23 @@ go stale, and faults that reach the trader instead of the console.
 | F2.9 | `pushToast`, `dismissToast`, `expireToasts`, `describeEngineError`, `wireEngineErrors` | `src/ui/toast.js` |
 | F2.10 | `collectExpressions`, `renderPrecompileModule`, `cspMeta`, `npm run build:csp` | `src/app/csp.js`, `docs/csp.md` |
 
-## Next up: Phase 8 — API Key Access Layer
+## Next up: Phase 9 — OKX Connectivity
 
-First feature **F8.1**. Nothing reads keys yet. What phase 8 must build:
+First feature **F9.1**. Nothing talks to a venue yet. What phase 9 must build:
 
-- URL param parsing (`?okxKey=…&okxSecret=…&okxPass=…`, `?etoroKey=…&etoroUser=…`) plus
-  `history.replaceState` scrubbing so keys never linger in the address bar.
-- A key modal for when no params are present — `ui.modal` already drives overlays, so
-  reuse `ui.toggleOverlay` with a `'keys'` name.
-- **An in-memory vault module. Keys must never enter Spektrum state** — state flows into
-  history, `serialize()` and journal exports. This is the hard rule of the phase.
-- Optional "remember on this device" storing an obfuscated copy, behind an explicit
-  opt-in and a plain warning.
-- `venueKeyPresence()` / `keyPresenceBanner()` in `src/utils/env.js` already report
-  presence without exposing values — the vault should expose the same shape.
-- Dev fallback already reads `import.meta.env.STOCKZ_*`.
+- WS client wrapper with auto-reconnect (exponential backoff — `retryDelay` already
+  exists in `src/state/async.js`) and resubscribe on recovery.
+- Public channels: `tickers`, `trades`, `books5`/`books-l2-tbt`.
+- Private WS login: HMAC-SHA256 over `timestamp + 'GET' + '/users/self/verify'` using
+  Web Crypto (`crypto.subtle`), keys from `getKey('okx', …)` — **never from state**.
+- Signed REST (`OK-ACCESS-KEY/SIGN/TIMESTAMP/PASSPHRASE`) for orders and account.
+- Book checksum validation with resync on mismatch.
+- Venue state belongs in `market.venues.okx.state` — the header LEDs already bind to it
+  (`live`/`connecting`/`stale`/`dead` via `connectionClass`).
+- Every payload mapper is a pure function with one test; sockets stay in a thin edge.
+- Note: this container's headless Chromium cannot reach the network, and unit tests must
+  not open real sockets — inject a socket factory the way `registerSystems` injects its
+  timer.
 
 ## Gotchas (learned the hard way — do not rediscover)
 
