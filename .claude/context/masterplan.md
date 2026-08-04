@@ -2162,16 +2162,16 @@
 **What:** Last price and your position entries always in sight - profit distance readable in one look.
 **How:** A horizontal level renderer with right-axis tags fed from the ticker and positions stores, side-aware green/orange coloring.
 
-- [ ] **T13.7.1 - Branch level line work** - What: Reference levels built without renderer risk. How: git checkout -b feature/13-7-level-lines from main.
-- [ ] **T13.7.2 - Implement drawLevelLine** - What: One reusable dashed horizontal with an axis tag. How: Renderer taking price, label, color, and dash, drawing the line plus a right-edge tag pill.
-- [ ] **T13.7.3 - Bind the last-price line** - What: The market's current level always on screen. How: Spektrum computed feeding drawLevelLine from the phase 11 ticker store.
-- [ ] **T13.7.4 - Bind position entry lines** - What: Every open position's entry visible on the chart. How: Map the phase 18 positions store to levels labeled with average entry and size.
-- [ ] **T13.7.5 - Implement levelColor** - What: Green when winning, orange when losing, instantly. How: Pure fn from position side and price-versus-entry sign returning palette roles.
-- [ ] **T13.7.6 - Implement clampLevel edge arrows** - What: Off-screen levels still signal their direction. How: clampLevel fn pinning y to the plot edge and drawing an arrow tag pointing off-view.
-- [ ] **T13.7.7 - Watch stores for dirty marks** - What: Levels track price and position changes live. How: Spektrum watch on ticker and positions values marking the level layer dirty.
-- [ ] **T13.7.8 - Style level distinctions** - What: Levels never mistaken for grid lines. How: Distinct dash patterns and tag typography per level kind from design tokens.
-- [ ] **T13.7.9 - Write single unit tests for level fns** - What: Coloring and clamping proven. How: One Vitest test each for levelColor and clampLevel, run individually via vitest run -t.
-- [ ] **T13.7.10 - Verify and merge level lines** - What: Entry-to-price distance always readable mid-scalp. How: Targeted tests green plus a long/short visual pass, then merge feature/13-7-level-lines into main.
+- [x] **T13.7.1 - Branch level line work** - What: Reference levels built without renderer risk. How: git checkout -b feature/13-7-level-lines from main.
+- [x] **T13.7.2 - Implement drawLevelLine** - What: One reusable dashed horizontal with an axis tag. How: Renderer taking price, label, color, and dash, drawing the line plus a right-edge tag pill.
+- [x] **T13.7.3 - Bind the last-price line** - What: The market's current level always on screen. How: Spektrum computed feeding drawLevelLine from the phase 11 ticker store.
+- [x] **T13.7.4 - Bind position entry lines** - What: Every open position's entry visible on the chart. How: Map the phase 18 positions store to levels labeled with average entry and size.
+- [x] **T13.7.5 - Implement levelColor** - What: Green when winning, orange when losing, instantly. How: Pure fn from position side and price-versus-entry sign returning palette roles.
+- [x] **T13.7.6 - Implement clampLevel edge arrows** - What: Off-screen levels still signal their direction. How: clampLevel fn pinning y to the plot edge and drawing an arrow tag pointing off-view.
+- [x] **T13.7.7 - Watch stores for dirty marks** - What: Levels track price and position changes live. How: Spektrum watch on ticker and positions values marking the level layer dirty.
+- [x] **T13.7.8 - Style level distinctions** - What: Levels never mistaken for grid lines. How: Distinct dash patterns and tag typography per level kind from design tokens.
+- [x] **T13.7.9 - Write single unit tests for level fns** - What: Coloring and clamping proven. How: One Vitest test each for levelColor and clampLevel, run individually via vitest run -t.
+- [x] **T13.7.10 - Verify and merge level lines** - What: Entry-to-price distance always readable mid-scalp. How: Targeted tests green plus a long/short visual pass, then merge feature/13-7-level-lines into main.
 
 ### F13.8 - Theme-Aware Chart Palettes
 
