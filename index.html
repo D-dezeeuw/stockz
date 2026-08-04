@@ -99,6 +99,9 @@
                 :class="ui.section === 'analytics' ? 'nav__item is-active' : 'nav__item'">stats</button>
       </nav>
 
+      <!-- Unmissable, because the dangerous mistake is not a chart drawing the wrong data
+           - it is a trader seeing a price they like on a book from an hour ago. -->
+      <span class="badge badge--playback" data-if="playback.source === 'playback'">PLAYBACK</span>
       <span class="grow status-line num truncate">{{ui.statusLine}}</span>
 
       <!-- Venue LEDs: is the desk actually connected to anything? -->

@@ -151,3 +151,18 @@ body,
 .icon-btn.is-silenced {
   color: var(--orange);
 }
+
+/*
+ * The playback badge.
+ *
+ * Orange and always in the header, never inside the block being replayed: a warning that
+ * only shows where you are already looking is a warning for somebody who did not need it.
+ */
+.badge--playback {
+  padding-inline: var(--sp-1);
+  border: 1px solid var(--orange);
+  border-radius: var(--radius-1);
+  color: var(--orange);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
