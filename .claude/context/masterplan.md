@@ -3498,16 +3498,16 @@
 **What:** The user captures the directional drive right after a session opens, when scalps pay fastest.
 **How:** UTC session-clock gate plus opening-range fns; a range breakout inside the window fires with-trend entries.
 
-- [ ] **T21.7.1 - Branch and scaffold open-drive module** - What: A dedicated branch for the session-open play. How: git checkout -b feature/f21-7-open-drive; create src/strategies/openDrive.js.
-- [ ] **T21.7.2 - Build sessionClock fn** - What: The strategy knows exactly when tradable session opens occur. How: Implement sessionClock(nowUtc, sessionDefs) returning active window and secondsToOpen from configured UTC windows.
-- [ ] **T21.7.3 - Build openingRange fn** - What: The first-minutes high/low captured as the breakout box. How: Implement openingRange(state, tick, rangeSecs) accumulating high and low during the opening window.
-- [ ] **T21.7.4 - Build driveSignal fn** - What: With-trend entry the moment the box breaks with buffer. How: Implement driveSignal(price, range, bufferTicks, windowActive) returning long, short or null.
-- [ ] **T21.7.5 - Build oneShotGuard fn** - What: Discipline built in: a max entry count per session open. How: Implement oneShotGuard(state, sessionId, maxEntries) counting fires per open.
-- [ ] **T21.7.6 - Wire clocked system** - What: The strategy arms itself on schedule with no user action. How: addSystem() on ticks plus an addAsync 1s clock updating sessionClock state and arming the window.
-- [ ] **T21.7.7 - Build trailStop fn** - What: The drive is ridden with a trailing tick stop, not a fixed target. How: Implement trailStop(position, price, trailTicks) ratcheting the stop and signaling exit on hit.
-- [ ] **T21.7.8 - Params and countdown readout** - What: Sessions list, rangeSecs and bufferTicks tunable; countdown-to-open visible. How: setValue params; a computed() secondsToOpen label rendered in the strategy row via {{countdown}}.
-- [ ] **T21.7.9 - Write single unit tests** - What: Clock and range math each proven once. How: One Vitest test each for sessionClock, openingRange, driveSignal, oneShotGuard and trailStop; vitest -t runs.
-- [ ] **T21.7.10 - Verify on open replay and merge** - What: Correct arming and a clean breakout fire on record. How: Replay a session-open recording, verify the arm/fire/trail sequence, ESLint, merge to main.
+- [x] **T21.7.1 - Branch and scaffold open-drive module** - What: A dedicated branch for the session-open play. How: git checkout -b feature/f21-7-open-drive; create src/strategies/openDrive.js.
+- [x] **T21.7.2 - Build sessionClock fn** - What: The strategy knows exactly when tradable session opens occur. How: Implement sessionClock(nowUtc, sessionDefs) returning active window and secondsToOpen from configured UTC windows.
+- [x] **T21.7.3 - Build openingRange fn** - What: The first-minutes high/low captured as the breakout box. How: Implement openingRange(state, tick, rangeSecs) accumulating high and low during the opening window.
+- [x] **T21.7.4 - Build driveSignal fn** - What: With-trend entry the moment the box breaks with buffer. How: Implement driveSignal(price, range, bufferTicks, windowActive) returning long, short or null.
+- [x] **T21.7.5 - Build oneShotGuard fn** - What: Discipline built in: a max entry count per session open. How: Implement oneShotGuard(state, sessionId, maxEntries) counting fires per open.
+- [x] **T21.7.6 - Wire clocked system** - What: The strategy arms itself on schedule with no user action. How: addSystem() on ticks plus an addAsync 1s clock updating sessionClock state and arming the window.
+- [x] **T21.7.7 - Build trailStop fn** - What: The drive is ridden with a trailing tick stop, not a fixed target. How: Implement trailStop(position, price, trailTicks) ratcheting the stop and signaling exit on hit.
+- [x] **T21.7.8 - Params and countdown readout** - What: Sessions list, rangeSecs and bufferTicks tunable; countdown-to-open visible. How: setValue params; a computed() secondsToOpen label rendered in the strategy row via {{countdown}}.
+- [x] **T21.7.9 - Write single unit tests** - What: Clock and range math each proven once. How: One Vitest test each for sessionClock, openingRange, driveSignal, oneShotGuard and trailStop; vitest -t runs.
+- [x] **T21.7.10 - Verify on open replay and merge** - What: Correct arming and a clean breakout fire on record. How: Replay a session-open recording, verify the arm/fire/trail sequence, ESLint, merge to main.
 
 ### F21.8 - Volatility Squeeze Expansion
 
