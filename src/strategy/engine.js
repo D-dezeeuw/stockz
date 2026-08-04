@@ -5,6 +5,7 @@ import { momentumStrategy } from './builtin/momentum.js'
 import { vwapRevertStrategy } from './builtin/vwap-revert.js'
 import { spreadCaptureStrategy } from './builtin/spread-capture.js'
 import { bookImbalanceStrategy } from './builtin/book-imbalance.js'
+import { tapePressureStrategy } from './builtin/tape-pressure.js'
 import { safeInvoke } from './sandbox.js'
 
 /**
@@ -25,6 +26,7 @@ export const BUILTIN_STRATEGIES = Object.freeze([
   vwapRevertStrategy,
   spreadCaptureStrategy,
   bookImbalanceStrategy,
+  tapePressureStrategy,
   compositeStrategy,
 ])
 
