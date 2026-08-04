@@ -1,0 +1,90 @@
+/*
+ * Which money is real.
+ *
+ * Three signals, all reading the same state: a segmented control in the header, a strip
+ * under it, and an accent on the blocks that can actually move money. Redundant on
+ * purpose — "I thought I was on paper" is a sentence said after the fact, and one signal
+ * is one that can be missed.
+ *
+ * The accent is on the *trading* blocks only. Colouring the whole grid would make the
+ * accent mean "the app is open", which is not information.
+ */
+.mode {
+  display: inline-flex;
+  flex: 0 0 auto;
+  border: 1px solid var(--line);
+  overflow: hidden;
+}
+
+.mode__seg {
+  position: relative;
+  padding: 2px var(--sp-1);
+  border: 0;
+  background: none;
+  color: var(--ink-muted);
+  font: inherit;
+  font-size: var(--fs-0);
+  letter-spacing: 0.04em;
+  cursor: pointer;
+}
+
+.mode__seg--paper.is-on {
+  background: var(--orange);
+  color: var(--ink-inverse);
+}
+
+.mode__seg--live.is-on {
+  background: var(--green);
+  color: var(--ink-inverse);
+}
+
+.mode__seg:hover:not(.is-on) {
+  color: var(--ink);
+}
+
+/*
+ * The hold ring. It fills from `--held`, which the timer writes into state — so the
+ * progress shown is the progress actually being kept rather than a CSS animation running
+ * alongside one, which would let the bar finish before the switch did (or after).
+ */
+.mode__ring {
+  position: absolute;
+  inset-block-end: 0;
+  inset-inline-start: 0;
+  block-size: 2px;
+  inline-size: var(--held, 0%);
+  background: var(--green);
+  transition: inline-size 40ms linear;
+}
+
+.paper-strip {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: var(--sp-2);
+  padding: 2px var(--sp-2);
+  background: var(--orange);
+  color: var(--ink-inverse);
+  font-size: var(--fs-0);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.paper-strip__note {
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  opacity: 0.85;
+}
+
+/* A left rule rather than a tint: a tinted block fights the ladder's own bid/ask colours,
+   and this has to be readable without competing with the data it frames. */
+.block.is-paper {
+  border-inline-start: 2px solid var(--orange);
+}
+
+@media (max-width: 40rem) {
+  .paper-strip__note {
+    display: none;
+  }
+}

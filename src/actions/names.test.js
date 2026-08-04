@@ -38,6 +38,7 @@ import { registerReportActions } from '../analytics/report.js'
 import { registerRecorderActions } from '../playback/recorder.js'
 import { registerLibraryActions } from '../playback/library.js'
 import { registerPlayerActions } from '../playback/player.js'
+import { registerModeActions } from '../exec/mode.js'
 import { registerBacktestActions } from '../backtest/runner.js'
 import { registerBacktestReportActions } from '../backtest/report.js'
 import { registerSweepActions } from '../backtest/sweep.js'
@@ -133,6 +134,9 @@ describe('allActionNames', () => {
       'playback.step',
       'playback.speed',
       'playback.exit',
+      'trade.setMode',
+      'trade.holdLive',
+      'trade.releaseLive',
       'backtest.start',
       'backtest.cancel',
       'backtest.configure',
@@ -230,6 +234,7 @@ describe('allActionNames', () => {
     registerRecorderActions()
     registerLibraryActions()
     registerPlayerActions()
+    registerModeActions()
     registerBacktestActions()
     registerBacktestReportActions()
     registerSweepActions()

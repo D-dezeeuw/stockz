@@ -209,6 +209,9 @@ export const PATHS = Object.freeze({
   trade: Object.freeze({
     armed: 'trade.armed',
     mode: 'trade.mode',
+    // How far through the press-and-hold that goes live. Filled from the timer rather than
+    // by CSS, so the ring shows the progress actually being kept.
+    holdPct: 'trade.holdPct',
     orders: 'trade.orders',
     positions: 'trade.positions',
     dayPnl: 'trade.dayPnl',
