@@ -4285,16 +4285,16 @@
 **What:** A ranked list of instruments by net PnL with win rate and trade count, so the user doubles down on pairs that pay and drops ones that bleed.
 **How:** groupByInstrument() and rankInstruments() fns feeding a canvas horizontal bar chart with click-through filtering into the journal block.
 
-- [ ] **T26.4.1 - Cut ranking branch** - What: Ranking work stays off main. How: git checkout -b feature/f26.4-instrument-ranking from main.
-- [ ] **T26.4.2 - Implement groupByInstrument()** - What: Per-instrument totals from raw trades. How: Pure groupByInstrument(trades) in src/analytics/instruments.js aggregating netPnl, fees, count and wins per instrument id.
-- [ ] **T26.4.3 - Implement rankInstruments()** - What: Best to worst ordering with derived rates. How: rankInstruments(groups) sorting by netPnl descending and attaching winRate and avgPnl per instrument.
-- [ ] **T26.4.4 - Render horizontal bars** - What: Relative performance visible as proportional bars. How: drawRanking(ctx, ranks, size) painting green/orange bars from a zero axis with instrument labels in monospace on canvas.
-- [ ] **T26.4.5 - Annotate count and win rate** - What: Context beyond raw PnL on every row. How: Draw trade count and winRate percentage at each bar end, dimmed via the design-system muted color token.
-- [ ] **T26.4.6 - Add click-to-filter** - What: One click jumps from a ranked instrument to its trades. How: Canvas click hit-testing rows then setValue on journal.filters.instrument so the journal block re-slices instantly.
-- [ ] **T26.4.7 - Wire reactive updates** - What: Rankings reshuffle live as results change. How: Spektrum computed('analytics.ranking') over period-filtered trades with a watch scheduling redraws on requestAnimationFrame.
-- [ ] **T26.4.8 - Cap and overflow the list** - What: Ten instruments readable, the rest reachable. How: Render the top ten bars and an aggregated Other row, with a data-action toggle expanding the full list.
-- [ ] **T26.4.9 - Write single unit tests for ranking fns** - What: groupByInstrument and rankInstruments each proven once. How: One Vitest test per function in instruments.test.js with a multi-venue fixture, run via vitest run -t.
-- [ ] **T26.4.10 - Verify and merge ranking** - What: The ranking ships green with working click-through. How: Run targeted tests, click a bar and confirm the journal filter applies, then merge the feature branch.
+- [x] **T26.4.1 - Cut ranking branch** - What: Ranking work stays off main. How: git checkout -b feature/f26.4-instrument-ranking from main.
+- [x] **T26.4.2 - Implement groupByInstrument()** - What: Per-instrument totals from raw trades. How: Pure groupByInstrument(trades) in src/analytics/instruments.js aggregating netPnl, fees, count and wins per instrument id.
+- [x] **T26.4.3 - Implement rankInstruments()** - What: Best to worst ordering with derived rates. How: rankInstruments(groups) sorting by netPnl descending and attaching winRate and avgPnl per instrument.
+- [x] **T26.4.4 - Render horizontal bars** - What: Relative performance visible as proportional bars. How: drawRanking(ctx, ranks, size) painting green/orange bars from a zero axis with instrument labels in monospace on canvas.
+- [x] **T26.4.5 - Annotate count and win rate** - What: Context beyond raw PnL on every row. How: Draw trade count and winRate percentage at each bar end, dimmed via the design-system muted color token.
+- [x] **T26.4.6 - Add click-to-filter** - What: One click jumps from a ranked instrument to its trades. How: Canvas click hit-testing rows then setValue on journal.filters.instrument so the journal block re-slices instantly.
+- [x] **T26.4.7 - Wire reactive updates** - What: Rankings reshuffle live as results change. How: Spektrum computed('analytics.ranking') over period-filtered trades with a watch scheduling redraws on requestAnimationFrame.
+- [x] **T26.4.8 - Cap and overflow the list** - What: Ten instruments readable, the rest reachable. How: Render the top ten bars and an aggregated Other row, with a data-action toggle expanding the full list.
+- [x] **T26.4.9 - Write single unit tests for ranking fns** - What: groupByInstrument and rankInstruments each proven once. How: One Vitest test per function in instruments.test.js with a multi-venue fixture, run via vitest run -t.
+- [x] **T26.4.10 - Verify and merge ranking** - What: The ranking ships green with working click-through. How: Run targeted tests, click a bar and confirm the journal filter applies, then merge the feature branch.
 
 ### F26.5 - Hold-Time Distribution Histogram
 

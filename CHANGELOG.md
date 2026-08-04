@@ -49,6 +49,19 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
   The scale is symmetric around zero, or a good week's losses would look mild purely because
   the wins were bigger. The best and worst hours are named in words underneath, because that
   is the sentence somebody actually wants told to them.
+- **Which instruments actually pay** — traders accumulate symbols the way people accumulate
+  browser tabs: something moved once, it went on the watchlist, and it has been quietly
+  costing money since. Ranked by net, with the **trade count on every row**, because net alone
+  would put one lucky trade above a hundred grinding ones and a ranking that recommended an
+  instrument on a single sample is worse than no ranking. Fees are shown per instrument rather
+  than folded away, since the symbol that pays least is very often not the one that moves
+  least — it is the one being traded most, at the venue charging most, in size too small to
+  carry the charge. The tail is **aggregated rather than truncated**: a list that simply
+  stopped at ten would hide the twenty small bleeders that together outweigh the instrument at
+  the top. A tiny-but-real number still gets a visible sliver of bar, because zero width reads
+  as "no data" and that is a different claim from "barely made anything". Rows are DOM rather
+  than canvas — the same reason the ladder is — so one click lands on that instrument's trades
+  in the journal, which is the whole reason to look at the ranking at all.
 
 ## [0.25.0] — 2026-08-04 — Phase 25: Trade Journal & Time-Travel Audit
 

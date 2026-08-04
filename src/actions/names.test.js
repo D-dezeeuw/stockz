@@ -31,6 +31,7 @@ import { registerFilterActions } from '../journal/filters.js'
 import { registerCsvActions } from '../journal/csv.js'
 import { registerSummaryActions } from '../journal/summary.js'
 import { registerRetentionActions } from '../journal/retention.js'
+import { registerRankingActions } from '../analytics/instruments.js'
 import { registerStrategyActions } from '../strategy/registry.js'
 import { registerTicketActions } from '../ticket/actions.js'
 import { registerSizingActions } from '../ticket/sizing.js'
@@ -87,6 +88,8 @@ describe('allActionNames', () => {
       'breaker.hold',
       'breaker.release',
       'breaker.copyLog',
+      'analytics.pickInstrument',
+      'analytics.expandRanking',
       'journal.addTag',
       'journal.removeTag',
       'journal.setNote',
@@ -180,6 +183,7 @@ describe('allActionNames', () => {
     registerCsvActions()
     registerSummaryActions()
     registerRetentionActions()
+    registerRankingActions()
     registerStrategyActions()
     registerTicketActions()
     registerSizingActions()

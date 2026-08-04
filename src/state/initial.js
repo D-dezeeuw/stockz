@@ -238,6 +238,9 @@ export function initialState(overrides = {}) {
     [PATHS.analytics.drawdown]: { maxDrawdown: 0, peak: 0, trough: 0 },
     [PATHS.analytics.hours]: [],
     [PATHS.analytics.hourExtremes]: { best: null, worst: null },
+    [PATHS.analytics.ranking]: [],
+    [PATHS.analytics.rankingTotal]: 0,
+    [PATHS.analytics.rankingExpanded]: false,
 
     // journal
     [PATHS.journal.trades]: [],
