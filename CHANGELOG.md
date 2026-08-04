@@ -12,6 +12,11 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ### Added
 
+- **Tick line chart** — the raw wiggle, drawn honestly and cheaply: a feed stall becomes
+  a gap rather than a flat line implying the market sat still, and thousands of prints
+  collapse to one min/max segment per pixel column so a one-print spike survives
+  downsampling. The last price pulses on each print, and the chart repaints only when its
+  own symbol trades. (F13.3)
 - **Chart scale maths** — price↔pixel and time↔pixel mapping both ways, auto-ranging
   snapped to the instrument's tick size, and price formatting derived from that same tick
   size, so no axis ever labels a price the instrument cannot trade at. Pan/zoom composes
