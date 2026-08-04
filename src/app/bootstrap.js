@@ -29,6 +29,7 @@ import { registerShortcutActions } from '../ticket/shortcuts.js'
 import { registerIntentAction } from '../ticket/intent.js'
 import { applyDefaultBindings } from '../keys/defaults.js'
 import { mountKeymap } from '../keys/keymap.js'
+import { registerBindingActions } from '../keys/overrides.js'
 import { appVersion } from './version.js'
 
 /**
@@ -85,6 +86,7 @@ export function bootstrap(options = {}) {
   registerSubmitAction({ send: sendOrder })
   registerShortcutActions({ send: sendOrder })
   registerIntentAction({ submit: submitFromIntent })
+  registerBindingActions()
   adoptKeys()
   applyTheme(doc?.documentElement?.getAttribute?.('data-theme') || preferredTheme(), doc)
   const derived = registerDerived()

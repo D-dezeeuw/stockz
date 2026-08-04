@@ -2599,32 +2599,32 @@
 **What:** Make every key yours - rebind any action and keep the layout across sessions.
 **How:** keys.overrides map in phase-7 settings synced with spektrum/persist and merged over the defaults at load time.
 
-- [ ] **T16.3.1 - Remapping branch** - What: Safe space for override plumbing. How: Branch feature/f16-03-remapping from main.
-- [ ] **T16.3.2 - Overrides settings schema** - What: Custom keys that survive reloads. How: Add keys.overrides to the phase-7 settings state wired into spektrum/persist localStorage sync.
-- [ ] **T16.3.3 - mergeBindings() function** - What: One effective map from two sources. How: Pure fn layering overrides atop DEFAULT_BINDINGS where a null override unbinds a chord.
-- [ ] **T16.3.4 - applyOverride() function** - What: Rebinds take effect immediately. How: Validate then setValue the override and re-register the live chord in the registry Map.
-- [ ] **T16.3.5 - Reset actions** - What: Escape hatch back to stock keys. How: Per-binding and reset-all data-action handlers clearing overrides and restoring defaults.
-- [ ] **T16.3.6 - Settings bindings list** - What: All keys reviewable in one screen. How: data-each list of effective bindings inside the phase-5 settings surface.
-- [ ] **T16.3.7 - migrateBindings() function** - What: Old saved layouts never break. How: Versioned overrides schema upgraded on load by a migration fn before merging.
-- [ ] **T16.3.8 - Live re-registration** - What: Rebinds work without a reload. How: watch() keys.overrides and rebuild the registry Map on every change.
-- [ ] **T16.3.9 - Single tests for override fns** - What: Merge and migrate logic pinned. How: One Vitest test each for mergeBindings, applyOverride and migrateBindings via vitest -t.
-- [ ] **T16.3.10 - Merge remapping** - What: Personal layouts on main. How: Lint plus targeted tests green, merge feature/f16-03-remapping.
+- [x] **T16.3.1 - Remapping branch** - What: Safe space for override plumbing. How: Branch feature/f16-03-remapping from main.
+- [x] **T16.3.2 - Overrides settings schema** - What: Custom keys that survive reloads. How: Add keys.overrides to the phase-7 settings state wired into spektrum/persist localStorage sync.
+- [x] **T16.3.3 - mergeBindings() function** - What: One effective map from two sources. How: Pure fn layering overrides atop DEFAULT_BINDINGS where a null override unbinds a chord.
+- [x] **T16.3.4 - applyOverride() function** - What: Rebinds take effect immediately. How: Validate then setValue the override and re-register the live chord in the registry Map.
+- [x] **T16.3.5 - Reset actions** - What: Escape hatch back to stock keys. How: Per-binding and reset-all data-action handlers clearing overrides and restoring defaults.
+- [x] **T16.3.6 - Settings bindings list** - What: All keys reviewable in one screen. How: data-each list of effective bindings inside the phase-5 settings surface.
+- [x] **T16.3.7 - migrateBindings() function** - What: Old saved layouts never break. How: Versioned overrides schema upgraded on load by a migration fn before merging.
+- [x] **T16.3.8 - Live re-registration** - What: Rebinds work without a reload. How: watch() keys.overrides and rebuild the registry Map on every change.
+- [x] **T16.3.9 - Single tests for override fns** - What: Merge and migrate logic pinned. How: One Vitest test each for mergeBindings, applyOverride and migrateBindings via vitest -t.
+- [x] **T16.3.10 - Merge remapping** - What: Personal layouts on main. How: Lint plus targeted tests green, merge feature/f16-03-remapping.
 
 ### F16.4 - Conflict Detection
 
 **What:** Never silently lose a shortcut - clashing bindings are flagged before they bite.
 **How:** findConflicts() cross-checks candidate chords against the effective map per scope, surfacing warnings in the rebind flow.
 
-- [ ] **T16.4.1 - Conflicts branch** - What: Focused branch for clash logic. How: Branch feature/f16-04-conflicts from main.
-- [ ] **T16.4.2 - findConflicts() function** - What: Every clash caught up front. How: Pure fn returning conflicting action ids for a candidate chord and scope pair.
-- [ ] **T16.4.3 - Scope-aware rules** - What: Only real collisions block a rebind. How: Conflict matrix where same-scope clashes are hard errors and cross-scope overlaps are warnings.
-- [ ] **T16.4.4 - validateChord() with reserved list** - What: System keys stay untouchable. How: RESERVED_CHORDS (ctrl+k, shift+slash, escape) rejected before registration.
-- [ ] **T16.4.5 - Inline conflict banner** - What: See the clash while rebinding. How: Warning row in the capture component shown via data-if on a conflicts state key.
-- [ ] **T16.4.6 - Swap and overwrite resolution** - What: Fix a clash in one click. How: data-action handlers that swap the two chords or unbind the older action safely.
-- [ ] **T16.4.7 - Conflict badges in settings** - What: Clashes visible without hunting. How: Orange badge on double-booked rows in the F16.3 bindings list via :attr class.
-- [ ] **T16.4.8 - auditBindings() boot check** - What: A corrupt layout cannot boot silently. How: Load-time audit disabling duplicate chords deterministically and logging the result.
-- [ ] **T16.4.9 - Single tests for conflict fns** - What: Clash rules beyond doubt. How: One Vitest test each for findConflicts and validateChord, run only via vitest -t.
-- [ ] **T16.4.10 - Merge conflicts feature** - What: Guarded rebinding on main. How: Lint and targeted tests green, merge feature/f16-04-conflicts.
+- [x] **T16.4.1 - Conflicts branch** - What: Focused branch for clash logic. How: Branch feature/f16-04-conflicts from main.
+- [x] **T16.4.2 - findConflicts() function** - What: Every clash caught up front. How: Pure fn returning conflicting action ids for a candidate chord and scope pair.
+- [x] **T16.4.3 - Scope-aware rules** - What: Only real collisions block a rebind. How: Conflict matrix where same-scope clashes are hard errors and cross-scope overlaps are warnings.
+- [x] **T16.4.4 - validateChord() with reserved list** - What: System keys stay untouchable. How: RESERVED_CHORDS (ctrl+k, shift+slash, escape) rejected before registration.
+- [x] **T16.4.5 - Inline conflict banner** - What: See the clash while rebinding. How: Warning row in the capture component shown via data-if on a conflicts state key.
+- [x] **T16.4.6 - Swap and overwrite resolution** - What: Fix a clash in one click. How: data-action handlers that swap the two chords or unbind the older action safely.
+- [x] **T16.4.7 - Conflict badges in settings** - What: Clashes visible without hunting. How: Orange badge on double-booked rows in the F16.3 bindings list via :attr class.
+- [x] **T16.4.8 - auditBindings() boot check** - What: A corrupt layout cannot boot silently. How: Load-time audit disabling duplicate chords deterministically and logging the result.
+- [x] **T16.4.9 - Single tests for conflict fns** - What: Clash rules beyond doubt. How: One Vitest test each for findConflicts and validateChord, run only via vitest -t.
+- [x] **T16.4.10 - Merge conflicts feature** - What: Guarded rebinding on main. How: Lint and targeted tests green, merge feature/f16-04-conflicts.
 
 ### F16.5 - Ctrl-K Command Palette
 

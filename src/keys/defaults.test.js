@@ -47,6 +47,11 @@ describe('applyDefaultBindings', () => {
     applyDefaultBindings({ KeyB: 'ticket.reset' })
     tick()
     expect(appState.ui.chordSheet.find((row) => row.key === 'B').action).toBe('ticket.reset')
+
+    // An explicit null switches a key off entirely, which is not the same as leaving it
+    // at its default.
+    applyDefaultBindings({ KeyB: null })
+    expect(resolveKey('KeyB')).toBeNull()
   })
 })
 
