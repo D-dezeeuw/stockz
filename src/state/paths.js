@@ -13,6 +13,7 @@
  *   market.*    live venue data; never persisted, never in a settings export
  *   trade.*     orders, positions, PnL, arm state
  *   strategy.*  registered strategies and their live signals
+ *   alerts.*    what the desk has tapped the trader on the shoulder about
  *
  * Credentials are absent on purpose: state flows into history, `serialize()` and journal
  * exports, so keys live only in the in-memory vault.
@@ -26,6 +27,7 @@ export const NAMESPACES = Object.freeze([
   'market',
   'trade',
   'strategy',
+  'alerts',
 ])
 
 /** Namespaces that survive a reload (written to localStorage by spektrum/persist). */
@@ -72,6 +74,9 @@ export const PATHS = Object.freeze({
     hudRow: 'ui.hudRow',
     strategyForm: 'ui.strategyForm',
     compositeWeights: 'ui.compositeWeights',
+    alertDraft: 'ui.alertDraft',
+    alertDirection: 'ui.alertDirection',
+    alertChips: 'ui.alertChips',
     captureFor: 'ui.captureFor',
     capturePreview: 'ui.capturePreview',
   }),
@@ -107,6 +112,7 @@ export const PATHS = Object.freeze({
     activePresets: 'settings.activePresets',
     customPresets: 'settings.customPresets',
     strategyStats: 'settings.strategyStats',
+    alerts: 'settings.alerts',
     chords: 'settings.chords',
   }),
   market: Object.freeze({
@@ -163,6 +169,10 @@ export const PATHS = Object.freeze({
     // derived
     exposure: 'trade.exposure',
     openOrders: 'trade.openOrders',
+  }),
+  alerts: Object.freeze({
+    fired: 'alerts.fired',
+    log: 'alerts.log',
   }),
   strategy: Object.freeze({
     registered: 'strategy.registered',

@@ -12,6 +12,7 @@ import { registerPrefillActions } from '../book/prefill.js'
 import { registerGroupingActions } from '../book/grouping.js'
 import { registerTapeActions } from '../book/tape.js'
 import { registerCompactActions } from '../hud/compact.js'
+import { registerAlertActions } from '../alerts/price.js'
 import { registerStrategyActions } from '../strategy/registry.js'
 import { registerTicketActions } from '../ticket/actions.js'
 import { registerSizingActions } from '../ticket/sizing.js'
@@ -48,6 +49,9 @@ describe('allActionNames', () => {
       'strategy.setWeight',
       'strategy.setPreset',
       'strategy.resetScore',
+      'alerts.create',
+      'alerts.update',
+      'alerts.remove',
       'book.prefill',
       'book.setGroup',
       'book.setFloor',
@@ -98,6 +102,7 @@ describe('allActionNames', () => {
     registerGroupingActions()
     registerTapeActions()
     registerCompactActions()
+    registerAlertActions()
     registerStrategyActions()
     registerTicketActions()
     registerSizingActions()

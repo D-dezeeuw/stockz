@@ -321,6 +321,28 @@
                 </div>
               </div>
             </div>
+            <!-- An alert set in under three seconds: level, direction, done. -->
+            <div class="alerts" data-if="block.id === 'watchlist'">
+              <form class="alerts__form" data-action="submit" data-fn="alerts.create"
+                    :data-instrument="market.focus">
+                <input type="number" name="price" class="field__input" placeholder="level"
+                       step="any" data-model="ui.alertDraft">
+                <select name="direction" data-model="ui.alertDirection">
+                  <option value="either">↕</option>
+                  <option value="above">↑</option>
+                  <option value="below">↓</option>
+                </select>
+                <button type="submit" class="chip">alert</button>
+              </form>
+              <div class="alerts__chips" data-each="chip in ui.alertChips">
+                <span class="chip" :class="'chip alerts__chip alerts__chip--' + chip.tone"
+                      :title="chip.note">
+                  {{chip.label}}
+                  <button type="button" class="alerts__x" data-action="click"
+                          data-fn="alerts.remove" :data-id="chip.id">×</button>
+                </span>
+              </div>
+            </div>
             <!-- Vital signs: is the desk fast, is the market wide, am I trading too
                  much, how am I doing. Four questions asked between trades. -->
             <button type="button" class="chip hud__density" data-if="block.id === 'hud'"

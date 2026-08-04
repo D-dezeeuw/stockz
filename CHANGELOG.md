@@ -10,6 +10,22 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ## [Unreleased]
 
+### Added
+
+- **Price-cross alerts** — the one thing a scalper cannot do is watch six instruments at
+  once, and the one thing they need is to know the moment one reaches a level. **A gap
+  through the level is a cross**: price does not visit every number on the way, and on a fast
+  tape it goes 100.0 → 100.7 without ever printing 100.5, so the test is always *between two
+  prices* — a `price === level` check would never fire and a bare `price >= level` would fire
+  on every tick afterwards. A fired alert is **disarmed, not deleted**, because a level that
+  mattered once tends to matter again and an alert that vanished on its first fire is one the
+  trader has to re-enter exactly when they are busy; one-shot exists and is not the default.
+  Alerts evaluate off the book's own **mid**, not the last print, since a level is about
+  where the market is and a single stale trade should not trip one. Every fire in a frame
+  folds into one write, ids are derived from what the alert *is* so setting the same one
+  twice replaces rather than piles up, and any edit re-arms — a moved level is meant to be
+  live, not to inherit the old one's cooldown.
+
 ## [0.21.0] — 2026-08-04 — Phase 21: Built-in Scalping Strategies
 
 Eight strategies out of the box, each a plain `defineStrategy` description on the phase-20

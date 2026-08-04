@@ -12,6 +12,7 @@ describe('initialState', () => {
     // Every namespace the architecture defines is seeded.
     const namespaces = new Set(Object.keys(state).map((k) => k.split('.')[0]))
     expect([...namespaces].sort()).toEqual([
+      'alerts',
       'app',
       'market',
       'settings',
