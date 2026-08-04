@@ -44,6 +44,39 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ### Added
 
+- **A fixed universe of forty instruments: twenty crypto, twenty stocks.** Ranking a
+  watchlist by live volume churns its membership under the trader between glances, and the
+  top of an exchange's volume table is mostly stablecoin pairs that do not move. A list that
+  is the same every morning is one a person can learn, so `universe.js` holds it. The second
+  half is the interesting half: OKX lists tokenized equities and commodities under an `X`
+  prefix, so Nvidia, Micron, Gold and the Nasdaq-100 go down exactly the same client, quote
+  feed and order path as Bitcoin — no second venue to integrate, and they trade around the
+  clock rather than only when New York is open. Every symbol was verified to exist on the
+  venue; rows carry names, because nobody reads `XMU` as Micron.
+- **Paper trading, which was a label rather than a mode.** `trade.mode` was read in exactly
+  one place — to decide whether to nag for credentials — and every order went to the venue
+  regardless of what it said. There is now a paper adapter that imports no venue client and
+  holds no credentials, so there is no code path from it to an exchange, and `adapterFor`
+  substitutes it for *every* venue while the desk is on paper. That is the one lookup every
+  order passes through, so the ticket, a hotkey, the bot and a flatten are all diverted by
+  construction rather than by a boolean that has to be checked correctly in four places.
+  Market orders pay the spread and limits fill at their limit: filling at the mid would
+  flatter every strategy by half a spread, which over a hundred trades a day is the whole
+  difference between profit and loss.
+- **A live/paper switch, next to the keys.** Entering credentials and deciding to use them
+  are the same decision, so they are in the same place. It refuses to go live with no keys,
+  says which mode is in force in words, and is deliberately absent from the settings schema
+  — every reload comes back on paper, for the same reason the bot comes back disarmed.
+- **The autopilot: the desk trading without being told to.** Ten strategies, a signal
+  normalizer, a scoreboard, a runner draining every 50ms, gates and a kill switch all
+  existed, and `startStrategy` had no callers anywhere — the runner drained an empty queue
+  forever and the Auto-Trade block was decoration. It now runs four strategies chosen to
+  disagree with each other (a momentum burst and a VWAP fade take opposite sides of the same
+  stretch; the book says what people intend, the tape says what they did) and follows the
+  focused instrument, because the venue socket streams that one only. It arms the bot on
+  paper and grounds it the instant the desk goes live, so real money always takes a
+  deliberate second decision — "it was trading a minute ago" is the worst possible reason
+  for it to start.
 - **The watchlist, which had never existed.** The block shipped in phase 2 with a title and
   an empty state, and the `lists/` module behind it — create, add, remove, reorder, search,
   all tested — was wired to no UI whatsoever. The block's body was, in fact, the price-alert
@@ -51,18 +84,14 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
   24h move, green up and orange down, one click to point the chart, book and ticket at an
   instrument. The alert form moved to the Alert Log block, where it belongs.
 - **It fills itself in.** A desk that opens empty and waits to be told what to watch cannot
-  start without a human. The instruments are the top pairs by *real traded volume*, ranked
-  from OKX's public tickers endpoint — 1,335 spot pairs down to the eight worth scalping,
-  re-ranked every fifteen minutes and re-quoted every four seconds. Stablecoin pairs are
-  excluded despite topping every volume table, because `USDC-USDT` is the biggest book on
-  the venue and moves half a basis point a day; cross-quoted pairs like `ETH-BTC` are
-  excluded because their volume is denominated in BTC and cannot be ranked against a dollar
-  figure. The endpoint needs no credentials, so the rows are live on a first visit before a
-  single key has been entered.
+  start without a human, so it opens already watching forty instruments across two tabs.
+  Quotes come from OKX's public tickers endpoint — one call covers every symbol, and it
+  needs no credentials, so the rows are live on a first visit before a single key has been
+  entered.
 - **The trader's override.** A checkbox on the block, and a setting in the drawer: turn it
-  off and the desk stops re-ranking and the list is yours. The desk only ever rebuilds its
-  own list — a hand-made list is never touched, because "the desk manages a list for you"
-  must not mean "the desk edits your lists".
+  off and the desk stops installing its lists and they are yours. The desk only ever
+  rebuilds the lists it owns — a hand-made list is never touched, because "the desk keeps a
+  list for you" must not mean "the desk edits your lists".
 
 ### Fixed
 

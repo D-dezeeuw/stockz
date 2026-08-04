@@ -140,6 +140,7 @@ export const PATHS = Object.freeze({
     strategyStats: 'settings.strategyStats',
     alerts: 'settings.alerts',
     alertToggles: 'settings.alertToggles',
+    autopilot: 'settings.autopilot',
     botArmed: 'settings.botArmed',
     botSize: 'settings.botSize',
     botStrategies: 'settings.botStrategies',

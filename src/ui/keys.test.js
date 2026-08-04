@@ -12,6 +12,7 @@ import {
   rememberEnabled,
   toggleRemember,
   applyRemember,
+  toggleLiveTrading,
   promptForKeys,
 } from './keys.js'
 import { clearKeys, hasKeys, setKeys, KEYS_CACHE_KEY } from '../venues/vault.js'
@@ -149,6 +150,7 @@ describe('registerKeyActions', () => {
       ACTIONS.keys.submit,
       ACTIONS.keys.lock,
       ACTIONS.keys.remember,
+      ACTIONS.keys.liveTrading,
     ])
     expect(actionNames()).toContain('keys.lock')
 
@@ -205,6 +207,34 @@ describe('applyRemember', () => {
     expect(applyRemember(false)).toBe(true)
     // Switching it off takes the copy with it rather than leaving one behind until a lock.
     expect(localStorage.getItem(KEYS_CACHE_KEY)).toBeNull()
+  })
+})
+
+describe('toggleLiveTrading', () => {
+  it('refuses to go live without credentials and always comes back to paper', () => {
+    // Going live with no keys would fill the screen with rejections and read as the desk
+    // being broken.
+    expect(toggleLiveTrading({}, { value: true })).toBe('paper')
+    tick()
+    expect(appState.trade.mode).toBe('paper')
+    expect(appState.ui.toasts[0].message).toMatch(/add venue keys/)
+
+    setKeys('okx', OKX)
+    syncKeyPresence()
+    tick()
+    expect(toggleLiveTrading({}, { value: true })).toBe('live')
+    tick()
+    expect(appState.trade.mode).toBe('live')
+
+    // No argument toggles rather than forcing a value.
+    expect(toggleLiveTrading({})).toBe('paper')
+    tick()
+    expect(appState.trade.mode).toBe('paper')
+
+    // Never persisted: trade.mode is deliberately absent from the settings schema, so a
+    // reload cannot come back live the way it came back armed.
+    expect(defaultSettings()).not.toHaveProperty('mode')
+    expect(defaultSettings()).not.toHaveProperty('tradeMode')
   })
 })
 

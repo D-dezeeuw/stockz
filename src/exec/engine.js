@@ -2,6 +2,7 @@ import { makeIntent, advanceOrderState, isSettled, roundToLotTick } from './type
 import { isAdapter, supportsIntent } from './adapters/contract.js'
 import { createOkxAdapter } from './adapters/okx.js'
 import { createEtoroAdapter } from './adapters/etoro.js'
+import { createPaperAdapter } from './adapters/paper.js'
 import { checkSlippage, checkSize } from './guard.js'
 import { appState } from '../app/engine.js'
 import { ingestOrderEvents } from '../ticket/lifecycle.js'
@@ -62,14 +63,30 @@ export function registerAdapter(adapter) {
   return String(adapter.venue)
 }
 
+/** @returns {boolean} true when the desk is trading on paper rather than for real. */
+export function paperMode(state = appState) {
+  return String(state?.trade?.mode ?? 'paper') !== 'live'
+}
+
 /**
  * The adapter for a venue.
+ *
+ * In paper mode this returns the simulator for *every* venue, which is what makes the mode
+ * real rather than decorative: the substitution happens on the one lookup every order goes
+ * through, so the ticket, a hotkey, the bot and a flatten are all diverted by construction.
+ * A boolean consulted at each send site would have to be right in every one of them, and
+ * the paper adapter cannot reach a venue even if it is wrong.
  *
  * @param {string} venue - the venue name.
  * @returns {object|null} the adapter.
  */
 export function adapterFor(venue) {
-  return adapters.get(String(venue ?? '')) ?? null
+  const real = adapters.get(String(venue ?? '')) ?? null
+  // An unknown venue stays unknown: paper mode must not conjure an adapter for a venue the
+  // desk cannot actually trade, or a typo becomes a position.
+  if (!real || !paperMode()) return real
+
+  return adapters.get('paper') ?? real
 }
 
 /**
@@ -341,11 +358,14 @@ export function resetEngine() {
 /**
  * Start the engine with the venues this build supports.
  *
- * @param {{okx?: object}} [deps] - injectable adapters.
+ * @param {{okx?: object, etoro?: object, paper?: object}} [deps] - injectable adapters.
  * @returns {string[]} the venues now registered.
  */
 export function startEngine(deps = {}) {
   registerAdapter(deps.okx ?? createOkxAdapter())
   registerAdapter(deps.etoro ?? createEtoroAdapter())
+  // Always registered, never venue-specific: `adapterFor` swaps it in for whichever venue
+  // an order names while the desk is on paper.
+  registerAdapter(deps.paper ?? createPaperAdapter())
   return [...adapters.keys()]
 }

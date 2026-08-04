@@ -15,8 +15,9 @@ import { registerThemeActions, applyTheme, preferredTheme } from '../ui/theme.js
 import { restoreSettings, persistSettings } from '../state/persist.js'
 import { registerSettingsActions } from '../ui/settings.js'
 import { registerKeyActions, adoptKeys, promptForKeys } from '../ui/keys.js'
-import { registerListActions, seedLists } from '../lists/state.js'
+import { registerListActions } from '../lists/state.js'
 import { startWatchlist, registerWatchActions } from '../lists/watch.js'
+import { startAutopilot } from '../bot/autopilot.js'
 import { registerCandleActions } from '../charts/candlestick.js'
 import { registerPrefillActions } from '../book/prefill.js'
 import { registerGroupingActions } from '../book/grouping.js'
@@ -222,7 +223,6 @@ export function bootstrap(options = {}) {
 
   registerSystems({ now: makeBootClock(now) })
   seedBlocks()
-  seedLists()
   // After the registry is seeded and before bindDOM, so the grid has its blocks on the
   // very first frame rather than painting empty and filling in a tick later.
   mountSectionBlocks()
@@ -254,6 +254,10 @@ export function bootstrap(options = {}) {
   // credentials — so the desk shows live instruments on a first visit, before any key is
   // entered, rather than an empty block waiting to be told what to watch.
   const unwatchlist = options.feeds === false ? () => {} : startWatchlist()
+  // Last, because it needs the adapters registered and the watchlist focused. Paper only:
+  // it arms the bot when the desk is simulating and grounds it the instant the desk goes
+  // live, so real money always takes a deliberate second decision.
+  const unautopilot = options.feeds === false ? () => {} : startAutopilot({ now })
 
   if (autoRun) run()
 
@@ -267,6 +271,7 @@ export function bootstrap(options = {}) {
       unrepeat()
       unreconcile()
       unwatchlist()
+      unautopilot()
       cleanup?.()
     },
     feeds,

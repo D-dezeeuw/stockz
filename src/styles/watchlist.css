@@ -25,9 +25,15 @@
   flex: 1 1 auto;
 }
 
+.watchlist__tabs {
+  display: flex;
+  gap: var(--space-1, 0.25rem);
+  flex: 0 0 auto;
+}
+
 .watchlist__row {
   display: grid;
-  grid-template-columns: 1.4fr 1fr 0.8fr;
+  grid-template-columns: 1.1fr 1.3fr 1fr 0.7fr;
   gap: var(--space-2, 0.5rem);
   align-items: baseline;
   width: 100%;
@@ -55,6 +61,12 @@
 .watchlist__sym {
   font-weight: 600;
   letter-spacing: 0.02em;
+}
+
+/* The name is context, not data: XMU and XSNDK are Micron and SanDisk, and nobody should
+   have to remember that. Dimmed so the scan still runs down the ticker column. */
+.watchlist__name {
+  min-width: 0;
 }
 
 .watchlist__price {
