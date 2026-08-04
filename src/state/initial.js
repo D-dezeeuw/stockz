@@ -171,6 +171,7 @@ export function initialState(overrides = {}) {
     [PATHS.trade.holdPct]: 0,
     [PATHS.trade.paperResting]: [],
     [PATHS.trade.paperBalance]: 10000,
+    [PATHS.trade.resetHoldPct]: 0,
     [PATHS.trade.paperAccount]: {
       balance: 10000,
       equity: 10000,

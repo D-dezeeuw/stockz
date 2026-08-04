@@ -9,8 +9,11 @@ import {
   paperMarks,
   bookPaperFill,
   resetPaperAccount,
+  beginPaperReset,
+  cancelPaperReset,
   startPaperAccount,
 } from './account.js'
+import { ingestFill, openPositions, resetPositions } from '../../positions/store.js'
 import { appState, setValue, tick, resetState } from '../../app/engine.js'
 import { PATHS } from '../../state/paths.js'
 
@@ -18,6 +21,8 @@ const POSITIONS = [{ instrument: 'BTC-USDT', qty: 2, avgPx: 100 }]
 
 beforeEach(() => {
   resetState()
+  resetPositions()
+  cancelPaperReset(null, {})
   setValue(PATHS.trade.paperBalance, DEFAULT_BALANCE)
   setValue(PATHS.settings.paperStartBalance, DEFAULT_BALANCE)
   tick()
@@ -142,6 +147,61 @@ describe('resetPaperAccount', () => {
     setValue(PATHS.settings.paperStartBalance, 5000)
     tick()
     expect(resetPaperAccount(null, { value: -5 })).toBe(5000)
+
+    // Everything at once. A reset that cleared the cash but left the positions would leave
+    // the account holding a book it never paid for, and the equity would be wrong from the
+    // first tick — worse than not resetting, because it looks like it worked.
+    ingestFill({ venue: 'paper', instrument: 'BTC-USDT', side: 'buy', qty: 1, px: 100, paper: true })
+    expect(openPositions()).toHaveLength(1)
+    resetPaperAccount(null, {})
+    tick()
+    expect(openPositions()).toEqual([])
+    expect(appState.trade.paperAccount.positions).toBe(0)
+  })
+})
+
+describe('beginPaperReset', () => {
+  it('wipes only after the hold completes', () => {
+    const timeouts = []
+    const timer = {
+      setTimeout: (fn) => (timeouts.push(fn), timeouts.length),
+      clearTimeout: (id) => (timeouts[id - 1] = null),
+      setInterval: () => 1,
+      clearInterval: () => {},
+    }
+    bookPaperFill({ paper: true, side: 'buy', qty: 1, px: 100 })
+    tick()
+    expect(appState.trade.paperBalance).toBe(9900)
+
+    expect(beginPaperReset(null, { timer, doc: null })).toBe(true)
+    tick()
+    // Nothing yet: a stray click that erases a week of practice is worse than one that
+    // costs a trade.
+    expect(appState.trade.paperBalance).toBe(9900)
+
+    timeouts[0]()
+    tick()
+    expect(appState.trade.paperBalance).toBe(DEFAULT_BALANCE)
+  })
+})
+
+describe('cancelPaperReset', () => {
+  it('abandons the wipe, so releasing early costs nothing', () => {
+    const timeouts = []
+    const timer = {
+      setTimeout: (fn) => (timeouts.push(fn), timeouts.length),
+      clearTimeout: (id) => (timeouts[id - 1] = null),
+      setInterval: () => 1,
+      clearInterval: () => {},
+    }
+    bookPaperFill({ paper: true, side: 'buy', qty: 1, px: 100 })
+    beginPaperReset(null, { timer, doc: null })
+
+    expect(cancelPaperReset(null, { timer, doc: null })).toBe(true)
+    tick()
+    expect(timeouts[0]).toBeNull()
+    expect(appState.trade.paperBalance).toBe(9900)
+    expect(cancelPaperReset(null, {})).toBe(false)
   })
 })
 

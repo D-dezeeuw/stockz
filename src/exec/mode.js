@@ -4,7 +4,8 @@ import { registerAction } from '../actions/registry.js'
 import { ACTIONS } from '../actions/names.js'
 import { pushToast } from '../ui/toast.js'
 import { keyPresence } from '../venues/vault.js'
-import { resetPaperAccount } from './paper/account.js'
+import { resetPaperAccount, beginPaperReset } from './paper/account.js'
+import { createHold } from '../ui/hold.js'
 import { createLogger } from '../utils/log.js'
 
 /**
@@ -100,82 +101,39 @@ export function setTradeMode(_state, payload = {}) {
   return mode
 }
 
-/** The LIVE segment's press, if one is in progress. */
-let holding = null
+/**
+ * The press that goes live.
+ *
+ * The gesture itself lives in `ui/hold.js`, shared with the practice-account wipe: two
+ * actions that must be deliberate and must not be dialogs, and one implementation of what
+ * "deliberate" means.
+ */
+const goLive = createHold({
+  path: PATHS.trade.holdPct,
+  ms: HOLD_MS,
+  onComplete: () => setTradeMode(null, { mode: 'live' }),
+})
 
 /**
  * Begin the press-and-hold that goes live.
  *
- * @param {object} _state - engine state (unused).
- * @param {{timer?: object, now?: () => number, holdMs?: number}} [payload] - injectable timer.
+ * @param {object} state - engine state (unused).
+ * @param {object} [payload] - injectable timer and document.
  * @returns {boolean} true when a hold started.
  */
-export function beginGoLive(_state, payload = {}) {
-  if (holding) return true
-
-  const timer = payload.timer ?? globalThis
-  const holdMs = Number(payload.holdMs) > 0 ? Number(payload.holdMs) : HOLD_MS
-
-  // The ring fills from state, so the progress a trader sees is the progress the timer is
-  // actually keeping rather than a CSS animation running beside it.
-  setValue(PATHS.trade.holdPct, 0)
-  const started = typeof payload.now === 'function' ? payload.now() : Date.now()
-
-  const tickHold = () => {
-    const elapsed = (typeof payload.now === 'function' ? payload.now() : Date.now()) - started
-    setValue(PATHS.trade.holdPct, Math.min(1, elapsed / holdMs))
-  }
-
-  holding = {
-    interval: timer.setInterval?.(tickHold, 40),
-    handle: timer.setTimeout?.(() => {
-      cancelGoLive(null, payload)
-      setTradeMode(null, { mode: 'live' })
-    }, holdMs),
-    timer,
-    release: null,
-  }
-
-  // Released on the *document*, not on the button. A pointer that goes down on LIVE and up
-  // somewhere else — which is what a hesitant press looks like — would otherwise leave the
-  // timer running and go live after the trader had visibly changed their mind.
-  const doc = payload.doc ?? globalThis.document
-  if (doc?.addEventListener) {
-    const release = () => cancelGoLive(null, { ...payload, doc })
-    holding.release = release
-    doc.addEventListener('pointerup', release, { once: true })
-    doc.addEventListener('pointercancel', release, { once: true })
-  }
-
-  return true
+export function beginGoLive(state, payload) {
+  return goLive.begin(state, payload)
 }
 
 /**
  * Abandon the press before it takes.
  *
- * @param {object} _state - engine state (unused).
- * @param {{timer?: object}} [payload] - injectable timer.
+ * @param {object} state - engine state (unused).
+ * @param {object} [payload] - injectable timer and document.
  * @returns {boolean} true when a hold was cancelled.
  */
-export function cancelGoLive(_state, payload = {}) {
-  if (!holding) return false
-
-  const timer = payload.timer ?? holding.timer ?? globalThis
-  timer.clearTimeout?.(holding.handle)
-  timer.clearInterval?.(holding.interval)
-
-  const doc = payload.doc ?? globalThis.document
-  if (holding.release && doc?.removeEventListener) {
-    // Removed as well as `once`: the listener that did *not* fire — pointercancel when the
-    // press ended in a pointerup — would otherwise stay armed and cancel the next hold.
-    doc.removeEventListener('pointerup', holding.release)
-    doc.removeEventListener('pointercancel', holding.release)
-  }
-
-  holding = null
-  setValue(PATHS.trade.holdPct, 0)
-
-  return true
+export function cancelGoLive(state, payload) {
+  return goLive.cancel(state, payload)
 }
 
 /**
@@ -196,7 +154,7 @@ export function applyModeParam(search) {
 
 /** Forget any hold in progress (tests). */
 export function resetMode() {
-  holding = null
+  goLive.cancel(null, {})
   return true
 }
 
@@ -212,11 +170,15 @@ export function registerModeActions() {
   registerAction(ACTIONS.trade.resetPaper, resetPaperAccount, {
     description: 'Reset the practice account to its starting stake',
   })
+  registerAction(ACTIONS.trade.holdReset, beginPaperReset, {
+    description: 'Hold to wipe the practice account',
+  })
 
   return [
     ACTIONS.trade.setMode,
     ACTIONS.trade.holdLive,
     ACTIONS.trade.releaseLive,
     ACTIONS.trade.resetPaper,
+    ACTIONS.trade.holdReset,
   ]
 }

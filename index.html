@@ -1175,7 +1175,12 @@
                 </div>
               </div>
               <p class="label" data-if="trade.paperResting.length === 0">no working paper orders</p>
-              <button type="button" class="chip" data-action="click" data-fn="trade.resetPaper">reset account</button>
+              <!-- Held, not confirmed. A dialog is wrong by this project's rules, and a
+                   stray click that erases a week of practice is worse than one that costs
+                   a trade. -->
+              <button type="button" class="chip chip--hold" data-action="pointerdown"
+                      data-fn="trade.holdReset" :style="'--held:' + (trade.resetHoldPct * 100) + '%'"
+                      title="hold to wipe the practice account">hold to reset<i class="mode__ring"></i></button>
             </div>
             <p class="label" data-if="block.id !== 'book' &amp;&amp; block.id !== 'tape' &amp;&amp; block.id !== 'ticket' &amp;&amp; block.id !== 'positions' &amp;&amp; block.id !== 'hud' &amp;&amp; block.id !== 'strategies' &amp;&amp; block.id !== 'scoreboard' &amp;&amp; block.id !== 'alerts' &amp;&amp; block.id !== 'bot' &amp;&amp; block.id !== 'backtest' &amp;&amp; block.id !== 'paper'">ready</p>
           </div>
