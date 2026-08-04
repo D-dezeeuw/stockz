@@ -3100,48 +3100,48 @@
 **What:** Exact submit-to-ack timing so you know how stale your entries are before you click.
 **How:** Stamp order submits with performance.now(), match venue acks by clientOrderId, and roll avg/p95 through metrics-core rings.
 
-- [ ] **T19.3.1 - Branch off main** - What: Dedicated space for latency plumbing. How: Create feature/f19.3-order-roundtrip from main before touching code.
-- [ ] **T19.3.2 - stampSubmit fn** - What: Every order carries a birth certificate. How: Record clientOrderId to t0 in a Map at the moment the order entry layer fires a submit.
-- [ ] **T19.3.3 - ackDeltaOkx fn** - What: True roundtrip for OKX orders. How: On the OKX v5 private orders channel ack, look up t0 by clientOrderId and return the performance.now() delta.
-- [ ] **T19.3.4 - ackDeltaEtoro fn** - What: True roundtrip for EToro orders. How: Compute the delta when the EToro REST order POST resolves, reusing the same Map and eviction rules.
-- [ ] **T19.3.5 - Stale entry eviction fn** - What: The Map never leaks on lost acks. How: evictStale(map, maxAgeMs) sweep called from the hud:tick system, dropping entries older than 30s.
-- [ ] **T19.3.6 - Rolling latency stats** - What: Stable avg and p95 instead of one noisy number. How: Push deltas into a 100-slot ring and compute rollingMean plus percentile(0.95) as computed hud values.
-- [ ] **T19.3.7 - Latency sparkline** - What: Shape of the last 30 roundtrips at a glance. How: Hand-rolled canvas mini-renderer drawing the ring as a stepped line inside the HUD tile.
-- [ ] **T19.3.8 - Roundtrip tile markup** - What: avg, p95 and last roundtrip readable in one row. How: Bind formatted values with {{}} in the HUD block and flash the row via :class on each new ack.
-- [ ] **T19.3.9 - Single tests per latency fn** - What: Stamping, matching and eviction proven independently. How: One Vitest test each for stampSubmit, ackDeltaOkx, ackDeltaEtoro and evictStale using an injected clock, run via -t.
-- [ ] **T19.3.10 - Merge latency tracker** - What: Roundtrip timing feeding the HUD for good. How: Green lint and targeted tests, then merge feature/f19.3 into main.
+- [x] **T19.3.1 - Branch off main** - What: Dedicated space for latency plumbing. How: Create feature/f19.3-order-roundtrip from main before touching code.
+- [x] **T19.3.2 - stampSubmit fn** - What: Every order carries a birth certificate. How: Record clientOrderId to t0 in a Map at the moment the order entry layer fires a submit.
+- [x] **T19.3.3 - ackDeltaOkx fn** - What: True roundtrip for OKX orders. How: On the OKX v5 private orders channel ack, look up t0 by clientOrderId and return the performance.now() delta.
+- [x] **T19.3.4 - ackDeltaEtoro fn** - What: True roundtrip for EToro orders. How: Compute the delta when the EToro REST order POST resolves, reusing the same Map and eviction rules.
+- [x] **T19.3.5 - Stale entry eviction fn** - What: The Map never leaks on lost acks. How: evictStale(map, maxAgeMs) sweep called from the hud:tick system, dropping entries older than 30s.
+- [x] **T19.3.6 - Rolling latency stats** - What: Stable avg and p95 instead of one noisy number. How: Push deltas into a 100-slot ring and compute rollingMean plus percentile(0.95) as computed hud values.
+- [x] **T19.3.7 - Latency sparkline** - What: Shape of the last 30 roundtrips at a glance. How: Hand-rolled canvas mini-renderer drawing the ring as a stepped line inside the HUD tile.
+- [x] **T19.3.8 - Roundtrip tile markup** - What: avg, p95 and last roundtrip readable in one row. How: Bind formatted values with {{}} in the HUD block and flash the row via :class on each new ack.
+- [x] **T19.3.9 - Single tests per latency fn** - What: Stamping, matching and eviction proven independently. How: One Vitest test each for stampSubmit, ackDeltaOkx, ackDeltaEtoro and evictStale using an injected clock, run via -t.
+- [x] **T19.3.10 - Merge latency tracker** - What: Roundtrip timing feeding the HUD for good. How: Green lint and targeted tests, then merge feature/f19.3 into main.
 
 ### F19.4 - Live spread monitor with alert threshold
 
 **What:** The live bid/ask spread in bps, flagged the instant it widens past your personal limit.
 **How:** Computed spreadBps from pipeline best bid/ask, a persisted threshold setting, and a Spektrum watch that trips a HUD alert flag.
 
-- [ ] **T19.4.1 - Start spread branch** - What: Contained work on spread math and alerts. How: git checkout -b feature/f19.4-spread-monitor from main.
-- [ ] **T19.4.2 - spreadBps fn** - What: One canonical spread number in basis points. How: Pure fn (ask - bid) / mid * 10000 with NaN guards for one-sided books.
-- [ ] **T19.4.3 - Computed live spread** - What: Spread updates with zero manual wiring. How: Spektrum computed hud.spread reading the active instrument's best bid/ask from the market data pipeline state.
-- [ ] **T19.4.4 - Threshold setting** - What: Your own widen limit, remembered across sessions. How: hud.spreadLimitBps setting synced through spektrum/persist to localStorage with a sane default of 5.
-- [ ] **T19.4.5 - Breach watcher** - What: Detection happens the tick the spread crosses your line. How: watch() on hud.spread flipping hud.spreadAlert when the value exceeds hud.spreadLimitBps.
-- [ ] **T19.4.6 - Breach event emit** - What: Downstream blocks can react to a wide spread. How: trigger('hud:spreadBreach') with instrument and bps payload when the watcher flips to true.
-- [ ] **T19.4.7 - Spread tile markup** - What: Live bps figure with its limit beside it. How: {{formatBps(hud.spread)}} and the limit rendered in the HUD block, alert state bound with :class.
-- [ ] **T19.4.8 - Alert flash styling** - What: A breach is impossible to miss peripherally. How: CSS keyframe orange flash on the tile scoped to the alert class, tuned for day and night palettes.
-- [ ] **T19.4.9 - Single tests for spread fns** - What: Math and breach logic proven in isolation. How: One Vitest test each for spreadBps and the watcher predicate fn, run with npx vitest run -t per name.
-- [ ] **T19.4.10 - Merge spread monitor** - What: Spread vigilance on for every session. How: Lint plus targeted test filters green, then merge to main.
+- [x] **T19.4.1 - Start spread branch** - What: Contained work on spread math and alerts. How: git checkout -b feature/f19.4-spread-monitor from main.
+- [x] **T19.4.2 - spreadBps fn** - What: One canonical spread number in basis points. How: Pure fn (ask - bid) / mid * 10000 with NaN guards for one-sided books.
+- [x] **T19.4.3 - Computed live spread** - What: Spread updates with zero manual wiring. How: Spektrum computed hud.spread reading the active instrument's best bid/ask from the market data pipeline state.
+- [x] **T19.4.4 - Threshold setting** - What: Your own widen limit, remembered across sessions. How: hud.spreadLimitBps setting synced through spektrum/persist to localStorage with a sane default of 5.
+- [x] **T19.4.5 - Breach watcher** - What: Detection happens the tick the spread crosses your line. How: watch() on hud.spread flipping hud.spreadAlert when the value exceeds hud.spreadLimitBps.
+- [x] **T19.4.6 - Breach event emit** - What: Downstream blocks can react to a wide spread. How: trigger('hud:spreadBreach') with instrument and bps payload when the watcher flips to true.
+- [x] **T19.4.7 - Spread tile markup** - What: Live bps figure with its limit beside it. How: {{formatBps(hud.spread)}} and the limit rendered in the HUD block, alert state bound with :class.
+- [x] **T19.4.8 - Alert flash styling** - What: A breach is impossible to miss peripherally. How: CSS keyframe orange flash on the tile scoped to the alert class, tuned for day and night palettes.
+- [x] **T19.4.9 - Single tests for spread fns** - What: Math and breach logic proven in isolation. How: One Vitest test each for spreadBps and the watcher predicate fn, run with npx vitest run -t per name.
+- [x] **T19.4.10 - Merge spread monitor** - What: Spread vigilance on for every session. How: Lint plus targeted test filters green, then merge to main.
 
 ### F19.5 - Slippage per fill
 
 **What:** Signed bps cost of every fill versus your intended price, plus your session average and worst offender.
 **How:** Capture intent price at submit, compare against fill price per side, aggregate through metrics-core rings into hud state.
 
-- [ ] **T19.5.1 - Spin up slippage branch** - What: Focused branch for fill-quality math. How: Create feature/f19.5-slippage from main and commit the empty module skeleton.
-- [ ] **T19.5.2 - captureIntent fn** - What: The price you meant to get is never lost. How: Store intended price and side keyed by clientOrderId when the order entry layer submits.
-- [ ] **T19.5.3 - slippageBps fn** - What: One signed number says how much the fill cost you. How: Pure fn returning side-adjusted (fill - intent) / intent * 10000 so positive always means worse.
-- [ ] **T19.5.4 - Per-fill compute hook** - What: Every fill is scored the moment it lands. How: Subscribe to the execution fills stream and run slippageBps against the captured intent for each fill.
-- [ ] **T19.5.5 - Session aggregate** - What: Your average execution quality for the day. How: Push per-fill bps into a ring and expose rollingMean as computed hud.slipAvg.
-- [ ] **T19.5.6 - worstFill tracker fn** - What: The single most expensive fill called out. How: trackWorst(prev, fill) pure reducer keeping the max bps fill with instrument and time.
-- [ ] **T19.5.7 - Publish slippage state** - What: Slippage visible to HUD and future analytics. How: setValue hud.slip.last, hud.slip.avg and hud.slip.worst on every scored fill.
-- [ ] **T19.5.8 - Slippage tile markup and color** - What: Last, average and worst readable in one glance. How: Bind the three values in the HUD block with green/orange :class coloring by sign and size.
-- [ ] **T19.5.9 - Single tests per slippage fn** - What: Intent capture, bps math and worst tracking each proven. How: One Vitest test per fn with buy and sell fixtures, executed via -t name filters only.
-- [ ] **T19.5.10 - Merge slippage meter** - What: Fill quality feedback shipping to main. How: Confirm lint and the targeted runs, merge feature/f19.5 into main.
+- [x] **T19.5.1 - Spin up slippage branch** - What: Focused branch for fill-quality math. How: Create feature/f19.5-slippage from main and commit the empty module skeleton.
+- [x] **T19.5.2 - captureIntent fn** - What: The price you meant to get is never lost. How: Store intended price and side keyed by clientOrderId when the order entry layer submits.
+- [x] **T19.5.3 - slippageBps fn** - What: One signed number says how much the fill cost you. How: Pure fn returning side-adjusted (fill - intent) / intent * 10000 so positive always means worse.
+- [x] **T19.5.4 - Per-fill compute hook** - What: Every fill is scored the moment it lands. How: Subscribe to the execution fills stream and run slippageBps against the captured intent for each fill.
+- [x] **T19.5.5 - Session aggregate** - What: Your average execution quality for the day. How: Push per-fill bps into a ring and expose rollingMean as computed hud.slipAvg.
+- [x] **T19.5.6 - worstFill tracker fn** - What: The single most expensive fill called out. How: trackWorst(prev, fill) pure reducer keeping the max bps fill with instrument and time.
+- [x] **T19.5.7 - Publish slippage state** - What: Slippage visible to HUD and future analytics. How: setValue hud.slip.last, hud.slip.avg and hud.slip.worst on every scored fill.
+- [x] **T19.5.8 - Slippage tile markup and color** - What: Last, average and worst readable in one glance. How: Bind the three values in the HUD block with green/orange :class coloring by sign and size.
+- [x] **T19.5.9 - Single tests per slippage fn** - What: Intent capture, bps math and worst tracking each proven. How: One Vitest test per fn with buy and sell fixtures, executed via -t name filters only.
+- [x] **T19.5.10 - Merge slippage meter** - What: Fill quality feedback shipping to main. How: Confirm lint and the targeted runs, merge feature/f19.5 into main.
 
 ### F19.6 - Trades-per-hour pace counter
 

@@ -92,3 +92,44 @@ export function resetLatency() {
   samples = []
   return true
 }
+
+/**
+ * Drop stamps whose ack never came.
+ *
+ * Without this the map grows for the life of the session: an order that is rejected at
+ * the transport, or whose ack is lost on a reconnect, leaves a submit stamp nothing will
+ * ever match. Sweeping is cheaper than the bookkeeping that would avoid it.
+ *
+ * @param {number} now - a monotonic timestamp.
+ * @param {number} [maxAgeMs] - how long an unmatched stamp may live.
+ * @returns {number} how many were dropped.
+ */
+export function evictStale(now, maxAgeMs = 30000) {
+  const at = Number(now)
+  const limit = Number(maxAgeMs) || 30000
+  if (!Number.isFinite(at)) return 0
+
+  let dropped = 0
+  for (const [id, record] of stamps) {
+    const started = Number(record?.submit)
+    // Only unmatched stamps are swept. A completed round trip is already accounted for
+    // in the samples, and dropping it changes nothing.
+    if (!Number.isFinite(started) || Number.isFinite(record?.ack)) continue
+    if (at - started <= limit) continue
+
+    stamps.delete(id)
+    dropped += 1
+  }
+
+  return dropped
+}
+
+/** @returns {number} how many orders are still awaiting an ack. */
+export function pendingStamps() {
+  let count = 0
+  for (const record of stamps.values()) {
+    if (Number.isFinite(record?.submit) && !Number.isFinite(record?.ack)) count += 1
+  }
+
+  return count
+}

@@ -1,5 +1,13 @@
 import { describe, it, expect, beforeEach } from 'vitest'
-import { stampLatency, latencyFor, latencySummary, resetLatency, WINDOW } from './latency.js'
+import {
+  stampLatency,
+  latencyFor,
+  latencySummary,
+  evictStale,
+  pendingStamps,
+  resetLatency,
+  WINDOW,
+} from './latency.js'
 
 beforeEach(() => resetLatency())
 
@@ -66,5 +74,38 @@ describe('resetLatency', () => {
     expect(resetLatency()).toBe(true)
     expect(latencyFor('a')).toEqual({ toAck: 0, toFill: 0, total: 0 })
     expect(latencySummary().count).toBe(0)
+  })
+})
+
+describe('evictStale', () => {
+  it('sweeps only the stamps whose ack never came', () => {
+    stampLatency('lost', 'submit', 0)
+    stampLatency('done', 'submit', 0)
+    stampLatency('done', 'ack', 50)
+    stampLatency('recent', 'submit', 29000)
+
+    expect(pendingStamps()).toBe(2)
+
+    // A completed round trip is already in the samples; dropping it changes nothing, so
+    // only the unmatched ones are swept.
+    expect(evictStale(40000, 30000)).toBe(1)
+    expect(pendingStamps()).toBe(1)
+    expect(latencyFor('done').toAck).toBe(50)
+    expect(latencyFor('lost')).toEqual({ toAck: 0, toFill: 0, total: 0 })
+
+    expect(evictStale(NaN)).toBe(0)
+    expect(evictStale(40000)).toBe(0)
+  })
+})
+
+describe('pendingStamps', () => {
+  it('counts what the desk is still waiting on', () => {
+    expect(pendingStamps()).toBe(0)
+
+    stampLatency('a', 'submit', 0)
+    expect(pendingStamps()).toBe(1)
+
+    stampLatency('a', 'ack', 10)
+    expect(pendingStamps()).toBe(0)
   })
 })

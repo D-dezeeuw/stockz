@@ -119,6 +119,15 @@ export const SETTINGS_SCHEMA = Object.freeze([
     default: 4,
   },
   {
+    key: 'spreadLimitBps',
+    group: 'trading',
+    label: 'Alert when spread exceeds (bps)',
+    kind: 'number',
+    min: 0,
+    step: 0.5,
+    default: 5,
+  },
+  {
     key: 'sessionStartUtc',
     group: 'trading',
     label: 'Session starts (UTC hour)',

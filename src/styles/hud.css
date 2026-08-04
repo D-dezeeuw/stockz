@@ -104,3 +104,32 @@
   background: transparent;
   border: 1px solid var(--line);
 }
+
+/*
+ * A breached spread. Flashing rather than merely coloured: slippage is what already
+ * happened, a widening spread is what is about to, and it deserves the attention.
+ */
+.hud__tile--alert {
+  border-color: var(--orange);
+  animation: spread-alert 900ms ease-in-out infinite;
+}
+
+.hud__tile--alert .hud__value {
+  color: var(--orange);
+}
+
+@keyframes spread-alert {
+  0%,
+  100% {
+    box-shadow: 0 0 4px color-mix(in srgb, var(--orange) 30%, transparent);
+  }
+  50% {
+    box-shadow: 0 0 12px color-mix(in srgb, var(--orange) 60%, transparent);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hud__tile--alert {
+    animation: none;
+  }
+}

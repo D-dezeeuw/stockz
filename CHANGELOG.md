@@ -12,6 +12,19 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ### Added
 
+- **Slippage per fill** — the cost a scalper cannot see without measuring: a two-tick edge
+  taken at one tick of slippage is half a strategy, and nothing on screen says so unless
+  something keeps score. **Positive always means worse**, whichever side was traded — a
+  buy filled above its intent and a sell filled below it are the same event, and a column
+  where they carry opposite signs cannot be averaged. A fill with no captured intent is
+  *not* scored as zero, because zero is a perfect fill and counting unknowns as perfect
+  flatters the average exactly where it should not. (F19.5)
+- **Spread alert** — slippage is what already happened; a widening spread is what is about
+  to. It fires on a real widening past the trader's own limit and never on missing data,
+  since an alert that fires on absence is an alert that gets muted. (F19.4)
+- **Latency eviction** — an order whose ack never came would otherwise leave a submit
+  stamp in the map for the life of the session. Only unmatched stamps are swept; a
+  completed round trip is already counted. (F19.3)
 - **Venue RTT monitor** — the number that answers "is it me or is it them", which have
   completely different responses: a busy tab is the trader's problem, a venue having a bad
   minute means sitting out. An unanswered ping resolves as a *reading* rather than an
