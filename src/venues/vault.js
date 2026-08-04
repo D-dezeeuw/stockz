@@ -10,8 +10,19 @@ import { readEnv } from '../utils/env.js'
  * module-scoped Map, deliberately outside the reactive tree, and nothing here ever
  * returns a full key to a caller that only needs to know whether one exists.
  *
- * Keys arrive from three places, in priority order: URL params (fastest — open a
- * bookmark and trade), the key modal, and `import.meta.env` for local dev.
+ * Keys arrive from four places, in priority order: URL params (fastest — open a bookmark
+ * and trade), the remembered cache, the key modal, and `import.meta.env` for local dev.
+ *
+ * **On the cache, plainly.** When "remember keys" is on, credentials are written to
+ * `localStorage` so a reload does not cost the trader their session. That is a real
+ * reduction in safety and it is worth being blunt about rather than dressing up: anything
+ * that can run script on this origin can read them, and so can anyone with the machine. It
+ * is off by default, the lock button wipes it, and it is stored in plain text — an
+ * obfuscation pass would only buy the false confidence that it was encrypted.
+ *
+ * What does *not* change is the harder guarantee: credentials still never enter Spektrum
+ * state. State is recorded into history, returned by `serialize()`, exported with the trade
+ * journal and dumped by devtools; the cache is a separate storage key nothing else reads.
  */
 
 const log = createLogger('vault')
@@ -193,4 +204,70 @@ export function adoptKeysFromEnv(bag) {
   })
 
   return keyPresence()
+}
+
+/** Where remembered credentials live. */
+export const KEYS_CACHE_KEY = 'stockz.keys.v1'
+
+/**
+ * Write the vault to storage.
+ *
+ * @param {Storage} [storage] - storage to write to.
+ * @returns {number} how many venues were written.
+ */
+export function cacheKeys(storage = globalThis.localStorage) {
+  const payload = Object.fromEntries(vault)
+  try {
+    storage?.setItem?.(KEYS_CACHE_KEY, JSON.stringify(payload))
+    return Object.keys(payload).length
+  } catch (err) {
+    // A full or blocked storage loses the convenience, never the session: the keys are
+    // already in the vault and this call is only about surviving the next reload.
+    log.warn(`could not remember keys: ${err?.message ?? err}`)
+    return 0
+  }
+}
+
+/**
+ * Read remembered credentials back into the vault.
+ *
+ * @param {Storage} [storage] - storage to read from.
+ * @returns {number} how many venues were restored.
+ */
+export function loadCachedKeys(storage = globalThis.localStorage) {
+  let parsed
+  try {
+    parsed = JSON.parse(storage?.getItem?.(KEYS_CACHE_KEY) ?? 'null')
+  } catch (err) {
+    log.warn(`unreadable key cache: ${err?.message ?? err}`)
+    return 0
+  }
+  if (!parsed || typeof parsed !== 'object') return 0
+
+  let restored = 0
+  for (const [venue, fields] of Object.entries(parsed)) {
+    // Through `setKeys` rather than straight into the Map: a cache written by an older
+    // build, or hand-edited, must go through the same field filter as anything else.
+    if (setKeys(venue, fields ?? {}).length > 0) restored += 1
+  }
+
+  return restored
+}
+
+/**
+ * Forget the remembered credentials.
+ *
+ * @param {Storage} [storage] - storage to clear.
+ * @returns {boolean} true when the cache is gone.
+ */
+export function forgetCachedKeys(storage = globalThis.localStorage) {
+  try {
+    // Removed rather than overwritten with an empty object: a lock that left a key-shaped
+    // hole behind would be a lock the next reader has to interpret.
+    storage?.removeItem?.(KEYS_CACHE_KEY)
+    return true
+  } catch (err) {
+    log.warn(`could not clear the key cache: ${err?.message ?? err}`)
+    return false
+  }
 }

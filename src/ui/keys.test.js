@@ -7,8 +7,11 @@ import {
   lockKeys,
   adoptKeys,
   registerKeyActions,
+  rememberEnabled,
+  toggleRemember,
+  promptForKeys,
 } from './keys.js'
-import { clearKeys, hasKeys, setKeys } from '../venues/vault.js'
+import { clearKeys, hasKeys, setKeys, KEYS_CACHE_KEY } from '../venues/vault.js'
 import { appState, setValue, tick, resetState, serialize } from '../app/engine.js'
 import { PATHS } from '../state/paths.js'
 import { clearActions, actionNames, dispatchAction } from '../actions/registry.js'
@@ -106,7 +109,11 @@ describe('adoptKeys', () => {
 
 describe('registerKeyActions', () => {
   it('registers submit and lock so a hotkey can panic-clear credentials', () => {
-    expect(registerKeyActions()).toEqual([ACTIONS.keys.submit, ACTIONS.keys.lock])
+    expect(registerKeyActions()).toEqual([
+      ACTIONS.keys.submit,
+      ACTIONS.keys.lock,
+      ACTIONS.keys.remember,
+    ])
     expect(actionNames()).toContain('keys.lock')
 
     setKeys('okx', OKX)
@@ -116,5 +123,46 @@ describe('registerKeyActions', () => {
     dispatchAction(ACTIONS.keys.lock)
     tick()
     expect(hasKeys('okx')).toBe(false)
+  })
+})
+
+describe('rememberEnabled', () => {
+  it('is off unless the trader turned it on', () => {
+    // Off by default: remembering a trading credential is a decision, not a default.
+    expect(rememberEnabled()).toBe(false)
+
+    setValue(PATHS.settings.rememberCredentials, true)
+    tick()
+    expect(rememberEnabled()).toBe(true)
+  })
+})
+
+describe('toggleRemember', () => {
+  it('acts immediately in both directions rather than waiting for the next save', () => {
+    setKeys('okx', OKX)
+
+    expect(toggleRemember({}, { value: true })).toBe(true)
+    tick()
+    // Switching it on with keys already loaded remembers *those* keys.
+    expect(localStorage.getItem(KEYS_CACHE_KEY)).toContain('ak')
+
+    expect(toggleRemember({}, { value: false })).toBe(false)
+    // And switching it off takes the copy with it rather than leaving one behind.
+    expect(localStorage.getItem(KEYS_CACHE_KEY)).toBeNull()
+  })
+})
+
+describe('promptForKeys', () => {
+  it('asks on boot in live mode, and never interrupts paper', () => {
+    // Paper mode must stay clickable for somebody who has not handed over credentials.
+    setValue(PATHS.trade.mode, 'paper')
+    tick()
+    expect(promptForKeys()).toBe(false)
+
+    setValue(PATHS.trade.mode, 'live')
+    tick()
+    expect(promptForKeys()).toBe(true)
+    tick()
+    expect(appState.ui.modal).toBe('keys')
   })
 })

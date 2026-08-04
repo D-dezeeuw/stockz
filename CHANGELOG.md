@@ -10,7 +10,34 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ## [Unreleased]
 
+### Fixed
+
+- **The key modal had no way to open it.** It has existed since phase 7 with a close button
+  as its only reference — no header control, no hotkey, no boot prompt — so the entire
+  credential flow was unreachable from the running desk. There is now a **keys** button in
+  the header carrying a presence dot, and a live-mode desk with no credentials asks on boot
+  rather than letting the trader find out on their first click. The dot shows presence only,
+  never a key or a fragment of one.
+- **eToro could not be entered at all.** The vault has always known the venue needs an api
+  key and a user key; the modal only ever offered OKX's three fields.
+
 ### Added
+
+- **Remembered credentials, off by default** — keys can now survive a reload instead of being
+  re-entered every session, which is what makes a URL-param bookmark actually usable. The
+  trade is stated at the switch rather than buried in a doc: convenience across reloads, in
+  exchange for credentials that anything running on this origin can read. Stored in plain
+  text on purpose — an obfuscation pass would buy nothing but the false confidence that it
+  was encrypted. **Lock wipes the cache** as well as the vault, because a lock that emptied
+  memory and left the copy on disk would undo itself on the next reload while the trader
+  believed it had worked; switching the toggle off wipes it too, rather than leaving a copy
+  behind until the next lock. URL params still win over the cache: opening a bookmark with a
+  key in it is an explicit instruction to use *that* key, and a stale cached one silently
+  winning would be the worst kind of surprise. The harder guarantee is unchanged — credentials
+  still never enter Spektrum state, so they stay out of history, `serialize()` and every
+  journal export. The setting is named `rememberCredentials` rather than `rememberKeys`
+  precisely so it does not trip the state-path credential guard, which is only worth having
+  while it has no exceptions to hide behind.
 
 - **The four numbers that say whether the edge is real** — a P&L says what happened; these say
   whether it will keep happening, and the distinction is the whole point: a trader up six

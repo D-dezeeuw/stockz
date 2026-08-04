@@ -276,6 +276,13 @@ export const SETTINGS_SCHEMA = Object.freeze([
     default: 200,
   },
   {
+    key: 'rememberCredentials',
+    group: 'risk',
+    label: 'Remember API keys on this browser',
+    kind: 'toggle',
+    default: false,
+  },
+  {
     key: 'compactHud',
     group: 'appearance',
     label: 'Compact HUD row',

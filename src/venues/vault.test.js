@@ -10,6 +10,10 @@ import {
   clearKeys,
   parseKeyParams,
   scrubKeyParams,
+  KEYS_CACHE_KEY,
+  cacheKeys,
+  loadCachedKeys,
+  forgetCachedKeys,
   adoptKeysFromUrl,
   adoptKeysFromEnv,
 } from './vault.js'
@@ -160,5 +164,79 @@ describe('vault isolation', () => {
     // journal. A key that reaches it ends up in a file the trader emails to someone.
     const dump = JSON.stringify(appState) + serialize()
     expect(dump).not.toContain('SUPER-SECRET-KEY')
+  })
+})
+
+/** A localStorage stand-in that can be told to fail. */
+function fakeStorage(broken = false) {
+  const map = new Map()
+  return {
+    map,
+    getItem: (key) => {
+      if (broken) throw new Error('blocked')
+      return map.get(key) ?? null
+    },
+    setItem: (key, value) => {
+      if (broken) throw new Error('quota')
+      map.set(key, value)
+    },
+    removeItem: (key) => {
+      if (broken) throw new Error('blocked')
+      map.delete(key)
+    },
+  }
+}
+
+describe('cacheKeys', () => {
+  it('loses the convenience rather than the session when storage refuses', () => {
+    clearKeys()
+    setKeys('okx', { apiKey: 'ak', secretKey: 'sk', passphrase: 'pp' })
+
+    const storage = fakeStorage()
+    expect(cacheKeys(storage)).toBe(1)
+    expect(JSON.parse(storage.map.get(KEYS_CACHE_KEY)).okx.apiKey).toBe('ak')
+
+    // The keys are already in the vault; this call is only about surviving a reload.
+    expect(cacheKeys(fakeStorage(true))).toBe(0)
+    expect(hasKeys('okx')).toBe(true)
+  })
+})
+
+describe('loadCachedKeys', () => {
+  it('puts a hand-edited cache through the same field filter as anything else', () => {
+    const storage = fakeStorage()
+    storage.setItem(
+      KEYS_CACHE_KEY,
+      JSON.stringify({
+        okx: { apiKey: 'ak', secretKey: 'sk', passphrase: 'pp', bogus: 'x' },
+        nonsense: { apiKey: 'k' },
+      }),
+    )
+
+    clearKeys()
+    expect(loadCachedKeys(storage)).toBe(1)
+    expect(hasKeys('okx')).toBe(true)
+    // An unknown venue and an unknown field are both dropped rather than trusted.
+    expect(getKey('okx', 'bogus')).toBe('')
+    expect(hasKeys('nonsense')).toBe(false)
+
+    storage.map.set(KEYS_CACHE_KEY, '{not json')
+    expect(loadCachedKeys(storage)).toBe(0)
+    expect(loadCachedKeys(fakeStorage(true))).toBe(0)
+  })
+})
+
+describe('forgetCachedKeys', () => {
+  it('removes the entry rather than leaving a key-shaped hole behind', () => {
+    clearKeys()
+    setKeys('okx', { apiKey: 'ak', secretKey: 'sk', passphrase: 'pp' })
+    const storage = fakeStorage()
+    cacheKeys(storage)
+
+    expect(forgetCachedKeys(storage)).toBe(true)
+    // A lock that left an empty object would be one the next reader has to interpret.
+    expect(storage.map.has(KEYS_CACHE_KEY)).toBe(false)
+
+    expect(forgetCachedKeys(fakeStorage(true))).toBe(false)
   })
 })

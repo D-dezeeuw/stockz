@@ -136,6 +136,14 @@
               data-modal="hotkeys" aria-label="Keyboard shortcuts">
         <svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M1 3 H15 V13 H1 Z M2.6 4.6 V11.4 H13.4 V4.6 Z M4 6 H6 V7.4 H4 Z M7 6 H9 V7.4 H7 Z M10 6 H12 V7.4 H10 Z M4 8.6 H12 V10 H4 Z"/></svg>
       </button>
+      <!-- The way in. The modal has existed since phase 7 with nothing but a close button
+           on it, which made the whole credential flow unreachable from the desk. The dot
+           shows presence only — never a key, never a fragment of one. -->
+      <button type="button" class="icon-btn" data-action="click" data-fn="ui.toggleOverlay"
+              data-modal="keys" aria-label="API keys">
+        <i :class="'led breaker-led__dot breaker-led__dot--' + ((ui.keysPresent.okx || ui.keysPresent.etoro) ? 'ok' : 'tripped')"></i>
+        <span class="label">keys</span>
+      </button>
       <button type="button" class="icon-btn" data-action="click" data-fn="ui.toggleOverlay"
               data-modal="settings" aria-label="Settings">
         <svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M7 1 H9 L9.4 3 L11 3.8 L12.8 2.9 L14 4.6 L12.7 6 L12.7 7.8 L14 9.2 L12.8 10.9 L11 10 L9.4 10.8 L9 13 H7 L6.6 10.8 L5 10 L3.2 10.9 L2 9.2 L3.3 7.8 L3.3 6 L2 4.6 L3.2 2.9 L5 3.8 L6.6 3 Z M8 5.4 A2.4 2.4 0 1 0 8 10.2 A2.4 2.4 0 1 0 8 5.4 Z"/></svg>
@@ -917,6 +925,31 @@
                autocomplete="off" spellcheck="false">
         <input class="field__input" type="password" name="passphrase" placeholder="passphrase"
                autocomplete="off" spellcheck="false">
+        <button type="submit" class="btn">save okx</button>
+      </form>
+
+      <!-- eToro was missing entirely: the vault has always known the venue needs an api key
+           and a user key, and the modal only ever offered OKX's three fields. -->
+      <form class="modal__card" data-action="submit" data-fn="keys.submit" data-venue="etoro">
+        <p class="block__state-title">etoro credentials</p>
+        <input class="field__input" type="password" name="apiKey" placeholder="api key"
+               autocomplete="off" spellcheck="false">
+        <input class="field__input" type="password" name="userKey" placeholder="user key"
+               autocomplete="off" spellcheck="false">
+        <button type="submit" class="btn">save etoro</button>
+      </form>
+
+      <div class="modal__card">
+        <!-- The trade is stated where the switch is, not in a doc nobody opens. -->
+        <label class="field field--row">
+          <input type="checkbox" data-action="change" data-fn="keys.remember"
+                 :checked="settings.rememberCredentials">
+          <span class="label">Remember on this browser — survives a reload, and anything
+                running on this origin can read them. Off by default.</span>
+        </label>
+        <p class="label">Or open the desk with
+          <code>?okxKey=…&amp;okxSecret=…&amp;okxPass=…</code> — the params are read once and
+          wiped from the address bar so they never reach history or a screen share.</p>
         <div class="row row--between">
           <button type="button" class="btn btn--warn" data-action="click" data-fn="keys.lock">
             lock
@@ -924,7 +957,7 @@
           <button type="button" class="btn" data-action="click" data-fn="ui.toggleOverlay"
                   data-modal="keys">close</button>
         </div>
-      </form>
+      </div>
     </div>
 
     <!-- The transport. A session is walked, not watched: the interesting question is never
