@@ -255,6 +255,9 @@ export const PATHS = Object.freeze({
     drawdown: 'analytics.drawdown',
     hours: 'analytics.hours',
     hourExtremes: 'analytics.hourExtremes',
+    ranking: 'analytics.ranking',
+    rankingTotal: 'analytics.rankingTotal',
+    rankingExpanded: 'analytics.rankingExpanded',
   }),
   journal: Object.freeze({
     trades: 'journal.trades',

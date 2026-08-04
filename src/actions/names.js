@@ -54,6 +54,10 @@ export const ACTIONS = Object.freeze({
     release: 'breaker.release',
     copyLog: 'breaker.copyLog',
   }),
+  analytics: Object.freeze({
+    pickInstrument: 'analytics.pickInstrument',
+    expandRanking: 'analytics.expandRanking',
+  }),
   journal: Object.freeze({
     addTag: 'journal.addTag',
     removeTag: 'journal.removeTag',

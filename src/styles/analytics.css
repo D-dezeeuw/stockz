@@ -103,3 +103,79 @@
   margin: 0;
   color: var(--ink-muted);
 }
+
+/*
+ * The instrument ranking. Bars behind the text rather than beside it: the row still reads as
+ * a row of numbers, and the bar is peripheral information the eye picks up without being
+ * asked to compare lengths across a gutter.
+ */
+.ranking {
+  display: grid;
+  gap: 1px;
+  margin-block-start: var(--sp-2);
+}
+
+.ranking__row {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(5rem, 1fr) 5rem minmax(7rem, 1.2fr);
+  gap: var(--sp-2);
+  align-items: baseline;
+  inline-size: 100%;
+  padding: 2px var(--sp-1);
+  border: 0;
+  background: none;
+  color: var(--ink);
+  font-size: var(--fs-0);
+  text-align: start;
+  cursor: pointer;
+}
+
+.ranking__bar {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  display: block;
+  overflow: hidden;
+}
+
+.ranking__bar i {
+  display: block;
+  block-size: 100%;
+  opacity: 0.16;
+}
+
+.ranking__row--up .ranking__bar i {
+  background: var(--green);
+}
+
+.ranking__row--down .ranking__bar i {
+  background: var(--orange);
+}
+
+.ranking__inst,
+.ranking__net,
+.ranking__meta {
+  position: relative;
+  z-index: 1;
+}
+
+.ranking__inst {
+  color: var(--ink-strong);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ranking__net {
+  text-align: end;
+  font-weight: 700;
+}
+
+.ranking__row--up .ranking__net {
+  color: var(--green);
+}
+
+.ranking__row--down .ranking__net {
+  color: var(--orange);
+}

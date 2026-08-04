@@ -7,6 +7,7 @@ import { refreshDays } from './summary.js'
 import { refreshKpis } from '../analytics/kpis.js'
 import { refreshEquity } from '../analytics/equity.js'
 import { refreshHeatmap } from '../analytics/heatmap.js'
+import { refreshRanking } from '../analytics/instruments.js'
 
 /**
  * Finding the trades worth studying.
@@ -125,6 +126,7 @@ export function refreshFiltered(rows = refreshJournalRows(), filters = appState.
   refreshKpis(visible)
   refreshEquity(visible)
   refreshHeatmap(visible)
+  refreshRanking(visible)
 
   return visible
 }

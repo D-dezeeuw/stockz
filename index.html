@@ -523,6 +523,23 @@
                 · worst {{analytics.hourExtremes.worst.label}} {{fmt.signed(analytics.hourExtremes.worst.net)}}
               </p>
             </div>
+            <!-- Traders accumulate symbols the way people accumulate browser tabs. This is
+                 the list nobody wants to look at and everybody should. DOM rows rather than
+                 a canvas chart, for the same reason the ladder is: they are click targets,
+                 and one click lands on that instrument's trades in the journal. -->
+            <div class="ranking" data-if="block.id === 'analytics'" data-each="r in analytics.ranking">
+              <button type="button" data-action="click" data-fn="analytics.pickInstrument"
+                      :data-instrument="r.instrument" :data-other="r.other"
+                      :class="'ranking__row ranking__row--' + r.tone">
+                <span class="ranking__bar"><i :style="'width:' + (r.bar * 100) + '%'"></i></span>
+                <span class="ranking__inst">{{r.instrument}}</span>
+                <span class="ranking__net tnum">{{fmt.signed(r.net)}}</span>
+                <!-- The count is here so a top line reading "1 trade" can be discounted. -->
+                <span class="ranking__meta label">{{r.count}}t · {{r.winRate}} · fees {{r.fees}}</span>
+              </button>
+            </div>
+            <button type="button" class="chip" data-if="block.id === 'analytics' &amp;&amp; analytics.rankingTotal > 10"
+                    data-action="click" data-fn="analytics.expandRanking">{{analytics.rankingExpanded ? 'top 10' : 'show all'}}</button>
             <!-- An alert set in under three seconds: level, direction, done. -->
             <div class="alerts" data-if="block.id === 'watchlist'">
               <form class="alerts__form" data-action="submit" data-fn="alerts.create"
