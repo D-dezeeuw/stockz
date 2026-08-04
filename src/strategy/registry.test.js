@@ -182,6 +182,7 @@ describe('registerStrategyActions', () => {
       'noop',
       'momentum-burst',
       'vwap-revert',
+      'spread-capture',
       'composite',
     ])
 
@@ -189,7 +190,7 @@ describe('registerStrategyActions', () => {
     // job — but the built-ins must not be registered a second time behind it.
     clearActions()
     registerStrategyActions()
-    expect(knownStrategies()).toHaveLength(4)
+    expect(knownStrategies()).toHaveLength(5)
 
     const bus = fakeBus()
     const run = startStrategy('noop', 'okx:BTC-USDT', { subscribe: bus.subscribe })
