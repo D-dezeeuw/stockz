@@ -753,6 +753,25 @@
                  data-model="settings.maxPosition">
         </label>
         <label class="field">
+          <span class="label">Pause after N losses (0 = off)</span>
+          <input type="number" step="1" min="0" class="field__input num"
+                 data-model="settings.maxConsecLosses">
+        </label>
+        <!-- The breaker's own record. Newest first, with the numbers attached: "it fired at
+             14:12" is trivia, "at 14:12 with the day at -412 against a -400 limit" is the
+             answer to the question actually being asked. -->
+        <div class="field field--row">
+          <span class="label">breaker log</span>
+          <button type="button" class="chip" data-action="click"
+                  data-fn="breaker.copyLog">copy</button>
+        </div>
+        <div class="breaker-log scroll-y" data-each="entry in breaker.log">
+          <div class="breaker-log__row">
+            <span class="label num">{{entry.ts}}</span>
+            <span class="breaker-log__what">{{entry.label}}</span>
+          </div>
+        </div>
+        <label class="field">
           <span class="label">Size presets</span>
           <input type="text" class="field__input" data-model="settings.sizePresets">
         </label>

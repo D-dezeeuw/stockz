@@ -22,6 +22,7 @@ import { registerBotActions } from '../bot/runner.js'
 import { registerSessionActions } from '../bot/session.js'
 import { registerKillActions } from '../breakers/kill.js'
 import { registerRearmActions } from '../breakers/rearm.js'
+import { registerLogActions as registerBreakerLogActions } from '../breakers/log.js'
 import { registerStrategyActions } from '../strategy/registry.js'
 import { registerTicketActions } from '../ticket/actions.js'
 import { registerSizingActions } from '../ticket/sizing.js'
@@ -77,6 +78,7 @@ describe('allActionNames', () => {
       'breaker.rearm',
       'breaker.hold',
       'breaker.release',
+      'breaker.copyLog',
       'bot.toggleArm',
       'bot.setAuto',
       'bot.disableAll',
@@ -143,6 +145,7 @@ describe('allActionNames', () => {
     registerSessionActions()
     registerKillActions()
     registerRearmActions()
+    registerBreakerLogActions()
     registerStrategyActions()
     registerTicketActions()
     registerSizingActions()

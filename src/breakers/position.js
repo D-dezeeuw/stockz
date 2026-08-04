@@ -3,6 +3,7 @@ import { PATHS } from '../state/paths.js'
 import { openPositions } from '../positions/store.js'
 import { currentThresholds } from './core.js'
 import { TRIP } from './codes.js'
+import { logBreakerEvent } from './log.js'
 
 /**
  * The position breaker, and the loss-streak pause.
@@ -162,8 +163,9 @@ export function streakCheck(state = appState?.settings) {
  *
  * @returns {boolean} true.
  */
-export function pauseTrading() {
+export function pauseTrading(now = 0) {
   paused = true
+  logBreakerEvent({ kind: 'pause', code: TRIP.LOSS_STREAK, ts: now, values: { streak: lossStreak } })
   setValue(PATHS.breaker.paused, true)
   setValue(PATHS.breaker.lossStreak, lossStreak)
 
@@ -214,6 +216,7 @@ export function pauseCheck(order, sources = {}) {
 export function recordBlock(reason, now) {
   const record = { reason: String(reason ?? ''), at: Number(now) || 0 }
   setValue(PATHS.breaker.lastBlock, record)
+  logBreakerEvent({ kind: 'block', code: TRIP.POSITION, reason: record.reason, ts: record.at })
   // A running count of saves. It is the number that tells a trader whether their cap is
   // doing anything or just sitting there.
   setValue(PATHS.breaker.blocked, (Number(appState.breaker?.blocked) || 0) + 1)

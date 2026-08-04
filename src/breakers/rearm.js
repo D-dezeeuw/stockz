@@ -5,6 +5,7 @@ import { ACTIONS } from '../actions/names.js'
 import { currentThresholds, trippedCode } from './core.js'
 import { rearm } from './kill.js'
 import { TRIP_REASONS } from './codes.js'
+import { logBreakerEvent } from './log.js'
 
 /**
  * Getting back in.
@@ -162,6 +163,7 @@ export function rearmDesk(now = 0) {
   // after that drawdown" is a question asked hours later, and a re-arm nobody can point at
   // is indistinguishable from a breaker that never fired.
   setValue(PATHS.breaker.lastRearm, { ts: Number(now) || 0, priorCode: prior })
+  logBreakerEvent({ kind: 'rearm', code: prior, ts: Number(now) || 0, values: { priorCode: prior } })
 
   return true
 }

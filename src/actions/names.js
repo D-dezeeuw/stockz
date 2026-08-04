@@ -52,6 +52,7 @@ export const ACTIONS = Object.freeze({
     rearm: 'breaker.rearm',
     hold: 'breaker.hold',
     release: 'breaker.release',
+    copyLog: 'breaker.copyLog',
   }),
   bot: Object.freeze({
     toggleArm: 'bot.toggleArm',

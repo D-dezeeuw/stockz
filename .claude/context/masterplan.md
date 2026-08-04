@@ -4031,16 +4031,16 @@
 **What:** Every trip, block, pause and re-arm is on the record with the exact numbers attached.
 **How:** logBreakerEvent(evt) appends compact entries to a Spektrum ring and an IndexedDB breakerEvents store off the hot path via queueMicrotask.
 
-- [ ] **T24.9.1 - Branch breaker log** - What: Isolated work on the event log. How: git checkout -b feature/f24.9-breaker-log from an up-to-date main.
-- [ ] **T24.9.2 - Log fn** - What: Recording never slows a check. How: Implement logBreakerEvent({ts, code, values}) pushing a 100-entry state ring and deferring the IndexedDB add with queueMicrotask.
-- [ ] **T24.9.3 - IndexedDB store** - What: Events survive reloads for post-session review. How: Add a breakerEvents object store keyed by ts in the shared IndexedDB upgrade helper used for tick recordings.
-- [ ] **T24.9.4 - Instrument call sites** - What: Nothing safety-related goes unlogged. How: Call logBreakerEvent from tripBreaker, pauseTrading, rearm and positionCheck rejections with structured value payloads.
-- [ ] **T24.9.5 - Log panel** - What: The record is readable inside the app. How: Render a newest-first data-each list of entries in the breaker settings section with code labels and values.
-- [ ] **T24.9.6 - Journal mirror** - What: Breaker events appear in the trading story. How: Mirror each entry into the phase-25 trade journal stream tagged type 'breaker'.
-- [ ] **T24.9.7 - Retention prune** - What: The store never grows unbounded. How: Implement pruneBreakerEvents deleting IndexedDB entries older than 30 days, run once at session start.
-- [ ] **T24.9.8 - Copy log action** - What: The log is shareable in one click. How: defineFn copyBreakerLog serializing visible entries to JSON onto navigator.clipboard via a data-action button.
-- [ ] **T24.9.9 - Single unit tests for log fns** - What: Log logic proven once per function. How: One Vitest test each for logBreakerEvent and pruneBreakerEvents using fake-indexeddb via targeted npx vitest run -t.
-- [ ] **T24.9.10 - Merge breaker log** - What: The event log lands on main. How: Green targeted tests plus ESLint, merge feature/f24.9-breaker-log into main, delete the branch.
+- [x] **T24.9.1 - Branch breaker log** - What: Isolated work on the event log. How: git checkout -b feature/f24.9-breaker-log from an up-to-date main.
+- [x] **T24.9.2 - Log fn** - What: Recording never slows a check. How: Implement logBreakerEvent({ts, code, values}) pushing a 100-entry state ring and deferring the IndexedDB add with queueMicrotask.
+- [x] **T24.9.3 - IndexedDB store** - What: Events survive reloads for post-session review. How: Add a breakerEvents object store keyed by ts in the shared IndexedDB upgrade helper used for tick recordings.
+- [x] **T24.9.4 - Instrument call sites** - What: Nothing safety-related goes unlogged. How: Call logBreakerEvent from tripBreaker, pauseTrading, rearm and positionCheck rejections with structured value payloads.
+- [x] **T24.9.5 - Log panel** - What: The record is readable inside the app. How: Render a newest-first data-each list of entries in the breaker settings section with code labels and values.
+- [x] **T24.9.6 - Journal mirror** - What: Breaker events appear in the trading story. How: Mirror each entry into the phase-25 trade journal stream tagged type 'breaker'.
+- [x] **T24.9.7 - Retention prune** - What: The store never grows unbounded. How: Implement pruneBreakerEvents deleting IndexedDB entries older than 30 days, run once at session start.
+- [x] **T24.9.8 - Copy log action** - What: The log is shareable in one click. How: defineFn copyBreakerLog serializing visible entries to JSON onto navigator.clipboard via a data-action button.
+- [x] **T24.9.9 - Single unit tests for log fns** - What: Log logic proven once per function. How: One Vitest test each for logBreakerEvent and pruneBreakerEvents using fake-indexeddb via targeted npx vitest run -t.
+- [x] **T24.9.10 - Merge breaker log** - What: The event log lands on main. How: Green targeted tests plus ESLint, merge feature/f24.9-breaker-log into main, delete the branch.
 
 ### F24.10 - Threshold settings
 

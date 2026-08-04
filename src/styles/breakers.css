@@ -12,6 +12,31 @@
  * things working.
  */
 
+/* The record. Dense and scrollable — it is read after the fact, not during. */
+.breaker-log {
+  display: grid;
+  gap: 1px;
+  max-block-size: 12rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-1);
+  background: var(--bg-inset);
+}
+
+.breaker-log__row {
+  display: flex;
+  gap: var(--sp-2);
+  align-items: baseline;
+  padding: 2px var(--sp-2);
+  font-size: var(--fs-0);
+}
+
+.breaker-log__what {
+  color: var(--orange);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 /* The lights. Three dots, each one a button onto the limit behind it. */
 .breaker-leds {
   display: inline-flex;

@@ -44,6 +44,21 @@ export {
 export { killSwitch, tripAction, killLatency, rearm, registerKillActions } from './kill.js'
 
 export {
+  LOG_SIZE,
+  RETENTION_MS,
+  LOG_KEY,
+  eventLabel,
+  logBreakerEvent,
+  breakerEvents,
+  flushBreakerLog,
+  loadBreakerLog,
+  pruneBreakerEvents,
+  copyBreakerLog,
+  registerLogActions,
+  resetBreakerLog,
+} from './log.js'
+
+export {
   HOLD_MS,
   stillOverLimit,
   startHold,

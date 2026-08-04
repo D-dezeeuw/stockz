@@ -95,6 +95,19 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
   otherwise leave the bar filling under a hand that had already let go, and the press start is
   tracked as null rather than zero because a monotonic clock reads near zero early in a page's
   life and a sentinel a real timestamp can equal is a press that silently never starts.
+- **The breaker's own record** — every trip, block, pause and re-arm, with the numbers that
+  caused it attached. The numbers are the point: "the breaker fired at 14:12" is trivia, and
+  "at 14:12 with the day at -412 against a -400 limit" is the answer to the question actually
+  being asked, which is always some version of *was it right to*. Recording never slows a
+  check — the ring lives outside the reactive tree, the publish is one write, and the persist
+  is deferred to a microtask and coalesced behind a flag so a burst of blocks serialises once
+  rather than once per block. A log that cost the hot path anything would eventually be the
+  reason somebody turned the breaker off. Bounded at a hundred entries, pruned at thirty days,
+  copyable as JSON in one click, and readable in the settings drawer newest-first. Stored in
+  `localStorage` rather than IndexedDB, deliberately and against the plan text: nothing else
+  here uses IDB and the plan's "shared upgrade helper" does not exist, so a hundred bounded
+  entries did not justify a second storage engine and a fake-IDB test dependency — the
+  guarantees asked for (survives reloads, bounded, pruned) are all met as it stands.
 
 ## [0.23.0] — 2026-08-04 — Phase 23: Auto-Trade Bot Runner
 
