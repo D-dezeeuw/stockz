@@ -195,6 +195,26 @@ export const SETTINGS_SCHEMA = Object.freeze([
     default: 1,
   },
   {
+    key: 'paperLatencyMs',
+    group: 'trading',
+    // Off by default: the realism is worth having, but a beginner's first ten orders
+    // should not feel broken. Choosing the delay is what makes it a lesson.
+    label: 'Practice order latency (ms, 0 = instant)',
+    kind: 'number',
+    min: 0,
+    step: 5,
+    default: 0,
+  },
+  {
+    key: 'paperLatencyJitter',
+    group: 'trading',
+    label: 'Practice latency jitter (0-1)',
+    kind: 'number',
+    min: 0,
+    step: 0.05,
+    default: 0.3,
+  },
+  {
     key: 'paperStartBalance',
     group: 'trading',
     label: 'Practice account starting stake',

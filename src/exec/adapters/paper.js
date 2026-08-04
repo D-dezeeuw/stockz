@@ -1,6 +1,7 @@
 import { appState } from '../../app/engine.js'
 import { capabilityFor, capabilityFlags } from '../capabilities.js'
 import { restOrder, cancelPaperOrder } from '../paper/engine.js'
+import { afterLatency } from '../paper/latency.js'
 
 /**
  * The paper adapter — the desk trading against itself.
@@ -75,45 +76,57 @@ export function createPaperAdapter(deps = {}) {
     capabilities: () => [...PAPER_CAPABILITIES],
     paper: true,
 
-    async submit(intent) {
+    submit(intent) {
       const clientId = String(intent?.clientId ?? '')
 
-      // A limit order joins the queue rather than filling on submit. It comes back
-      // `working`, not `filled` — the tape decides the rest.
-      if (intent?.type !== 'market' && Number(intent?.price) > 0) {
-        const rested = restOrder({ ...intent, clientId })
-        if (!rested) {
-          return { ok: false, reason: 'no_price', message: 'limit needs a price', clientId }
+      // Delayed by the configured wire time, and the market is read *on arrival* rather
+      // than at submit. Pricing against the book as it was when the button was pressed
+      // would model the delay without modelling anything it costs, which is the whole
+      // point of having one.
+      return afterLatency(() => {
+        // A limit order joins the queue rather than filling on submit. It comes back
+        // `working`, not `filled` — the tape decides the rest.
+        if (intent?.type !== 'market' && Number(intent?.price) > 0) {
+          const rested = restOrder({ ...intent, clientId })
+          if (!rested) {
+            return { ok: false, reason: 'no_price', message: 'limit needs a price', clientId }
+          }
+          return {
+            ok: true,
+            clientId,
+            order: { state: 'working', avgPx: 0, filled: 0, resting: true, paper: true },
+          }
         }
+
+        const price = paperFillPrice(intent, market())
+
+        // Unfillable rather than silently filled at zero: a paper fill at no price would
+        // book a position whose P&L is nonsense for the rest of the session.
+        if (!(price > 0)) {
+          return { ok: false, reason: 'no_market', message: 'no price to fill against', clientId }
+        }
+
         return {
           ok: true,
           clientId,
-          order: { state: 'working', avgPx: 0, filled: 0, resting: true, paper: true },
+          order: { state: 'filled', avgPx: price, filled: Number(intent?.size) || 0, paper: true },
         }
-      }
-
-      const price = paperFillPrice(intent, market())
-
-      // Unfillable rather than silently filled at zero: a paper fill at no price would
-      // book a position whose P&L is nonsense for the rest of the session.
-      if (!(price > 0)) {
-        return { ok: false, reason: 'no_market', message: 'no price to fill against', clientId }
-      }
-
-      return {
-        ok: true,
-        clientId,
-        order: { state: 'filled', avgPx: price, filled: Number(intent?.size) || 0, paper: true },
-      }
+      }, deps)
     },
 
-    async cancel(order) {
-      // Limits do rest now, so a cancel has something real to catch. Reporting `ok` for an
-      // id that was not there would let a stuck order look cancelled.
-      const id = String(order?.clientId ?? order?.id ?? '')
-      const removed = cancelPaperOrder(id)
+    cancel(order) {
+      // A cancel goes over the same wire, so it feels the same delay — which is exactly
+      // when a fill can still land in front of it, as it would live.
+      return afterLatency(() => {
+        // Limits do rest now, so a cancel has something real to catch. Reporting `ok` for
+        // an id that was not there would let a stuck order look cancelled.
+        const id = String(order?.clientId ?? order?.id ?? '')
+        const removed = cancelPaperOrder(id)
 
-      return removed ? { ok: true } : { ok: false, reason: 'not_found', message: 'no such paper order' }
+        return removed
+          ? { ok: true }
+          : { ok: false, reason: 'not_found', message: 'no such paper order' }
+      }, deps)
     },
   }
 }
