@@ -1,0 +1,55 @@
+/*
+ * The HUD.
+ *
+ * Read at a glance and only between trades, so the tiles are big, few, and stationary.
+ * Every value is tabular and pre-formatted to a fixed width — a row of numbers that
+ * reflows as they change is a row nobody can scan.
+ */
+
+.hud {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(6rem, 1fr));
+  gap: var(--space-2, 0.5rem);
+  height: 100%;
+  align-content: start;
+}
+
+.hud__tile {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  padding: var(--space-1, 0.25rem) var(--space-2, 0.5rem);
+  border: 1px solid var(--line);
+}
+
+.hud__value {
+  font-size: var(--font-size-lg, 1.125rem);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+}
+
+.hud__label {
+  font-size: var(--font-size-xs, 0.6875rem);
+  color: var(--ink-muted);
+}
+
+/*
+ * Three states rather than a gradient: the question this tile answers — can I trust the
+ * fast path right now — has three answers.
+ */
+.hud__tile--good .hud__value {
+  color: var(--green);
+}
+
+.hud__tile--warn .hud__value {
+  color: var(--ink);
+}
+
+.hud__tile--bad .hud__value {
+  color: var(--orange);
+}
+
+.hud__tile--bad {
+  border-color: var(--orange);
+}
