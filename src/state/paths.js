@@ -263,6 +263,9 @@ export const PATHS = Object.freeze({
     recording: 'replay.recording',
     sessions: 'replay.sessions',
     library: 'replay.library',
+    // Market *tick* replay's transport, kept apart from phase 25's journal trade replay
+    // above: different features, same word.
+    player: 'replay.player',
   }),
   analytics: Object.freeze({
     // The one switch every analytics number obeys, and the trade list it scopes to. The

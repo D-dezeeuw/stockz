@@ -12,6 +12,18 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ### Added
 
+- **F27.3 — the replay transport.** A video editor for markets: load a session, play it at
+  1x to 50x, pause, step one tick, jump anywhere. The point is not to watch — it is to stop
+  on the tick where the decision went wrong and look at the book as it was. Ticks are
+  republished onto the **same bus** the live feed uses, so the ladder, tape, chart and
+  strategies all replay without knowing they are not live; a strategy tested against a
+  separate playback path is a strategy tested against something other than the desk. Gaps
+  are clamped at two seconds *before* scaling, so a four-minute quiet stretch is skipped
+  rather than merely shortened and nobody concludes the player has hung. It keeps its own
+  `replay.player` object and its own action names rather than fighting phase 25's journal
+  trade replay for `replay.active` and `replay.step` — different features that happen to
+  share a word.
+
 - **F27.2 — the recording library.** Recordings are only useful if the right one can be
   found, and a session identified by `rec-lz4k9x-3f0a` is one nobody will ever pick
   deliberately — so every row carries when, how long, which instruments and how many ticks,

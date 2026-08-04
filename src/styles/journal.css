@@ -355,7 +355,7 @@
 
 .library__row {
   display: grid;
-  grid-template-columns: 1.6fr 1.2fr 0.7fr 0.6fr 0.7fr auto;
+  grid-template-columns: 1.6fr 1.2fr 0.7fr 0.6fr 0.7fr auto auto;
   gap: var(--sp-1);
   align-items: baseline;
   padding-block: var(--sp-1);
@@ -392,4 +392,45 @@
 
 .library__x:hover {
   color: var(--orange);
+}
+
+/*
+ * The replay transport.
+ *
+ * One row: what is loaded, where in it, how fast, and the way back to live. Paused is
+ * orange because a desk showing prices that are not current is a desk that must never be
+ * mistaken for a live one.
+ */
+.transport {
+  display: flex;
+  gap: var(--sp-1);
+  align-items: center;
+  flex: 0 0 auto;
+  padding-block: var(--sp-1);
+  border-block-end: 1px solid var(--line);
+  margin-block-end: var(--sp-1);
+}
+
+.transport__label {
+  min-inline-size: 0;
+  color: var(--orange);
+}
+
+.transport__clock {
+  margin-inline-start: auto;
+  color: var(--ink-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.transport__speeds {
+  display: flex;
+  gap: 2px;
+}
+
+.library__play {
+  border: 0;
+  background: none;
+  color: var(--green);
+  cursor: pointer;
+  font: inherit;
 }

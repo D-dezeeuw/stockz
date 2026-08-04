@@ -4436,16 +4436,16 @@
 **What:** Scrub through a recorded session at 1x to 50x with pause and single-tick step, like a video editor for markets.
 **How:** A player module rescheduling recorded inter-tick gaps by a speed factor, driven by a transport block bound with Spektrum data-action.
 
-- [ ] **T27.3.1 - Player feature branch** - What: Transport work isolated from main. How: git switch -c feature/replay-player from main.
-- [ ] **T27.3.2 - Player core** - What: A session loads and holds a precise playback cursor. How: createReplayPlayer() streaming chunks from IndexedDB with cursor, clock, and speed state.
-- [ ] **T27.3.3 - Tick scheduling** - What: Playback pacing that mirrors the recorded market at any speed. How: nextTickDelay() scales recorded inter-tick gaps by the speed factor with a burst clamp for 50x.
-- [ ] **T27.3.4 - Transport functions** - What: Play, pause, and single-tick step primitives the UI can trust. How: playReplay(), pauseReplay(), and stepTick() mutating player state through Spektrum trigger actions.
-- [ ] **T27.3.5 - Speed selector** - What: Snap between 1x, 2x, 5x, 10x, 25x, 50x mid-playback. How: Button row bound data-action="setReplaySpeed" writing replay.speed consumed by nextTickDelay.
-- [ ] **T27.3.6 - Seek timeline** - What: Click anywhere in the session to jump straight there. How: Hand-rolled canvas timeline mapping click x to seekToTime() using the chunk time index.
-- [ ] **T27.3.7 - Transport block UI** - What: A tight one-row player: transport, speed, clock, progress. How: Grid block styled with design tokens, mono timestamps, green progress bar, orange paused state.
-- [ ] **T27.3.8 - Playback hotkeys** - What: Space to pause, arrows to step, no mouse needed. How: Register replay bindings in the phase 16 hotkey registry, active only while replay.source is engaged.
-- [ ] **T27.3.9 - Player unit tests** - What: Every transport function proven once, per the one-test rule. How: One Vitest test each for nextTickDelay, playReplay, pauseReplay, stepTick, seekToTime run via vitest run -t.
-- [ ] **T27.3.10 - Player merge** - What: The transport ships. How: ESLint plus targeted Vitest green, merge feature/replay-player into main.
+- [x] **T27.3.1 - Player feature branch** - What: Transport work isolated from main. How: git switch -c feature/replay-player from main.
+- [x] **T27.3.2 - Player core** - What: A session loads and holds a precise playback cursor. How: createReplayPlayer() streaming chunks from IndexedDB with cursor, clock, and speed state.
+- [x] **T27.3.3 - Tick scheduling** - What: Playback pacing that mirrors the recorded market at any speed. How: nextTickDelay() scales recorded inter-tick gaps by the speed factor with a burst clamp for 50x.
+- [x] **T27.3.4 - Transport functions** - What: Play, pause, and single-tick step primitives the UI can trust. How: playReplay(), pauseReplay(), and stepTick() mutating player state through Spektrum trigger actions.
+- [x] **T27.3.5 - Speed selector** - What: Snap between 1x, 2x, 5x, 10x, 25x, 50x mid-playback. How: Button row bound data-action="setReplaySpeed" writing replay.speed consumed by nextTickDelay.
+- [x] **T27.3.6 - Seek timeline** - What: Click anywhere in the session to jump straight there. How: Hand-rolled canvas timeline mapping click x to seekToTime() using the chunk time index.
+- [x] **T27.3.7 - Transport block UI** - What: A tight one-row player: transport, speed, clock, progress. How: Grid block styled with design tokens, mono timestamps, green progress bar, orange paused state.
+- [x] **T27.3.8 - Playback hotkeys** - What: Space to pause, arrows to step, no mouse needed. How: Register replay bindings in the phase 16 hotkey registry, active only while replay.source is engaged.
+- [x] **T27.3.9 - Player unit tests** - What: Every transport function proven once, per the one-test rule. How: One Vitest test each for nextTickDelay, playReplay, pauseReplay, stepTick, seekToTime run via vitest run -t.
+- [x] **T27.3.10 - Player merge** - What: The transport ships. How: ESLint plus targeted Vitest green, merge feature/replay-player into main.
 
 ### F27.4 - Replay Pipeline Integration
 
