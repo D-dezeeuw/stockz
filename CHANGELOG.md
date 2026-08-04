@@ -10,8 +10,21 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ## [Unreleased]
 
+## [0.15.0] — 2026-08-04 — Phase 15: Rapid Order Entry
+
+Intent to live order in one click. The ticket, its price modes and sizing, the arm gate,
+the submit fast path, the order lifecycle, feedback, a burst queue, the panic shortcuts,
+and click-to-trade off the ladder and the chart.
+
 ### Added
 
+- **Click-to-trade** — the ladder and the chart are where a scalper is already looking
+  when they decide, so the decision is expressible there: a plain click rests a limit at
+  the level, shift crosses it, and a chart click snaps to a tradable tick because an
+  order at an unquotable price is a rejection dressed up as an entry. A click on a cold
+  desk *stages* the ticket rather than doing nothing — that is what separating arming
+  from clicking is for, and a click that silently vanished would teach the trader the
+  surface is unreliable. (F15.10)
 - **Cancel-all and repeat-last** — the two things reached for when there is no time to
   think. CXL ALL stays enabled while the desk is disarmed: arming gates *entering* risk,
   and a trader who disarmed in a panic must not then find the exit greyed out. Repeat
@@ -580,7 +593,8 @@ with a test policy and a live URL.
   literal `APP_VERSION` (a JSON import is bundler-only), guarded by a test that fails if
   it drifts from `package.json`; static assets moved from `public/` to the repo root.
 
-[Unreleased]: https://github.com/D-dezeeuw/stockz/compare/v0.14.0...HEAD
+[Unreleased]: https://github.com/D-dezeeuw/stockz/compare/v0.15.0...HEAD
+[0.15.0]: https://github.com/D-dezeeuw/stockz/compare/v0.14.0...v0.15.0
 [0.14.0]: https://github.com/D-dezeeuw/stockz/compare/v0.13.0...v0.14.0
 [0.13.0]: https://github.com/D-dezeeuw/stockz/compare/v0.12.0...v0.13.0
 [0.12.0]: https://github.com/D-dezeeuw/stockz/compare/v0.11.0...v0.12.0

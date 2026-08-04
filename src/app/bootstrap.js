@@ -1,6 +1,7 @@
 import { setValue, bindDOM, run, tick, checkpoint, engineInfo } from './engine.js'
 import { initialState } from '../state/initial.js'
-import { registerCoreActions, actionNames } from '../actions/registry.js'
+import { registerCoreActions, actionNames, dispatchAction } from '../actions/registry.js'
+import { ACTIONS } from '../actions/names.js'
 import { registerDerived } from '../state/derived.js'
 import { registerSystems } from '../state/systems.js'
 import { mountDevtools } from './devtools.js'
@@ -24,6 +25,7 @@ import { registerSizingActions } from '../ticket/sizing.js'
 import { registerSubmitAction } from '../ticket/submit.js'
 import { sendOrder } from '../ticket/send.js'
 import { registerShortcutActions } from '../ticket/shortcuts.js'
+import { registerIntentAction } from '../ticket/intent.js'
 import { appVersion } from './version.js'
 
 /**
@@ -77,8 +79,9 @@ export function bootstrap(options = {}) {
   registerSizingActions()
   // The venue call is injected rather than imported inside the action, so the fast path
   // can be exercised end to end without a network.
-  registerSubmitAction({ send: (payload) => sendOrder(payload) })
-  registerShortcutActions({ send: (payload) => sendOrder(payload) })
+  registerSubmitAction({ send: sendOrder })
+  registerShortcutActions({ send: sendOrder })
+  registerIntentAction({ submit: submitFromIntent })
   adoptKeys()
   applyTheme(doc?.documentElement?.getAttribute?.('data-theme') || preferredTheme(), doc)
   const derived = registerDerived()
@@ -105,6 +108,19 @@ export function bootstrap(options = {}) {
   if (autoRun) run()
 
   return { paths: Object.keys(state), actions: actionNames(), derived, cleanup, feeds }
+}
+
+/**
+ * Fire the ticket from a click-to-trade intent.
+ *
+ * Named rather than inlined at the registration site: an inline arrow is invisible to
+ * the coverage gate, and this one is on the order path.
+ *
+ * @param {{side?: string}} click - the intent's click details.
+ * @returns {unknown} whatever the submit action returned.
+ */
+export function submitFromIntent(click) {
+  return dispatchAction(ACTIONS.ticket.submit, click)
 }
 
 /**

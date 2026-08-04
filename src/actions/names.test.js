@@ -15,6 +15,7 @@ import { registerTicketActions } from '../ticket/actions.js'
 import { registerSizingActions } from '../ticket/sizing.js'
 import { registerSubmitAction } from '../ticket/submit.js'
 import { registerShortcutActions } from '../ticket/shortcuts.js'
+import { registerIntentAction } from '../ticket/intent.js'
 
 beforeEach(() => {
   clearActions()
@@ -42,6 +43,7 @@ describe('allActionNames', () => {
       'ticket.stepQty',
       'ticket.submit',
       'ticket.repeatLast',
+      'ticket.intent',
       'orders.cancelAll',
       'app.reset',
       'lists.focus',
@@ -73,6 +75,7 @@ describe('allActionNames', () => {
     registerSizingActions()
     registerSubmitAction()
     registerShortcutActions()
+    registerIntentAction()
     expect(actionNames().sort()).toEqual(allActionNames().sort())
 
     // Every name follows <namespace>.<verb>, which is what registerAction enforces.
