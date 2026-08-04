@@ -12,6 +12,24 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ### Added
 
+- **OCO** — the moment one exit fills the other stops being protection and becomes an
+  unhedged order that will happily open a new position the next time price touches it.
+  The sibling lookup is a Map, not a scan, because this runs on the fill path where every
+  millisecond is exposure nobody chose. A partial fill *shrinks* the sibling rather than
+  cancelling it — the remainder still needs protecting — and a cancel that fails because
+  the order already filled is read as both legs filling, which is a race, not an error.
+  (F17.6)
+- **Trailing stops** — the whole value is one property: a trail only ever tightens. The
+  ratchet works from the *best* price seen rather than the last, which is precisely the
+  bug that turns a scalp up two ticks into one down twenty, and it only amends when the
+  move is worth at least a step, because an amend per tick is a rate limit waiting to
+  happen. Breach is measured against the live price; the stop exists to fire on what the
+  market is doing now. (F17.7)
+- **Slippage guard** — the one check between a fat finger and a filled order, and it
+  catches a silent failure: an order at 10,000 instead of 100 does not look wrong in a
+  form field. It runs inside `prepare`, the single place every order passes, because a
+  check the ticket does and a hotkey forgets is not a check. A market order has no price
+  to compare, so its book must be live instead. (F17.8)
 - **Time-in-force** — IOC, FOK and post-only, each expressing a different intolerance
   (of leftovers, of partial size, of paying the spread) and each costing money in a way
   that is hard to see afterwards when it is wrong. Where a venue lacks one the engine can

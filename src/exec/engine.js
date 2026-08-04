@@ -1,6 +1,8 @@
 import { makeIntent, advanceOrderState, isSettled } from './types.js'
 import { isAdapter, supportsIntent } from './adapters/contract.js'
 import { createOkxAdapter } from './adapters/okx.js'
+import { checkSlippage, checkSize } from './guard.js'
+import { appState } from '../app/engine.js'
 import { ingestOrderEvents } from '../ticket/lifecycle.js'
 import { makeClientOrderId } from '../ticket/submit.js'
 import { createLogger } from '../utils/log.js'
@@ -59,7 +61,7 @@ export function adapterFor(venue) {
  * @param {object} input - the order request.
  * @returns {{ok: boolean, intent: object|null, reason: string}} the verdict.
  */
-export function prepare(input) {
+export function prepare(input, market = deskMarket()) {
   const built = makeIntent(input)
   if (!built.ok) return built
 
@@ -69,7 +71,29 @@ export function prepare(input) {
   const supported = supportsIntent(built.intent, adapter.capabilities())
   if (!supported.ok) return { ok: false, intent: null, reason: supported.reason }
 
+  // The guards run here, in the one place every order passes, rather than in each caller
+  // — a check the ticket does and a hotkey forgets is not a check.
+  const sized = checkSize(built.intent.size, market.maxSize)
+  if (!sized.ok) return { ok: false, intent: null, reason: sized.reason }
+
+  const slip = checkSlippage(built.intent, market)
+  if (!slip.ok) return { ok: false, intent: null, reason: slip.reason }
+
   return built
+}
+
+/**
+ * The market context the guards check against.
+ *
+ * @returns {{mid: number, maxBps: number, maxSize: number, bookStatus: string}} the context.
+ */
+export function deskMarket() {
+  return {
+    mid: Number(appState.market?.mid) || 0,
+    maxBps: Number(appState.settings?.maxDeviationBps) || 0,
+    maxSize: Number(appState.settings?.maxPosition) || 0,
+    bookStatus: String(appState.market?.bookStatus ?? ''),
+  }
 }
 
 /**
