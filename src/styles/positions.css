@@ -130,3 +130,17 @@
     animation: none;
   }
 }
+
+/* The equity curve. Stroked in the day's own colour so the shape and the score agree
+   without the eye having to check both. */
+.equity {
+  width: 100%;
+  height: 1.75rem;
+  flex: 0 0 auto;
+}
+
+.equity__line {
+  stroke: var(--green);
+  stroke-width: 1.5;
+  vector-effect: non-scaling-stroke;
+}

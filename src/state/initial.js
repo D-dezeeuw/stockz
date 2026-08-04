@@ -107,6 +107,7 @@ export function initialState(overrides = {}) {
     [PATHS.trade.score]: { gross: 0, fees: 0, net: 0, count: 0, wins: 0 },
     [PATHS.trade.dayTotal]: 0,
     [PATHS.trade.dayLabel]: '0.00',
+    [PATHS.trade.equityPath]: '',
     [PATHS.trade.buyingPower]: 0,
     [PATHS.trade.lastReject]: '',
     [PATHS.trade.queue]: [],

@@ -303,6 +303,11 @@
                 <button type="button" class="ticket__cancel" data-action="click"
                         data-fn="positions.flattenAll">FLAT ALL</button>
               </div>
+              <!-- The session's shape: a day's net hides whether it was a grind or one
+                   lucky trade on a losing morning. -->
+              <svg class="equity" viewBox="0 0 120 28" preserveAspectRatio="none" aria-hidden="true">
+                <polyline class="equity__line" :points="trade.equityPath" fill="none" />
+              </svg>
               <div class="positions__rows" data-each="p in trade.positions">
                 <div class="positions__row" :class="'positions__row positions__row--' + p.side">
                   <span class="positions__inst">{{p.instrument}}</span>
