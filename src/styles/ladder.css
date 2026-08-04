@@ -308,3 +308,20 @@
   overflow-y: auto;
   overscroll-behavior: contain;
 }
+
+/*
+ * A degraded book is dimmed and its rows stop being click targets. The prefill action
+ * refuses these clicks anyway; the cursor says so before the click happens.
+ */
+.ladder--degraded {
+  opacity: 0.55;
+}
+
+.ladder--degraded .ladder__row {
+  cursor: not-allowed;
+}
+
+.chip--warn {
+  color: var(--orange);
+  border-color: var(--orange);
+}

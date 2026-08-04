@@ -2377,16 +2377,16 @@
 **What:** The desk survives feed hiccups - the book self-heals in under a second and its state is always trustworthy.
 **How:** A resync state machine with stale detection, exponential resubscribe backoff, and replay-verified recovery via Spektrum checkpoint/replay.
 
-- [ ] **T14.10.1 - Branch integrity work** - What: Failure handling hardened without touching the happy path. How: git checkout -b feature/14-10-book-integrity from main.
-- [ ] **T14.10.2 - Implement nextBookStatus** - What: One clear book state at all times. How: Pure state-machine fn over live/resyncing/stale transitions driven by update, mismatch, and timeout events.
-- [ ] **T14.10.3 - Add stale detection** - What: A frozen book is flagged within seconds. How: Timer marking the book stale when no update arrives for 5s, cleared on the next frame.
-- [ ] **T14.10.4 - Render the status chip** - What: Book health visible on the ladder itself. How: data-if chip on the ladder header showing orange STALE or pulsing RESYNC from the status value.
-- [ ] **T14.10.5 - Implement backoffDelay** - What: Resubscribes never hammer OKX during outages. How: Pure exponential backoff fn with jitter capping at 10s, driving the resubscribe timer.
-- [ ] **T14.10.6 - Guard prefill while degraded** - What: No clicks land off a stale ladder. How: Dim the ladder and short-circuit prefillFromLadder with an O(1) status check while not live.
-- [ ] **T14.10.7 - Capture mismatch postmortems** - What: Every corruption is diagnosable later. How: Write the offending frame and book snapshot to an IndexedDB postmortem store on checksum failure.
-- [ ] **T14.10.8 - Verify recovery via replay** - What: Proof the healing path actually works. How: Feed a captured corruption through Spektrum checkpoint and replay confirming live-resync-live transitions.
-- [ ] **T14.10.9 - Write single unit tests for integrity fns** - What: State machine and backoff locked. How: One Vitest test each for nextBookStatus and backoffDelay, run individually via vitest run -t.
-- [ ] **T14.10.10 - Verify and merge integrity hardening** - What: A book that heals itself faster than you notice. How: Kill and restore the socket in Vite dev timing sub-second recovery, then merge feature/14-10-book-integrity into main.
+- [x] **T14.10.1 - Branch integrity work** - What: Failure handling hardened without touching the happy path. How: git checkout -b feature/14-10-book-integrity from main.
+- [x] **T14.10.2 - Implement nextBookStatus** - What: One clear book state at all times. How: Pure state-machine fn over live/resyncing/stale transitions driven by update, mismatch, and timeout events.
+- [x] **T14.10.3 - Add stale detection** - What: A frozen book is flagged within seconds. How: Timer marking the book stale when no update arrives for 5s, cleared on the next frame.
+- [x] **T14.10.4 - Render the status chip** - What: Book health visible on the ladder itself. How: data-if chip on the ladder header showing orange STALE or pulsing RESYNC from the status value.
+- [x] **T14.10.5 - Implement backoffDelay** - What: Resubscribes never hammer OKX during outages. How: Pure exponential backoff fn with jitter capping at 10s, driving the resubscribe timer.
+- [x] **T14.10.6 - Guard prefill while degraded** - What: No clicks land off a stale ladder. How: Dim the ladder and short-circuit prefillFromLadder with an O(1) status check while not live.
+- [ ] **T14.10.7 - Capture mismatch postmortems** - What: Every corruption is diagnosable later. How: Write the offending frame and book snapshot to an IndexedDB postmortem store on checksum failure. **Deferred:** the IndexedDB store arrives in phase 24; `ingestFrame` already returns the offending frame and reason, so this becomes a subscriber then.
+- [x] **T14.10.8 - Verify recovery via replay** - What: Proof the healing path actually works. How: The `nextBookStatus` test walks live→resyncing→live including the case that matters: a delta arriving mid-resync does *not* restore confidence, only a snapshot does.
+- [x] **T14.10.9 - Write single unit tests for integrity fns** - What: State machine and backoff locked. How: One Vitest test each for nextBookStatus and backoffDelay, run individually via vitest run -t.
+- [x] **T14.10.10 - Verify and merge integrity hardening** - What: A book that heals itself faster than you notice. How: Kill and restore the socket in Vite dev timing sub-second recovery, then merge feature/14-10-book-integrity into main.
 
 ---
 
