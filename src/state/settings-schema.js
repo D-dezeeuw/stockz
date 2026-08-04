@@ -119,6 +119,15 @@ export const SETTINGS_SCHEMA = Object.freeze([
     default: 4,
   },
   {
+    key: 'maxDeviationBps',
+    group: 'risk',
+    label: 'Max distance from mid (bps)',
+    kind: 'number',
+    min: 0,
+    step: 25,
+    default: 500,
+  },
+  {
     key: 'maxBurst',
     group: 'risk',
     label: 'Max queued orders',

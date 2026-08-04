@@ -87,6 +87,7 @@ export const PATHS = Object.freeze({
     qtyPresets: 'settings.qtyPresets',
     volume: 'settings.volume',
     maxBurst: 'settings.maxBurst',
+    maxDeviationBps: 'settings.maxDeviationBps',
     chords: 'settings.chords',
   }),
   market: Object.freeze({

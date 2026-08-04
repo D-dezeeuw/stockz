@@ -10,8 +10,9 @@ import {
   liveOrders,
   resetEngine,
   startEngine,
+  deskMarket,
 } from './engine.js'
-import { appState, tick, resetState } from '../app/engine.js'
+import { appState, setValue, tick, resetState } from '../app/engine.js'
 
 beforeEach(() => {
   resetEngine()
@@ -67,6 +68,13 @@ describe('prepare', () => {
     expect(prepare(order({ tif: 'fok' })).reason).toBe('no fok')
     expect(prepare(order({ symbol: 'kraken:BTC-USD' })).reason).toBe('no adapter for kraken')
     expect(prepare(order({ size: 0 })).reason).toBe('no size')
+
+    // The guards run here, in the one place every order passes: a check the ticket does
+    // and a hotkey forgets is not a check.
+    const market = { mid: 100, maxBps: 500, maxSize: 5, bookStatus: 'live' }
+    expect(prepare(order({ price: 1000 }), market).reason).toContain('bps from mid')
+    expect(prepare(order({ size: 50 }), market).reason).toBe('size over 5')
+    expect(prepare(order(), market).ok).toBe(true)
   })
 })
 
@@ -188,5 +196,22 @@ describe('resetEngine', () => {
     expect(resetEngine()).toBe(true)
     expect(adapterFor('okx')).toBeNull()
     expect(liveOrders()).toEqual([])
+  })
+})
+
+describe('deskMarket', () => {
+  it('reads the guard\'s inputs off the desk as it stands right now', () => {
+    setValue('market.mid', 100)
+    setValue('market.bookStatus', 'live')
+    setValue('settings.maxDeviationBps', 250)
+    setValue('settings.maxPosition', 3)
+    tick()
+
+    expect(deskMarket()).toEqual({ mid: 100, maxBps: 250, maxSize: 3, bookStatus: 'live' })
+
+    // An empty desk yields zeroes, which the guards read as "no limit configured"
+    // rather than as "block everything".
+    resetState()
+    expect(deskMarket()).toEqual({ mid: 0, maxBps: 0, maxSize: 0, bookStatus: '' })
   })
 })

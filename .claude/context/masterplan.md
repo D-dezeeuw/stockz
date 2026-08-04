@@ -2814,48 +2814,48 @@
 **What:** TP and SL both work the market, and the instant one fills the other dies - no orphaned stops eating the account.
 **How:** OCO watcher on fill events cancelling the sibling through the venue cancel API within the same event tick.
 
-- [ ] **T17.6.1 - Branch and OCO pair model** - What: Sibling linkage the engine can resolve in O(1). How: Create feature/exec-oco; add an OCO pair record {aId, bId, status} plus a sibling lookup Map in src/exec/oco.js.
-- [ ] **T17.6.2 - Pair registration function** - What: Any two working orders become an OCO pair in one call. How: defineFn linkOco(idA, idB) validating both are acked and writing both directions into the sibling Map.
-- [ ] **T17.6.3 - Fill listener** - What: The engine reacts the moment either member fills. How: watch() exec:update for filled transitions on OCO members and resolve the sibling id via the Map, no scans.
-- [ ] **T17.6.4 - Sibling cancel dispatch** - What: The losing leg is dead before the next tick lands. How: Fire OKX POST /api/v5/trade/cancel-order or the EToro cancel endpoint immediately from the listener, no confirm dialog.
-- [ ] **T17.6.5 - Race resolution** - What: Simultaneous double-fill never produces a phantom error state. How: Write resolveOcoRace() treating a cancel-reject-because-filled as a clean pair close with both fills booked.
-- [ ] **T17.6.6 - Partial fill policy** - What: Sibling size always mirrors what is left to protect. How: On partial fills shrink the sibling via the F17.9 amend flow instead of cancelling it outright.
-- [ ] **T17.6.7 - Pair badge in orders block** - What: Linked orders visibly linked. How: Render a chain glyph on both rows in the working-orders data-each template when a sibling id is present.
-- [ ] **T17.6.8 - Reconnect resync** - What: OCO protection survives a dropped WebSocket. How: Rebuild the sibling Map from the open-orders snapshot plus stored pair records after private WS reconnect.
-- [ ] **T17.6.9 - Single unit tests for OCO fns** - What: Linking and race logic each pinned by one test. How: One Vitest test each for linkOco and resolveOcoRace, run with only those files targeted.
-- [ ] **T17.6.10 - Verify and merge** - What: OCO lands proven safe. How: ESLint plus the feature's tests green, merge feature/exec-oco into main.
+- [x] **T17.6.1 - Branch and OCO pair model** - What: Sibling linkage the engine can resolve in O(1). How: Create feature/exec-oco; add an OCO pair record {aId, bId, status} plus a sibling lookup Map in src/exec/oco.js.
+- [x] **T17.6.2 - Pair registration function** - What: Any two working orders become an OCO pair in one call. How: defineFn linkOco(idA, idB) validating both are acked and writing both directions into the sibling Map.
+- [x] **T17.6.3 - Fill listener** - What: The engine reacts the moment either member fills. How: watch() exec:update for filled transitions on OCO members and resolve the sibling id via the Map, no scans.
+- [x] **T17.6.4 - Sibling cancel dispatch** - What: The losing leg is dead before the next tick lands. How: Fire OKX POST /api/v5/trade/cancel-order or the EToro cancel endpoint immediately from the listener, no confirm dialog.
+- [x] **T17.6.5 - Race resolution** - What: Simultaneous double-fill never produces a phantom error state. How: Write resolveOcoRace() treating a cancel-reject-because-filled as a clean pair close with both fills booked.
+- [x] **T17.6.6 - Partial fill policy** - What: Sibling size always mirrors what is left to protect. How: On partial fills shrink the sibling via the F17.9 amend flow instead of cancelling it outright.
+- [x] **T17.6.7 - Pair badge in orders block** - What: Linked orders visibly linked. How: Render a chain glyph on both rows in the working-orders data-each template when a sibling id is present.
+- [x] **T17.6.8 - Reconnect resync** - What: OCO protection survives a dropped WebSocket. How: Rebuild the sibling Map from the open-orders snapshot plus stored pair records after private WS reconnect.
+- [x] **T17.6.9 - Single unit tests for OCO fns** - What: Linking and race logic each pinned by one test. How: One Vitest test each for linkOco and resolveOcoRace, run with only those files targeted.
+- [x] **T17.6.10 - Verify and merge** - What: OCO lands proven safe. How: ESLint plus the feature's tests green, merge feature/exec-oco into main.
 
 ### F17.7 - Trailing stop loop
 
 **What:** Stops that chase price tick by tick, locking in scalp profit without manual dragging.
 **How:** Trailing loop subscribed to the phase-11 tick stream ratcheting stop prices through amend calls, native OKX algo where supported.
 
-- [ ] **T17.7.1 - Branch and trail config model** - What: Trailing behavior expressed as data. How: Create feature/exec-trailing; add trail config {distanceTicks, stepTicks, side} to types.js with defaults.
-- [ ] **T17.7.2 - Trail registration function** - What: Any order or position gains a trail in one call. How: defineFn startTrail(targetId, config) seeding the initial stop from the current mark and storing the trail record.
-- [ ] **T17.7.3 - Ratchet math** - What: A stop that only ever tightens. How: Write pure nextTrailStop(best, current, config) returning a new stop only when price improves by >= stepTicks, never loosening.
-- [ ] **T17.7.4 - Tick stream subscription** - What: Trails advance on real market movement, batch-efficient. How: Hook the trail loop into the feed worker's tick batches via addAsync, one ratchet pass per batch.
-- [ ] **T17.7.5 - Amend throttle** - What: Venue rate limits never tripped by a fast tape. How: Push a venue amend only when the computed stop moved >= stepTicks since the last pushed value, tracked per trail.
-- [ ] **T17.7.6 - OKX native algo path** - What: Server-side trailing when the venue offers it. How: Use the OKX move_order_stop algo order when capabilityFor reports native trailing, skipping the client loop.
-- [ ] **T17.7.7 - Client-side trigger fire** - What: Breach converts to exit instantly even in emulated mode. How: On stop breach submit a single reduce-only market order via submitMarket and close the trail record.
-- [ ] **T17.7.8 - Trail HUD readout** - What: Live distance-to-stop visible per trailing order. How: Show remaining ticks in the order row via {{trail.remaining}}, switching to the orange token within 2 ticks.
-- [ ] **T17.7.9 - Single unit tests for trail fns** - What: Ratchet and registration logic pinned. How: One Vitest test each for nextTrailStop and startTrail, each executed via its own file filter.
-- [ ] **T17.7.10 - Verify and merge** - What: Trailing lands green. How: ESLint plus feature tests pass, merge feature/exec-trailing into main.
+- [x] **T17.7.1 - Branch and trail config model** - What: Trailing behavior expressed as data. How: Create feature/exec-trailing; add trail config {distanceTicks, stepTicks, side} to types.js with defaults.
+- [x] **T17.7.2 - Trail registration function** - What: Any order or position gains a trail in one call. How: defineFn startTrail(targetId, config) seeding the initial stop from the current mark and storing the trail record.
+- [x] **T17.7.3 - Ratchet math** - What: A stop that only ever tightens. How: Write pure nextTrailStop(best, current, config) returning a new stop only when price improves by >= stepTicks, never loosening.
+- [x] **T17.7.4 - Tick stream subscription** - What: Trails advance on real market movement, batch-efficient. How: Hook the trail loop into the feed worker's tick batches via addAsync, one ratchet pass per batch.
+- [x] **T17.7.5 - Amend throttle** - What: Venue rate limits never tripped by a fast tape. How: Push a venue amend only when the computed stop moved >= stepTicks since the last pushed value, tracked per trail.
+- [x] **T17.7.6 - OKX native algo path** - What: Server-side trailing when the venue offers it. How: Use the OKX move_order_stop algo order when capabilityFor reports native trailing, skipping the client loop.
+- [x] **T17.7.7 - Client-side trigger fire** - What: Breach converts to exit instantly even in emulated mode. How: On stop breach submit a single reduce-only market order via submitMarket and close the trail record.
+- [x] **T17.7.8 - Trail HUD readout** - What: Live distance-to-stop visible per trailing order. How: Show remaining ticks in the order row via {{trail.remaining}}, switching to the orange token within 2 ticks.
+- [x] **T17.7.9 - Single unit tests for trail fns** - What: Ratchet and registration logic pinned. How: One Vitest test each for nextTrailStop and startTrail, each executed via its own file filter.
+- [x] **T17.7.10 - Verify and merge** - What: Trailing lands green. How: ESLint plus feature tests pass, merge feature/exec-trailing into main.
 
 ### F17.8 - Slippage guard
 
 **What:** One instant sanity check blocks orders too far from mid - fat fingers die before they cost money, speed untouched.
 **How:** O(1) max-deviation check comparing intent price to the cached live mid at submit time, threshold from user settings.
 
-- [ ] **T17.8.1 - Branch and guard setting** - What: A user-tunable deviation ceiling. How: Create feature/exec-slippage-guard; add maxDeviationBps to the phase-7 settings defaults with a sane initial value.
-- [ ] **T17.8.2 - Deviation check function** - What: Pass/block decided in microseconds. How: Write pure defineFn checkSlippage(intent, mid, maxBps) returning {ok, bps} with zero async and zero allocation in the hot path.
-- [ ] **T17.8.3 - Cached mid source** - What: The guard never waits on the network. How: Read best bid/ask straight from the phase-11 market data store values already held in memory.
-- [ ] **T17.8.4 - Submit pipeline interception** - What: Every order passes the guard exactly once. How: Call checkSlippage inside the engine submit path before the adapter; a block emits an instant exec:rejected event.
-- [ ] **T17.8.5 - Market order variant** - What: Market orders guarded too, against a moving tape. How: For market intents compare top-of-book to the last trade and block when drift exceeds the same bps ceiling.
-- [ ] **T17.8.6 - One-shot override** - What: Deliberate outsized orders still possible at full speed. How: Shift-held submit bypasses the guard once and logs an override event into the exec journal stream.
-- [ ] **T17.8.7 - Blocked-order feedback** - What: A block is felt immediately without a dialog. How: Flash the ticket border orange for 300ms via a CSS class toggle showing the measured bps inline.
-- [ ] **T17.8.8 - Settings slider** - What: Threshold adjustable mid-session and remembered. How: Range input in the settings modal bound with data-model and persisted through spektrum/persist to localStorage.
-- [ ] **T17.8.9 - Single unit test for checkSlippage** - What: The guard's math beyond doubt. How: One Vitest test for checkSlippage covering pass, block and exact-threshold cases, run on that file only.
-- [ ] **T17.8.10 - Verify and merge** - What: Guard lands proven fast and correct. How: ESLint plus the feature's test green, merge feature/exec-slippage-guard into main.
+- [x] **T17.8.1 - Branch and guard setting** - What: A user-tunable deviation ceiling. How: Create feature/exec-slippage-guard; add maxDeviationBps to the phase-7 settings defaults with a sane initial value.
+- [x] **T17.8.2 - Deviation check function** - What: Pass/block decided in microseconds. How: Write pure defineFn checkSlippage(intent, mid, maxBps) returning {ok, bps} with zero async and zero allocation in the hot path.
+- [x] **T17.8.3 - Cached mid source** - What: The guard never waits on the network. How: Read best bid/ask straight from the phase-11 market data store values already held in memory.
+- [x] **T17.8.4 - Submit pipeline interception** - What: Every order passes the guard exactly once. How: Call checkSlippage inside the engine submit path before the adapter; a block emits an instant exec:rejected event.
+- [x] **T17.8.5 - Market order variant** - What: Market orders guarded too, against a moving tape. How: For market intents compare top-of-book to the last trade and block when drift exceeds the same bps ceiling.
+- [x] **T17.8.6 - One-shot override** - What: Deliberate outsized orders still possible at full speed. How: Shift-held submit bypasses the guard once and logs an override event into the exec journal stream.
+- [x] **T17.8.7 - Blocked-order feedback** - What: A block is felt immediately without a dialog. How: Flash the ticket border orange for 300ms via a CSS class toggle showing the measured bps inline.
+- [x] **T17.8.8 - Settings slider** - What: Threshold adjustable mid-session and remembered. How: Range input in the settings modal bound with data-model and persisted through spektrum/persist to localStorage.
+- [x] **T17.8.9 - Single unit test for checkSlippage** - What: The guard's math beyond doubt. How: One Vitest test for checkSlippage covering pass, block and exact-threshold cases, run on that file only.
+- [x] **T17.8.10 - Verify and merge** - What: Guard lands proven fast and correct. How: ESLint plus the feature's test green, merge feature/exec-slippage-guard into main.
 
 ### F17.9 - Amend/replace flow for working orders
 
