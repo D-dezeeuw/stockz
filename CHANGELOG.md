@@ -12,6 +12,11 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ### Added
 
+- **Windowed tape rendering** — the DOM holds the rows on screen plus overscan, with
+  spacers standing in for the rest so the scrollbar still reflects the whole tape, and
+  arriving prints buffer and drain once per frame rather than writing state a thousand
+  times a second. Hovering pauses the pin-to-top: a tape that runs away under the cursor
+  is one you cannot read a print off. (F14.9)
 - **Tape size filter** — a per-instrument noise floor with one-tap presets, and a badge
   saying how much flow it is hiding, because that is the question a filter creates.
   Whales bypass the floor entirely: the print that most changes what the flow means must
