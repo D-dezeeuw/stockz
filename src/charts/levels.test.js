@@ -137,6 +137,17 @@ describe('chartLevels', () => {
     // The short entered at 120 with the market at 110 is in profit — green, not orange.
     expect(levels[2]).toEqual({ price: 120, label: '120.0 × 1', color: '#0f0', kind: 'entry' })
 
+    // Strategy levels ride along, muted and dashed: they are somebody's inference about
+    // the market, not a fact about the account like an entry.
+    const withLevels = chartLevels({
+      price: 110,
+      supports: [{ px: 105, kind: 'high', touches: 3 }],
+      palette,
+      tickSize: 0.1,
+    })
+    expect(withLevels.at(-1)).toMatchObject({ price: 105, label: '105.0 ×3', kind: 'level' })
+    expect(LEVEL_DASH.level).toEqual([1, 4])
+
     // No price yet is a chart with no levels, not a chart with a zero line on it.
     expect(chartLevels({ positions: [{ entry: 100, size: 1 }] })).toHaveLength(1)
     expect(chartLevels()).toEqual([])

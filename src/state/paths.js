@@ -126,6 +126,7 @@ export const PATHS = Object.freeze({
     imbalance: 'market.imbalance',
     whales: 'market.whales',
     whaleCount: 'market.whaleCount',
+    levels: 'market.levels',
     // derived (written by computed, never by hand)
     mid: 'market.mid',
     spread: 'market.spread',

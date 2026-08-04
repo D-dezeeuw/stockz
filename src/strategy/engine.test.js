@@ -24,6 +24,7 @@ describe('describeStrategies', () => {
       'spread-capture',
       'book-imbalance',
       'tape-pressure',
+      'range-fade',
       'composite',
     ])
     expect(BUILTIN_STRATEGIES).toContain(noopStrategy)
