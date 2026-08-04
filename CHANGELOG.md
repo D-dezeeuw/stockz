@@ -12,6 +12,18 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ### Added
 
+- **EMA and RSI as incremental indicators** — these run on every tick of every instrument
+  of every running strategy, the hottest path in the desk, so they are closures over a
+  handful of numbers with an `update(x)` that allocates nothing and does O(1) work: no
+  history array, no window sliced per tick. The EMA **seeds on its first sample** — one
+  that spends its first hundred ticks climbing from 0 to 60000 is not a slow reading, it is
+  a wrong one. RSI is Wilder-smoothed and checked against Wilder's own worked series, which
+  is the only real proof it is right; no losses at all reads as 100 by definition rather
+  than as a division by zero. Both report their own **warmup**, because an average of three
+  samples of a fourteen-period reading is not wrong so much as not yet meaningful, and a
+  strategy acting on it is acting on noise dressed as a number. `crossed()` refuses to fire
+  on a pair that merely touched. A hot-path check asserts a per-update ceiling, which is
+  what would catch an accidental allocation creeping in later.
 - **Signal spine** — one dialect every strategy speaks: direction as a **number**, not a
   word, because a consumer that has to remember whether `'sell'` means -1 or 1 will
   eventually get it backwards, and backwards here means trading the opposite of what was
