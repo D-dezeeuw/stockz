@@ -26,6 +26,7 @@ export const ACTIONS = Object.freeze({
     stop: 'strategy.stop',
     setParam: 'strategy.setParam',
     resume: 'strategy.resume',
+    setWeight: 'strategy.setWeight',
   }),
   book: Object.freeze({
     prefill: 'book.prefill',

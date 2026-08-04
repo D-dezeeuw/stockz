@@ -71,6 +71,7 @@ export const PATHS = Object.freeze({
     fees: 'ui.fees',
     hudRow: 'ui.hudRow',
     strategyForm: 'ui.strategyForm',
+    compositeWeights: 'ui.compositeWeights',
     captureFor: 'ui.captureFor',
     capturePreview: 'ui.capturePreview',
   }),

@@ -427,6 +427,16 @@
                   </select>
                 </label>
               </div>
+              <!-- The blend recipe. Sliders renormalise against each other, so moving one
+                   moves the rest and the whole editor is republished on every input. -->
+              <div class="runs__weights" data-if="ui.compositeWeights.length > 0" data-each="w in ui.compositeWeights">
+                <label class="runs__weight">
+                  <span class="label truncate">{{w.name}} · {{w.instrument}}</span>
+                  <input type="range" min="0" max="100" step="5" :value="w.pct"
+                         data-action="input" data-fn="strategy.setWeight" :data-member="w.key">
+                  <span class="num">{{w.pct}}%</span>
+                </label>
+              </div>
               <!-- Benched runs. Visible and reversible: a strategy that vanished silently
                    would look exactly like one with nothing to say. -->
               <div class="runs__rows runs__rows--benched" data-each="bad in strategy.quarantined">

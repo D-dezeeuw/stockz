@@ -11,6 +11,7 @@ import { sessionKey } from '../positions/ledger.js'
 import { measureTick, recordCost, shouldRunTick, DEFAULT_BUDGET_MS } from './budget.js'
 import { recordResult, release, resetSandbox, isQuarantined } from './sandbox.js'
 import { snapshotRing, resetHistory } from './history.js'
+import { setWeight, publishWeights } from './composite.js'
 
 /**
  * Who is registered, and what is running where.
@@ -195,6 +196,7 @@ export function liveRuns() {
  * @returns {object[]} the summaries.
  */
 export function publishRunning() {
+  publishWeights(liveRuns())
   const rows = liveRuns().map((run) => ({
     key: run.key,
     strategyId: run.strategyId,
@@ -249,6 +251,7 @@ export function registerStrategyActions() {
   registerAction(ACTIONS.strategy.resume, (_state, payload) =>
     resumeStrategy(payload?.key ?? payload?.runKey ?? payload),
   )
+  registerAction(ACTIONS.strategy.setWeight, (_state, payload) => tuneWeight(payload))
 
   return ACTIONS.strategy.stop
 }
@@ -374,4 +377,20 @@ export function resumeStrategy(runKey) {
  */
 export function runQuarantined(runKey) {
   return isQuarantined(runKey)
+}
+
+/**
+ * Set one member's share of the blend.
+ *
+ * @param {{member?: string, key?: string, value?: any}} payload - the slider's write.
+ * @returns {object} the normalised weights.
+ */
+export function tuneWeight(payload) {
+  const weights = setWeight(payload?.member ?? payload?.key, payload?.value)
+  // Republished from the returned map rather than re-read from state: the write above
+  // lands next tick, so a re-read here would render the weights from before the drag. The
+  // whole editor is republished because moving one slider moves them all.
+  publishWeights(liveRuns(), weights)
+
+  return weights
 }
