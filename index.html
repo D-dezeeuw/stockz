@@ -437,6 +437,11 @@
                  clear from never having happened. Credentials never travel with it. -->
             <button type="button" class="chip journal__export" data-if="block.id === 'journal'"
                     data-action="click" data-fn="journal.export">export session</button>
+            <!-- The slice on screen, as a spreadsheet. The desk is not where a monthly
+                 review happens, and pretending otherwise means rebuilding pivot tables. -->
+            <button type="button" class="chip journal__export" data-if="block.id === 'journal'"
+                    data-action="click" data-fn="journal.csv"
+                    :disabled="journal.filtered.length === 0">csv</button>
             <!-- Loading a day back in. The buy buttons stop working the moment it lands. -->
             <label class="chip journal__import" data-if="block.id === 'journal'">
               import

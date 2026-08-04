@@ -4182,16 +4182,16 @@
 **What:** The filtered journal downloads as clean CSV, so the user can analyze trades in Excel or Google Sheets without retyping.
 **How:** Pure buildCsv() over the filtered trades with RFC 4180 escaping, delivered as a Blob download from a journal header button.
 
-- [ ] **T25.8.1 - Cut CSV branch** - What: CSV work isolated from main. How: git checkout -b feature/f25.8-csv-export from main.
-- [ ] **T25.8.2 - Implement toCsvRow()** - What: Any trade value survives commas, quotes and newlines intact. How: toCsvRow(values) in src/journal/csv.js quoting and doubling embedded quotes per RFC 4180.
-- [ ] **T25.8.3 - Implement buildCsv()** - What: A complete spreadsheet-ready document from any trade list. How: buildCsv(trades) emitting a header row of metric column names then one toCsvRow per trade.
-- [ ] **T25.8.4 - Map metric columns** - What: Hold time, MAE/MFE, slippage, fees, tags and notes all present as columns. How: csvColumns spec array pairing header labels with accessor fns over the enriched trade record.
-- [ ] **T25.8.5 - Normalize numbers and dates** - What: Files import cleanly regardless of user locale. How: Format numbers with fixed decimal points and timestamps as ISO 8601 strings inside the accessors, never locale-dependent.
-- [ ] **T25.8.6 - Export the active slice** - What: What you filter is what you export. How: Feed the journal.filtered computed rather than all trades into buildCsv so the download honors current filters.
-- [ ] **T25.8.7 - Wire the download and confirm** - What: One click saves stockz-trades-YYYYMMDD.csv with feedback. How: Blob download via a temporary anchor from a header button data-action, then a brief toast via the notifications block.
-- [ ] **T25.8.8 - Handle the empty case** - What: An empty filter result never yields a broken file. How: Disable the export button with a data-if when journal.filtered is empty and still emit the header row if forced via keyboard.
-- [ ] **T25.8.9 - Write single unit tests for CSV fns** - What: toCsvRow and buildCsv each proven by exactly one test. How: One Vitest test per function in csv.test.js asserting escaping and header order, run via vitest run -t.
-- [ ] **T25.8.10 - Verify and merge CSV export** - What: CSV lands on main opening cleanly in a spreadsheet. How: Run targeted tests, open an exported file in LibreOffice to eyeball columns, merge the feature branch.
+- [x] **T25.8.1 - Cut CSV branch** - What: CSV work isolated from main. How: git checkout -b feature/f25.8-csv-export from main.
+- [x] **T25.8.2 - Implement toCsvRow()** - What: Any trade value survives commas, quotes and newlines intact. How: toCsvRow(values) in src/journal/csv.js quoting and doubling embedded quotes per RFC 4180.
+- [x] **T25.8.3 - Implement buildCsv()** - What: A complete spreadsheet-ready document from any trade list. How: buildCsv(trades) emitting a header row of metric column names then one toCsvRow per trade.
+- [x] **T25.8.4 - Map metric columns** - What: Hold time, MAE/MFE, slippage, fees, tags and notes all present as columns. How: csvColumns spec array pairing header labels with accessor fns over the enriched trade record.
+- [x] **T25.8.5 - Normalize numbers and dates** - What: Files import cleanly regardless of user locale. How: Format numbers with fixed decimal points and timestamps as ISO 8601 strings inside the accessors, never locale-dependent.
+- [x] **T25.8.6 - Export the active slice** - What: What you filter is what you export. How: Feed the journal.filtered computed rather than all trades into buildCsv so the download honors current filters.
+- [x] **T25.8.7 - Wire the download and confirm** - What: One click saves stockz-trades-YYYYMMDD.csv with feedback. How: Blob download via a temporary anchor from a header button data-action, then a brief toast via the notifications block.
+- [x] **T25.8.8 - Handle the empty case** - What: An empty filter result never yields a broken file. How: Disable the export button with a data-if when journal.filtered is empty and still emit the header row if forced via keyboard.
+- [x] **T25.8.9 - Write single unit tests for CSV fns** - What: toCsvRow and buildCsv each proven by exactly one test. How: One Vitest test per function in csv.test.js asserting escaping and header order, run via vitest run -t.
+- [x] **T25.8.10 - Verify and merge CSV export** - What: CSV lands on main opening cleanly in a spreadsheet. How: Run targeted tests, open an exported file in LibreOffice to eyeball columns, merge the feature branch.
 
 ### F25.9 - Daily Summary Rows
 

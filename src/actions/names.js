@@ -65,6 +65,7 @@ export const ACTIONS = Object.freeze({
     filter: 'journal.filter',
     sort: 'journal.sort',
     clearFilters: 'journal.clearFilters',
+    csv: 'journal.csv',
   }),
   replay: Object.freeze({
     step: 'replay.step',
