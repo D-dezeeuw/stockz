@@ -2631,32 +2631,32 @@
 **What:** Any desk action in two keystrokes - Ctrl-K, type, Enter.
 **How:** Overlay palette ranking the action catalog with a fuzzyScore() subsequence matcher and dispatching the selection via trigger().
 
-- [ ] **T16.5.1 - Palette branch** - What: Dedicated branch for the palette. How: Branch feature/f16-05-palette from main.
-- [ ] **T16.5.2 - Palette overlay markup** - What: A launcher that appears instantly. How: Overlay template with search input and data-each results list, hidden by data-cloak until boot.
-- [ ] **T16.5.3 - Open/close wiring** - What: Summon and dismiss without thought. How: Ctrl-K toggle through the registry, Escape closes, focus trapped in the search input.
-- [ ] **T16.5.4 - fuzzyScore() function** - What: Sloppy typing still finds the action. How: Subsequence scorer with start-of-word bonuses ranking catalog labels.
-- [ ] **T16.5.5 - searchActions() computed** - What: Results update as you type. How: Spektrum computed re-ranking the catalog from palette.query on every keystroke.
-- [ ] **T16.5.6 - Keyboard result navigation** - What: Select and fire without the mouse. How: ArrowUp/ArrowDown move the selection; Enter dispatches the trigger and closes.
-- [ ] **T16.5.7 - Chord hints in rows** - What: Learn hotkeys while searching. How: Render each action's current chord from the effective map beside its label via {{expr}}.
-- [ ] **T16.5.8 - Palette styling** - What: Launcher in the desk aesthetic. How: Green-on-black terminal panel with an orange selection bar, theme-aware for day/night.
-- [ ] **T16.5.9 - Single tests for search fns** - What: Ranking quality locked in. How: One Vitest test each for fuzzyScore and searchActions, run only via vitest -t.
-- [ ] **T16.5.10 - Merge palette** - What: Ctrl-K launcher on main. How: Lint plus targeted tests green, merge feature/f16-05-palette.
+- [x] **T16.5.1 - Palette branch** - What: Dedicated branch for the palette. How: Branch feature/f16-05-palette from main.
+- [x] **T16.5.2 - Palette overlay markup** - What: A launcher that appears instantly. How: Overlay template with search input and data-each results list, hidden by data-cloak until boot.
+- [x] **T16.5.3 - Open/close wiring** - What: Summon and dismiss without thought. How: Ctrl-K toggle through the registry, Escape closes, focus trapped in the search input.
+- [x] **T16.5.4 - fuzzyScore() function** - What: Sloppy typing still finds the action. How: Subsequence scorer with start-of-word bonuses ranking catalog labels.
+- [x] **T16.5.5 - searchActions() computed** - What: Results update as you type. How: Spektrum computed re-ranking the catalog from palette.query on every keystroke.
+- [x] **T16.5.6 - Keyboard result navigation** - What: Select and fire without the mouse. How: ArrowUp/ArrowDown move the selection; Enter dispatches the trigger and closes.
+- [x] **T16.5.7 - Chord hints in rows** - What: Learn hotkeys while searching. How: Render each action's current chord from the effective map beside its label via {{expr}}.
+- [x] **T16.5.8 - Palette styling** - What: Launcher in the desk aesthetic. How: Green-on-black terminal panel with an orange selection bar, theme-aware for day/night.
+- [x] **T16.5.9 - Single tests for search fns** - What: Ranking quality locked in. How: One Vitest test each for fuzzyScore and searchActions, run only via vitest -t.
+- [x] **T16.5.10 - Merge palette** - What: Ctrl-K launcher on main. How: Lint plus targeted tests green, merge feature/f16-05-palette.
 
 ### F16.6 - Bindings Cheat-Sheet Overlay
 
 **What:** Press ? and see every live shortcut at a glance, grouped by scope and searchable.
 **How:** Full-screen overlay rendering the effective binding map through groupBindings() with data-each groups, toggled by the ? chord.
 
-- [ ] **T16.6.1 - Cheat-sheet branch** - What: Contained branch for the overlay. How: Branch feature/f16-06-cheatsheet from main.
-- [ ] **T16.6.2 - groupBindings() function** - What: Shortcuts organized, not dumped. How: Pure fn transforming the effective map into scope and category groups for display.
-- [ ] **T16.6.3 - Overlay template** - What: The whole layout on one screen. How: Full-screen grid of data-each groups rendering kbd-styled chord caps next to action labels.
-- [ ] **T16.6.4 - Question-mark toggle** - What: Help is one key away. How: Register shift+slash as a reserved chord opening the overlay; Escape or ? again closes it.
-- [ ] **T16.6.5 - Live remap accuracy** - What: The sheet never lies. How: watch() keys.overrides so an open overlay re-renders the instant a binding changes.
-- [ ] **T16.6.6 - Type-to-filter** - What: Find one shortcut in a crowded sheet. How: Filter box narrowing groups by reusing the F16.5 fuzzyScore matcher.
-- [ ] **T16.6.7 - Unbound and clash annotations** - What: Gaps and problems self-report. How: Dim unbound catalog actions and mark conflicts inline using findConflicts output.
-- [ ] **T16.6.8 - Cheat-sheet styling** - What: Readable at a glance mid-session. How: Day/night kbd cap styling from phase-3 tokens with green group headers.
-- [ ] **T16.6.9 - Single test groupBindings** - What: Grouping logic can never drift. How: One Vitest test over a fixture map, run via vitest -t groupBindings.
-- [ ] **T16.6.10 - Merge cheat-sheet** - What: Self-documenting keys on main. How: Lint and targeted test green, merge feature/f16-06-cheatsheet.
+- [x] **T16.6.1 - Cheat-sheet branch** - What: Contained branch for the overlay. How: Branch feature/f16-06-cheatsheet from main.
+- [x] **T16.6.2 - groupBindings() function** - What: Shortcuts organized, not dumped. How: Pure fn transforming the effective map into scope and category groups for display.
+- [x] **T16.6.3 - Overlay template** - What: The whole layout on one screen. How: Full-screen grid of data-each groups rendering kbd-styled chord caps next to action labels.
+- [x] **T16.6.4 - Question-mark toggle** - What: Help is one key away. How: Register shift+slash as a reserved chord opening the overlay; Escape or ? again closes it.
+- [x] **T16.6.5 - Live remap accuracy** - What: The sheet never lies. How: watch() keys.overrides so an open overlay re-renders the instant a binding changes.
+- [x] **T16.6.6 - Type-to-filter** - What: Find one shortcut in a crowded sheet. How: Filter box narrowing groups by reusing the F16.5 fuzzyScore matcher.
+- [x] **T16.6.7 - Unbound and clash annotations** - What: Gaps and problems self-report. How: Dim unbound catalog actions and mark conflicts inline using findConflicts output.
+- [x] **T16.6.8 - Cheat-sheet styling** - What: Readable at a glance mid-session. How: Day/night kbd cap styling from phase-3 tokens with green group headers.
+- [x] **T16.6.9 - Single test groupBindings** - What: Grouping logic can never drift. How: One Vitest test over a fixture map, run via vitest -t groupBindings.
+- [x] **T16.6.10 - Merge cheat-sheet** - What: Self-documenting keys on main. How: Lint and targeted test green, merge feature/f16-06-cheatsheet.
 
 ### F16.7 - Scoped Key Contexts
 

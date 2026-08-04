@@ -51,6 +51,12 @@ export const DEFAULT_BINDINGS = Object.freeze([
   { chord: 'KeyL', action: ACTIONS.ticket.setMode, payload: { mode: 'limit' }, label: 'limit' },
   { chord: 'KeyT', action: ACTIONS.ui.setTheme, payload: {}, label: 'toggle theme' },
   {
+    chord: 'ctrl+KeyK',
+    action: ACTIONS.ui.palette,
+    payload: {},
+    label: 'command palette',
+  },
+  {
     chord: 'shift+Slash',
     action: ACTIONS.ui.toggleOverlay,
     payload: { modal: 'keys-help' },

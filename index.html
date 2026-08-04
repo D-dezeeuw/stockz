@@ -294,6 +294,21 @@
       </section>
     </main>
 
+    <!-- Command palette: Ctrl+K, type, Enter. Every row shows the chord that would have
+         done the same thing, so the palette teaches its own shortcuts. -->
+    <div class="modal" data-if="ui.modal === 'palette'" role="dialog" aria-label="Command palette">
+      <div class="modal__card palette">
+        <input class="palette__input" type="text" placeholder="run a command…"
+               data-action="input" data-fn="ui.paletteSearch" autocomplete="off">
+        <ul class="palette__rows" data-each="row in ui.paletteRows">
+          <li class="palette__row">
+            <span class="palette__label">{{row.label}}</span>
+            <kbd class="keysheet__chord" data-if="row.chord">{{row.chord}}</kbd>
+          </li>
+        </ul>
+      </div>
+    </div>
+
     <!-- Hotkey cheat sheet. Grouped by action namespace, which is how the desk is
          already organised — one mental model, not two. -->
     <div class="modal" data-if="ui.modal === 'keys-help'" role="dialog" aria-label="Hotkeys">
