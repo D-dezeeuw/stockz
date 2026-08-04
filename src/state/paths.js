@@ -107,6 +107,9 @@ export const PATHS = Object.freeze({
     maxDailyLoss: 'settings.maxDailyLoss',
     maxConsecLosses: 'settings.maxConsecLosses',
     pauseMinutes: 'settings.pauseMinutes',
+    maxDays: 'settings.maxDays',
+    maxTrades: 'settings.maxTrades',
+    maxCheckpoints: 'settings.maxCheckpoints',
     maxPosition: 'settings.maxPosition',
     favourites: 'settings.favourites',
     debugCharts: 'settings.debugCharts',
@@ -261,6 +264,8 @@ export const PATHS = Object.freeze({
     hidden: 'journal.hidden',
     days: 'journal.days',
     openDay: 'journal.openDay',
+    storage: 'journal.storage',
+    pruned: 'journal.pruned',
   }),
   strategy: Object.freeze({
     registered: 'strategy.registered',

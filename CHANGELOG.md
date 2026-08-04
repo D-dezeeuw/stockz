@@ -133,6 +133,19 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
   the running score is what a trader checks between trades, and scrolling for it is scrolling
   away from the ticket — and one day expands at a time, since a journal with every day open is
   the list the summaries existed to replace.
+- **Retention, so the journal stays fast forever** — a desk that runs for a year accumulates a
+  journal that takes a second to filter, and the fix is not a faster filter, it is not keeping
+  a year. Age is applied **before** count, deliberately: the other order keeps a thousand
+  ancient trades and drops last week's, which is exactly backwards, since recency is what
+  makes an entry useful and a trade from March is one nobody is learning from in November.
+  Zero means "keep everything" on every field, matching the rest of the desk — a zero meaning
+  "keep nothing" would delete a trader's history the first time they cleared a box to see what
+  happened. **Nothing valuable disappears silently**: the CSV of what is about to go is
+  *offered*, not asked about, because a confirm dialog in a background cleanup is a dialog
+  that lands mid-trade. The sweep runs at idle rather than on a timer, since cleanup competing
+  with a live order book for a frame costs the trader money to save disk nobody was short of.
+  Storage usage is shown against quota, and a browser that declines to report one reads "—"
+  rather than 0%, which would be a readout claiming a fact nobody supplied.
 
 ## [0.24.0] — 2026-08-04 — Phase 24: Circuit Breakers & Risk Kill Switch
 

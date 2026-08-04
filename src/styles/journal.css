@@ -161,6 +161,25 @@
   text-align: end;
 }
 
+.journal__storage {
+  display: flex;
+  gap: var(--sp-2);
+  align-items: center;
+  padding-block-start: var(--sp-1);
+}
+
+.journal__bar {
+  flex: 1;
+  block-size: 3px;
+  background: var(--bg-inset);
+}
+
+.journal__bar i {
+  display: block;
+  block-size: 100%;
+  background: var(--green);
+}
+
 .journal__filters {
   display: flex;
   flex-wrap: wrap;

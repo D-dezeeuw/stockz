@@ -4214,16 +4214,16 @@
 **What:** The journal stays fast forever: old trades, ticks and checkpoints age out by policy while anything valuable can be archived first.
 **How:** pruneTrades() and companion fns applying a settings-driven retention policy to state, IndexedDB tick stores and the checkpoint index at idle time.
 
-- [ ] **T25.10.1 - Cut retention branch** - What: Pruning work isolated from main. How: git checkout -b feature/f25.10-retention from main.
-- [ ] **T25.10.2 - Model the retention policy** - What: The user decides how much history to keep. How: settings.retention {maxDays, maxTrades, maxCheckpoints} with defaults in the settings block, persisted via spektrum/persist.
-- [ ] **T25.10.3 - Implement pruneTrades()** - What: Trade history trimmed exactly to policy. How: Pure pruneTrades(trades, policy, now) in src/journal/retention.js returning kept trades and a pruned list by age then count.
-- [ ] **T25.10.4 - Prune tick recordings** - What: IndexedDB never balloons past the retention window. How: pruneTicks(policy) deleting IndexedDB tick recording ranges older than maxDays via a keyrange cursor delete.
-- [ ] **T25.10.5 - Cap the checkpoint index** - What: Time-travel stays snappy with a bounded snapshot set. How: pruneCheckpoints(index, policy) dropping the oldest entries past maxCheckpoints and removing their stored snapshots.
-- [ ] **T25.10.6 - Schedule pruning at idle** - What: Cleanup never competes with live scalping. How: Run the three prune fns from requestIdleCallback shortly after session start and once per hour via a timer.
-- [ ] **T25.10.7 - Offer archive-before-prune** - What: Nothing valuable disappears silently. How: When pruning would drop trades, prompt once to download them via the existing buildCsv and exportSession paths before deletion.
-- [ ] **T25.10.8 - Show storage usage** - What: The user sees how much space history consumes. How: Read navigator.storage.estimate() into state.journal.storage and render used/quota with a slim bar in the journal footer.
-- [ ] **T25.10.9 - Write single unit tests for prune fns** - What: pruneTrades, pruneTicks and pruneCheckpoints each proven once. How: One Vitest test per function in retention.test.js with fake-timer dates, run via vitest run -t.
-- [ ] **T25.10.10 - Verify and merge retention** - What: Policy-driven pruning lands green on main. How: Run targeted tests, dry-run a prune against seeded old data checking counts, then merge the feature branch.
+- [x] **T25.10.1 - Cut retention branch** - What: Pruning work isolated from main. How: git checkout -b feature/f25.10-retention from main.
+- [x] **T25.10.2 - Model the retention policy** - What: The user decides how much history to keep. How: settings.retention {maxDays, maxTrades, maxCheckpoints} with defaults in the settings block, persisted via spektrum/persist.
+- [x] **T25.10.3 - Implement pruneTrades()** - What: Trade history trimmed exactly to policy. How: Pure pruneTrades(trades, policy, now) in src/journal/retention.js returning kept trades and a pruned list by age then count.
+- [x] **T25.10.4 - Prune tick recordings** - What: IndexedDB never balloons past the retention window. How: pruneTicks(policy) deleting IndexedDB tick recording ranges older than maxDays via a keyrange cursor delete.
+- [x] **T25.10.5 - Cap the checkpoint index** - What: Time-travel stays snappy with a bounded snapshot set. How: pruneCheckpoints(index, policy) dropping the oldest entries past maxCheckpoints and removing their stored snapshots.
+- [x] **T25.10.6 - Schedule pruning at idle** - What: Cleanup never competes with live scalping. How: Run the three prune fns from requestIdleCallback shortly after session start and once per hour via a timer.
+- [x] **T25.10.7 - Offer archive-before-prune** - What: Nothing valuable disappears silently. How: When pruning would drop trades, prompt once to download them via the existing buildCsv and exportSession paths before deletion.
+- [x] **T25.10.8 - Show storage usage** - What: The user sees how much space history consumes. How: Read navigator.storage.estimate() into state.journal.storage and render used/quota with a slim bar in the journal footer.
+- [x] **T25.10.9 - Write single unit tests for prune fns** - What: pruneTrades, pruneTicks and pruneCheckpoints each proven once. How: One Vitest test per function in retention.test.js with fake-timer dates, run via vitest run -t.
+- [x] **T25.10.10 - Verify and merge retention** - What: Policy-driven pruning lands green on main. How: Run targeted tests, dry-run a prune against seeded old data checking counts, then merge the feature branch.
 
 ---
 

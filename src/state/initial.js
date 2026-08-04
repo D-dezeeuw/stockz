@@ -248,6 +248,8 @@ export function initialState(overrides = {}) {
     [PATHS.journal.hidden]: 0,
     [PATHS.journal.days]: [],
     [PATHS.journal.openDay]: '',
+    [PATHS.journal.storage]: { used: 0, quota: 0, pct: 0, label: '—' },
+    [PATHS.journal.pruned]: null,
 
     // alerts
     [PATHS.alerts.fired]: null,
