@@ -227,6 +227,7 @@ export function initialState(overrides = {}) {
     [PATHS.journal.trades]: [],
     [PATHS.journal.count]: 0,
     [PATHS.journal.last]: null,
+    [PATHS.journal.rows]: [],
 
     // alerts
     [PATHS.alerts.fired]: null,

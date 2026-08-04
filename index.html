@@ -46,6 +46,7 @@
   <link rel="stylesheet" href="./src/styles/hud.css">
   <link rel="stylesheet" href="./src/styles/strategies.css">
   <link rel="stylesheet" href="./src/styles/breakers.css">
+  <link rel="stylesheet" href="./src/styles/journal.css">
   <link rel="stylesheet" href="./src/styles/utilities.css">
 
   <!-- The UI engine, straight from the CDN. Pinned to an exact version: the live page
@@ -373,6 +374,23 @@
                   <button type="button" class="chip" data-action="click" data-fn="positions.flatten"
                           :data-key="p.key">×</button>
                 </div>
+              </div>
+            </div>
+            <!-- The journal. One row per round trip, not per fill: forty executions across
+                 six partial exits is one decision, and reviewing it as forty rows teaches
+                 nobody anything. Hold, slippage, fees and MAE/MFE sit on the row because
+                 the net alone says a trade worked without saying why, and the why is the
+                 part that compounds. -->
+            <div class="journal" data-if="block.id === 'journal'" data-each="t in journal.rows">
+              <div class="journal__row" :class="t.net >= 0 ? 'journal__row journal__row--up' : 'journal__row journal__row--down'">
+                <span class="journal__inst">{{t.instrument}}</span>
+                <span class="journal__side">{{t.side}}</span>
+                <span class="journal__qty tnum">{{t.qty}}</span>
+                <span class="journal__px tnum">{{fmt.price(t.entryPx)}} → {{fmt.price(t.exitPx)}}</span>
+                <span class="journal__hold tnum">{{t.holdLabel}}</span>
+                <span class="journal__excursion tnum" title="worst against / best in favour">{{fmt.signed(t.mae)}} / {{fmt.signed(t.mfe)}}</span>
+                <span class="journal__cost tnum" title="slippage · fees">{{fmt.signed(-t.slippage)}} · {{t.fees}}</span>
+                <span class="journal__net tnum">{{fmt.signed(t.net)}}</span>
               </div>
             </div>
             <!-- An alert set in under three seconds: level, direction, done. -->

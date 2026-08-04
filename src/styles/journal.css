@@ -1,0 +1,89 @@
+/*
+ * The journal.
+ *
+ * One row per round trip, dense enough that a session's worth is scannable without
+ * scrolling for it. Every numeric column is tabular so the digits line up — a column of
+ * P&L that shifts by a pixel per row is a column nobody reads down.
+ *
+ * The colour carries the *net*, not the gross. A trade that made money before fees and lost
+ * it after is a losing trade, and painting it green would be flattering the one number that
+ * matters least.
+ */
+
+.journal {
+  display: grid;
+  gap: 1px;
+  overflow-y: auto;
+  min-block-size: 0;
+}
+
+.journal__row {
+  display: grid;
+  grid-template-columns: minmax(4.5rem, 1fr) 2.5rem 3rem minmax(7rem, 1.4fr) 3.5rem minmax(5rem, 1fr) minmax(5rem, 1fr) 4.5rem;
+  gap: var(--sp-1);
+  align-items: baseline;
+  padding: 2px var(--sp-1);
+  border-inline-start: 2px solid transparent;
+  font-size: var(--fs-0);
+}
+
+.journal__row:nth-child(odd) {
+  background: var(--bg-inset);
+}
+
+.journal__row--up {
+  border-inline-start-color: var(--green);
+}
+
+.journal__row--down {
+  border-inline-start-color: var(--orange);
+}
+
+.journal__inst {
+  color: var(--ink-strong);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.journal__side {
+  color: var(--ink-muted);
+  text-transform: uppercase;
+}
+
+.journal__hold,
+.journal__cost,
+.journal__excursion {
+  color: var(--ink-muted);
+}
+
+.journal__net {
+  text-align: end;
+  font-weight: 700;
+}
+
+.journal__row--up .journal__net {
+  color: var(--green);
+}
+
+.journal__row--down .journal__net {
+  color: var(--orange);
+}
+
+/* Narrow screens drop the columns a trader can reconstruct — the entry/exit prices and the
+   excursion — before the ones they cannot: what it was, and what it paid. A media query
+   rather than a container query, matching the breakpoint the grid already uses; nothing in
+   this codebase declares a container-type, and a @container rule with no container silently
+   never matches. */
+@media (max-width: 40rem) {
+  .journal__row {
+    grid-template-columns: minmax(4rem, 1fr) 2.5rem 3.5rem 4.5rem;
+  }
+
+  .journal__qty,
+  .journal__px,
+  .journal__excursion,
+  .journal__cost {
+    display: none;
+  }
+}

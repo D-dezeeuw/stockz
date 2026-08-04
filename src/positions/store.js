@@ -111,6 +111,7 @@ export function ingestFill(fill) {
     instrument: key,
     qty: signed,
     px: fill?.px,
+    intentPx: fill?.intentPx,
     fee: fill?.fee,
     ts: fill?.ts,
   })
