@@ -11,7 +11,7 @@ import { ingestFill } from '../positions/store.js'
 import { captureIntent, scoreFill } from '../hud/quality.js'
 import { recordFee } from '../hud/fees.js'
 import { routeExecAlert } from '../alerts/exec.js'
-import { dailyLossCheck, breakerRejection, TRIP } from '../breakers/index.js'
+import { dailyLossCheck, orderChecks, breakerRejection, TRIP } from '../breakers/index.js'
 import { createLogger } from '../utils/log.js'
 
 const log = createLogger('exec')
@@ -143,6 +143,12 @@ export async function submit(input, deps = {}) {
   // is the only reason it can afford to be here at all.
   const trip = dailyLossCheck({ position: intent.size, now: at })
   if (trip !== TRIP.NONE) return breakerRejection(trip)
+
+  // The soft checks: these refuse *this order* and leave the desk running. A cap breach is
+  // a typo far more often than an emergency, and flattening the book over one is a cure
+  // worse than the mistake.
+  const blocked = orderChecks(intent, { now: at })
+  if (blocked.code !== TRIP.NONE) return { ok: false, clientId: '', reason: blocked.reason }
 
   const clientId = intent.clientId || issueId(at)
   // Claimed before the network call: a duplicate id at the venue is either a rejection

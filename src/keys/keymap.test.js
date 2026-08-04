@@ -124,6 +124,8 @@ describe('isTypingTarget', () => {
 
     // Escape is how a trader leaves a field they opened by accident.
     expect(isTypingTarget(input, 'Escape')).toBe(false)
+    // And the kill chord, because an emergency arriving mid-keystroke is the emergency.
+    expect(isTypingTarget(input, 'ctrl+shift+KeyK')).toBe(false)
 
     const editable = document.createElement('div')
     editable.isContentEditable = true

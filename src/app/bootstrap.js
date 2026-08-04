@@ -33,6 +33,7 @@ import { registerPersistActions, rehydrateAlerts } from '../alerts/persist.js'
 import { registerBotActions, createBotRunner } from '../bot/runner.js'
 import { registerSessionActions } from '../bot/session.js'
 import { watchThresholds } from '../breakers/index.js'
+import { registerKillActions } from '../breakers/kill.js'
 import { onAlert } from '../alerts/bus.js'
 import { knownStrategies } from '../strategy/registry.js'
 import { connectFeeds } from './feeds.js'
@@ -120,6 +121,7 @@ export function bootstrap(options = {}) {
   registerBotActions()
   registerSessionActions()
   watchThresholds()
+  registerKillActions()
   // The runner comes up disarmed by construction: `botArmed` is transient and never
   // restored, so the loop can run from boot and still place nothing.
   createBotRunner()

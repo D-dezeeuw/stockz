@@ -1,4 +1,5 @@
-import { refreshThresholds } from './core.js'
+import { refreshThresholds, TRIP } from './core.js'
+import { pauseCheck, positionCheck, recordBlock } from './position.js'
 import { watch } from '../app/engine.js'
 import { PATHS } from '../state/paths.js'
 
@@ -23,6 +24,48 @@ export {
 } from './core.js'
 
 export { updateDayPnl, dailyPct, dailyLossCheck, refreshDaily, resetDay } from './daily.js'
+
+export {
+  getPosSize,
+  isReducing,
+  capFor,
+  positionCheck,
+  onRealizedFill,
+  streakCheck,
+  pauseTrading,
+  clearPause,
+  pauseCheck,
+  recordBlock,
+  pauseState,
+  resetPause,
+} from './position.js'
+
+export { killSwitch, tripAction, killLatency, rearm, registerKillActions } from './kill.js'
+
+/**
+ * Every soft check an order must pass: the ones that block *this order* without halting
+ * the desk.
+ *
+ * Separate from `dailyLossCheck` on purpose. One fat-fingered size should not cancel every
+ * working order and flatten the book — the cure would be worse than the mistake, and a
+ * safety feature that punishes typos is one traders route around.
+ *
+ * @param {object} order - the intent.
+ * @param {{now?: number}} [context] - the clock.
+ * @returns {{code: number, reason: string}} the verdict.
+ */
+export function orderChecks(order, context = {}) {
+  const paused = pauseCheck(order)
+  if (paused.code !== TRIP.NONE) {
+    recordBlock(paused.reason, context.now)
+    return paused
+  }
+
+  const capped = positionCheck(order)
+  if (capped.code !== TRIP.NONE) recordBlock(capped.reason, context.now)
+
+  return capped
+}
 
 /**
  * Keep the threshold cache in step with the settings.

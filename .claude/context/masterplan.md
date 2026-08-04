@@ -3935,48 +3935,48 @@
 **What:** No single instrument can ever grow past the trader's max size, even under rapid fire.
 **How:** positionCheck compares open size plus incoming order size against a cached per-instrument cap in one comparison, blocking the order without a full trip.
 
-- [ ] **T24.3.1 - Branch max position** - What: Isolated work on the position breaker. How: git checkout -b feature/f24.3-max-position from an up-to-date main.
-- [ ] **T24.3.2 - Size accessor** - What: Exposure lookups cost nothing. How: Implement getPosSize(instId) as an O(1) wrapper over the phase-18 positions.byInstrument index.
-- [ ] **T24.3.3 - Position check fn** - What: Oversized orders die before the venue sees them. How: Implement positionCheck comparing getPosSize(instId) + order.size against the cached cap, code 2.
-- [ ] **T24.3.4 - Override flattening** - What: Custom caps per instrument at hot-path speed. How: Flatten the settings capOverrides map into the threshold cache at refreshThresholds for direct key access.
-- [ ] **T24.3.5 - Reduce-only exemption** - What: Exits always go through, whatever the cap. How: Pass any order whose sign reduces current exposure via a single sign comparison before the cap check.
-- [ ] **T24.3.6 - Block-not-trip semantics** - What: One fat-fingered size never flattens the whole book. How: Wire code 2 as a soft per-order rejection in the order path that does not fire the tripBreaker latch.
-- [ ] **T24.3.7 - Ticket flash feedback** - What: The trader sees the block without a dialog. How: Set breaker.lastBlock so the phase-15 order ticket flashes an orange border via :class for 600ms.
-- [ ] **T24.3.8 - Blocked counter** - What: A running count of saves for the session. How: addValue breaker.session.blocked on each rejection, shown in the phase-19 HUD stats row.
-- [ ] **T24.3.9 - Single unit tests for position fns** - What: Position logic proven once per function. How: One Vitest test each for getPosSize and positionCheck via targeted npx vitest run -t.
-- [ ] **T24.3.10 - Merge max position** - What: The position breaker lands on main. How: Green targeted tests plus ESLint, merge feature/f24.3-max-position into main, delete the branch.
+- [x] **T24.3.1 - Branch max position** - What: Isolated work on the position breaker. How: git checkout -b feature/f24.3-max-position from an up-to-date main.
+- [x] **T24.3.2 - Size accessor** - What: Exposure lookups cost nothing. How: Implement getPosSize(instId) as an O(1) wrapper over the phase-18 positions.byInstrument index.
+- [x] **T24.3.3 - Position check fn** - What: Oversized orders die before the venue sees them. How: Implement positionCheck comparing getPosSize(instId) + order.size against the cached cap, code 2.
+- [x] **T24.3.4 - Override flattening** - What: Custom caps per instrument at hot-path speed. How: Flatten the settings capOverrides map into the threshold cache at refreshThresholds for direct key access.
+- [x] **T24.3.5 - Reduce-only exemption** - What: Exits always go through, whatever the cap. How: Pass any order whose sign reduces current exposure via a single sign comparison before the cap check.
+- [x] **T24.3.6 - Block-not-trip semantics** - What: One fat-fingered size never flattens the whole book. How: Wire code 2 as a soft per-order rejection in the order path that does not fire the tripBreaker latch.
+- [x] **T24.3.7 - Ticket flash feedback** - What: The trader sees the block without a dialog. How: Set breaker.lastBlock so the phase-15 order ticket flashes an orange border via :class for 600ms.
+- [x] **T24.3.8 - Blocked counter** - What: A running count of saves for the session. How: addValue breaker.session.blocked on each rejection, shown in the phase-19 HUD stats row.
+- [x] **T24.3.9 - Single unit tests for position fns** - What: Position logic proven once per function. How: One Vitest test each for getPosSize and positionCheck via targeted npx vitest run -t.
+- [x] **T24.3.10 - Merge max position** - What: The position breaker lands on main. How: Green targeted tests plus ESLint, merge feature/f24.3-max-position into main, delete the branch.
 
 ### F24.4 - Consecutive-loss auto-pause
 
 **What:** A string of losers auto-pauses the whole desk before the hole gets deeper.
 **How:** A realized-loss streak counter checked in one comparison; hitting the limit pauses new entries while exits stay open.
 
-- [ ] **T24.4.1 - Branch loss streak** - What: Isolated work on the streak pause. How: git checkout -b feature/f24.4-loss-streak from an up-to-date main.
-- [ ] **T24.4.2 - Realized streak tracker** - What: One authoritative count of consecutive losers. How: Implement onRealizedFill(pnl) in the breakers module incrementing breaker.lossStreak on losses and resetting on wins from phase-18 fills.
-- [ ] **T24.4.3 - Streak check fn** - What: The limit binds in a single comparison. How: Implement streakCheck comparing breaker.lossStreak against the cached maxConsecLosses, code 3.
-- [ ] **T24.4.4 - Pause action** - What: Entries stop, exits stay open. How: Implement pauseTrading() setting breaker.paused so new entry orders reject with reason 'paused' while reduce-only orders pass.
-- [ ] **T24.4.5 - Check wiring** - What: The streak guard sits inline with the others. How: Add streakCheck to checkBreakers routing code 3 to pauseTrading via the tripBreaker latch.
-- [ ] **T24.4.6 - Pause stamp UI** - What: The pause is impossible to miss. How: Render a PAUSED stamp with streak count in the phase-19 HUD block behind data-if on breaker.paused.
-- [ ] **T24.4.7 - Timed resume** - What: The desk reopens automatically after the breather. How: Implement clearPause() invoked when a pauseMinutes timer elapses or via the F24.8 re-arm flow.
-- [ ] **T24.4.8 - Streak setting default** - What: The streak limit is the trader's number. How: Add maxConsecLosses (default 5, 0 disables) to the breaker settings schema consumed by refreshThresholds.
-- [ ] **T24.4.9 - Single unit tests for streak fns** - What: Streak logic proven once per function. How: One Vitest test each for onRealizedFill, streakCheck, pauseTrading and clearPause via targeted npx vitest run -t.
-- [ ] **T24.4.10 - Merge loss streak** - What: The auto-pause lands on main. How: Green targeted tests plus ESLint, merge feature/f24.4-loss-streak into main, delete the branch.
+- [x] **T24.4.1 - Branch loss streak** - What: Isolated work on the streak pause. How: git checkout -b feature/f24.4-loss-streak from an up-to-date main.
+- [x] **T24.4.2 - Realized streak tracker** - What: One authoritative count of consecutive losers. How: Implement onRealizedFill(pnl) in the breakers module incrementing breaker.lossStreak on losses and resetting on wins from phase-18 fills.
+- [x] **T24.4.3 - Streak check fn** - What: The limit binds in a single comparison. How: Implement streakCheck comparing breaker.lossStreak against the cached maxConsecLosses, code 3.
+- [x] **T24.4.4 - Pause action** - What: Entries stop, exits stay open. How: Implement pauseTrading() setting breaker.paused so new entry orders reject with reason 'paused' while reduce-only orders pass.
+- [x] **T24.4.5 - Check wiring** - What: The streak guard sits inline with the others. How: Add streakCheck to checkBreakers routing code 3 to pauseTrading via the tripBreaker latch.
+- [x] **T24.4.6 - Pause stamp UI** - What: The pause is impossible to miss. How: Render a PAUSED stamp with streak count in the phase-19 HUD block behind data-if on breaker.paused.
+- [x] **T24.4.7 - Timed resume** - What: The desk reopens automatically after the breather. How: Implement clearPause() invoked when a pauseMinutes timer elapses or via the F24.8 re-arm flow.
+- [x] **T24.4.8 - Streak setting default** - What: The streak limit is the trader's number. How: Add maxConsecLosses (default 5, 0 disables) to the breaker settings schema consumed by refreshThresholds.
+- [x] **T24.4.9 - Single unit tests for streak fns** - What: Streak logic proven once per function. How: One Vitest test each for onRealizedFill, streakCheck, pauseTrading and clearPause via targeted npx vitest run -t.
+- [x] **T24.4.10 - Merge loss streak** - What: The auto-pause lands on main. How: Green targeted tests plus ESLint, merge feature/f24.4-loss-streak into main, delete the branch.
 
 ### F24.5 - Kill switch
 
 **What:** One button or key nukes all activity instantly - the fastest exit in the room.
 **How:** A header button plus a phase-16 hotkey calling killSwitch(), which fires the trip latch synchronously with zero confirmation steps.
 
-- [ ] **T24.5.1 - Branch kill switch** - What: Isolated work on the kill switch. How: git checkout -b feature/f24.5-kill-switch from an up-to-date main.
-- [ ] **T24.5.2 - Kill fn** - What: One synchronous call ends everything. How: Implement killSwitch() invoking tripBreaker(4, {source}) immediately, idempotent behind the existing latch.
-- [ ] **T24.5.3 - Header kill button** - What: The escape hatch is always one glance away. How: Add a permanent KILL button to the phase-5 header with a minimum 44px hit area, bound via data-action to killSwitch.
-- [ ] **T24.5.4 - Kill hotkey** - What: Zero mouse travel in an emergency. How: Register Ctrl+Shift+K in the phase-16 registry using a capture-phase keydown listener so it fires even with an input focused.
-- [ ] **T24.5.5 - Instant latch behavior** - What: One press, no confirm, visibly done. How: Single activation trips immediately and swaps the button into a KILLED state via data-if - no dialogs anywhere.
-- [ ] **T24.5.6 - Alarm styling** - What: The button reads as the emergency control it is. How: Style with a dedicated high-contrast alarm treatment from phase-3 tokens, distinct in both day and night themes.
-- [ ] **T24.5.7 - Bot stop verification** - What: Certainty the phase-23 loop dies on kill. How: Fire killSwitch in the dev build and assert bot.masterArmed is false and bot ticks stop, using spektrum/inspect on live state.
-- [ ] **T24.5.8 - Press-to-cancel latency** - What: Proof of how fast the kill really is. How: Record performance.now() from activation to the first cancel dispatch and store the delta on breaker.lastKillLatencyMs.
-- [ ] **T24.5.9 - Single unit test for kill fn** - What: The kill path proven once. How: One Vitest test for killSwitch asserting latch idempotency, run via npx vitest run -t killSwitch.
-- [ ] **T24.5.10 - Merge kill switch** - What: The kill switch lands on main. How: Green targeted test plus ESLint, merge feature/f24.5-kill-switch into main, delete the branch.
+- [x] **T24.5.1 - Branch kill switch** - What: Isolated work on the kill switch. How: git checkout -b feature/f24.5-kill-switch from an up-to-date main.
+- [x] **T24.5.2 - Kill fn** - What: One synchronous call ends everything. How: Implement killSwitch() invoking tripBreaker(4, {source}) immediately, idempotent behind the existing latch.
+- [x] **T24.5.3 - Header kill button** - What: The escape hatch is always one glance away. How: Add a permanent KILL button to the phase-5 header with a minimum 44px hit area, bound via data-action to killSwitch.
+- [x] **T24.5.4 - Kill hotkey** - What: Zero mouse travel in an emergency. How: Register Ctrl+Shift+K in the phase-16 registry using a capture-phase keydown listener so it fires even with an input focused.
+- [x] **T24.5.5 - Instant latch behavior** - What: One press, no confirm, visibly done. How: Single activation trips immediately and swaps the button into a KILLED state via data-if - no dialogs anywhere.
+- [x] **T24.5.6 - Alarm styling** - What: The button reads as the emergency control it is. How: Style with a dedicated high-contrast alarm treatment from phase-3 tokens, distinct in both day and night themes.
+- [x] **T24.5.7 - Bot stop verification** - What: Certainty the phase-23 loop dies on kill. How: Fire killSwitch in the dev build and assert bot.masterArmed is false and bot ticks stop, using spektrum/inspect on live state.
+- [x] **T24.5.8 - Press-to-cancel latency** - What: Proof of how fast the kill really is. How: Record performance.now() from activation to the first cancel dispatch and store the delta on breaker.lastKillLatencyMs.
+- [x] **T24.5.9 - Single unit test for kill fn** - What: The kill path proven once. How: One Vitest test for killSwitch asserting latch idempotency, run via npx vitest run -t killSwitch.
+- [x] **T24.5.10 - Merge kill switch** - What: The kill switch lands on main. How: Green targeted test plus ESLint, merge feature/f24.5-kill-switch into main, delete the branch.
 
 ### F24.6 - Trip action: cancel, flatten, disarm
 

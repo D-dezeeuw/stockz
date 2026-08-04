@@ -47,6 +47,10 @@ export const ACTIONS = Object.freeze({
     export: 'alerts.export',
     import: 'alerts.import',
   }),
+  breaker: Object.freeze({
+    kill: 'breaker.kill',
+    rearm: 'breaker.rearm',
+  }),
   bot: Object.freeze({
     toggleArm: 'bot.toggleArm',
     setAuto: 'bot.setAuto',

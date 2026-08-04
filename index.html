@@ -45,6 +45,7 @@
   <link rel="stylesheet" href="./src/styles/positions.css">
   <link rel="stylesheet" href="./src/styles/hud.css">
   <link rel="stylesheet" href="./src/styles/strategies.css">
+  <link rel="stylesheet" href="./src/styles/breakers.css">
   <link rel="stylesheet" href="./src/styles/utilities.css">
 
   <!-- The UI engine, straight from the CDN. Pinned to an exact version: the live page
@@ -136,6 +137,19 @@
       <!-- The day's number, always in view: the answer changes what the right next
            trade is. -->
       <span class="daypnl" :class="'daypnl' + (trade.dayTotal >= 0 ? ' daypnl--up' : ' daypnl--down') + (ui.pnlPulse ? ' daypnl--pulse-' + ui.pnlPulse : '')">{{trade.dayLabel}}</span>
+      <!-- The escape hatch, permanently in the corner and one click deep. No confirm
+           step and no "type KILL to continue": every step between the press and the
+           flatten is a step the market keeps moving through. Rightmost by design —
+           the easiest target on the bar to hit without aiming. -->
+      <button type="button" class="kill" data-if="!breaker.tripped" data-action="click"
+              data-fn="breaker.kill" data-source="button"
+              aria-label="Kill switch: cancel every order and flatten every position">KILL</button>
+      <button type="button" class="kill kill--tripped" data-if="breaker.tripped"
+              data-action="click" data-fn="breaker.rearm"
+              aria-label="Re-arm the desk">
+        <b>KILLED</b>
+        <span class="kill__why truncate">{{breaker.reason}} · re-arm</span>
+      </button>
     </header>
 
     <!-- The grid: every cell identical in size, driven entirely by the block registry.
@@ -295,6 +309,15 @@
               <span class="chip chip--warn" data-if="trade.queue.length > 0">queued {{trade.queue.length}}</span>
               <!-- Why the last click did not send, in the trader's own words. -->
               <p class="ticket__reject" data-if="trade.lastReject">{{trade.lastReject}}</p>
+              <!-- A refused order is not a failed one, and the ticket has to say which:
+                   the click did nothing, on purpose, and the desk is still running. The
+                   class alternates on the block counter so the flash actually replays —
+                   a CSS animation on an element that merely changed its text never
+                   restarts, and the second identical block would land silently. -->
+              <p data-if="breaker.lastBlock"
+                 :class="'ticket__block ticket__block--' + (breaker.blocked % 2)">
+                BLOCKED · {{breaker.lastBlock ? breaker.lastBlock.reason : ''}}
+              </p>
               <div class="ticket__shortcuts">
                 <!-- Always enabled: arming gates entering risk, never leaving it. -->
                 <button type="button" class="ticket__cancel" data-action="click"
@@ -357,6 +380,16 @@
                  much, how am I doing. Four questions asked between trades. -->
             <button type="button" class="chip hud__density" data-if="block.id === 'hud'"
                     data-action="click" data-fn="ui.toggleCompactHud">{{settings.compactHud ? 'expand' : 'compact'}}</button>
+            <!-- Stamped across the vitals rather than tucked in a tile: a trader whose
+                 entries are being refused needs to know that before they click, not
+                 after. Says what still works, because "paused" on its own reads as
+                 "trapped" — the exits never close. -->
+            <div class="paused" data-if="block.id === 'hud' &amp;&amp; breaker.paused">
+              <b class="paused__stamp">PAUSED</b>
+              <span class="paused__why">{{breaker.lossStreak}} losses in a row · entries blocked, exits open</span>
+              <button type="button" class="chip" data-action="click"
+                      data-fn="breaker.rearm">resume</button>
+            </div>
             <!-- One row instead of nine tiles, ordered worst-first: in a strip this dense
                  a fixed order buries the one reading that matters behind seven that are
                  fine. Exactly one representation is mounted at a time. -->
@@ -408,6 +441,12 @@
               <div class="hud__tile">
                 <span class="hud__value">{{ui.session.turnoverLabel}}</span>
                 <span class="hud__label">turnover · {{ui.session.contracts}} traded</span>
+              </div>
+              <!-- Saves. Mounted only once there are any: a permanent zero teaches the eye
+                   to skip the tile, which is the one moment it stops being zero. -->
+              <div class="hud__tile" data-if="breaker.blocked > 0">
+                <span class="hud__value">{{breaker.blocked}}</span>
+                <span class="hud__label">blocked · {{breaker.lastBlock ? breaker.lastBlock.reason : ''}}</span>
               </div>
               <!-- Fees against gross. Past half, they are the business rather than a cost
                    of it, and the meter says so before the P&L does. -->
