@@ -236,3 +236,46 @@
   color: var(--orange);
   font-size: var(--fs-0);
 }
+
+/* Fee drag. The ratio gets the big type because it is the sentence, and the bars are the
+   evidence underneath it. */
+.fees {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--sp-1) var(--sp-2);
+  align-items: baseline;
+  margin-block-start: var(--sp-2);
+}
+
+.fees__ratio {
+  font-size: var(--fs-3);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.fees__ratio--up {
+  color: var(--green);
+}
+
+.fees__ratio--warn {
+  color: var(--orange);
+}
+
+.fees__ratio--down {
+  color: var(--orange-hot);
+}
+
+.fees__ratio--flat {
+  color: var(--ink-muted);
+}
+
+.fees__bars {
+  grid-column: 1 / -1;
+  inline-size: 100%;
+  block-size: 2.25rem;
+}
+
+.fees__venue {
+  grid-column: 1 / -1;
+  color: var(--ink-muted);
+}
