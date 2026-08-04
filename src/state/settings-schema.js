@@ -93,6 +93,13 @@ export const SETTINGS_SCHEMA = Object.freeze([
     default: false,
   },
   {
+    key: 'compactHud',
+    group: 'appearance',
+    label: 'Compact HUD row',
+    kind: 'toggle',
+    default: false,
+  },
+  {
     key: 'bookDepth',
     group: 'trading',
     label: 'Imbalance depth',

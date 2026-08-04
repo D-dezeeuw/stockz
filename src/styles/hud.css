@@ -55,6 +55,57 @@
 }
 
 /*
+ * The compact strip: nine vitals in one row. auto-fit rather than nine fixed columns, so
+ * the strip holds its single row at any block width instead of wrapping into the layout
+ * it was supposed to replace.
+ */
+.hud-strip {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(3.5rem, 1fr));
+  gap: var(--space-1, 0.25rem);
+  align-items: center;
+}
+
+.hud-strip__cell {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  font-size: var(--font-size-xs, 0.6875rem);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.hud-strip__cell b {
+  color: var(--ink-muted);
+  font-weight: 400;
+}
+
+.hud-strip__cell span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.hud-strip__cell--good span,
+.hud-strip__cell--ok span,
+.hud-strip__cell--hot span {
+  color: var(--green);
+}
+
+.hud-strip__cell--bad span,
+.hud-strip__cell--cold span,
+.hud-strip__cell--warn span,
+.hud-strip__cell--over span {
+  color: var(--orange);
+}
+
+.hud__density {
+  align-self: flex-start;
+  margin-bottom: var(--space-1, 0.25rem);
+}
+
+/*
  * Pace and streak. On-target and neutral are deliberately unstyled: a HUD where every
  * tile is coloured is one where colour has stopped meaning anything, so only the two
  * readings worth interrupting for get a colour.

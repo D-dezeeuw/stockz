@@ -20,6 +20,7 @@ import { registerCandleActions } from '../charts/candlestick.js'
 import { registerPrefillActions } from '../book/prefill.js'
 import { registerGroupingActions } from '../book/grouping.js'
 import { registerTapeActions } from '../book/tape.js'
+import { registerCompactActions } from '../hud/compact.js'
 import { connectFeeds } from './feeds.js'
 import { registerTicketActions } from '../ticket/actions.js'
 import { registerSizingActions } from '../ticket/sizing.js'
@@ -86,6 +87,7 @@ export function bootstrap(options = {}) {
   registerPrefillActions()
   registerGroupingActions()
   registerTapeActions()
+  registerCompactActions()
   registerTicketActions()
   registerSizingActions()
   // The venue call is injected rather than imported inside the action, so the fast path

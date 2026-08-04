@@ -3212,16 +3212,16 @@
 **What:** All nine vitals squeezed into one grid-block row so metrics stay visible while every other block works.
 **How:** A persisted compact flag switching the HUD via data-if into a severity-ordered abbreviated strip laid out as a single CSS grid row.
 
-- [ ] **T19.10.1 - Cut compact branch** - What: Safe space for the layout rework. How: git checkout -b feature/f19.10-compact-hud from main.
-- [ ] **T19.10.2 - Compact flag setting** - What: Your HUD density choice is remembered. How: hud.compact boolean synced through spektrum/persist with default false.
-- [ ] **T19.10.3 - severityRank fn** - What: Alerting metrics jump to the front of the strip. How: Pure fn scoring each metric from its alert and tier flags, returning a sortable rank.
-- [ ] **T19.10.4 - abbreviate fn** - What: Nine metrics fit one row without losing meaning. How: Pure fn mapping metric ids to 2-3 char labels and shortening values via formatCompact.
-- [ ] **T19.10.5 - Ordered metric list computed** - What: The strip reorders itself as alerts fire. How: Spektrum computed sorting the metric descriptors by severityRank on every hud change.
-- [ ] **T19.10.6 - Compact strip markup** - What: The one-row HUD renders from live data. How: data-each over the ordered list emitting label/value cells, gated by data-if on hud.compact.
-- [ ] **T19.10.7 - Full/compact switch** - What: Toggling never leaves stale DOM behind. How: Complementary data-if on the full tile grid so exactly one representation is mounted at a time.
-- [ ] **T19.10.8 - Single-row CSS layout** - What: The strip holds one uniform block row at any width. How: CSS grid with auto-fit minmax cells, ellipsis overflow and day/night token colors.
-- [ ] **T19.10.9 - Toggle action and tests** - What: One click flips density, and the fns are proven. How: data-action toggle in the HUD header plus one Vitest test each for severityRank and abbreviate via -t.
-- [ ] **T19.10.10 - Merge compact mode** - What: Space-saving HUD live for all users. How: Lint plus the two targeted test runs, then merge feature/f19.10 into main.
+- [x] **T19.10.1 - Cut compact branch** - What: Safe space for the layout rework. How: git checkout -b feature/f19.10-compact-hud from main.
+- [x] **T19.10.2 - Compact flag setting** - What: Your HUD density choice is remembered. How: hud.compact boolean synced through spektrum/persist with default false.
+- [x] **T19.10.3 - severityRank fn** - What: Alerting metrics jump to the front of the strip. How: Pure fn scoring each metric from its alert and tier flags, returning a sortable rank.
+- [x] **T19.10.4 - abbreviate fn** - What: Nine metrics fit one row without losing meaning. How: Pure fn mapping metric ids to 2-3 char labels and shortening values via formatCompact.
+- [x] **T19.10.5 - Ordered metric list computed** - What: The strip reorders itself as alerts fire. How: Spektrum computed sorting the metric descriptors by severityRank on every hud change.
+- [x] **T19.10.6 - Compact strip markup** - What: The one-row HUD renders from live data. How: data-each over the ordered list emitting label/value cells, gated by data-if on hud.compact.
+- [x] **T19.10.7 - Full/compact switch** - What: Toggling never leaves stale DOM behind. How: Complementary data-if on the full tile grid so exactly one representation is mounted at a time.
+- [x] **T19.10.8 - Single-row CSS layout** - What: The strip holds one uniform block row at any width. How: CSS grid with auto-fit minmax cells, ellipsis overflow and day/night token colors.
+- [x] **T19.10.9 - Toggle action and tests** - What: One click flips density, and the fns are proven. How: data-action toggle in the HUD header plus one Vitest test each for severityRank and abbreviate via -t.
+- [x] **T19.10.10 - Merge compact mode** - What: Space-saving HUD live for all users. How: Lint plus the two targeted test runs, then merge feature/f19.10 into main.
 
 ---
 

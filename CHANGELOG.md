@@ -12,6 +12,15 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ### Added
 
+- **Compact HUD row** — nine vitals in a single block row, so the HUD stops competing with
+  the book and the ticket for screen and the metrics stay visible while the trader is
+  actually working. The strip is **ordered by severity rather than by a fixed layout**: in
+  a row this dense a fixed order means the one reading that matters is wherever it always
+  was — off to the right, behind seven that are fine. An active alert outranks any tone,
+  because an alert is happening now and a tone has been true for a while; ties keep their
+  original order so a quiet row never reshuffles itself under the eye. An unknown metric is
+  truncated to three characters rather than dropped, since a missing cell reads as a metric
+  that is fine, which is the one thing it must never do.
 - **Fee burn meter** — a scalper's edge is measured in ticks and their fees are measured in
   the same ticks, so the two numbers belong on the same screen: a hundred round trips at a
   two-tick edge and a one-tick fee is a day that reads as a win on gross and is a loss in
