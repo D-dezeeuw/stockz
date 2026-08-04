@@ -503,6 +503,15 @@
                 <span class="kpi__note">{{k.note}}</span>
               </div>
             </div>
+            <!-- The shape of the session. The tiles say whether the edge exists; this says
+                 what the ride was like, and two traders ending the week on the same number —
+                 one grinding, one down four thousand on Wednesday — are in very different
+                 positions. Per trade rather than per hour: a lunch break is not a flat patch
+                 of trading, and every point here is a decision. -->
+            <div class="equity-chart" data-if="block.id === 'analytics'">
+              <canvas id="equity-canvas" class="equity-chart__canvas"></canvas>
+              <span class="equity-chart__dd label">max drawdown {{fmt.signed(analytics.drawdown.maxDrawdown)}}</span>
+            </div>
             <!-- An alert set in under three seconds: level, direction, done. -->
             <div class="alerts" data-if="block.id === 'watchlist'">
               <form class="alerts__form" data-action="submit" data-fn="alerts.create"

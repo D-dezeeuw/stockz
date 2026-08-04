@@ -57,3 +57,28 @@
 .kpi--info .kpi__value {
   color: var(--ink-strong);
 }
+
+/*
+ * The curve. Given real height because the shape is the content — a two-centimetre strip
+ * would show a line going up and nothing about how it got there, which is the half that
+ * matters.
+ */
+.equity-chart {
+  position: relative;
+  display: grid;
+  min-block-size: 7rem;
+  margin-block-start: var(--sp-2);
+}
+
+.equity-chart__canvas {
+  inline-size: 100%;
+  block-size: 100%;
+  min-block-size: 7rem;
+}
+
+.equity-chart__dd {
+  position: absolute;
+  inset-block-start: 2px;
+  inset-inline-end: 2px;
+  color: var(--orange);
+}
