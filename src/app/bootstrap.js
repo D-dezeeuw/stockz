@@ -24,6 +24,7 @@ import { registerCompactActions } from '../hud/compact.js'
 import { registerStrategyActions } from '../strategy/registry.js'
 import { registerAlertActions } from '../alerts/price.js'
 import { publishToggles } from '../alerts/signals.js'
+import { registerToastActions, wireAlertToasts } from '../ui/toast.js'
 import { knownStrategies } from '../strategy/registry.js'
 import { connectFeeds } from './feeds.js'
 import { registerTicketActions } from '../ticket/actions.js'
@@ -94,6 +95,8 @@ export function bootstrap(options = {}) {
   registerCompactActions()
   registerStrategyActions()
   registerAlertActions()
+  registerToastActions()
+  wireAlertToasts()
   // After the strategies register, so every one of them gets a mute switch.
   publishToggles(knownStrategies())
   registerTicketActions()

@@ -1,4 +1,7 @@
 import { setValue, appState, onError } from '../app/engine.js'
+import { registerAction } from '../actions/registry.js'
+import { ACTIONS } from '../actions/names.js'
+import { onAlert } from '../alerts/bus.js'
 import { PATHS } from '../state/paths.js'
 import { createLogger } from '../utils/log.js'
 
@@ -99,11 +102,85 @@ export function expireToasts(now) {
   const current = Array.isArray(appState?.ui?.toasts) ? appState.ui.toasts : []
   if (current.length === 0) return 0
 
-  const alive = current.filter((t) => Number(t?.until) > now)
+  // A paused toast never expires: its countdown is frozen while the pointer is on it.
+  const alive = current.filter((t) => t?.paused === true || Number(t?.until) > now)
   const expired = current.length - alive.length
 
   if (expired > 0) setValue(PATHS.ui.toasts, alive)
   return expired
+}
+
+/**
+ * Show a toast, or bump the one already saying this.
+ *
+ * @param {string} message - what happened.
+ * @param {string} [level] - one of TOAST_LEVELS.
+ * @param {number} [now] - epoch ms.
+ * @returns {object} the toast that was pushed or bumped.
+ */
+export function coalesceToast(message, level = 'info', now = 0) {
+  const text = String(message ?? '').trim() || 'something happened'
+  const current = Array.isArray(appState?.ui?.toasts) ? appState.ui.toasts : []
+  const existing = current.find((t) => t?.message === text && Number(t?.until) > now)
+  if (!existing) return pushToast(text, level, now)
+
+  // Bumped rather than re-stacked. A venue erroring forty times a second would otherwise
+  // fill the cap with one message and push out the three others the trader needed to see —
+  // and the count is more informative than the repeats were.
+  const bumped = {
+    ...existing,
+    count: (Number(existing.count) || 1) + 1,
+    until: now + (TOAST_TTL[existing.level] ?? TOAST_TTL.info),
+  }
+  setValue(
+    PATHS.ui.toasts,
+    current.map((t) => (t?.id === existing.id ? bumped : t)),
+  )
+
+  return bumped
+}
+
+/**
+ * Freeze or resume a toast's countdown.
+ *
+ * @param {number} id - toast id.
+ * @param {boolean} paused - whether the pointer is on it.
+ * @param {number} now - epoch ms.
+ * @returns {object|null} the toast, or null when there was none.
+ */
+export function pauseToast(id, paused, now) {
+  const current = Array.isArray(appState?.ui?.toasts) ? appState.ui.toasts : []
+  const toast = current.find((t) => t?.id === id)
+  if (!toast) return null
+
+  // Reading a toast stops its clock. The alternative is a message that vanishes mid-word,
+  // which is worse than one that never appeared.
+  const next = paused
+    ? { ...toast, paused: true, remaining: Math.max(0, Number(toast.until) - Number(now)) }
+    : { ...toast, paused: false, until: Number(now) + (Number(toast.remaining) || 0) }
+
+  setValue(
+    PATHS.ui.toasts,
+    current.map((t) => (t?.id === id ? next : t)),
+  )
+
+  return next
+}
+
+/**
+ * Turn an alert into a toast.
+ *
+ * @param {object} alert - a bus alert.
+ * @param {number} [now] - epoch ms.
+ * @returns {object|null} the toast, or null when there was nothing to show.
+ */
+export function toastFromAlert(alert, now = 0) {
+  const text = String(alert?.text ?? '').trim()
+  if (!text) return null
+
+  // The bus severity and the toast level are the same vocabulary on purpose: a second
+  // mapping table is a second place for 'error' to quietly become 'warn'.
+  return coalesceToast(text, String(alert?.severity ?? 'info'), Number(alert?.ts) || now)
 }
 
 /**
@@ -141,4 +218,34 @@ export function wireEngineErrors(options = {}) {
 
   onError(handler)
   return handler
+}
+
+/**
+ * Register the toast actions.
+ *
+ * @returns {string} the dismiss action's name.
+ */
+export function registerToastActions() {
+  registerAction(ACTIONS.ui.dismissToast, (_state, payload) =>
+    dismissToast(Number(payload?.id ?? payload)),
+  )
+  registerAction(ACTIONS.ui.hoverToast, (_state, payload) =>
+    pauseToast(Number(payload?.id), payload?.paused !== 'false' && payload?.paused !== false, Date.now()),
+  )
+
+  return ACTIONS.ui.dismissToast
+}
+
+/**
+ * Show every bus alert as a toast.
+ *
+ * @param {{now?: () => number}} [options] - injected clock.
+ * @returns {() => void} unsubscribe.
+ */
+export function wireAlertToasts(options = {}) {
+  const { now = () => Date.now() } = options
+
+  // One subscription, not one per source: the whole reason the alert bus exists is that a
+  // new alert type should not need a new wire into every output.
+  return onAlert((alert) => toastFromAlert(alert, now()))
 }
