@@ -133,3 +133,17 @@
   position: relative;
   overflow: hidden;
 }
+
+/* The one-time intro. A button rather than a span, because the only thing to do with it is
+   make it go away — and a dismiss target you have to hunt for is worse than no hint. */
+.paper-strip__hint {
+  padding: 0 var(--sp-1);
+  border: 1px solid currentColor;
+  background: none;
+  color: inherit;
+  font: inherit;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  text-transform: none;
+  cursor: pointer;
+}

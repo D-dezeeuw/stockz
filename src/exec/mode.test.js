@@ -9,6 +9,9 @@ import {
   beginGoLive,
   cancelGoLive,
   applyModeParam,
+  isFirstRun,
+  applyFirstRunMode,
+  dismissPaperHint,
   resetMode,
   registerModeActions,
 } from './mode.js'
@@ -42,6 +45,8 @@ beforeEach(() => {
   setValue(PATHS.trade.queue, [])
   setValue(PATHS.trade.holdPct, 0)
   setValue(PATHS.ui.toasts, [])
+  setValue(PATHS.ui.paperHint, false)
+  setValue(PATHS.settings.modeChosen, false)
   tick()
 })
 
@@ -164,6 +169,53 @@ describe('applyModeParam', () => {
   })
 })
 
+describe('isFirstRun', () => {
+  it('is true until the trader has met the mode control', () => {
+    expect(isFirstRun({})).toBe(true)
+    expect(isFirstRun({ settings: {} })).toBe(true)
+    expect(isFirstRun({ settings: { modeChosen: true } })).toBe(false)
+  })
+})
+
+describe('applyFirstRunMode', () => {
+  it('starts a new desk on paper and shows the hint exactly once', () => {
+    setValue(PATHS.trade.mode, 'live')
+    tick()
+
+    // The first trade on STOCKZ is always a free one: the alternative is a stranger's
+    // first click reaching a venue.
+    expect(applyFirstRunMode()).toEqual({ mode: 'paper', hint: true })
+    tick()
+    expect(appState.trade.mode).toBe('paper')
+    expect(appState.ui.paperHint).toBe(true)
+
+    setValue(PATHS.settings.modeChosen, true)
+    setValue(PATHS.trade.mode, 'live')
+    tick()
+    // A returning trader keeps the mode they chose, and is not lectured about it.
+    expect(applyFirstRunMode()).toEqual({ mode: 'live', hint: false })
+    tick()
+    expect(appState.trade.mode).toBe('live')
+    expect(appState.ui.paperHint).toBe(false)
+  })
+})
+
+describe('dismissPaperHint', () => {
+  it('puts the hint away for good', () => {
+    applyFirstRunMode()
+    tick()
+    expect(appState.ui.paperHint).toBe(true)
+
+    expect(dismissPaperHint()).toBe(true)
+    tick()
+    expect(appState.ui.paperHint).toBe(false)
+    // Recorded in the persisted branch: a hint that came back on every reload is one
+    // nobody reads by the third time.
+    expect(appState.settings.modeChosen).toBe(true)
+    expect(isFirstRun()).toBe(false)
+  })
+})
+
 describe('resetMode', () => {
   it('forgets a hold in progress', () => {
     beginGoLive(null, { timer: fakeTimer() })
@@ -180,8 +232,10 @@ describe('registerModeActions', () => {
       'trade.releaseLive',
       'trade.resetPaper',
       'trade.holdReset',
+      'trade.dismissHint',
     ])
     expect(actionNames().sort()).toEqual([
+      'trade.dismissHint',
       'trade.holdLive',
       'trade.holdReset',
       'trade.releaseLive',

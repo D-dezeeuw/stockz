@@ -210,6 +210,13 @@
     <div class="paper-strip" data-if="trade.mode === 'paper'" role="status">
       <span>PAPER TRADING</span>
       <span class="paper-strip__note">orders are simulated · nothing reaches a venue</span>
+      <!-- Once, and then never again. A permanent explanation aimed at somebody who has
+           been trading for a month is noise, and noise on this strip is how the strip
+           itself stops being read. -->
+      <button type="button" class="paper-strip__hint" data-if="ui.paperHint"
+              data-action="click" data-fn="trade.dismissHint">
+        new here? everything is practice until you hold LIVE · dismiss
+      </button>
     </div>
 
     <!-- The grid: every cell identical in size, driven entirely by the block registry.

@@ -195,6 +195,15 @@ export const SETTINGS_SCHEMA = Object.freeze([
     default: 1,
   },
   {
+    key: 'modeChosen',
+    group: 'trading',
+    // Not a preference anybody sets deliberately — it records that the trader has met the
+    // mode control at all, which is what makes the first-run hint one-time.
+    label: 'Trading mode has been chosen',
+    kind: 'toggle',
+    default: false,
+  },
+  {
     key: 'paperLatencyMs',
     group: 'trading',
     // Off by default: the realism is worth having, but a beginner's first ten orders

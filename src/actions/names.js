@@ -103,6 +103,7 @@ export const ACTIONS = Object.freeze({
     releaseLive: 'trade.releaseLive',
     resetPaper: 'trade.resetPaper',
     holdReset: 'trade.holdReset',
+    dismissHint: 'trade.dismissHint',
   }),
   backtest: Object.freeze({
     start: 'backtest.start',
