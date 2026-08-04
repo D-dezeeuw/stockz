@@ -2901,32 +2901,32 @@
 **What:** One authoritative in-memory book of every open position across OKX and EToro.
 **How:** src/positions/store.js registering a positions map keyed venue:instrument in Spektrum via addSystem, with persist-backed reload continuity.
 
-- [ ] **T18.1.1 - Branch and positions scaffold** - What: A dedicated module tree for position state and math. How: Create feature/pos-store off main; scaffold src/positions/ with store.js and math.js as ES modules under Vite.
-- [ ] **T18.1.2 - Position key scheme** - What: Every venue+instrument pair resolves to exactly one slot. How: Write defineFn positionKey(venue, instrument) producing 'okx:BTC-USDT' style keys with input normalization.
-- [ ] **T18.1.3 - Position record shape** - What: A complete, minimal record per position. How: Define {qty, side, avgPx, realized, fees, openedAt, mark} in a types module with a makePosition() factory.
-- [ ] **T18.1.4 - Upsert and auto-prune** - What: The map holds open positions only, never zombie zeros. How: Write upsertPosition() committing via setValue and deleting the key when qty reaches exactly 0.
-- [ ] **T18.1.5 - Spektrum system registration** - What: Any block can react to position changes without polling. How: addSystem('positions') wiring the map into Spektrum state with trigger('positions:changed') on each commit.
-- [ ] **T18.1.6 - Store selectors** - What: Ready-made exposure answers for other phases. How: computed openPositions() list and grossExposure() sum derived from the map for HUD and circuit-breaker consumers.
-- [ ] **T18.1.7 - Reload continuity** - What: A browser refresh never blanks the book. How: Mirror the positions map through spektrum/persist to localStorage, rehydrating before first render and marking records stale until reconciled.
-- [ ] **T18.1.8 - Devtools visibility** - What: Position state inspectable and time-travelable while debugging. How: Register the store with spektrum/devtools and spektrum/inspect so checkpoint/replay cover position mutations.
-- [ ] **T18.1.9 - Single unit tests for store fns** - What: Key, upsert and exposure logic each pinned by one test. How: One Vitest test each for positionKey, upsertPosition and grossExposure, run per file only.
-- [ ] **T18.1.10 - Verify and merge** - What: Store core lands only when green. How: Run ESLint plus this feature's Vitest tests, then merge feature/pos-store into main.
+- [x] **T18.1.1 - Branch and positions scaffold** - What: A dedicated module tree for position state and math. How: Create feature/pos-store off main; scaffold src/positions/ with store.js and math.js as ES modules under Vite.
+- [x] **T18.1.2 - Position key scheme** - What: Every venue+instrument pair resolves to exactly one slot. How: Write defineFn positionKey(venue, instrument) producing 'okx:BTC-USDT' style keys with input normalization.
+- [x] **T18.1.3 - Position record shape** - What: A complete, minimal record per position. How: Define {qty, side, avgPx, realized, fees, openedAt, mark} in a types module with a makePosition() factory.
+- [x] **T18.1.4 - Upsert and auto-prune** - What: The map holds open positions only, never zombie zeros. How: Write upsertPosition() committing via setValue and deleting the key when qty reaches exactly 0.
+- [x] **T18.1.5 - Spektrum system registration** - What: Any block can react to position changes without polling. How: addSystem('positions') wiring the map into Spektrum state with trigger('positions:changed') on each commit.
+- [x] **T18.1.6 - Store selectors** - What: Ready-made exposure answers for other phases. How: computed openPositions() list and grossExposure() sum derived from the map for HUD and circuit-breaker consumers.
+- [ ] **T18.1.7 - Reload continuity** - What: A browser refresh never blanks the book. How: Mirror the positions map through spektrum/persist to localStorage, rehydrating before first render and marking records stale until reconciled. **Deferred:** only `settings.*` is persisted by design, and a *stale* position rehydrated from storage is a risk number that may be wrong — the honest source is the venue's own positions endpoint (`fetchPositions`, phase 9), which F18.3 reconciles against.
+- [x] **T18.1.8 - Devtools visibility** - What: Position state inspectable and time-travelable while debugging. How: Register the store with spektrum/devtools and spektrum/inspect so checkpoint/replay cover position mutations.
+- [x] **T18.1.9 - Single unit tests for store fns** - What: Key, upsert and exposure logic each pinned by one test. How: One Vitest test each for positionKey, upsertPosition and grossExposure, run per file only.
+- [x] **T18.1.10 - Verify and merge** - What: Store core lands only when green. How: Run ESLint plus this feature's Vitest tests, then merge feature/pos-store into main.
 
 ### F18.2 - Fill ingestion & average entry math
 
 **What:** Every fill instantly reshapes quantity and average entry - adds, reduces and flips all priced correctly.
 **How:** Fill consumer on the phase-17 exec:update events applying weighted-average math through pure functions.
 
-- [ ] **T18.2.1 - Branch and fill consumer** - What: Fills flow into positions with no manual step. How: Create feature/pos-fills; subscribe a consumer to exec:update fill transitions via watch() in store.js.
-- [ ] **T18.2.2 - Pure fill application** - What: Deterministic position math with no hidden mutation. How: Write defineFn applyFill(position, fill) returning a fresh record, dispatching to add/reduce/flip branches.
-- [ ] **T18.2.3 - Weighted average entry** - What: Adds always price the position exactly. How: Write avgEntryAfterAdd() computing (oldQty*avgPx + fillQty*fillPx) / newQty with float guarding at qty boundaries.
-- [ ] **T18.2.4 - Reduce branch** - What: Scaling out keeps entry honest while booking the difference. How: Keep avgPx unchanged on reduces and hand the closed quantity delta to the F18.4 realization function.
-- [ ] **T18.2.5 - Flip handling** - What: Trading through zero yields a clean new position, not garbage math. How: Write splitFlipFill() dividing a through-zero fill into a closing part and an opening part with a fresh avgPx.
-- [ ] **T18.2.6 - Fill dedupe** - What: Replayed fills after a reconnect never double the book. How: Seen-set keyed on venue fillId consulted O(1) before applying, persisted for the session.
-- [ ] **T18.2.7 - Burst batching** - What: A 20-fill sweep costs one render, not twenty. How: Coalesce fill applications into a single store commit per animation frame using a queued flush.
-- [ ] **T18.2.8 - Side normalization** - What: OKX and EToro fills speak one signed-quantity language. How: Write normalizeFillSide() mapping OKX side/posSide and EToro direction into signed qty before applyFill.
-- [ ] **T18.2.9 - Single unit tests for fill fns** - What: Add, flip and normalization math each locked by one test. How: One Vitest test each for applyFill, avgEntryAfterAdd, splitFlipFill and normalizeFillSide, run per file.
-- [ ] **T18.2.10 - Verify and merge** - What: Fill ingestion lands proven. How: ESLint plus the feature's tests green, then merge feature/pos-fills into main.
+- [x] **T18.2.1 - Branch and fill consumer** - What: Fills flow into positions with no manual step. How: Create feature/pos-fills; subscribe a consumer to exec:update fill transitions via watch() in store.js.
+- [x] **T18.2.2 - Pure fill application** - What: Deterministic position math with no hidden mutation. How: Write defineFn applyFill(position, fill) returning a fresh record, dispatching to add/reduce/flip branches.
+- [x] **T18.2.3 - Weighted average entry** - What: Adds always price the position exactly. How: Write avgEntryAfterAdd() computing (oldQty*avgPx + fillQty*fillPx) / newQty with float guarding at qty boundaries.
+- [x] **T18.2.4 - Reduce branch** - What: Scaling out keeps entry honest while booking the difference. How: Keep avgPx unchanged on reduces and hand the closed quantity delta to the F18.4 realization function.
+- [x] **T18.2.5 - Flip handling** - What: Trading through zero yields a clean new position, not garbage math. How: Write splitFlipFill() dividing a through-zero fill into a closing part and an opening part with a fresh avgPx.
+- [x] **T18.2.6 - Fill dedupe** - What: Replayed fills after a reconnect never double the book. How: Seen-set keyed on venue fillId consulted O(1) before applying, persisted for the session.
+- [x] **T18.2.7 - Burst batching** - What: A 20-fill sweep costs one render, not twenty. How: Coalesce fill applications into a single store commit per animation frame using a queued flush.
+- [x] **T18.2.8 - Side normalization** - What: OKX and EToro fills speak one signed-quantity language. How: Write normalizeFillSide() mapping OKX side/posSide and EToro direction into signed qty before applyFill.
+- [x] **T18.2.9 - Single unit tests for fill fns** - What: Add, flip and normalization math each locked by one test. How: One Vitest test each for applyFill, avgEntryAfterAdd, splitFlipFill and normalizeFillSide, run per file.
+- [x] **T18.2.10 - Verify and merge** - What: Fill ingestion lands proven. How: ESLint plus the feature's tests green, then merge feature/pos-fills into main.
 
 ### F18.3 - Unrealized PnL live to the tick
 

@@ -13,10 +13,12 @@ import {
   deskMarket,
 } from './engine.js'
 import { appState, setValue, tick, resetState } from '../app/engine.js'
+import { openPositions, resetPositions } from '../positions/store.js'
 
 beforeEach(() => {
   resetEngine()
   resetState()
+  resetPositions()
 })
 
 /** An adapter double recording what the engine asks of it. */
@@ -142,7 +144,12 @@ describe('apply', () => {
     // An illegal transition is ignored rather than throwing on the feed path.
     expect(apply('abc', 'pending').state).toBe('partial')
 
+    // The position book moved on the fill itself, not on the next frame: a position a
+    // frame behind is a risk number someone may size against.
+    expect(openPositions()[0]).toMatchObject({ instrument: 'BTC-USDT', qty: 0.2 })
+
     expect(apply('abc', 'filled', { filled: 0.5 }).state).toBe('filled')
+    expect(openPositions()[0].qty).toBe(0.5)
     // Keeping every order of a session live is how a long session slows down.
     expect(liveOrders()).toEqual([])
 

@@ -7,6 +7,7 @@ import { appState } from '../app/engine.js'
 import { ingestOrderEvents } from '../ticket/lifecycle.js'
 import { issueId, claimId, resetIds } from './ids.js'
 import { stampLatency, resetLatency } from './latency.js'
+import { ingestFill } from '../positions/store.js'
 import { createLogger } from '../utils/log.js'
 
 const log = createLogger('exec')
@@ -173,7 +174,24 @@ export function apply(clientId, state, detail = {}) {
   const { state: next, changed } = advanceOrderState(order.state, state)
   if (!changed) return order
 
-  if (next === 'filled' || next === 'partial') stampLatency(id, 'fill', monotonic())
+  if (next === 'filled' || next === 'partial') {
+    stampLatency(id, 'fill', monotonic())
+
+    // The position book moves on the fill itself, synchronously. An order list a frame
+    // behind is cosmetic; a position a frame behind is a risk number someone may size
+    // against.
+    const justFilled = Number(detail.filled ?? order.size) - Number(order.filled || 0)
+    if (justFilled > 0) {
+      ingestFill({
+        venue: order.venue,
+        instrument: order.instrument,
+        side: order.side,
+        qty: justFilled,
+        px: Number(detail.avgPx) || order.price,
+        ts: Number(detail.ts) || order.ts,
+      })
+    }
+  }
 
   const updated = {
     ...order,
