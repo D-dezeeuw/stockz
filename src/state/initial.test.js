@@ -19,6 +19,7 @@ describe('initialState', () => {
       'breaker',
       'journal',
       'market',
+      'playback',
       'replay',
       'settings',
       'strategy',

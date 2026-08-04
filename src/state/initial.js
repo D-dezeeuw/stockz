@@ -206,6 +206,18 @@ export function initialState(overrides = {}) {
     [PATHS.bot.capped]: [],
     [PATHS.bot.session]: { signals: 0, orders: 0, dry: 0, blocked: 0, startedAt: 0 },
 
+    // recorded markets, and the transport that plays them back
+    [PATHS.playback.recording]: null,
+    [PATHS.playback.library]: [],
+    [PATHS.playback.transport]: {
+      active: false,
+      playing: false,
+      cursor: 0,
+      total: 0,
+      speed: 1,
+      label: '',
+    },
+
     // the safety net
     [PATHS.breaker.tripped]: 0,
     [PATHS.breaker.reason]: '',
@@ -232,10 +244,6 @@ export function initialState(overrides = {}) {
     [PATHS.replay.trade]: null,
     [PATHS.replay.speed]: 1,
     [PATHS.replay.label]: '',
-    [PATHS.replay.recording]: null,
-    [PATHS.replay.sessions]: [],
-    [PATHS.replay.library]: [],
-    [PATHS.replay.player]: { active: false, playing: false, cursor: 0, total: 0, speed: 1, label: '' },
     [PATHS.replay.error]: '',
 
     // analytics

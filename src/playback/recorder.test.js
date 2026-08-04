@@ -151,8 +151,8 @@ describe('stopRecording', () => {
 describe('isRecording', () => {
   it('reads the live flag, which is never restored from a closed tab', () => {
     expect(isRecording({})).toBe(false)
-    expect(isRecording({ replay: { recording: null } })).toBe(false)
-    expect(isRecording({ replay: { recording: { id: 'rec-1' } } })).toBe(true)
+    expect(isRecording({ playback: { recording: null } })).toBe(false)
+    expect(isRecording({ playback: { recording: { id: 'rec-1' } } })).toBe(true)
   })
 })
 
@@ -182,7 +182,7 @@ describe('resetRecorder', () => {
 
 describe('registerRecorderActions', () => {
   it('registers the REC toggle', () => {
-    expect(registerRecorderActions()).toEqual([ACTIONS.replay.record])
-    expect(actionNames()).toContain('replay.record')
+    expect(registerRecorderActions()).toEqual([ACTIONS.playback.record])
+    expect(actionNames()).toContain('playback.record')
   })
 })

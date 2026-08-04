@@ -35,9 +35,9 @@ import { registerRetentionActions } from '../journal/retention.js'
 import { registerRankingActions } from '../analytics/instruments.js'
 import { registerPeriodActions } from '../analytics/period.js'
 import { registerReportActions } from '../analytics/report.js'
-import { registerRecorderActions } from '../replay/recorder.js'
-import { registerLibraryActions } from '../replay/library.js'
-import { registerPlayerActions } from '../replay/player.js'
+import { registerRecorderActions } from '../playback/recorder.js'
+import { registerLibraryActions } from '../playback/library.js'
+import { registerPlayerActions } from '../playback/player.js'
 import { registerStrategyActions } from '../strategy/registry.js'
 import { registerTicketActions } from '../ticket/actions.js'
 import { registerSizingActions } from '../ticket/sizing.js'
@@ -120,15 +120,15 @@ describe('allActionNames', () => {
       'replay.speed',
       'replay.exit',
       'replay.import',
-      'replay.record',
-      'replay.deleteRecording',
-      'replay.renameRecording',
-      'replay.play',
-      'replay.pause',
-      'replay.load',
-      'replay.stepTick',
-      'replay.tickSpeed',
-      'replay.unload',
+      'playback.record',
+      'playback.deleteRecording',
+      'playback.renameRecording',
+      'playback.load',
+      'playback.play',
+      'playback.pause',
+      'playback.step',
+      'playback.speed',
+      'playback.exit',
       'bot.toggleArm',
       'bot.setAuto',
       'bot.disableAll',

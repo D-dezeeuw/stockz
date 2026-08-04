@@ -126,7 +126,7 @@ export async function listRecordings(deps = {}) {
  */
 export async function refreshLibrary(deps = {}) {
   const rows = await listRecordings(deps)
-  setValue(PATHS.replay.library, rows)
+  setValue(PATHS.playback.library, rows)
 
   return rows
 }
@@ -176,8 +176,8 @@ export async function deleteRecording(_state, payload = {}) {
   // Removed from the view whatever the store said. A row that survives a delete the trader
   // watched happen reads as a desk that ignored them.
   setValue(
-    PATHS.replay.library,
-    (appState.replay?.library ?? []).filter((row) => row?.id !== id),
+    PATHS.playback.library,
+    (appState.playback?.library ?? []).filter((row) => row?.id !== id),
   )
   pushToast(gone ? 'recording deleted' : 'could not delete that recording', gone ? 'success' : 'warn')
 
@@ -215,12 +215,12 @@ export async function renameRecording(_state, payload = {}) {
  * @returns {string[]} the registered names.
  */
 export function registerLibraryActions() {
-  registerAction(ACTIONS.replay.deleteRecording, deleteRecording, {
+  registerAction(ACTIONS.playback.deleteRecording, deleteRecording, {
     description: 'Delete a saved recording',
   })
-  registerAction(ACTIONS.replay.renameRecording, renameRecording, {
+  registerAction(ACTIONS.playback.renameRecording, renameRecording, {
     description: 'Rename a saved recording',
   })
 
-  return [ACTIONS.replay.deleteRecording, ACTIONS.replay.renameRecording]
+  return [ACTIONS.playback.deleteRecording, ACTIONS.playback.renameRecording]
 }

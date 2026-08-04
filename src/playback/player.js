@@ -94,7 +94,7 @@ let transport = { ...PLAYER_STATE }
  */
 export function publishPlayer(patch = {}) {
   transport = { ...transport, ...patch }
-  setValue(PATHS.replay.player, { ...transport })
+  setValue(PATHS.playback.transport, { ...transport })
 
   return transport
 }
@@ -270,31 +270,31 @@ export function resetPlayer() {
  * @returns {string[]} the registered names.
  */
 export function registerPlayerActions() {
-  registerAction(ACTIONS.replay.play, (_state, payload) => playReplay(payload), {
+  registerAction(ACTIONS.playback.play, (_state, payload) => playReplay(payload), {
     description: 'Play the loaded recording',
   })
-  registerAction(ACTIONS.replay.pause, (_state, payload) => pauseReplay(payload), {
+  registerAction(ACTIONS.playback.pause, (_state, payload) => pauseReplay(payload), {
     description: 'Pause playback',
   })
-  registerAction(ACTIONS.replay.load, (_state, payload) => loadReplay(payload?.id, payload), {
+  registerAction(ACTIONS.playback.load, (_state, payload) => loadReplay(payload?.id, payload), {
     description: 'Load a recording into the transport',
   })
-  registerAction(ACTIONS.replay.stepTick, (_state, payload) => stepTick(payload), {
+  registerAction(ACTIONS.playback.step, (_state, payload) => stepTick(payload), {
     description: 'Advance the recording one tick',
   })
-  registerAction(ACTIONS.replay.tickSpeed, setReplaySpeed, {
+  registerAction(ACTIONS.playback.speed, setReplaySpeed, {
     description: 'Set tick playback speed',
   })
-  registerAction(ACTIONS.replay.unload, exitReplay, {
+  registerAction(ACTIONS.playback.exit, exitReplay, {
     description: 'Leave tick replay and return to live',
   })
 
   return [
-    ACTIONS.replay.play,
-    ACTIONS.replay.pause,
-    ACTIONS.replay.load,
-    ACTIONS.replay.stepTick,
-    ACTIONS.replay.tickSpeed,
-    ACTIONS.replay.unload,
+    ACTIONS.playback.play,
+    ACTIONS.playback.pause,
+    ACTIONS.playback.load,
+    ACTIONS.playback.step,
+    ACTIONS.playback.speed,
+    ACTIONS.playback.exit,
   ]
 }

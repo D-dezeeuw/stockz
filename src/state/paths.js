@@ -16,6 +16,8 @@
  *   alerts.*    what the desk has tapped the trader on the shoulder about
  *   bot.*       what the auto-trader decided, and why
  *   breaker.*   whether the desk has stopped itself, and what stopped it
+ *   replay.*    time travel through the *journal* — stepping back through trades
+ *   playback.*  replaying recorded *market ticks* — a different thing entirely
  *
  * Credentials are absent on purpose: state flows into history, `serialize()` and journal
  * exports, so keys live only in the in-memory vault.
@@ -35,6 +37,7 @@ export const NAMESPACES = Object.freeze([
   'analytics',
   'journal',
   'replay',
+  'playback',
 ])
 
 /** Namespaces that survive a reload (written to localStorage by spektrum/persist). */
@@ -258,14 +261,15 @@ export const PATHS = Object.freeze({
     speed: 'replay.speed',
     label: 'replay.label',
     error: 'replay.error',
+  }),
+  playback: Object.freeze({
     // The recording in progress, or null. Live state, never persisted: a "recording" flag
     // restored from a closed tab would claim a capture that is not running.
-    recording: 'replay.recording',
-    sessions: 'replay.sessions',
-    library: 'replay.library',
-    // Market *tick* replay's transport, kept apart from phase 25's journal trade replay
-    // above: different features, same word.
-    player: 'replay.player',
+    recording: 'playback.recording',
+    library: 'playback.library',
+    // The transport, as one object: its fields always move together, and a path each would
+    // repaint the block up to five times for one action.
+    transport: 'playback.transport',
   }),
   analytics: Object.freeze({
     // The one switch every analytics number obeys, and the trade list it scopes to. The
