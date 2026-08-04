@@ -3546,16 +3546,16 @@
 **What:** The user sees which strategy earns: fires, win rate, PnL and hold time per strategy updating live.
 **How:** Incremental stats accumulator fns fed by watch() on signal and position-close events, rendered in a scoreboard grid block.
 
-- [ ] **T21.10.1 - Branch and scaffold stats module** - What: A dedicated branch for the scoreboard. How: git checkout -b feature/f21-10-scoreboard; create src/strategies/strategyStats.js.
-- [ ] **T21.10.2 - Build recordFire fn** - What: Every signal logged with strategy, side and timestamp. How: Implement recordFire(state, event) appending to a per-strategy fire list via addValue.
-- [ ] **T21.10.3 - Build recordOutcome fn** - What: Each fire linked to its fill and closed PnL. How: Implement recordOutcome(state, closeEvent) matching phase-18 position closes to fires by strategy and instrument.
-- [ ] **T21.10.4 - Build statsRollup fn** - What: Win rate, avg PnL, avg hold and fires/hour always current, never rescanned. How: Implement incremental statsRollup(prev, outcome) updating running aggregates in O(1).
-- [ ] **T21.10.5 - Wire event feeds** - What: Stats update themselves from live trading events. How: watch() on trigger('strategy:signal') and position-close events routing into recordFire and recordOutcome.
-- [ ] **T21.10.6 - Build scoreboard block** - What: A per-strategy stats table in the dashboard grid, sorted by PnL. How: Register a uniform grid block with data-each rows over a computed() sorted stats list.
-- [ ] **T21.10.7 - Style scoreboard with PnL sparklines** - What: Green/orange PnL coloring and a per-strategy equity sparkline. How: Theme-token classes plus a hand-rolled canvas sparkline of cumulative PnL per row.
-- [ ] **T21.10.8 - Session reset and persistence** - What: Day stats survive reload and reset on demand. How: Persist the stats slice via spektrum/persist under stockz.stratstats plus a reset data-action clearing it.
-- [ ] **T21.10.9 - Write single unit tests** - What: Accumulator math trusted, one test per fn. How: Vitest tests for recordFire, recordOutcome and statsRollup with targeted vitest -t runs.
-- [ ] **T21.10.10 - Verify on full replay and merge** - What: A replayed session yields a coherent scoreboard on main. How: Run all strategies over a recorded session, sanity-check totals against closes, ESLint, merge.
+- [x] **T21.10.1 - Branch and scaffold stats module** - What: A dedicated branch for the scoreboard. How: git checkout -b feature/f21-10-scoreboard; create src/strategies/strategyStats.js.
+- [x] **T21.10.2 - Build recordFire fn** - What: Every signal logged with strategy, side and timestamp. How: Implement recordFire(state, event) appending to a per-strategy fire list via addValue.
+- [x] **T21.10.3 - Build recordOutcome fn** - What: Each fire linked to its fill and closed PnL. How: Implement recordOutcome(state, closeEvent) matching phase-18 position closes to fires by strategy and instrument.
+- [x] **T21.10.4 - Build statsRollup fn** - What: Win rate, avg PnL, avg hold and fires/hour always current, never rescanned. How: Implement incremental statsRollup(prev, outcome) updating running aggregates in O(1).
+- [x] **T21.10.5 - Wire event feeds** - What: Stats update themselves from live trading events. How: watch() on trigger('strategy:signal') and position-close events routing into recordFire and recordOutcome.
+- [x] **T21.10.6 - Build scoreboard block** - What: A per-strategy stats table in the dashboard grid, sorted by PnL. How: Register a uniform grid block with data-each rows over a computed() sorted stats list.
+- [x] **T21.10.7 - Style scoreboard with PnL sparklines** - What: Green/orange PnL coloring and a per-strategy equity sparkline. How: Theme-token classes plus a hand-rolled canvas sparkline of cumulative PnL per row.
+- [x] **T21.10.8 - Session reset and persistence** - What: Day stats survive reload and reset on demand. How: Persist the stats slice via spektrum/persist under stockz.stratstats plus a reset data-action clearing it.
+- [x] **T21.10.9 - Write single unit tests** - What: Accumulator math trusted, one test per fn. How: Vitest tests for recordFire, recordOutcome and statsRollup with targeted vitest -t runs.
+- [x] **T21.10.10 - Verify on full replay and merge** - What: A replayed session yields a coherent scoreboard on main. How: Run all strategies over a recorded session, sanity-check totals against closes, ESLint, merge.
 
 ---
 

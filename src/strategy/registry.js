@@ -13,6 +13,7 @@ import { recordResult, release, resetSandbox, isQuarantined } from './sandbox.js
 import { snapshotRing, resetHistory } from './history.js'
 import { setWeight, publishWeights } from './composite.js'
 import { applyPreset, presetNames, presetDirty } from './presets.js'
+import { recordFire, flushScoreboard, resetScoreboard, saveScoreboard } from './scoreboard.js'
 
 /**
  * Who is registered, and what is running where.
@@ -157,6 +158,9 @@ export function startStrategy(strategyId, instrument, options = {}) {
       instrument: run.instrument,
     })
     publishSignal(run.key, run.signal)
+    // Scored on the same call that publishes, for the same reason history is: a second
+    // place to record a fire is a place that will eventually be forgotten.
+    recordFire({ ...run.signal, strategyId: strategy.id, instrument: run.instrument })
   })
 
   runs.set(key, run)
@@ -232,6 +236,7 @@ export function resetStrategies() {
   known.clear()
   resetSandbox()
   resetHistory()
+  resetScoreboard()
   sessionDay = ''
   return true
 }
@@ -255,6 +260,7 @@ export function registerStrategyActions() {
   )
   registerAction(ACTIONS.strategy.setWeight, (_state, payload) => tuneWeight(payload))
   registerAction(ACTIONS.strategy.setPreset, (_state, payload) => pickPreset(payload))
+  registerAction(ACTIONS.strategy.resetScore, () => resetScoreboard())
 
   return ACTIONS.strategy.stop
 }
@@ -325,6 +331,15 @@ export function rollStrategySessions(now, startHourUtc = 0) {
 }
 
 /**
+ * Persist the day's scoreboard.
+ *
+ * @returns {object[]} what was saved.
+ */
+export function persistScoreboard() {
+  return saveScoreboard()
+}
+
+/**
  * Sweep expired signals and republish what is running.
  *
  * Called from the frame pump: a signal whose ttl has passed must stop looking like one
@@ -335,6 +350,7 @@ export function rollStrategySessions(now, startHourUtc = 0) {
  */
 export function tickStrategies(now, startHourUtc = 0) {
   rollStrategySessions(now, startHourUtc)
+  flushScoreboard()
   const expired = sweepSignals(now)
   if (expired.length > 0) {
     for (const run of liveRuns()) {

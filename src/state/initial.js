@@ -115,6 +115,7 @@ export function initialState(overrides = {}) {
     [PATHS.settings.strategyParams]: {},
     [PATHS.settings.activePresets]: {},
     [PATHS.settings.customPresets]: {},
+    [PATHS.settings.strategyStats]: [],
     [PATHS.settings.tapeFloors]: {},
     [PATHS.settings.chords]: {},
     [PATHS.settings.watchlists]: [],
@@ -178,5 +179,6 @@ export function initialState(overrides = {}) {
     [PATHS.strategy.running]: [],
     [PATHS.strategy.quarantined]: [],
     [PATHS.strategy.signals]: {},
+    [PATHS.strategy.scoreboard]: [],
   }
 }

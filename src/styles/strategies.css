@@ -198,3 +198,49 @@
   border-color: var(--orange);
   color: var(--orange);
 }
+
+/*
+ * The scoreboard. Net leads and is the only coloured column: win rate and fire count are
+ * context for it, not competitors — a strategy can win 80% of its trades and still be the
+ * one to switch off.
+ */
+.score {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1, 0.25rem);
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.score__rows {
+  display: flex;
+  flex-direction: column;
+}
+
+.score__row {
+  display: grid;
+  grid-template-columns: 1fr auto 2.5rem 3.5rem 3.5rem;
+  gap: var(--space-2, 0.5rem);
+  align-items: center;
+  padding: 0.15rem 0;
+  border-bottom: 1px solid var(--line);
+  font-size: var(--font-size-xs, 0.6875rem);
+  font-variant-numeric: tabular-nums;
+}
+
+.score__net {
+  font-weight: 600;
+}
+
+.score__row--up .score__net {
+  color: var(--green);
+}
+
+.score__row--down .score__net {
+  color: var(--orange);
+}
+
+.score__cell {
+  color: var(--ink-muted);
+  text-align: right;
+}

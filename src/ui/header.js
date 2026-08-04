@@ -17,10 +17,10 @@ export const SECTIONS = Object.freeze(['dashboard', 'trade', 'journal', 'analyti
 
 /** Which blocks belong to which section. A block absent from a set is hidden there. */
 export const SECTION_BLOCKS = Object.freeze({
-  dashboard: ['watchlist', 'chart', 'book', 'tape', 'ticket', 'positions', 'hud', 'strategies', 'journal'],
+  dashboard: ['watchlist', 'chart', 'book', 'tape', 'ticket', 'positions', 'hud', 'strategies', 'scoreboard', 'journal'],
   trade: ['chart', 'book', 'tape', 'ticket', 'positions', 'hud', 'strategies'],
   journal: ['journal', 'positions'],
-  analytics: ['journal', 'hud', 'chart', 'strategies'],
+  analytics: ['journal', 'hud', 'chart', 'strategies', 'scoreboard'],
 })
 
 /**
