@@ -222,6 +222,8 @@ export const PATHS = Object.freeze({
     paperBalance: 'trade.paperBalance',
     paperAccount: 'trade.paperAccount',
     resetHoldPct: 'trade.resetHoldPct',
+    // Practice against real, from the same journal and the same statistics functions.
+    bookCompare: 'trade.bookCompare',
     orders: 'trade.orders',
     positions: 'trade.positions',
     dayPnl: 'trade.dayPnl',
