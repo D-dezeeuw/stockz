@@ -17,6 +17,9 @@ export const ACTIONS = Object.freeze({
     setTheme: 'ui.setTheme',
     setCandleInterval: 'ui.setCandleInterval',
   }),
+  book: Object.freeze({
+    prefill: 'book.prefill',
+  }),
   app: Object.freeze({
     reset: 'app.reset',
   }),

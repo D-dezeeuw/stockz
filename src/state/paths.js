@@ -100,6 +100,10 @@ export const PATHS = Object.freeze({
     orders: 'trade.orders',
     positions: 'trade.positions',
     dayPnl: 'trade.dayPnl',
+    ticketPrice: 'trade.ticketPrice',
+    ticketSide: 'trade.ticketSide',
+    ticketSize: 'trade.ticketSize',
+    ticketFlash: 'trade.ticketFlash',
     // derived
     exposure: 'trade.exposure',
     openOrders: 'trade.openOrders',

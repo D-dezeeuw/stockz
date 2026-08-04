@@ -12,6 +12,11 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ### Added
 
+- **Click-to-trade prefill** — the reason the ladder is DOM and not canvas: every price
+  on it is a click target that loads the ticket, snapped to a tradable tick and carrying
+  the desk's standard clip. Clicking a bid joins it; shift-clicking crosses it. Nothing
+  is submitted and nothing is confirmed — a dialog between the click and the ticket adds
+  a round trip to human reaction time on the one path where that cost is felt. (F14.6)
 - **Whale highlight** — "big" is meaningless as an absolute (5 BTC is a whale, 5 DOGE is
   dust), so the baseline is a rolling *median* of recent print sizes: session-adaptive,
   and median rather than mean precisely so one 400-lot print cannot redefine normal for

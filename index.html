@@ -158,7 +158,8 @@
               </div>
               <div class="ladder__side ladder__side--ask" data-each="row in market.ladder.asks">
                 <div class="ladder__row ladder__row--ask" :style="'--bar:' + row.pct + '%'"
-                     data-action="click" data-fn="book.prefill" data-side="sell">
+                     data-action="click" data-fn="book.prefill" data-side="ask"
+                     :data-price="row.px">
                   <span class="ladder__price">{{row.priceLabel}}</span>
                   <span class="ladder__size">{{row.sizeLabel}}</span>
                   <span class="ladder__total">{{row.total}}</span>
@@ -167,12 +168,14 @@
               <div class="ladder__spread"
                    :class="market.ladder.spread &amp;&amp; market.ladder.spread.crossed
                      ? 'ladder__spread ladder__spread--crossed' : 'ladder__spread'">
-                <span class="ladder__mid">{{market.ladder.spread ? market.ladder.spread.midLabel : '—'}}</span>
+                <span class="ladder__mid" data-action="click" data-fn="book.prefill"
+                      data-side="bid" :data-price="market.ladder.spread ? market.ladder.spread.mid : 0">{{market.ladder.spread ? market.ladder.spread.midLabel : '—'}}</span>
                 <span class="ladder__ticks">{{market.ladder.spread ? market.ladder.spread.spreadLabel : '—'}}</span>
               </div>
               <div class="ladder__side ladder__side--bid" data-each="row in market.ladder.bids">
                 <div class="ladder__row ladder__row--bid" :style="'--bar:' + row.pct + '%'"
-                     data-action="click" data-fn="book.prefill" data-side="buy">
+                     data-action="click" data-fn="book.prefill" data-side="bid"
+                     :data-price="row.px">
                   <span class="ladder__price">{{row.priceLabel}}</span>
                   <span class="ladder__size">{{row.sizeLabel}}</span>
                   <span class="ladder__total">{{row.total}}</span>

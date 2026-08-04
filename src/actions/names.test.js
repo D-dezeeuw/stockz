@@ -8,6 +8,7 @@ import { registerSettingsActions } from '../ui/settings.js'
 import { registerKeyActions } from '../ui/keys.js'
 import { registerListActions } from '../lists/state.js'
 import { registerCandleActions } from '../charts/candlestick.js'
+import { registerPrefillActions } from '../book/prefill.js'
 
 beforeEach(() => {
   clearActions()
@@ -22,6 +23,7 @@ describe('allActionNames', () => {
       'ui.toggleOverlay',
       'ui.setTheme',
       'ui.setCandleInterval',
+      'book.prefill',
       'app.reset',
       'lists.focus',
       'lists.add',
@@ -45,6 +47,7 @@ describe('allActionNames', () => {
     registerKeyActions()
     registerListActions()
     registerCandleActions()
+    registerPrefillActions()
     expect(actionNames().sort()).toEqual(allActionNames().sort())
 
     // Every name follows <namespace>.<verb>, which is what registerAction enforces.
