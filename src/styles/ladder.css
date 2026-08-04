@@ -270,3 +270,10 @@
     animation: none;
   }
 }
+
+.ladder__groups {
+  display: flex;
+  gap: var(--space-1, 0.25rem);
+  padding-block: var(--space-1, 0.25rem);
+  flex: 0 0 auto;
+}

@@ -19,6 +19,7 @@ export const ACTIONS = Object.freeze({
   }),
   book: Object.freeze({
     prefill: 'book.prefill',
+    setGroup: 'book.setGroup',
   }),
   app: Object.freeze({
     reset: 'app.reset',

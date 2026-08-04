@@ -2329,16 +2329,16 @@
 **What:** Collapse the ladder to coarser price steps and see the structure behind the noise.
 **How:** A groupLevels fn bucketing book levels to a selected tick multiple with a data-model selector persisted per instrument.
 
-- [ ] **T14.7.1 - Branch grouping work** - What: Aggregation logic isolated from the live ladder. How: git checkout -b feature/14-7-price-grouping from main.
-- [ ] **T14.7.2 - Implement groupLevels** - What: Depth aggregated to any step in one pass. How: Pure fn bucketing levels to the group size and summing sizes per bucket.
-- [ ] **T14.7.3 - Implement side-correct rounding** - What: Grouped prices never cross the spread. How: bucketPrice fn flooring bid prices and ceiling ask prices to the group boundary.
-- [ ] **T14.7.4 - Implement groupSizes options** - What: Sensible step choices for any instrument. How: Pure fn deriving x1/x2/x5/x10 multiples from the phase 12 instrument tickSize.
-- [ ] **T14.7.5 - Build the group selector UI** - What: Change granularity in one click mid-trade. How: Compact segmented control in the ladder header bound with Spektrum data-model.
-- [ ] **T14.7.6 - Chain the grouped book computed** - What: The ladder re-aggregates instantly on selection. How: Spektrum computed deriving grouped bids and asks from the raw book plus group size.
-- [ ] **T14.7.7 - Key rows for stable identity** - What: Smooth bar transitions instead of row flicker. How: Key the data-each rows on bucket price so unchanged buckets keep their DOM nodes.
-- [ ] **T14.7.8 - Persist the group choice** - What: Your granularity per market survives reloads. How: Per-instrument group selection stored via spektrum/persist in the settings namespace.
-- [ ] **T14.7.9 - Write single unit tests for grouping fns** - What: Bucketing and rounding locked. How: One Vitest test each for groupLevels, bucketPrice, and groupSizes, run individually via vitest run -t.
-- [ ] **T14.7.10 - Verify and merge grouping** - What: Structure readable at every zoom level. How: Compare grouped sums against raw book slices on live data, then merge feature/14-7-price-grouping into main.
+- [x] **T14.7.1 - Branch grouping work** - What: Aggregation logic isolated from the live ladder. How: git checkout -b feature/14-7-price-grouping from main.
+- [x] **T14.7.2 - Implement groupLevels** - What: Depth aggregated to any step in one pass. How: Pure fn bucketing levels to the group size and summing sizes per bucket.
+- [x] **T14.7.3 - Implement side-correct rounding** - What: Grouped prices never cross the spread. How: bucketPrice fn flooring bid prices and ceiling ask prices to the group boundary.
+- [x] **T14.7.4 - Implement groupSizes options** - What: Sensible step choices for any instrument. How: Pure fn deriving x1/x2/x5/x10 multiples from the phase 12 instrument tickSize.
+- [x] **T14.7.5 - Build the group selector UI** - What: Change granularity in one click mid-trade. How: Compact segmented control in the ladder header bound with Spektrum data-model.
+- [x] **T14.7.6 - Chain the grouped book computed** - What: The ladder re-aggregates instantly on selection. How: Spektrum computed deriving grouped bids and asks from the raw book plus group size.
+- [x] **T14.7.7 - Key rows for stable identity** - What: Smooth bar transitions instead of row flicker. How: Key the data-each rows on bucket price so unchanged buckets keep their DOM nodes.
+- [x] **T14.7.8 - Persist the group choice** - What: Your granularity per market survives reloads. How: Per-instrument group selection stored via spektrum/persist in the settings namespace.
+- [x] **T14.7.9 - Write single unit tests for grouping fns** - What: Bucketing and rounding locked. How: One Vitest test each for groupLevels, bucketPrice, and groupSizes, run individually via vitest run -t.
+- [x] **T14.7.10 - Verify and merge grouping** - What: Structure readable at every zoom level. How: Compare grouped sums against raw book slices on live data, then merge feature/14-7-price-grouping into main.
 
 ### F14.8 - Tape Size Filter
 

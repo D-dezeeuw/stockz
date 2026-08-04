@@ -1,4 +1,5 @@
 import { formatPrice, decimalsOf } from '../charts/scale.js'
+import { groupBook } from './grouping.js'
 
 /**
  * The depth ladder.
@@ -178,13 +179,17 @@ export function visibleMax(book, depth = LADDER_DEPTH) {
  * @returns {{bids: object[], asks: object[], spread: object}} the view.
  */
 export function ladderView(book, options = {}) {
-  const { depth = LADDER_DEPTH, tickSize = 0.01, lotSize = 0.0001 } = options
-  const max = visibleMax(book, depth)
+  const { depth = LADDER_DEPTH, tickSize = 0.01, lotSize = 0.0001, group = 0 } = options
+  // Grouping happens before anything is measured, so the bars scale against the grouped
+  // sizes rather than against the raw levels they were aggregated from.
+  const source = Number(group) > 0 ? groupBook(book, group) : book
+  const max = visibleMax(source, depth)
   const shared = { depth, tickSize, lotSize, max }
 
   return {
-    bids: ladderRows(book?.bids, { ...shared, side: 'bid' }),
-    asks: ladderRows(book?.asks, { ...shared, side: 'ask' }),
-    spread: spreadRow(book, { tickSize }),
+    bids: ladderRows(source?.bids, { ...shared, side: 'bid' }),
+    asks: ladderRows(source?.asks, { ...shared, side: 'ask' }),
+    spread: spreadRow(source, { tickSize }),
+    group: Number(group) || 0,
   }
 }
