@@ -402,6 +402,31 @@
                  stop — a strategy is registered once and runs many times. -->
             <div class="runs" data-if="block.id === 'strategies'">
               <p class="label" data-if="strategy.running.length === 0">nothing running</p>
+              <!-- The form builds itself from the param schema. The moment tuning needs
+                   hand-written markup, half the strategies ship without it and get tuned
+                   by editing source. Values route through one action rather than through a
+                   dynamic data-model, so every write is coerced against the schema. -->
+              <div class="runs__params" data-each="field in ui.strategyForm">
+                <label class="runs__param">
+                  <span class="label">{{field.label}}</span>
+                  <input type="number" data-if="field.kind === 'number'" :value="field.value"
+                         :min="field.min" :max="field.max" :step="field.step"
+                         data-action="change" data-fn="strategy.setParam"
+                         :data-strategy="field.strategyId" :data-param="field.key">
+                  <input type="checkbox" data-if="field.kind === 'toggle'" :checked="field.value"
+                         data-action="change" data-fn="strategy.setParam"
+                         :data-strategy="field.strategyId" :data-param="field.key">
+                  <input type="text" data-if="field.kind === 'text'" :value="field.value"
+                         data-action="change" data-fn="strategy.setParam"
+                         :data-strategy="field.strategyId" :data-param="field.key">
+                  <select data-if="field.kind === 'select'"
+                          data-action="change" data-fn="strategy.setParam"
+                          :data-strategy="field.strategyId" :data-param="field.key"
+                          data-each="opt in field.options">
+                    <option :value="opt" :selected="opt === field.value">{{opt}}</option>
+                  </select>
+                </label>
+              </div>
               <div class="runs__rows" data-each="run in strategy.running">
                 <div class="runs__row">
                   <span class="runs__name">{{run.name}}</span>

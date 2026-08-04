@@ -5,6 +5,7 @@ import { ACTIONS } from '../actions/names.js'
 import { onTick } from '../pipeline/bus.js'
 import { validateStrategyShape, createStrategyContext } from './contract.js'
 import { runHook, BUILTIN_STRATEGIES } from './engine.js'
+import { setStrategyParam, publishParamForm, applyParams, paramsFor } from './params.js'
 
 /**
  * Who is registered, and what is running where.
@@ -61,6 +62,16 @@ export function registerStrategy(descriptor) {
 }
 
 /**
+ * The descriptor behind an id.
+ *
+ * @param {string} strategyId - the strategy.
+ * @returns {object|null} the descriptor.
+ */
+export function strategyFor(strategyId) {
+  return known.get(String(strategyId ?? '')) ?? null
+}
+
+/**
  * Everything registered.
  *
  * @returns {object[]} the descriptors, in registration order.
@@ -90,7 +101,7 @@ export function startStrategy(strategyId, instrument, options = {}) {
   const ctx = createStrategyContext({
     strategy,
     instrument,
-    params: options.params,
+    params: options.params ?? paramsFor(strategy),
     ind: options.ind,
     now: options.now,
   })
@@ -189,6 +200,46 @@ export function registerStrategyActions() {
   registerAction(ACTIONS.strategy.stop, (_state, payload) =>
     stopStrategy(payload?.key ?? payload?.runKey ?? payload),
   )
+  registerAction(ACTIONS.strategy.setParam, (_state, payload) => tuneStrategy(payload))
 
   return ACTIONS.strategy.stop
+}
+
+/**
+ * Retune a strategy from the form, and re-init anything already running on it.
+ *
+ * @param {{strategy?: string, param?: string, value?: any, checked?: boolean}} payload -
+ *   the form's write.
+ * @returns {object|null} the params now in force.
+ */
+export function tuneStrategy(payload) {
+  const strategy = strategyFor(payload?.strategy)
+  const key = String(payload?.param ?? '')
+  if (!strategy) return null
+
+  const spec = strategy.params?.[key]
+  // A checkbox reports `checked`, everything else reports `value` — reading the wrong one
+  // turns every toggle into a permanent true.
+  const raw = spec?.kind === 'toggle' ? (payload?.checked ?? payload?.value) : payload?.value
+  const next = setStrategyParam(strategy, key, raw)
+  if (!next) return null
+
+  // Applied within the tick, not behind a restart button: a tuning that needs a restart is
+  // a tuning nobody uses mid-session, which is the only time it matters.
+  for (const run of liveRuns()) {
+    if (run.strategyId === strategy.id) applyParams(run, next, strategy)
+  }
+
+  return next
+}
+
+/**
+ * Show a strategy's form.
+ *
+ * @param {string} strategyId - the strategy.
+ * @returns {object[]} the field descriptors.
+ */
+export function showParamForm(strategyId) {
+  const strategy = strategyFor(strategyId)
+  return strategy ? publishParamForm(strategy) : []
 }

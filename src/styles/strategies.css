@@ -59,3 +59,41 @@
 .runs__signal--flat {
   color: var(--ink-muted);
 }
+
+/*
+ * The auto-built tuning form. Two columns so the labels line up down the block and the
+ * inputs stay a consistent target — a form whose fields jog left and right with the label
+ * length is one that gets misclicked mid-session.
+ */
+.runs__params {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1, 0.25rem);
+  padding-bottom: var(--space-2, 0.5rem);
+  border-bottom: 1px solid var(--line);
+}
+
+.runs__param {
+  display: grid;
+  grid-template-columns: 1fr 5rem;
+  align-items: center;
+  gap: var(--space-2, 0.5rem);
+}
+
+.runs__param input[type='number'],
+.runs__param input[type='text'],
+.runs__param select {
+  width: 100%;
+  min-width: 0;
+  background: var(--surface-2, transparent);
+  color: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: var(--radius, 2px);
+  padding: 0.15rem 0.3rem;
+  font: inherit;
+  font-variant-numeric: tabular-nums;
+}
+
+.runs__param input[type='checkbox'] {
+  justify-self: start;
+}

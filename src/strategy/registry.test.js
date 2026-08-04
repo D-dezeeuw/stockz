@@ -9,6 +9,9 @@ import {
   publishRunning,
   resetStrategies,
   registerStrategyActions,
+  strategyFor,
+  tuneStrategy,
+  showParamForm,
 } from './registry.js'
 import { defineStrategy } from './contract.js'
 import { ACTIONS } from '../actions/names.js'
@@ -180,5 +183,50 @@ describe('registerStrategyActions', () => {
     const run = startStrategy('noop', 'okx:BTC-USDT', { subscribe: bus.subscribe })
     dispatchAction(ACTIONS.strategy.stop, { key: run.key })
     expect(liveRuns()).toHaveLength(0)
+  })
+})
+
+describe('strategyFor', () => {
+  it('resolves an id to its descriptor, and an unknown one to nothing', () => {
+    registerStrategy(stub())
+
+    expect(strategyFor('mean-rev').name).toBe('Mean Reversion')
+    expect(strategyFor('nope')).toBeNull()
+    expect(strategyFor()).toBeNull()
+  })
+})
+
+describe('tuneStrategy', () => {
+  it('applies within the tick, because a tuning behind a restart is one nobody uses', () => {
+    registerStrategy(
+      defineStrategy({
+        id: 'tuned',
+        params: { lookback: { kind: 'number', default: 20, min: 5, max: 200 } },
+        init: (ctx) => ({ threshold: ctx.params.lookback * 2 }),
+        onTick: () => null,
+        onCandle: () => null,
+      }),
+    )
+    const bus = fakeBus()
+    const run = startStrategy('tuned', 'okx:BTC-USDT', { subscribe: bus.subscribe })
+    expect(run.memory).toEqual({ threshold: 40 })
+
+    expect(tuneStrategy({ strategy: 'tuned', param: 'lookback', value: '60' })).toEqual({
+      lookback: 60,
+    })
+    // The running run picked it up, init included.
+    expect(run.memory).toEqual({ threshold: 120 })
+
+    expect(tuneStrategy({ strategy: 'nope', param: 'lookback', value: 1 })).toBeNull()
+    expect(tuneStrategy({ strategy: 'tuned', param: 'ghost', value: 1 })).toBeNull()
+  })
+})
+
+describe('showParamForm', () => {
+  it('publishes the form for a known strategy only', () => {
+    registerStrategy(stub())
+
+    expect(showParamForm('mean-rev').map((f) => f.key)).toEqual(['lookback'])
+    expect(showParamForm('nope')).toEqual([])
   })
 })
