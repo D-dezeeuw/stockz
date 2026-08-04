@@ -4015,16 +4015,16 @@
 **What:** Getting back in after a trip is deliberate but takes seconds, not paperwork.
 **How:** A hold-to-arm button (1 second press) calls rearm(), clearing the trip latch while day PnL and streak counters stay intact.
 
-- [ ] **T24.8.1 - Branch re-arm** - What: Isolated work on the re-arm flow. How: git checkout -b feature/f24.8-re-arm from an up-to-date main.
-- [ ] **T24.8.2 - Re-arm fn** - What: The latch clears but the limits still bind. How: Implement rearm() resetting breaker.tripped and the trip latch while leaving breaker.dayPnl and breaker.lossStreak untouched.
-- [ ] **T24.8.3 - Hold-to-arm button** - What: Re-arming takes intent, not a dialog. How: Show a RE-ARM button behind data-if on breaker.tripped requiring a full 1s pointerdown hold before rearm() fires.
-- [ ] **T24.8.4 - Hold progress fn** - What: The hold is visible as it happens. How: Implement armHoldProgress driving a radial progress ring from pointerdown to pointerup via requestAnimationFrame.
-- [ ] **T24.8.5 - Still-over-limit guard** - What: No re-arm into an already-blown limit. How: Re-run dailyLossCheck inside rearm() and keep the trip with an explanatory reason text when the limit is still exceeded.
-- [ ] **T24.8.6 - Bots stay off rule** - What: Re-arming the desk never re-arms the robots. How: Leave phase-23 bot.masterArmed false after rearm() and state it in a caption under the button.
-- [ ] **T24.8.7 - Re-arm record** - What: Every re-arm is traceable. How: Store {ts, priorCode} on breaker.lastRearm at each successful rearm() for the F24.9 log to pick up.
-- [ ] **T24.8.8 - Success transition styling** - What: A satisfying orange-to-green flip on completion. How: Add a CSS transition on the button state classes using phase-3 tokens for both themes.
-- [ ] **T24.8.9 - Single unit tests for re-arm fns** - What: Re-arm logic proven once per function. How: One Vitest test each for rearm and armHoldProgress via targeted npx vitest run -t.
-- [ ] **T24.8.10 - Merge re-arm** - What: The re-arm flow lands on main. How: Green targeted tests plus ESLint, merge feature/f24.8-re-arm into main, delete the branch.
+- [x] **T24.8.1 - Branch re-arm** - What: Isolated work on the re-arm flow. How: git checkout -b feature/f24.8-re-arm from an up-to-date main.
+- [x] **T24.8.2 - Re-arm fn** - What: The latch clears but the limits still bind. How: Implement rearm() resetting breaker.tripped and the trip latch while leaving breaker.dayPnl and breaker.lossStreak untouched.
+- [x] **T24.8.3 - Hold-to-arm button** - What: Re-arming takes intent, not a dialog. How: Show a RE-ARM button behind data-if on breaker.tripped requiring a full 1s pointerdown hold before rearm() fires.
+- [x] **T24.8.4 - Hold progress fn** - What: The hold is visible as it happens. How: Implement armHoldProgress driving a radial progress ring from pointerdown to pointerup via requestAnimationFrame.
+- [x] **T24.8.5 - Still-over-limit guard** - What: No re-arm into an already-blown limit. How: Re-run dailyLossCheck inside rearm() and keep the trip with an explanatory reason text when the limit is still exceeded.
+- [x] **T24.8.6 - Bots stay off rule** - What: Re-arming the desk never re-arms the robots. How: Leave phase-23 bot.masterArmed false after rearm() and state it in a caption under the button.
+- [x] **T24.8.7 - Re-arm record** - What: Every re-arm is traceable. How: Store {ts, priorCode} on breaker.lastRearm at each successful rearm() for the F24.9 log to pick up.
+- [x] **T24.8.8 - Success transition styling** - What: A satisfying orange-to-green flip on completion. How: Add a CSS transition on the button state classes using phase-3 tokens for both themes.
+- [x] **T24.8.9 - Single unit tests for re-arm fns** - What: Re-arm logic proven once per function. How: One Vitest test each for rearm and armHoldProgress via targeted npx vitest run -t.
+- [x] **T24.8.10 - Merge re-arm** - What: The re-arm flow lands on main. How: Green targeted tests plus ESLint, merge feature/f24.8-re-arm into main, delete the branch.
 
 ### F24.9 - Breaker event log
 

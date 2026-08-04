@@ -21,6 +21,7 @@ import { registerPersistActions } from '../alerts/persist.js'
 import { registerBotActions } from '../bot/runner.js'
 import { registerSessionActions } from '../bot/session.js'
 import { registerKillActions } from '../breakers/kill.js'
+import { registerRearmActions } from '../breakers/rearm.js'
 import { registerStrategyActions } from '../strategy/registry.js'
 import { registerTicketActions } from '../ticket/actions.js'
 import { registerSizingActions } from '../ticket/sizing.js'
@@ -74,6 +75,8 @@ describe('allActionNames', () => {
       'alerts.import',
       'breaker.kill',
       'breaker.rearm',
+      'breaker.hold',
+      'breaker.release',
       'bot.toggleArm',
       'bot.setAuto',
       'bot.disableAll',
@@ -139,6 +142,7 @@ describe('allActionNames', () => {
     registerBotActions()
     registerSessionActions()
     registerKillActions()
+    registerRearmActions()
     registerStrategyActions()
     registerTicketActions()
     registerSizingActions()

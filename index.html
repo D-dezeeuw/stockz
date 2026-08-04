@@ -155,11 +155,16 @@
       <button type="button" class="kill" data-if="!breaker.tripped" data-action="click"
               data-fn="breaker.kill" data-source="button"
               aria-label="Kill switch: cancel every order and flatten every position">KILL</button>
+      <!-- Getting back in is the asymmetric direction: a mis-click that halts costs thirty
+           seconds, one that un-halts hands the market back the account the limit was
+           protecting. So it takes a one-second hold — nothing to read, nothing to click
+           through, just keep pressing. Letting go early cancels it. The robots stay off. -->
       <button type="button" class="kill kill--tripped" data-if="breaker.tripped"
-              data-action="click" data-fn="breaker.rearm"
-              aria-label="Re-arm the desk">
+              data-action="pointerdown" data-fn="breaker.hold"
+              aria-label="Hold one second to re-arm the desk">
         <b>KILLED</b>
-        <span class="kill__why truncate">{{breaker.reason}} · re-arm</span>
+        <span class="kill__why truncate">{{breaker.reason}} · hold to re-arm · bots stay off</span>
+        <i class="kill__ring" :style="'--held:' + (breaker.holdPct * 100) + '%'"></i>
       </button>
       <!-- Anything the flatten has not finished closing. Red until empty, because a wipe
            that half-worked and looked finished is worse than one that visibly failed. -->

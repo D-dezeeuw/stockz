@@ -50,6 +50,8 @@ export const ACTIONS = Object.freeze({
   breaker: Object.freeze({
     kill: 'breaker.kill',
     rearm: 'breaker.rearm',
+    hold: 'breaker.hold',
+    release: 'breaker.release',
   }),
   bot: Object.freeze({
     toggleArm: 'bot.toggleArm',
