@@ -12,6 +12,14 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ### Added
 
+- **The desk is live** — until now every phase built machinery that nothing started:
+  the socket reconnected, the pipeline coalesced, the book validated itself, and the
+  dashboard rendered seeded state. `src/venues/okx/live.js` is the wiring — the only
+  module that knows both a WebSocket frame and a state path — routing trades, depth and
+  tickers into the pipeline and flushing once per animation frame rather than once per
+  message. Public OKX channels need no credentials, so prices appear before any key is
+  entered: keys gate *trading*, not *seeing*. Feeds are opt-in (`feeds: true`, set only
+  by the entry point), so nothing under test ever dials a venue.
 - **Book integrity & resync hardening** — a depth feed does not fail loudly: the socket
   stays open, the frames stop, and the ladder shows its last book indefinitely, looking
   exactly like a quiet market. So the book now carries an explicit status. Deltas

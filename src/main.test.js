@@ -17,6 +17,8 @@ describe('bootWhenReady', () => {
     expect(calls).toHaveLength(1)
     expect(calls[0].doc).toBe(document)
     expect(typeof calls[0].now).toBe('number')
+    // Running the app is what asks for a live socket — booting the module alone does not.
+    expect(calls[0].feeds).toBe(true)
 
     // Explicit null (a document-less environment) short-circuits.
     expect(bootWhenReady(null, boot)).toBeNull()

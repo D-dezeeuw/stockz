@@ -212,11 +212,8 @@ tape, imbalance maths, whale detection — driven by OKX v5 `books` and `trades`
 - Imbalance maths is pure and belongs in its own module with one test per function.
 
 ### Still outstanding across phases
-**No venue client is started at boot.** `bootstrap.js` still never calls
-`createOkxSocket`, so the desk runs on seeded state. Everything needed exists
-(`createOkxSocket`, `ingest`, `setVenueState`, `subscribeFrame`), and Phase 14 is the
-natural home for the wiring — it is the first phase whose whole point is live venue data
-on screen.
+*(none — the boot-time feed gap recorded here through phase 13 was closed in phase 14;
+see `src/venues/okx/live.js` and `src/app/feeds.js`.)*
 
 ## Gotchas (learned the hard way — do not rediscover)
 

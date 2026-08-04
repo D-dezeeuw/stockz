@@ -23,13 +23,15 @@ export function bootWhenReady(doc = globalThis.document, boot = bootstrap) {
   if (!doc) return null
 
   if (doc.readyState === 'loading') {
-    doc.addEventListener('DOMContentLoaded', () => boot({ doc, now: Date.now() }), {
+    doc.addEventListener('DOMContentLoaded', () => boot({ doc, now: Date.now(), feeds: true }), {
       once: true,
     })
     return null
   }
 
-  return boot({ doc, now: Date.now() })
+  // `feeds: true` only here: the live socket is a property of *running the app*, not of
+  // booting the module, so nothing under test dials a venue by accident.
+  return boot({ doc, now: Date.now(), feeds: true })
 }
 
 const log = createLogger('boot')
