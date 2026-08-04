@@ -114,6 +114,39 @@ export function ingestOrderEvent(event, options = {}) {
 }
 
 /**
+ * Apply several venue events in one write.
+ *
+ * Not a convenience wrapper: `setValue` lands on the next tick, so calling the singular
+ * form in a loop makes every iteration read a list that is missing the previous one's
+ * change — a cancel-all over three orders would land exactly one cancellation.
+ *
+ * @param {object[]} events - venue events.
+ * @param {{silent?: boolean, now?: number}} [options] - announcement options.
+ * @returns {object[]} the order list now in state.
+ */
+export function ingestOrderEvents(events, options = {}) {
+  const list = Array.isArray(events) ? events : []
+  const before = Array.isArray(appState.trade?.orders) ? appState.trade.orders : []
+
+  let next = before
+  const announced = []
+
+  for (const event of list) {
+    const id = String(event?.clOrdId ?? '')
+    const wasTerminal = isTerminal(next.find((order) => order?.clOrdId === id))
+    next = applyOrderEvent(next, event)
+
+    const order = next.find((o) => o?.clOrdId === id)
+    if (!wasTerminal && isTerminal(order)) announced.push(order)
+  }
+
+  setValue(PATHS.trade.orders, next)
+  for (const order of announced) announce(order, options)
+
+  return next
+}
+
+/**
  * Announce an outcome, unless the caller asked for silence (replay, backfill).
  *
  * @param {object} order - the terminal order.

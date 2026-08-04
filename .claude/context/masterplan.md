@@ -2528,16 +2528,16 @@
 **What:** Two panic-speed shortcuts: flatten every working order or refire the last order instantly.
 **How:** cancelAll() using the OKX v5 cancel-batch-orders endpoint plus a lastOrder snapshot replayed by repeatLast().
 
-- [ ] **T15.9.1 - Shortcuts branch** - What: Contained branch for the two shortcuts. How: Branch feature/f15-09-cancel-repeat from main.
-- [ ] **T15.9.2 - cancelAll() function** - What: Every working order gone in one call. How: Collect live ids from orders.byId, POST OKX cancel-batch-orders and fire EToro per-order cancels.
-- [ ] **T15.9.3 - CXL ALL button** - What: The exit always within reach. How: Red-bordered button with data-action="orders.cancelAll" kept enabled even while the desk is disarmed.
-- [ ] **T15.9.4 - lastOrder snapshot** - What: The desk remembers your last shot. How: watch() successful submits and store a deep-cloned payload under ticket.lastOrder.
-- [ ] **T15.9.5 - repeatLast() function** - What: Refire the same order in one click. How: Resubmit the snapshot through the F15.5 fast path with a fresh makeClientOrderId stamp.
-- [ ] **T15.9.6 - Repeat button with summary** - What: Know exactly what refires. How: Button labelled by a {{ticket.lastOrder.summary}} binding showing side, qty and price.
-- [ ] **T15.9.7 - Empty-state guards** - What: No dead buttons, no false hopes. How: Hide repeat via data-if until lastOrder exists; cancelAll returns early at zero open orders.
-- [ ] **T15.9.8 - Result toasts** - What: Confirmation of what was cancelled. How: Push a cancelled-count toast through the F15.7 pipeline when the batch response lands.
-- [ ] **T15.9.9 - Single tests for shortcut fns** - What: Both shortcuts verified. How: One Vitest test each for cancelAll and repeatLast, run only via vitest -t.
-- [ ] **T15.9.10 - Merge shortcuts** - What: Panic-speed controls on main. How: Lint and targeted tests green, merge feature/f15-09-cancel-repeat.
+- [x] **T15.9.1 - Shortcuts branch** - What: Contained branch for the two shortcuts. How: Branch feature/f15-09-cancel-repeat from main.
+- [x] **T15.9.2 - cancelAll() function** - What: Every working order gone in one call. How: Collect live ids from orders.byId, POST OKX cancel-batch-orders and fire EToro per-order cancels.
+- [x] **T15.9.3 - CXL ALL button** - What: The exit always within reach. How: Red-bordered button with data-action="orders.cancelAll" kept enabled even while the desk is disarmed.
+- [x] **T15.9.4 - lastOrder snapshot** - What: The desk remembers your last shot. How: watch() successful submits and store a deep-cloned payload under ticket.lastOrder.
+- [x] **T15.9.5 - repeatLast() function** - What: Refire the same order in one click. How: Resubmit the snapshot through the F15.5 fast path with a fresh makeClientOrderId stamp.
+- [x] **T15.9.6 - Repeat button with summary** - What: Know exactly what refires. How: Button labelled by a {{ticket.lastOrder.summary}} binding showing side, qty and price.
+- [x] **T15.9.7 - Empty-state guards** - What: No dead buttons, no false hopes. How: Hide repeat via data-if until lastOrder exists; cancelAll returns early at zero open orders.
+- [x] **T15.9.8 - Result toasts** - What: Confirmation of what was cancelled. How: Push a cancelled-count toast through the F15.7 pipeline when the batch response lands.
+- [x] **T15.9.9 - Single tests for shortcut fns** - What: Both shortcuts verified. How: One Vitest test each for cancelAll and repeatLast, run only via vitest -t.
+- [x] **T15.9.10 - Merge shortcuts** - What: Panic-speed controls on main. How: Lint and targeted tests green, merge feature/f15-09-cancel-repeat.
 
 ### F15.10 - Click-to-Trade Wiring
 

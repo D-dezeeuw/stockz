@@ -32,6 +32,10 @@ export const ACTIONS = Object.freeze({
     applyPreset: 'ticket.applyPreset',
     stepQty: 'ticket.stepQty',
     submit: 'ticket.submit',
+    repeatLast: 'ticket.repeatLast',
+  }),
+  orders: Object.freeze({
+    cancelAll: 'orders.cancelAll',
   }),
   app: Object.freeze({
     reset: 'app.reset',

@@ -278,6 +278,13 @@
               <span class="chip chip--warn" data-if="trade.queue.length > 0">queued {{trade.queue.length}}</span>
               <!-- Why the last click did not send, in the trader's own words. -->
               <p class="ticket__reject" data-if="trade.lastReject">{{trade.lastReject}}</p>
+              <div class="ticket__shortcuts">
+                <!-- Always enabled: arming gates entering risk, never leaving it. -->
+                <button type="button" class="ticket__cancel" data-action="click"
+                        data-fn="orders.cancelAll">CXL ALL</button>
+                <button type="button" class="chip" data-action="click" data-fn="ticket.repeatLast"
+                        data-if="trade.lastOrderSummary">↻ {{trade.lastOrderSummary}}</button>
+              </div>
               <button type="button" class="ticket__arm" data-action="click" data-fn="ticket.arm"
                       :class="trade.armed ? 'ticket__arm ticket__arm--on' : 'ticket__arm'">{{trade.armed ? 'ARMED' : 'SAFE'}}</button>
             </div>
