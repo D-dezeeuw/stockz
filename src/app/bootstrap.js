@@ -18,6 +18,7 @@ import { registerCandleActions } from '../charts/candlestick.js'
 import { registerPrefillActions } from '../book/prefill.js'
 import { registerGroupingActions } from '../book/grouping.js'
 import { registerTapeActions } from '../book/tape.js'
+import { connectFeeds } from './feeds.js'
 import { appVersion } from './version.js'
 
 /**
@@ -85,9 +86,14 @@ export function bootstrap(options = {}) {
   // Dev only, and never awaited: instrumentation must not delay the first paint.
   mountDevtools()
 
+  // Feeds start *after* the first paint. A socket opened before bindDOM would race the
+  // first frame, and a desk that paints in 40ms and connects in 300 feels faster than
+  // one that does both in 320.
+  const feeds = connectFeeds(options)
+
   if (autoRun) run()
 
-  return { paths: Object.keys(state), actions: actionNames(), derived, cleanup }
+  return { paths: Object.keys(state), actions: actionNames(), derived, cleanup, feeds }
 }
 
 /**
