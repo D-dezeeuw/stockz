@@ -7,6 +7,7 @@ import { setBlockStatus, BLOCK_STATUS } from '../blocks/registry.js'
 import { findBacktestStrategy, backtestStrategyOptions } from './strategies.js'
 import { runRequest } from './worker.js'
 import { resolveFillConfig } from './fills.js'
+import { refreshReport } from './report.js'
 import { createLogger } from '../utils/log.js'
 
 /**
@@ -233,6 +234,9 @@ export function runBacktest(config = {}, deps = {}) {
 
   setValue(PATHS.backtest.error, '')
   setValue(PATHS.backtest.result, null)
+  // Cleared as the run starts. Leaving the last run's report on screen while a new one
+  // crunches is how somebody reads a number that belongs to different params.
+  refreshReport(null)
   setBlockStatus('backtest', BLOCK_STATUS.loading)
   publishBacktest({ ...BACKTEST_STATE, running: true, runId })
 
@@ -249,6 +253,10 @@ export function runBacktest(config = {}, deps = {}) {
 
     setValue(PATHS.backtest.result, result)
     setValue(PATHS.backtest.summary, backtestSummary(result))
+    // The statistics land with the result, not on a later frame: a report that appeared a
+    // tick after the numbers it describes would show the previous run's stats beside this
+    // run's headline for one paint.
+    refreshReport(result)
     log.info(`${runId}: ${result?.played ?? 0} ticks, ${result?.signals?.length ?? 0} signals`)
     pushToast(`backtest: ${result?.signals?.length ?? 0} signals in ${result?.elapsedMs ?? 0}ms`, 'success')
     return result

@@ -297,6 +297,11 @@ export const PATHS = Object.freeze({
     // The fill assumptions in force, derived from the persisted settings so a run and the
     // drawer can never disagree about what was assumed.
     fillConfig: 'backtest.fillConfig',
+    // The report: full statistics, the headline tiles, and the curve on its own path so
+    // the canvas watches one thing rather than repainting on every field of the report.
+    stats: 'backtest.stats',
+    tiles: 'backtest.tiles',
+    curve: 'backtest.curve',
     // The last finished run, the always-shaped readout of it, and why the last one did
     // not finish. The summary exists because a template cannot read through a null result.
     result: 'backtest.result',

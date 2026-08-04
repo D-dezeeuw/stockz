@@ -84,3 +84,46 @@
   color: var(--green);
   font-weight: 600;
 }
+
+/*
+ * The headline tiles. Equal cells on one row, so the eye compares magnitudes rather than
+ * reading labels — the same reason every block in the grid is the same size.
+ */
+.bt-tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(4.5rem, 1fr));
+  gap: var(--sp-1);
+}
+
+.bt-tile {
+  display: flex;
+  flex-direction: column;
+  padding: var(--sp-1);
+  border: 1px solid var(--line);
+  background: var(--bg-inset);
+  font-variant-numeric: tabular-nums;
+}
+
+.bt-tile__value {
+  color: var(--ink-strong);
+  font-weight: 600;
+}
+
+.bt-tile__label {
+  color: var(--ink-muted);
+  font-size: var(--fs-0);
+}
+
+.bt-tile--up .bt-tile__value { color: var(--green); }
+.bt-tile--down .bt-tile__value { color: var(--orange); }
+
+.bt-chart {
+  inline-size: 100%;
+  block-size: 5rem;
+  min-block-size: 0;
+}
+
+.backtest__out {
+  display: flex;
+  gap: var(--sp-1);
+}
