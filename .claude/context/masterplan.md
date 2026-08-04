@@ -4086,16 +4086,16 @@
 **What:** Every closed trade carries hold time, MAE/MFE, slippage and fees, so the user sees exactly where each scalp made or lost money.
 **How:** Pure metric functions in src/journal/metrics.js reading fills plus IndexedDB tick recordings, attached to trades via Spektrum computed on close.
 
-- [ ] **T25.2.1 - Cut metrics branch** - What: Metric work stays off main until proven. How: git checkout -b feature/f25.2-trade-metrics from updated main.
-- [ ] **T25.2.2 - Implement holdTime()** - What: Millisecond-accurate hold duration per trade. How: Pure holdTime(trade) in src/journal/metrics.js returning closeTs minus openTs, formatted by an existing duration helper.
-- [ ] **T25.2.3 - Implement slippage()** - What: Visible cost of chasing price on entry and exit. How: slippage(trade) comparing intended limit price on each fill against its actual average fill price, summed in quote currency.
-- [ ] **T25.2.4 - Implement sumFees()** - What: True fee cost per round trip across venues. How: sumFees(trade) aggregating the fee fields from OKX v5 fill payloads and EToro execution records into one signed number.
-- [ ] **T25.2.5 - Implement maeMfe() over tick recordings** - What: Worst excursion and best unrealized profit for every scalp. How: maeMfe(trade, ticks) scanning the IndexedDB tick recording between openTs and closeTs for min/max adverse and favorable move.
-- [ ] **T25.2.6 - Implement netPnl() and rMultiple()** - What: Bottom-line result and risk-adjusted size of each trade. How: netPnl(trade) from fills minus sumFees(); rMultiple(trade, stopDist) dividing net by initial risk distance when a stop is tagged.
-- [ ] **T25.2.7 - Attach metrics on trade close** - What: Metrics appear on the trade record without any manual step. How: Spektrum computed('journal.enriched') maps state.journal.trades through the metric fns whenever a trade closes.
-- [ ] **T25.2.8 - Render metric columns** - What: Hold, MAE/MFE, slippage and fees readable at a glance per row. How: Extend the journal row template with {{trade.holdTime}}-style bindings and monospace numeric formatting.
-- [ ] **T25.2.9 - Write single unit tests for metric fns** - What: Each of the six metric functions proven by exactly one test. How: One Vitest test per fn in metrics.test.js with fixture fills and ticks, run via vitest run -t per name.
-- [ ] **T25.2.10 - Verify and merge metrics** - What: Enriched journal ships only when green. How: Run the six targeted tests and eslint, confirm live enrichment against a paper fill, merge to main.
+- [x] **T25.2.1 - Cut metrics branch** - What: Metric work stays off main until proven. How: git checkout -b feature/f25.2-trade-metrics from updated main.
+- [x] **T25.2.2 - Implement holdTime()** - What: Millisecond-accurate hold duration per trade. How: Pure holdTime(trade) in src/journal/metrics.js returning closeTs minus openTs, formatted by an existing duration helper.
+- [x] **T25.2.3 - Implement slippage()** - What: Visible cost of chasing price on entry and exit. How: slippage(trade) comparing intended limit price on each fill against its actual average fill price, summed in quote currency.
+- [x] **T25.2.4 - Implement sumFees()** - What: True fee cost per round trip across venues. How: sumFees(trade) aggregating the fee fields from OKX v5 fill payloads and EToro execution records into one signed number.
+- [x] **T25.2.5 - Implement maeMfe() over tick recordings** - What: Worst excursion and best unrealized profit for every scalp. How: maeMfe(trade, ticks) scanning the IndexedDB tick recording between openTs and closeTs for min/max adverse and favorable move.
+- [x] **T25.2.6 - Implement netPnl() and rMultiple()** - What: Bottom-line result and risk-adjusted size of each trade. How: netPnl(trade) from fills minus sumFees(); rMultiple(trade, stopDist) dividing net by initial risk distance when a stop is tagged.
+- [x] **T25.2.7 - Attach metrics on trade close** - What: Metrics appear on the trade record without any manual step. How: Spektrum computed('journal.enriched') maps state.journal.trades through the metric fns whenever a trade closes.
+- [x] **T25.2.8 - Render metric columns** - What: Hold, MAE/MFE, slippage and fees readable at a glance per row. How: Extend the journal row template with {{trade.holdTime}}-style bindings and monospace numeric formatting.
+- [x] **T25.2.9 - Write single unit tests for metric fns** - What: Each of the six metric functions proven by exactly one test. How: One Vitest test per fn in metrics.test.js with fixture fills and ticks, run via vitest run -t per name.
+- [x] **T25.2.10 - Verify and merge metrics** - What: Enriched journal ships only when green. How: Run the six targeted tests and eslint, confirm live enrichment against a paper fill, merge to main.
 
 ### F25.3 - Notes and Tags on Trades
 

@@ -225,6 +225,9 @@ export function apply(clientId, state, detail = {}) {
         side: order.side,
         qty: justFilled,
         px: Number(detail.avgPx) || order.price,
+        // What the order asked for, carried onto the fill. Slippage is only answerable
+        // against the intent, and the intent is gone by the time anybody reviews the trade.
+        intentPx: order.price,
         ts: Number(detail.ts) || order.ts,
       })
 

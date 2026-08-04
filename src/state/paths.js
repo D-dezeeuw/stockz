@@ -239,6 +239,7 @@ export const PATHS = Object.freeze({
     trades: 'journal.trades',
     count: 'journal.count',
     last: 'journal.last',
+    rows: 'journal.rows',
   }),
   strategy: Object.freeze({
     registered: 'strategy.registered',

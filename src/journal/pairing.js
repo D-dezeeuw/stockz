@@ -66,6 +66,9 @@ export function normalizeFill(raw) {
     instrument,
     qty: signed,
     px,
+    // Kept when the venue path supplied it: slippage is only answerable against what the
+    // order asked for, and that is gone by the time anybody reviews the trade.
+    intentPx: Number(raw?.intentPx) || 0,
     fee: Math.abs(Number(raw?.fee) || 0),
     ts: Number(raw?.ts) || 0,
   }

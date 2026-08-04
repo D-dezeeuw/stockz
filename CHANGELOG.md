@@ -28,6 +28,23 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
   Gross and net are both kept — gross says whether the idea worked, net says whether it paid,
   and on a scalping desk those diverge constantly. The half-open lots and the seen-id set
   persist together: restoring lots without the ids would replay the day straight back in.
+- **Where each scalp actually made its money** — a net number says a trade worked; it never
+  says why, and on a desk taking hundreds of round trips a day the why is the only thing that
+  compounds. Five metrics ride on every row. **Hold time**, the difference between a scalp and
+  a position that got away, and never negative however the clocks behaved. **Slippage**,
+  separating what chasing cost from what the idea earned — a good strategy executed badly and
+  a bad one executed well are identical in the net — measured against the order's own intended
+  price, now carried onto the fill because the intent is gone by the time anyone reviews the
+  trade. **Fees**, which past a certain rate are not a rounding error but the business.
+  **MAE/MFE**, which is what separates "that lost money" from "that was never in trouble and
+  then gave it all back" — two outcomes that call for opposite fixes — read off a bounded
+  in-memory price trail per instrument rather than a tick recording, one array write per frame
+  instead of a storage engine, with a trade older than the trail honestly reporting no
+  excursion instead of a number reconstructed from candles nobody was looking at. And the **R
+  multiple**, which refuses to exist when no stop was tagged: an assumed risk would be
+  comparable across trades that never shared the assumption. Rows are enriched on publish, not
+  frozen at close, because the excursion of a trade that closed a second ago is still filling
+  in behind it.
 
 ## [0.24.0] — 2026-08-04 — Phase 24: Circuit Breakers & Risk Kill Switch
 
