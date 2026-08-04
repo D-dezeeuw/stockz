@@ -217,7 +217,7 @@ describe('tuneStrategy', () => {
     const run = startStrategy('tuned', 'okx:BTC-USDT', { subscribe: bus.subscribe })
     expect(run.memory).toEqual({ threshold: 40 })
 
-    expect(tuneStrategy({ strategy: 'tuned', param: 'lookback', value: '60' })).toEqual({
+    expect(tuneStrategy({ strategy: 'tuned', param: 'lookback', value: '60' })).toMatchObject({
       lookback: 60,
     })
     // The running run picked it up, init included.
@@ -232,7 +232,7 @@ describe('showParamForm', () => {
   it('publishes the form for a known strategy only', () => {
     registerStrategy(stub())
 
-    expect(showParamForm('mean-rev').map((f) => f.key)).toEqual(['lookback'])
+    expect(showParamForm('mean-rev').map((f) => f.key)).toEqual(['budgetMs', 'lookback'])
     expect(showParamForm('nope')).toEqual([])
   })
 })

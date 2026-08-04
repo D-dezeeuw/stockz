@@ -3331,16 +3331,16 @@
 **What:** Strategies stay snappy: each gets a per-tick time budget and slow ones get throttled, never the UI.
 **How:** Wrap onTick with performance.now() measurement, EWMA the cost per run, and stride-gate over-budget strategies to every Nth tick.
 
-- [ ] **T20.7.1 - Open budget branch** - What: Contained work on the timing guardrail. How: git checkout -b feature/f20.7-perf-budget from main.
-- [ ] **T20.7.2 - measureTick wrapper fn** - What: Every hook call has a known cost. How: Higher-order fn timing the wrapped hook with performance.now() and returning {result, costMs}.
-- [ ] **T20.7.3 - costEwma tracker fn** - What: A stable cost estimate immune to single spikes. How: Reuse the ewma pure fn per run with alpha 0.2, stored on the run record.
-- [ ] **T20.7.4 - Budget schema entry** - What: Authors declare their own tick budget. How: Add budgetMs to the param schema defaults (2ms) so the settings UI exposes it per strategy.
-- [ ] **T20.7.5 - overBudget fn** - What: A crisp verdict on who is too slow. How: Pure fn comparing the EWMA cost against budgetMs with 20 percent hysteresis to avoid flapping.
-- [ ] **T20.7.6 - throttleStride fn** - What: Slow strategies degrade gracefully instead of dying. How: Pure fn mapping the overage ratio to a tick stride of 2, 4 or 8.
-- [ ] **T20.7.7 - Stride gate in dispatch** - What: The tick loop skips throttled runs cheaply. How: Modulo check on a per-run tick counter inside the engine dispatch before invoking onTick.
-- [ ] **T20.7.8 - Cost state and warn badge** - What: Slowness is visible before it hurts. How: Publish per-run costMs and stride into strategies.running and bind an orange badge via :class in the runs block.
-- [ ] **T20.7.9 - Single tests per budget fn** - What: Measurement, EWMA, verdict and stride proven alone. How: One Vitest test per fn with a fake clock, each run through its own -t filter.
-- [ ] **T20.7.10 - Merge perf guardrail** - What: A tick loop that stays fast under load. How: Lint plus targeted runs green, merge feature/f20.7.
+- [x] **T20.7.1 - Open budget branch** - What: Contained work on the timing guardrail. How: git checkout -b feature/f20.7-perf-budget from main.
+- [x] **T20.7.2 - measureTick wrapper fn** - What: Every hook call has a known cost. How: Higher-order fn timing the wrapped hook with performance.now() and returning {result, costMs}.
+- [x] **T20.7.3 - costEwma tracker fn** - What: A stable cost estimate immune to single spikes. How: Reuse the ewma pure fn per run with alpha 0.2, stored on the run record.
+- [x] **T20.7.4 - Budget schema entry** - What: Authors declare their own tick budget. How: Add budgetMs to the param schema defaults (2ms) so the settings UI exposes it per strategy.
+- [x] **T20.7.5 - overBudget fn** - What: A crisp verdict on who is too slow. How: Pure fn comparing the EWMA cost against budgetMs with 20 percent hysteresis to avoid flapping.
+- [x] **T20.7.6 - throttleStride fn** - What: Slow strategies degrade gracefully instead of dying. How: Pure fn mapping the overage ratio to a tick stride of 2, 4 or 8.
+- [x] **T20.7.7 - Stride gate in dispatch** - What: The tick loop skips throttled runs cheaply. How: Modulo check on a per-run tick counter inside the engine dispatch before invoking onTick.
+- [x] **T20.7.8 - Cost state and warn badge** - What: Slowness is visible before it hurts. How: Publish per-run costMs and stride into strategies.running and bind an orange badge via :class in the runs block.
+- [x] **T20.7.9 - Single tests per budget fn** - What: Measurement, EWMA, verdict and stride proven alone. How: One Vitest test per fn with a fake clock, each run through its own -t filter.
+- [x] **T20.7.10 - Merge perf guardrail** - What: A tick loop that stays fast under load. How: Lint plus targeted runs green, merge feature/f20.7.
 
 ### F20.8 - Sandboxed strategy errors
 

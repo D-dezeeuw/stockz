@@ -8,7 +8,14 @@ describe('describeStrategies', () => {
     const summaries = describeStrategies()
 
     expect(summaries).toEqual([
-      { id: 'noop', name: 'No-op (reference)', params: ['label'], hooks: ['init', 'onTick', 'onCandle'] },
+      {
+        id: 'noop',
+        name: 'No-op (reference)',
+        // budgetMs is merged in by defineStrategy: every strategy carries a tick budget
+        // whether or not its author thought about one.
+        params: ['budgetMs', 'label'],
+        hooks: ['init', 'onTick', 'onCandle'],
+      },
     ])
     expect(BUILTIN_STRATEGIES).toContain(noopStrategy)
 
