@@ -10,6 +10,49 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ## [Unreleased]
 
+## [0.28.0] - 2026-08-04 — Paper Trading Mode
+
+### Added
+
+- **F28.1 — paper/live mode switch.** Three signals reading one value: a segmented control,
+  a full-width orange strip, and a left rule on the blocks that can move money. Going live
+  is a 600ms press-and-hold, not a dialog — speed is the product, but a mode this expensive
+  to get wrong must be impossible to hit by accident. Switching empties the intent queue
+  *before* it flips, so an order queued a frame earlier cannot drain through the wrong
+  adapter. `?mode=paper` in a URL wins over the persisted mode; `?mode=live` is ignored.
+- **F28.2 — paper sim fill engine.** Limit orders now **rest** instead of filling instantly
+  at their own price. A resting order joins a queue sized by what was already showing at
+  the level, and every print eats that ahead-volume before it reaches the order — price
+  alone is never enough. Partial fills, cancels and amends behave as a venue's do; an amend
+  re-queues at the back, because repricing is not free. Fills leave through the same
+  `ingestFill` door live fills use.
+- **F28.3 — paper balance and equity.** Cash, equity and exposure, kept separate from the
+  live P&L. Equity is cash plus the open book at live marks, so it breathes between trades.
+- **F28.4 — reused positions and PnL blocks.** Paper renders through the phase-18 blocks
+  unchanged; the only addition is a chip, read from the position rather than from the
+  desk's current mode.
+- **F28.5 — paper account reset.** One hold wipes cash, positions and the resting book
+  together. The gesture moved into `ui/hold.js`, shared with going live.
+- **F28.6 — journal tagging for paper trades.** Practice is journaled fully but tagged, and
+  filterable apart — a win rate over the two mixed together means nothing.
+- **F28.7 — latency simulation.** Optional wire delay with seeded jitter; the market is
+  read *on arrival*, not at submit.
+- **F28.8 — paper vs live comparison.** Both books from the same journal through the same
+  statistics functions, with twin equity curves on a shared scale.
+- **F28.9 — paper-first onboarding.** Every new desk starts on paper, with a one-time hint
+  that retires the moment the trader touches the mode control.
+- **F28.10 — paper engine hardening.** Crossed books, gaps, stalled feeds and malformed
+  sizes are refused by name rather than filled against.
+
+### Fixed
+
+- **Settings never persisted.** `persistSettings` watched `settings.theme` and
+  `settings.blocks` and nothing else, so the market mode, the bot's rate and caps, the
+  backtest fill assumptions, the practice stake and the alert list were written to state,
+  rendered, and then lost on reload — unless the trader happened to change the theme in the
+  same session. It now watches every declared settings path.
+
+
 ## [0.27.0] - 2026-08-04 — Market Replay & Backtesting
 
 ### Added

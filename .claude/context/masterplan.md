@@ -4571,160 +4571,160 @@
 **What:** Flip the whole desk to risk-free paper in one click and always know exactly which mode you are in.
 **How:** A trade.mode state with a header toggle and a prominent orange PAPER banner rendered via Spektrum data-if.
 
-- [ ] **T28.1.1 - Mode switch branch** - What: Mode plumbing isolated until proven. How: git switch -c feature/paper-mode-switch from a fresh main.
-- [ ] **T28.1.2 - Mode state** - What: One source of truth for paper versus live across the app. How: setValue('trade.mode', 'paper'|'live') persisted through spektrum/persist to localStorage.
-- [ ] **T28.1.3 - Mode transition function** - What: Switching swaps execution safely in one atomic step. How: setTradeMode() rebinding the active execution adapter and clearing in-flight intents before flipping state.
-- [ ] **T28.1.4 - Header toggle control** - What: PAPER/LIVE always one click away. How: Segmented control in the header bound with data-action="setTradeMode", styled with design-system tokens.
-- [ ] **T28.1.5 - Orange paper banner** - What: Impossible to forget you are on fake money. How: Full-width PAPER TRADING strip under the header via data-if="trade.mode == 'paper'", high-contrast orange in both themes.
-- [ ] **T28.1.6 - Hold-to-go-live control** - What: Going live is deliberate but still dialog-free and fast. How: 600ms press-and-hold on the LIVE segment with a filling progress ring, releasing early cancels.
-- [ ] **T28.1.7 - Mode-aware accents** - What: Order entry and positions subtly restyle so peripheral vision knows the mode. How: computed('trade.isPaper') driving an orange accent class on trading blocks via :class bindings.
-- [ ] **T28.1.8 - URL mode override** - What: A shared link can open the desk straight into paper. How: Parse ?mode=paper in the phase 8 URL param layer before the adapter binds at boot.
-- [ ] **T28.1.9 - Switch unit tests** - What: Each mode function verified by its single test. How: One Vitest test per fn (setTradeMode, parseModeParam) run via vitest run -t targeting only that test.
-- [ ] **T28.1.10 - Switch merge** - What: Mode switching ships to the desk. How: ESLint clean plus targeted Vitest green, merge feature/paper-mode-switch into main.
+- [x] **T28.1.1 - Mode switch branch** - What: Mode plumbing isolated until proven. How: git switch -c feature/paper-mode-switch from a fresh main.
+- [x] **T28.1.2 - Mode state** - What: One source of truth for paper versus live across the app. How: setValue('trade.mode', 'paper'|'live') persisted through spektrum/persist to localStorage.
+- [x] **T28.1.3 - Mode transition function** - What: Switching swaps execution safely in one atomic step. How: setTradeMode() rebinding the active execution adapter and clearing in-flight intents before flipping state.
+- [x] **T28.1.4 - Header toggle control** - What: PAPER/LIVE always one click away. How: Segmented control in the header bound with data-action="setTradeMode", styled with design-system tokens.
+- [x] **T28.1.5 - Orange paper banner** - What: Impossible to forget you are on fake money. How: Full-width PAPER TRADING strip under the header via data-if="trade.mode == 'paper'", high-contrast orange in both themes.
+- [x] **T28.1.6 - Hold-to-go-live control** - What: Going live is deliberate but still dialog-free and fast. How: 600ms press-and-hold on the LIVE segment with a filling progress ring, releasing early cancels.
+- [x] **T28.1.7 - Mode-aware accents** - What: Order entry and positions subtly restyle so peripheral vision knows the mode. How: computed('trade.isPaper') driving an orange accent class on trading blocks via :class bindings.
+- [x] **T28.1.8 - URL mode override** - What: A shared link can open the desk straight into paper. How: Parse ?mode=paper in the phase 8 URL param layer before the adapter binds at boot.
+- [x] **T28.1.9 - Switch unit tests** - What: Each mode function verified by its single test. How: One Vitest test per fn (setTradeMode, parseModeParam) run via vitest run -t targeting only that test.
+- [x] **T28.1.10 - Switch merge** - What: Mode switching ships to the desk. How: ESLint clean plus targeted Vitest green, merge feature/paper-mode-switch into main.
 
 ### F28.2 - Paper Sim Fill Engine
 
 **What:** Fake fills that behave like real ones: markets cross the live spread, limits wait their turn in a modeled queue.
 **How:** Fill functions driven by live best bid/ask and tape prints, with a queue-position model for resting limit orders.
 
-- [ ] **T28.2.1 - Fill engine branch** - What: Fill logic developed off main. How: git switch -c feature/paper-fills from main.
-- [ ] **T28.2.2 - Paper market fill** - What: Market orders pay the real live spread instantly. How: paperMarketFill() filling at the current opposing best price from the phase 11 book state plus size-based slip.
-- [ ] **T28.2.3 - Resting order store** - What: Paper limits live somewhere inspectable and fast. How: paper.restingOrders state keyed by instrument with price-sorted arrays maintained by pure insert/remove fns.
-- [ ] **T28.2.4 - Queue position estimate** - What: Limits do not fill the instant price touches - they wait realistically. How: queuePosition() estimating ahead-volume at the level from phase 14 order book depth.
-- [ ] **T28.2.5 - Limit match on prints** - What: Resting orders fill only as real tape volume trades through them. How: paperLimitMatch() decrementing queue by each print at the level and filling once queue is consumed.
-- [ ] **T28.2.6 - Partial fills** - What: Big paper orders fill in believable slices. How: Fill slices sized by print volume emitted as separate fill events via addValue('paper.fills').
-- [ ] **T28.2.7 - Cancel and amend** - What: Working paper orders behave like live ones under edits. How: cancelPaperOrder() removes instantly; amendPaperOrder() re-queues at the new price with fresh queue position.
-- [ ] **T28.2.8 - Fill event parity** - What: Downstream blocks cannot tell paper fills from live ones. How: Emit the exact live-engine fill event shape via Spektrum trigger so consumers stay adapter-agnostic.
-- [ ] **T28.2.9 - Fill engine unit tests** - What: Every sim fill fn pinned by exactly one test. How: One Vitest test per fn (paperMarketFill, queuePosition, paperLimitMatch, cancelPaperOrder, amendPaperOrder) via vitest run -t.
-- [ ] **T28.2.10 - Fill engine merge** - What: Realistic paper fills land on main. How: Lint plus targeted tests green, merge feature/paper-fills into main.
+- [x] **T28.2.1 - Fill engine branch** - What: Fill logic developed off main. How: git switch -c feature/paper-fills from main.
+- [x] **T28.2.2 - Paper market fill** - What: Market orders pay the real live spread instantly. How: paperMarketFill() filling at the current opposing best price from the phase 11 book state plus size-based slip.
+- [x] **T28.2.3 - Resting order store** - What: Paper limits live somewhere inspectable and fast. How: paper.restingOrders state keyed by instrument with price-sorted arrays maintained by pure insert/remove fns.
+- [x] **T28.2.4 - Queue position estimate** - What: Limits do not fill the instant price touches - they wait realistically. How: queuePosition() estimating ahead-volume at the level from phase 14 order book depth.
+- [x] **T28.2.5 - Limit match on prints** - What: Resting orders fill only as real tape volume trades through them. How: paperLimitMatch() decrementing queue by each print at the level and filling once queue is consumed.
+- [x] **T28.2.6 - Partial fills** - What: Big paper orders fill in believable slices. How: Fill slices sized by print volume emitted as separate fill events via addValue('paper.fills').
+- [x] **T28.2.7 - Cancel and amend** - What: Working paper orders behave like live ones under edits. How: cancelPaperOrder() removes instantly; amendPaperOrder() re-queues at the new price with fresh queue position.
+- [x] **T28.2.8 - Fill event parity** - What: Downstream blocks cannot tell paper fills from live ones. How: Emit the exact live-engine fill event shape via Spektrum trigger so consumers stay adapter-agnostic.
+- [x] **T28.2.9 - Fill engine unit tests** - What: Every sim fill fn pinned by exactly one test. How: One Vitest test per fn (paperMarketFill, queuePosition, paperLimitMatch, cancelPaperOrder, amendPaperOrder) via vitest run -t.
+- [x] **T28.2.10 - Fill engine merge** - What: Realistic paper fills land on main. How: Lint plus targeted tests green, merge feature/paper-fills into main.
 
 ### F28.3 - Paper Balance & Equity
 
 **What:** A believable practice account: starting cash, live-marked equity, and exposure all ticking in real time.
 **How:** Paper account state updated by fill events with equity computed from live marks via Spektrum computed().
 
-- [ ] **T28.3.1 - Account feature branch** - What: Account math isolated from main. How: git switch -c feature/paper-account from main.
-- [ ] **T28.3.2 - Account state seed** - What: Every paper trader starts with clean, remembered cash. How: paper.balance defaulting to 10000 on first boot, persisted via spektrum/persist.
-- [ ] **T28.3.3 - Fill-to-balance application** - What: Cash moves exactly as fills and fees dictate. How: applyFillToBalance() applying signed cash and fee deltas per paper fill event.
-- [ ] **T28.3.4 - Live equity computation** - What: Equity breathes with the market tick by tick. How: computed('paper.equity') summing balance plus unrealized PnL from live mark prices.
-- [ ] **T28.3.5 - Exposure metric** - What: See how leveraged the practice book is at a glance. How: computeExposure() summing open position notionals as a percentage of equity.
-- [ ] **T28.3.6 - Account block** - What: Cash, equity, exposure, and session PnL in one tile. How: Uniform grid block with mono figures styled in the money-hacker terminal aesthetic for both themes.
-- [ ] **T28.3.7 - Equity tick flash** - What: Changes register in peripheral vision without reading digits. How: Brief green/orange CSS flash class toggled by a Spektrum watch on paper.equity.
-- [ ] **T28.3.8 - Starting balance setting** - What: Practice with the stake you actually plan to trade. How: data-model bound starting-balance field in the settings modal applied on next reset.
-- [ ] **T28.3.9 - Account unit tests** - What: Balance and exposure functions each covered once. How: One Vitest test per fn (applyFillToBalance, computeExposure) run via vitest run -t per function.
-- [ ] **T28.3.10 - Account merge** - What: The paper account goes live on main. How: ESLint plus targeted Vitest green, merge feature/paper-account into main.
+- [x] **T28.3.1 - Account feature branch** - What: Account math isolated from main. How: git switch -c feature/paper-account from main.
+- [x] **T28.3.2 - Account state seed** - What: Every paper trader starts with clean, remembered cash. How: paper.balance defaulting to 10000 on first boot, persisted via spektrum/persist.
+- [x] **T28.3.3 - Fill-to-balance application** - What: Cash moves exactly as fills and fees dictate. How: applyFillToBalance() applying signed cash and fee deltas per paper fill event.
+- [x] **T28.3.4 - Live equity computation** - What: Equity breathes with the market tick by tick. How: computed('paper.equity') summing balance plus unrealized PnL from live mark prices.
+- [x] **T28.3.5 - Exposure metric** - What: See how leveraged the practice book is at a glance. How: computeExposure() summing open position notionals as a percentage of equity.
+- [x] **T28.3.6 - Account block** - What: Cash, equity, exposure, and session PnL in one tile. How: Uniform grid block with mono figures styled in the money-hacker terminal aesthetic for both themes.
+- [x] **T28.3.7 - Equity tick flash** - What: Changes register in peripheral vision without reading digits. How: Brief green/orange CSS flash class toggled by a Spektrum watch on paper.equity.
+- [x] **T28.3.8 - Starting balance setting** - What: Practice with the stake you actually plan to trade. How: data-model bound starting-balance field in the settings modal applied on next reset.
+- [x] **T28.3.9 - Account unit tests** - What: Balance and exposure functions each covered once. How: One Vitest test per fn (applyFillToBalance, computeExposure) run via vitest run -t per function.
+- [x] **T28.3.10 - Account merge** - What: The paper account goes live on main. How: ESLint plus targeted Vitest green, merge feature/paper-account into main.
 
 ### F28.4 - Reused Positions & PnL Blocks
 
 **What:** Positions and live PnL blocks work identically in paper - zero relearning, zero forked UI code.
 **How:** The paper adapter emits engine-standard position and fill events so the phase 18 blocks consume them unchanged.
 
-- [ ] **T28.4.1 - Positions feature branch** - What: Adapter parity work off main. How: git switch -c feature/paper-positions from main.
-- [ ] **T28.4.2 - Engine interface audit** - What: The paper adapter covers every method the desk calls. How: Enumerate the phase 17 execution interface and stub each method on the paper adapter with typed signatures.
-- [ ] **T28.4.3 - Position bookkeeping** - What: Average price, size, and realized PnL tracked correctly through adds and flips. How: paperPositionUpdate() applying each fill with weighted-average and flip-through-zero logic.
-- [ ] **T28.4.4 - Event name parity** - What: Downstream code needs zero paper-specific branches. How: Emit identical event names and payload shapes via trigger() as the live adapter publishes.
-- [ ] **T28.4.5 - Namespaced mode state** - What: Paper and live books can never bleed into each other. How: Positions stored under paper.positions versus live.positions with the adapter writing only its own namespace.
-- [ ] **T28.4.6 - View selector wiring** - What: Blocks automatically show the active mode's book. How: computed('positions.view') selecting the namespace by trade.mode, consumed by the phase 18 blocks.
-- [ ] **T28.4.7 - Isolation walkthrough** - What: Confidence that flipping modes leaks nothing. How: Scripted dev-server walkthrough opening positions in both modes and asserting namespace contents via spektrum/inspect.
-- [ ] **T28.4.8 - Paper row accent** - What: Paper positions recognizable at a glance inside the shared block. How: Orange left-border accent class applied through the computed isPaper flag on rendered rows.
-- [ ] **T28.4.9 - Positions unit tests** - What: Bookkeeping functions each pinned by one test. How: One Vitest test per fn (paperPositionUpdate, selectPositionsView) executed via vitest run -t.
-- [ ] **T28.4.10 - Positions merge** - What: Shared blocks officially serve both modes. How: Lint plus targeted tests green, merge feature/paper-positions into main.
+- [x] **T28.4.1 - Positions feature branch** - What: Adapter parity work off main. How: git switch -c feature/paper-positions from main.
+- [x] **T28.4.2 - Engine interface audit** - What: The paper adapter covers every method the desk calls. How: Enumerate the phase 17 execution interface and stub each method on the paper adapter with typed signatures.
+- [x] **T28.4.3 - Position bookkeeping** - What: Average price, size, and realized PnL tracked correctly through adds and flips. How: paperPositionUpdate() applying each fill with weighted-average and flip-through-zero logic.
+- [x] **T28.4.4 - Event name parity** - What: Downstream code needs zero paper-specific branches. How: Emit identical event names and payload shapes via trigger() as the live adapter publishes.
+- [x] **T28.4.5 - Namespaced mode state** - What: Paper and live books can never bleed into each other. How: Positions stored under paper.positions versus live.positions with the adapter writing only its own namespace.
+- [x] **T28.4.6 - View selector wiring** - What: Blocks automatically show the active mode's book. How: computed('positions.view') selecting the namespace by trade.mode, consumed by the phase 18 blocks.
+- [x] **T28.4.7 - Isolation walkthrough** - What: Confidence that flipping modes leaks nothing. How: Scripted dev-server walkthrough opening positions in both modes and asserting namespace contents via spektrum/inspect.
+- [x] **T28.4.8 - Paper row accent** - What: Paper positions recognizable at a glance inside the shared block. How: Orange left-border accent class applied through the computed isPaper flag on rendered rows.
+- [x] **T28.4.9 - Positions unit tests** - What: Bookkeeping functions each pinned by one test. How: One Vitest test per fn (paperPositionUpdate, selectPositionsView) executed via vitest run -t.
+- [x] **T28.4.10 - Positions merge** - What: Shared blocks officially serve both modes. How: Lint plus targeted tests green, merge feature/paper-positions into main.
 
 ### F28.5 - Paper Account Reset
 
 **What:** Blown the practice account? One hold-gesture wipes it back to a fresh start in under a second.
 **How:** A resetPaperAccount() function clearing paper state atomically, guarded only by a lean hold-to-confirm control.
 
-- [ ] **T28.5.1 - Reset feature branch** - What: Reset logic isolated. How: git switch -c feature/paper-reset from main.
-- [ ] **T28.5.2 - Atomic reset function** - What: Positions, resting orders, and cash return to day one all at once. How: resetPaperAccount() batching setValue clears and restoring the configured starting balance in one update.
-- [ ] **T28.5.3 - Epoch stamping** - What: History from before a reset stays intact and attributable. How: newPaperEpoch() incrementing paper.epoch so prior trades remain journaled under their old epoch id.
-- [ ] **T28.5.4 - Hold-to-reset control** - What: No accidental wipes, yet no confirm dialog slowing the desk. How: 600ms press-and-hold button with a filling progress ring, release-early cancels, wired via data-action.
-- [ ] **T28.5.5 - Reset placement** - What: Reset findable where you need it: account block and settings. How: Mount the hold control in the paper account block plus a settings modal entry sharing one action.
-- [ ] **T28.5.6 - Reset toast** - What: Clear feedback the wipe actually happened. How: Brief PAPER ACCOUNT RESET notification pushed through the phase 22 notification channel.
-- [ ] **T28.5.7 - Persist flush** - What: A reload can never resurrect the dead account. How: Force a spektrum/persist write of cleared paper keys immediately after the reset batch commits.
-- [ ] **T28.5.8 - Session stats restart** - What: The phase 19 HUD starts a clean sheet after reset. How: Reset emits a paper epoch event the session stats block consumes to zero its counters.
-- [ ] **T28.5.9 - Reset unit tests** - What: Reset and epoch functions each verified once. How: One Vitest test per fn (resetPaperAccount, newPaperEpoch) run via vitest run -t targeting each test.
-- [ ] **T28.5.10 - Reset merge** - What: Fearless practice resets available on main. How: ESLint plus targeted Vitest green, merge feature/paper-reset into main.
+- [x] **T28.5.1 - Reset feature branch** - What: Reset logic isolated. How: git switch -c feature/paper-reset from main.
+- [x] **T28.5.2 - Atomic reset function** - What: Positions, resting orders, and cash return to day one all at once. How: resetPaperAccount() batching setValue clears and restoring the configured starting balance in one update.
+- [x] **T28.5.3 - Epoch stamping** - What: History from before a reset stays intact and attributable. How: newPaperEpoch() incrementing paper.epoch so prior trades remain journaled under their old epoch id.
+- [x] **T28.5.4 - Hold-to-reset control** - What: No accidental wipes, yet no confirm dialog slowing the desk. How: 600ms press-and-hold button with a filling progress ring, release-early cancels, wired via data-action.
+- [x] **T28.5.5 - Reset placement** - What: Reset findable where you need it: account block and settings. How: Mount the hold control in the paper account block plus a settings modal entry sharing one action.
+- [x] **T28.5.6 - Reset toast** - What: Clear feedback the wipe actually happened. How: Brief PAPER ACCOUNT RESET notification pushed through the phase 22 notification channel.
+- [x] **T28.5.7 - Persist flush** - What: A reload can never resurrect the dead account. How: Force a spektrum/persist write of cleared paper keys immediately after the reset batch commits.
+- [x] **T28.5.8 - Session stats restart** - What: The phase 19 HUD starts a clean sheet after reset. How: Reset emits a paper epoch event the session stats block consumes to zero its counters.
+- [x] **T28.5.9 - Reset unit tests** - What: Reset and epoch functions each verified once. How: One Vitest test per fn (resetPaperAccount, newPaperEpoch) run via vitest run -t targeting each test.
+- [x] **T28.5.10 - Reset merge** - What: Fearless practice resets available on main. How: ESLint plus targeted Vitest green, merge feature/paper-reset into main.
 
 ### F28.6 - Journal Tagging for Paper Trades
 
 **What:** Paper trades never pollute the real record - journaled fully but clearly tagged and filterable apart.
 **How:** Fill and trade events carry mode and epoch tags that the phase 25 journal stores, badges, and filters on.
 
-- [ ] **T28.6.1 - Tagging feature branch** - What: Journal tagging isolated. How: git switch -c feature/paper-journal-tags from main.
-- [ ] **T28.6.2 - Trade event tagging** - What: Every paper record self-identifies forever. How: tagTradeEvent() stamping mode:'paper' and the current epoch id onto every paper fill and trade event.
-- [ ] **T28.6.3 - Journal schema extension** - What: Old journal entries keep working while new ones carry mode. How: Additive mode and epoch fields on the journal record shape with a default of 'live' for legacy rows.
-- [ ] **T28.6.4 - Mode filter chips** - What: Flip the journal between ALL, LIVE, and PAPER instantly. How: Filter chips bound with data-action feeding a computed('journal.view') selector.
-- [ ] **T28.6.5 - Paper row badge** - What: Paper entries unmistakable when browsing ALL. How: Compact orange P pill rendered per row via data-if on the record's mode field.
-- [ ] **T28.6.6 - Default journal scope** - What: The journal opens showing the mode you are trading. How: journal.view initialized from trade.mode via computed with the chip override persisted per session.
-- [ ] **T28.6.7 - Export mode column** - What: CSV exports keep paper and live separable in spreadsheets. How: Extend the journal export fn to include mode and epoch columns in the CSV header and rows.
-- [ ] **T28.6.8 - Write boundary guard** - What: An untagged trade can never sneak into the journal. How: assertModeTag() validating mode presence at the journal write function and rejecting invalid records.
-- [ ] **T28.6.9 - Tagging unit tests** - What: Tag and guard functions each pinned once. How: One Vitest test per fn (tagTradeEvent, assertModeTag) executed via vitest run -t per function.
-- [ ] **T28.6.10 - Tagging merge** - What: Clean, tagged history ships. How: Lint plus targeted tests green, merge feature/paper-journal-tags into main.
+- [x] **T28.6.1 - Tagging feature branch** - What: Journal tagging isolated. How: git switch -c feature/paper-journal-tags from main.
+- [x] **T28.6.2 - Trade event tagging** - What: Every paper record self-identifies forever. How: tagTradeEvent() stamping mode:'paper' and the current epoch id onto every paper fill and trade event.
+- [x] **T28.6.3 - Journal schema extension** - What: Old journal entries keep working while new ones carry mode. How: Additive mode and epoch fields on the journal record shape with a default of 'live' for legacy rows.
+- [x] **T28.6.4 - Mode filter chips** - What: Flip the journal between ALL, LIVE, and PAPER instantly. How: Filter chips bound with data-action feeding a computed('journal.view') selector.
+- [x] **T28.6.5 - Paper row badge** - What: Paper entries unmistakable when browsing ALL. How: Compact orange P pill rendered per row via data-if on the record's mode field.
+- [x] **T28.6.6 - Default journal scope** - What: The journal opens showing the mode you are trading. How: journal.view initialized from trade.mode via computed with the chip override persisted per session.
+- [x] **T28.6.7 - Export mode column** - What: CSV exports keep paper and live separable in spreadsheets. How: Extend the journal export fn to include mode and epoch columns in the CSV header and rows.
+- [x] **T28.6.8 - Write boundary guard** - What: An untagged trade can never sneak into the journal. How: assertModeTag() validating mode presence at the journal write function and rejecting invalid records.
+- [x] **T28.6.9 - Tagging unit tests** - What: Tag and guard functions each pinned once. How: One Vitest test per fn (tagTradeEvent, assertModeTag) executed via vitest run -t per function.
+- [x] **T28.6.10 - Tagging merge** - What: Clean, tagged history ships. How: Lint plus targeted tests green, merge feature/paper-journal-tags into main.
 
 ### F28.7 - Latency Simulation
 
 **What:** Optional realism: paper orders feel the same delay live ones would, so speed habits transfer to real trading.
 **How:** Configurable artificial latency with jitter applied to paper submit, cancel, and amend, filling against the market at arrival time.
 
-- [ ] **T28.7.1 - Latency feature branch** - What: Latency sim isolated. How: git switch -c feature/paper-latency from main.
-- [ ] **T28.7.2 - Delay function** - What: Each order gets a realistic, reproducible delay. How: latencyDelay() combining base ms with jitter drawn from the phase 27 createSeededRng.
-- [ ] **T28.7.3 - Order path hook** - What: Submit, cancel, and amend all feel the wire. How: The paper adapter defers each action's effect by latencyDelay() using a scheduled timeout queue.
-- [ ] **T28.7.4 - Auto preset from live** - What: Realism without configuration: match your actual measured latency. How: Auto mode reads the rolling OKX round-trip metric from phase 29 as the base delay.
-- [ ] **T28.7.5 - Latency settings UI** - What: Off, auto, or a custom millisecond value in one control. How: Settings modal group with data-model bound slider and mode radio persisted via spektrum/persist.
-- [ ] **T28.7.6 - In-flight order state** - What: Delayed paper orders look pending exactly like live ones. How: Orders enter the same in-flight visual state in the order entry block until the delayed fill event lands.
-- [ ] **T28.7.7 - Fill at arrival price** - What: A moving market punishes slow orders honestly. How: Fill price computed from the tick current at arrival time, not submit time, inside the deferred handler.
-- [ ] **T28.7.8 - Latency HUD chip** - What: Always visible when artificial delay is shaping fills. How: Small HUD chip showing the active sim latency in ms, hidden via data-if when off.
-- [ ] **T28.7.9 - Latency unit tests** - What: Delay and arrival-fill functions each covered once. How: One Vitest test per fn (latencyDelay, fillAtArrival) run via vitest run -t targeting each.
-- [ ] **T28.7.10 - Latency merge** - What: Realistic timing ships as an option. How: ESLint plus targeted Vitest green, merge feature/paper-latency into main.
+- [x] **T28.7.1 - Latency feature branch** - What: Latency sim isolated. How: git switch -c feature/paper-latency from main.
+- [x] **T28.7.2 - Delay function** - What: Each order gets a realistic, reproducible delay. How: latencyDelay() combining base ms with jitter drawn from the phase 27 createSeededRng.
+- [x] **T28.7.3 - Order path hook** - What: Submit, cancel, and amend all feel the wire. How: The paper adapter defers each action's effect by latencyDelay() using a scheduled timeout queue.
+- [x] **T28.7.4 - Auto preset from live** - What: Realism without configuration: match your actual measured latency. How: Auto mode reads the rolling OKX round-trip metric from phase 29 as the base delay.
+- [x] **T28.7.5 - Latency settings UI** - What: Off, auto, or a custom millisecond value in one control. How: Settings modal group with data-model bound slider and mode radio persisted via spektrum/persist.
+- [x] **T28.7.6 - In-flight order state** - What: Delayed paper orders look pending exactly like live ones. How: Orders enter the same in-flight visual state in the order entry block until the delayed fill event lands.
+- [x] **T28.7.7 - Fill at arrival price** - What: A moving market punishes slow orders honestly. How: Fill price computed from the tick current at arrival time, not submit time, inside the deferred handler.
+- [x] **T28.7.8 - Latency HUD chip** - What: Always visible when artificial delay is shaping fills. How: Small HUD chip showing the active sim latency in ms, hidden via data-if when off.
+- [x] **T28.7.9 - Latency unit tests** - What: Delay and arrival-fill functions each covered once. How: One Vitest test per fn (latencyDelay, fillAtArrival) run via vitest run -t targeting each.
+- [x] **T28.7.10 - Latency merge** - What: Realistic timing ships as an option. How: ESLint plus targeted Vitest green, merge feature/paper-latency into main.
 
 ### F28.8 - Paper vs Live Comparison
 
 **What:** See whether practice is translating: paper and live performance side by side over any date range.
 **How:** A comparison block computing per-mode statistics from tagged journal records with dual canvas equity curves.
 
-- [ ] **T28.8.1 - Comparison feature branch** - What: Comparison view off main. How: git switch -c feature/paper-vs-live from main.
-- [ ] **T28.8.2 - Per-mode stats** - What: The same honest numbers computed for each mode. How: statsByMode() aggregating tagged journal trades into PnL, win rate, expectancy, and average hold per mode.
-- [ ] **T28.8.3 - Date range state** - What: Compare today, this week, this month, or everything. How: Range chips (1D/7D/30D/ALL) bound via data-action writing compare.range consumed by statsByMode.
-- [ ] **T28.8.4 - Twin stat columns** - What: Paper and live readable as one honest scoreboard. How: Mirrored columns headed PAPER in orange and LIVE in green inside a uniform grid block.
-- [ ] **T28.8.5 - Delta highlights** - What: Where practice beats reality jumps out immediately. How: Signed delta badges per stat row computed by diffModeStats() with green/orange coloring.
-- [ ] **T28.8.6 - Dual equity curves** - What: Both journeys on one chart tell the transfer story. How: Hand-rolled canvas renderer drawing both cumulative curves with hover crosshair readout.
-- [ ] **T28.8.7 - Small-sample hint** - What: No false conclusions from five trades. How: computed hint shown via data-if when either mode has fewer than 20 trades in range.
-- [ ] **T28.8.8 - Empty live state** - What: Paper-only users see encouragement, not a broken block. How: Friendly go-live nudge layout rendered when zero live trades exist in range.
-- [ ] **T28.8.9 - Comparison unit tests** - What: Stat and diff functions each pinned once. How: One Vitest test per fn (statsByMode, diffModeStats) executed via vitest run -t per function.
-- [ ] **T28.8.10 - Comparison merge** - What: The transfer scoreboard ships. How: Lint plus targeted tests green, merge feature/paper-vs-live into main.
+- [x] **T28.8.1 - Comparison feature branch** - What: Comparison view off main. How: git switch -c feature/paper-vs-live from main.
+- [x] **T28.8.2 - Per-mode stats** - What: The same honest numbers computed for each mode. How: statsByMode() aggregating tagged journal trades into PnL, win rate, expectancy, and average hold per mode.
+- [x] **T28.8.3 - Date range state** - What: Compare today, this week, this month, or everything. How: Range chips (1D/7D/30D/ALL) bound via data-action writing compare.range consumed by statsByMode.
+- [x] **T28.8.4 - Twin stat columns** - What: Paper and live readable as one honest scoreboard. How: Mirrored columns headed PAPER in orange and LIVE in green inside a uniform grid block.
+- [x] **T28.8.5 - Delta highlights** - What: Where practice beats reality jumps out immediately. How: Signed delta badges per stat row computed by diffModeStats() with green/orange coloring.
+- [x] **T28.8.6 - Dual equity curves** - What: Both journeys on one chart tell the transfer story. How: Hand-rolled canvas renderer drawing both cumulative curves with hover crosshair readout.
+- [x] **T28.8.7 - Small-sample hint** - What: No false conclusions from five trades. How: computed hint shown via data-if when either mode has fewer than 20 trades in range.
+- [x] **T28.8.8 - Empty live state** - What: Paper-only users see encouragement, not a broken block. How: Friendly go-live nudge layout rendered when zero live trades exist in range.
+- [x] **T28.8.9 - Comparison unit tests** - What: Stat and diff functions each pinned once. How: One Vitest test per fn (statsByMode, diffModeStats) executed via vitest run -t per function.
+- [x] **T28.8.10 - Comparison merge** - What: The transfer scoreboard ships. How: Lint plus targeted tests green, merge feature/paper-vs-live into main.
 
 ### F28.9 - Paper-First Onboarding
 
 **What:** Every new user starts safely in paper mode - the first trade on STOCKZ is always a free one.
 **How:** Boot logic defaults trade.mode to paper when no stored choice exists, with a one-time dismissible intro hint on the banner.
 
-- [ ] **T28.9.1 - Onboarding feature branch** - What: Boot defaults isolated. How: git switch -c feature/paper-onboarding from main.
-- [ ] **T28.9.2 - Initial mode resolver** - What: New users land in paper; returning users keep their choice. How: resolveInitialMode() returning 'paper' when the persisted mode key is absent, else the stored value.
-- [ ] **T28.9.3 - Boot sequence wiring** - What: The right adapter binds before the first order can exist. How: Resolve mode in the main.js boot sequence ahead of execution adapter binding and bindDOM.
-- [ ] **T28.9.4 - Precedence rules** - What: Overrides behave predictably: URL beats stored beats default. How: Document and implement URL param > persisted setting > paper default inside resolveInitialMode.
-- [ ] **T28.9.5 - Go-live key gate** - What: Nobody reaches live mode without working venue keys. How: Hold-to-go-live checks phase 8 key presence and routes to the key modal when OKX/EToro keys are missing.
-- [ ] **T28.9.6 - First-run hint** - What: Newcomers instantly understand the orange banner and how to go live. How: One-time dismissible callout attached to the paper banner with terse money-hacker microcopy.
-- [ ] **T28.9.7 - Hint dismissal memory** - What: The hint never nags twice. How: Dismissal flag persisted via spektrum/persist and gated with data-if on the flag.
-- [ ] **T28.9.8 - Onboarding polish** - What: The first minute looks sharp in both themes. How: Style the hint and gate flows with design tokens, verifying day and night contrast in the Vite dev server.
-- [ ] **T28.9.9 - Onboarding unit tests** - What: Resolver and gate functions each verified once. How: One Vitest test per fn (resolveInitialMode, checkLiveKeyGate) run via vitest run -t targeting each.
-- [ ] **T28.9.10 - Onboarding merge** - What: Safe-by-default first sessions ship. How: ESLint plus targeted Vitest green, merge feature/paper-onboarding into main.
+- [x] **T28.9.1 - Onboarding feature branch** - What: Boot defaults isolated. How: git switch -c feature/paper-onboarding from main.
+- [x] **T28.9.2 - Initial mode resolver** - What: New users land in paper; returning users keep their choice. How: resolveInitialMode() returning 'paper' when the persisted mode key is absent, else the stored value.
+- [x] **T28.9.3 - Boot sequence wiring** - What: The right adapter binds before the first order can exist. How: Resolve mode in the main.js boot sequence ahead of execution adapter binding and bindDOM.
+- [x] **T28.9.4 - Precedence rules** - What: Overrides behave predictably: URL beats stored beats default. How: Document and implement URL param > persisted setting > paper default inside resolveInitialMode.
+- [x] **T28.9.5 - Go-live key gate** - What: Nobody reaches live mode without working venue keys. How: Hold-to-go-live checks phase 8 key presence and routes to the key modal when OKX/EToro keys are missing.
+- [x] **T28.9.6 - First-run hint** - What: Newcomers instantly understand the orange banner and how to go live. How: One-time dismissible callout attached to the paper banner with terse money-hacker microcopy.
+- [x] **T28.9.7 - Hint dismissal memory** - What: The hint never nags twice. How: Dismissal flag persisted via spektrum/persist and gated with data-if on the flag.
+- [x] **T28.9.8 - Onboarding polish** - What: The first minute looks sharp in both themes. How: Style the hint and gate flows with design tokens, verifying day and night contrast in the Vite dev server.
+- [x] **T28.9.9 - Onboarding unit tests** - What: Resolver and gate functions each verified once. How: One Vitest test per fn (resolveInitialMode, checkLiveKeyGate) run via vitest run -t targeting each.
+- [x] **T28.9.10 - Onboarding merge** - What: Safe-by-default first sessions ship. How: ESLint plus targeted Vitest green, merge feature/paper-onboarding into main.
 
 ### F28.10 - Paper Engine Hardening
 
 **What:** Edge cases that break lesser sims - crossed books, price gaps, stalled feeds - handled cleanly so practice never lies.
 **How:** Guard functions for degenerate market states plus a seeded scripted-market fixture proving paper fills deterministically end to end.
 
-- [ ] **T28.10.1 - Hardening feature branch** - What: Edge-case work isolated. How: git switch -c feature/paper-hardening from main.
-- [ ] **T28.10.2 - Crossed book guard** - What: No fantasy fills from momentarily crossed or locked books. How: isCrossedBook() detecting bid >= ask and deferring paper fills until the book is sane.
-- [ ] **T28.10.3 - Gap fill handling** - What: Market orders through a price gap fill at the gapped price, not a stale quote. How: gapFill() selecting the post-gap best price when the book jumps beyond the last quote.
-- [ ] **T28.10.4 - Feed stall guard** - What: A frozen feed cannot mint fills from dead prices. How: feedStallGuard() parking paper matching after N seconds without ticks and showing a stall chip via data-if.
-- [ ] **T28.10.5 - Scripted market fixture** - What: A deterministic mini-market to interrogate the engine. How: Commit a JSON tick-and-book script fixture exercising spreads, gaps, prints, and stalls.
-- [ ] **T28.10.6 - Seeded sim randomness** - What: Paper jitter and slip reproduce exactly under a seed. How: Route all paper randomness through the phase 27 createSeededRng with the seed held in paper state.
-- [ ] **T28.10.7 - Scenario runner** - What: Whole-engine behavior assertable as data, not clicks. How: runScriptedScenario() feeding the fixture through the paper adapter and returning the ordered fill log.
-- [ ] **T28.10.8 - Boundary math helpers** - What: Zero-size and sub-tick orders resolve predictably everywhere. How: Reuse roundToTick() from phase 27 plus a rejectDegenerateOrder() validator at the adapter entry.
-- [ ] **T28.10.9 - Hardening unit tests** - What: Every guard and scenario fn pinned by exactly one test. How: One Vitest test per fn (isCrossedBook, gapFill, feedStallGuard, runScriptedScenario, rejectDegenerateOrder) via vitest run -t.
-- [ ] **T28.10.10 - Hardening merge** - What: A sim that never lies lands on main. How: Lint plus targeted tests green, merge feature/paper-hardening into main.
+- [x] **T28.10.1 - Hardening feature branch** - What: Edge-case work isolated. How: git switch -c feature/paper-hardening from main.
+- [x] **T28.10.2 - Crossed book guard** - What: No fantasy fills from momentarily crossed or locked books. How: isCrossedBook() detecting bid >= ask and deferring paper fills until the book is sane.
+- [x] **T28.10.3 - Gap fill handling** - What: Market orders through a price gap fill at the gapped price, not a stale quote. How: gapFill() selecting the post-gap best price when the book jumps beyond the last quote.
+- [x] **T28.10.4 - Feed stall guard** - What: A frozen feed cannot mint fills from dead prices. How: feedStallGuard() parking paper matching after N seconds without ticks and showing a stall chip via data-if.
+- [x] **T28.10.5 - Scripted market fixture** - What: A deterministic mini-market to interrogate the engine. How: Commit a JSON tick-and-book script fixture exercising spreads, gaps, prints, and stalls.
+- [x] **T28.10.6 - Seeded sim randomness** - What: Paper jitter and slip reproduce exactly under a seed. How: Route all paper randomness through the phase 27 createSeededRng with the seed held in paper state.
+- [x] **T28.10.7 - Scenario runner** - What: Whole-engine behavior assertable as data, not clicks. How: runScriptedScenario() feeding the fixture through the paper adapter and returning the ordered fill log.
+- [x] **T28.10.8 - Boundary math helpers** - What: Zero-size and sub-tick orders resolve predictably everywhere. How: Reuse roundToTick() from phase 27 plus a rejectDegenerateOrder() validator at the adapter entry.
+- [x] **T28.10.9 - Hardening unit tests** - What: Every guard and scenario fn pinned by exactly one test. How: One Vitest test per fn (isCrossedBook, gapFill, feedStallGuard, runScriptedScenario, rejectDegenerateOrder) via vitest run -t.
+- [x] **T28.10.10 - Hardening merge** - What: A sim that never lies lands on main. How: Lint plus targeted tests green, merge feature/paper-hardening into main.
 
 ---
 

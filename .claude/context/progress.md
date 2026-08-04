@@ -5,19 +5,46 @@ in `masterplan.md`, and knows where the project stands. Rewritten at every phase
 
 ---
 
-## Status: Phase 27 closed (v0.27.0) — phase 28 next
+## Status: Phase 28 closed (v0.28.0) — STOPPED HERE by the owner
 
-Delivery is running unattended to phase 30 on the owner's instruction (2026-08-04:
-*"Work until all phases are complete do not stop before completion"*).
+The owner asked to **stop after phase 28** (2026-08-04). Phases 29 and 30 are untouched;
+the earlier "work until all phases are complete" instruction is superseded. Do not start
+phase 29 without a fresh instruction.
 
 **Live:** https://d-dezeeuw.github.io/stockz/ (Pages serves `main` root — pushing is deploying)
-**Tests:** 1369, one per function, all passing. Backtest files: 92% statements, 81% branches.
+**Tests:** 1420, one per function, all passing. Paper/mode files: 98% statements, 89% branches.
 **Branch model:** everything merges to `main`; no feature branches outstanding.
 
-**Next: phase 28 — Paper Trading Mode**, starting at F28.1. Note that a working paper
-adapter *already exists* (`src/exec/adapters/paper.js`, built mid-phase-26 when the owner
-asked for automated trading) — phase 28 should extend and formalise it rather than
-rebuild it.
+## Phase 28 — Paper Trading Mode (closed)
+
+| Feature | What now exists | Where |
+| --- | --- | --- |
+| F28.1 | `setTradeMode`, `parseModeParam`, `applyModeParam`, `isPaper`, `beginGoLive`, `cancelGoLive` | `src/exec/mode.js` |
+| F28.2 | `queuePosition`, `insertResting`, `removeResting`, `amendResting`, `paperMarketFill`, `paperLimitMatch`; `restOrder`, `workPrint`, `cancelPaperOrder`, `amendPaperOrder` | `src/exec/paper/{book,engine}.js` |
+| F28.3 | `applyFillToBalance`, `markToMarket`, `computeExposure`, `refreshAccount`, `paperMarks`, `bookPaperFill` | `src/exec/paper/account.js` |
+| F28.4 | `paper` flag through `makePosition`/`applyFill`/`normalizeFill`/`makeTrade` | `src/positions/`, `src/journal/pairing.js` |
+| F28.5 | `createHold` (shared with going live), `resetPaperAccount`, `beginPaperReset` | `src/ui/hold.js`, `src/exec/paper/account.js` |
+| F28.6 | `BOOKS`, the `book` journal filter, paper badges on rows | `src/journal/filters.js` |
+| F28.7 | `latencyConfig`, `latencyFor`, `afterLatency`, `seedLatency` | `src/exec/paper/latency.js` |
+| F28.8 | `splitByBook`, `bookStats`, `refreshBookCompare`, `mountBookChart` | `src/exec/paper/compare.js` |
+| F28.9 | `isFirstRun`, `applyFirstRunMode`, `dismissPaperHint` | `src/exec/mode.js` |
+| F28.10 | `checkBook`, `checkGap`, `checkFresh`, `guardPaperFill` | `src/exec/paper/guards.js` |
+
+### Things a later phase must know
+
+**A position's mode is on the position, not on `trade.mode`.** A paper position left open
+across a switch to live must not start reading as real, so every badge and every journal
+filter reads the record's own flag. It is sticky through adds and reduces; a flip takes the
+incoming fill's mode.
+
+**`createHold` is the only "deliberate but not a dialog" gesture.** Going live and wiping
+the practice account both use it. The ring fills from the timer, release listens on the
+*document*, and both listeners are removed on cancel — a leftover `pointercancel` kills the
+next hold.
+
+**Settings persistence was broken until F28.10.** `persistSettings` watched two paths. It
+now watches `Object.values(PATHS.settings)`, so a new setting persists by existing. Any
+setting added later needs a `PATHS.settings` entry or it will silently not survive reload.
 
 ## Phase 27 — Market Replay & Backtesting (closed)
 
