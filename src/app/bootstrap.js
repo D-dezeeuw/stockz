@@ -34,6 +34,7 @@ import { registerBotActions, createBotRunner } from '../bot/runner.js'
 import { registerSessionActions } from '../bot/session.js'
 import { watchTrip, watchPending } from '../breakers/index.js'
 import { watchBreakerSettings } from '../breakers/settings.js'
+import { loadOpenLots } from '../journal/pairing.js'
 import { registerKillActions } from '../breakers/kill.js'
 import { registerRearmActions, mountRelease } from '../breakers/rearm.js'
 import {
@@ -137,6 +138,9 @@ export function bootstrap(options = {}) {
   // Read back and pruned once at boot: the record is for reviewing a session that has
   // already happened, and thirty days of it is the most anybody looks back.
   loadBreakerLog()
+  // The half-open scalp survives a reload: the state worth keeping is precisely the one a
+  // refresh lands in the middle of.
+  loadOpenLots()
   pruneBreakerEvents(Date.now())
   // The daily-loss trip has no other reaction path — it publishes a code and returns a
   // rejection — so without these the desk would halt with its orders still resting.

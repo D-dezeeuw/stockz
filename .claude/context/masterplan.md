@@ -4070,16 +4070,16 @@
 **What:** Raw venue fills grouped into complete round-trip trades, so each scalp shows as one journal entry instead of scattered executions.
 **How:** Pure pairFills() FIFO matcher in src/journal/pairing.js fed from the fills stream via Spektrum watch, emitting trade records into state.journal.trades.
 
-- [ ] **T25.1.1 - Cut pairing branch** - What: Isolated workspace so pairing work never destabilizes main. How: git checkout -b feature/f25.1-fill-pairing from a freshly pulled main.
-- [ ] **T25.1.2 - Define trade record schema** - What: One agreed shape every journal consumer can rely on. How: JSDoc typedef in src/journal/types.js with id, instrument, side, qty, entryFills, exitFills, openTs, closeTs.
-- [ ] **T25.1.3 - Build FIFO lot matcher** - What: Deterministic entry/exit matching per instrument. How: Pure matchLots(fills) in src/journal/pairing.js pairing oldest open lots first, returning closed lots plus remainder.
-- [ ] **T25.1.4 - Support partial exits and scale-outs** - What: Scaled-out scalps still pair into correct round trips. How: Extend pairFills() to split a lot when exit qty is smaller than entry qty, carrying the open remainder forward.
-- [ ] **T25.1.5 - Split position flips** - What: A long-to-short flip fill books as one close plus one open, not a corrupt trade. How: Add splitFlipFill() that divides a crossing fill into a closing leg and an opening leg by signed position size.
-- [ ] **T25.1.6 - Dedupe fills by venue id** - What: Reconnect replays of the fill feed never double-count a trade. How: Keep a Set of OKX fillId and EToro execution ids and skip already-seen ids inside the pairing reducer.
-- [ ] **T25.1.7 - Wire the live fills stream** - What: Trades appear in the journal the instant a scalp closes. How: Spektrum watch on state.fills runs pairFills() and addValue()s each completed trade into state.journal.trades.
-- [ ] **T25.1.8 - Persist open pairing state** - What: Half-open trades survive a page reload mid-scalp. How: Sync the open-lots ledger under stockz.journal.openLots with spektrum/persist to localStorage.
-- [ ] **T25.1.9 - Write single unit tests for pairing fns** - What: matchLots, pairFills and splitFlipFill each proven by exactly one test. How: One Vitest test per function in pairing.test.js, run with vitest run -t per function name.
-- [ ] **T25.1.10 - Verify and merge pairing** - What: Pairing lands on main only when green. How: Run the three targeted Vitest tests plus eslint src/journal, then merge feature/f25.1-fill-pairing into main.
+- [x] **T25.1.1 - Cut pairing branch** - What: Isolated workspace so pairing work never destabilizes main. How: git checkout -b feature/f25.1-fill-pairing from a freshly pulled main.
+- [x] **T25.1.2 - Define trade record schema** - What: One agreed shape every journal consumer can rely on. How: JSDoc typedef in src/journal/types.js with id, instrument, side, qty, entryFills, exitFills, openTs, closeTs.
+- [x] **T25.1.3 - Build FIFO lot matcher** - What: Deterministic entry/exit matching per instrument. How: Pure matchLots(fills) in src/journal/pairing.js pairing oldest open lots first, returning closed lots plus remainder.
+- [x] **T25.1.4 - Support partial exits and scale-outs** - What: Scaled-out scalps still pair into correct round trips. How: Extend pairFills() to split a lot when exit qty is smaller than entry qty, carrying the open remainder forward.
+- [x] **T25.1.5 - Split position flips** - What: A long-to-short flip fill books as one close plus one open, not a corrupt trade. How: Add splitFlipFill() that divides a crossing fill into a closing leg and an opening leg by signed position size.
+- [x] **T25.1.6 - Dedupe fills by venue id** - What: Reconnect replays of the fill feed never double-count a trade. How: Keep a Set of OKX fillId and EToro execution ids and skip already-seen ids inside the pairing reducer.
+- [x] **T25.1.7 - Wire the live fills stream** - What: Trades appear in the journal the instant a scalp closes. How: Spektrum watch on state.fills runs pairFills() and addValue()s each completed trade into state.journal.trades.
+- [x] **T25.1.8 - Persist open pairing state** - What: Half-open trades survive a page reload mid-scalp. How: Sync the open-lots ledger under stockz.journal.openLots with spektrum/persist to localStorage.
+- [x] **T25.1.9 - Write single unit tests for pairing fns** - What: matchLots, pairFills and splitFlipFill each proven by exactly one test. How: One Vitest test per function in pairing.test.js, run with vitest run -t per function name.
+- [x] **T25.1.10 - Verify and merge pairing** - What: Pairing lands on main only when green. How: Run the three targeted Vitest tests plus eslint src/journal, then merge feature/f25.1-fill-pairing into main.
 
 ### F25.2 - Per-Trade Metrics: Hold Time, MAE/MFE, Slippage, Fees
 

@@ -3,6 +3,7 @@ import { PATHS } from '../state/paths.js'
 import { makePosition, applyFill, unrealizedPnl, sideOf, DUST } from './math.js'
 import { splitSymbol } from '../lists/ops.js'
 import { appendRealization, flushLedger } from './ledger.js'
+import { onJournalFill } from '../journal/pairing.js'
 
 /**
  * The positions book.
@@ -95,6 +96,19 @@ export function ingestFill(fill) {
   const signed = String(fill?.side ?? '').toLowerCase() === 'sell' ? -magnitude : magnitude
 
   const { position, realized } = applyFill(positionFor(key), {
+    qty: signed,
+    px: fill?.px,
+    fee: fill?.fee,
+    ts: fill?.ts,
+  })
+
+  // And into the journal, off the same fill. Fed here rather than from a watch on the
+  // published book: the journal pairs *executions*, and a frame-batched position snapshot
+  // has already averaged away the two fills a scale-out is made of.
+  onJournalFill({
+    id: fill?.id ?? fill?.fillId,
+    venue: fill?.venue,
+    instrument: key,
     qty: signed,
     px: fill?.px,
     fee: fill?.fee,
