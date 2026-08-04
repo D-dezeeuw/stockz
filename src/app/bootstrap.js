@@ -16,6 +16,7 @@ import { restoreSettings, persistSettings } from '../state/persist.js'
 import { registerSettingsActions } from '../ui/settings.js'
 import { registerKeyActions, adoptKeys, promptForKeys } from '../ui/keys.js'
 import { registerListActions, seedLists } from '../lists/state.js'
+import { startWatchlist, registerWatchActions } from '../lists/watch.js'
 import { registerCandleActions } from '../charts/candlestick.js'
 import { registerPrefillActions } from '../book/prefill.js'
 import { registerGroupingActions } from '../book/grouping.js'
@@ -127,6 +128,7 @@ export function bootstrap(options = {}) {
   registerSettingsActions()
   registerKeyActions()
   registerListActions()
+  registerWatchActions()
   registerCandleActions()
   registerPrefillActions()
   registerGroupingActions()
@@ -248,6 +250,10 @@ export function bootstrap(options = {}) {
   // The venue is the authority on positions; the desk checks itself against it on a
   // timer rather than trusting a book built from fills it happened to see.
   const unreconcile = options.feeds === false ? () => {} : startReconciler()
+  // The watchlist fills and quotes itself from the public tickers endpoint, which needs no
+  // credentials — so the desk shows live instruments on a first visit, before any key is
+  // entered, rather than an empty block waiting to be told what to watch.
+  const unwatchlist = options.feeds === false ? () => {} : startWatchlist()
 
   if (autoRun) run()
 
@@ -260,6 +266,7 @@ export function bootstrap(options = {}) {
       unfocus()
       unrepeat()
       unreconcile()
+      unwatchlist()
       cleanup?.()
     },
     feeds,

@@ -7,6 +7,7 @@ import { registerThemeActions } from '../ui/theme.js'
 import { registerSettingsActions } from '../ui/settings.js'
 import { registerKeyActions } from '../ui/keys.js'
 import { registerListActions } from '../lists/state.js'
+import { registerWatchActions } from '../lists/watch.js'
 import { registerCandleActions } from '../charts/candlestick.js'
 import { registerPrefillActions } from '../book/prefill.js'
 import { registerGroupingActions } from '../book/grouping.js'
@@ -139,6 +140,7 @@ describe('allActionNames', () => {
       'lists.move',
       'lists.setActive',
       'lists.manage',
+      'lists.auto',
       'keys.submit',
       'keys.lock',
       'keys.remember',
@@ -161,6 +163,7 @@ describe('allActionNames', () => {
     registerSettingsActions()
     registerKeyActions()
     registerListActions()
+    registerWatchActions()
     registerCandleActions()
     registerPrefillActions()
     registerGroupingActions()

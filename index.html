@@ -43,6 +43,7 @@
   <link rel="stylesheet" href="./src/styles/ladder.css">
   <link rel="stylesheet" href="./src/styles/ticket.css">
   <link rel="stylesheet" href="./src/styles/positions.css">
+  <link rel="stylesheet" href="./src/styles/watchlist.css">
   <link rel="stylesheet" href="./src/styles/hud.css">
   <link rel="stylesheet" href="./src/styles/strategies.css">
   <link rel="stylesheet" href="./src/styles/breakers.css">
@@ -588,8 +589,27 @@
               <canvas id="underwater-canvas" class="underwater__canvas"></canvas>
               <span class="label" data-if="analytics.worstRun.current < 0">currently {{analytics.worstRun.currentLabel}} below peak</span>
             </div>
+            <!-- The watchlist. Populated by the desk from real traded volume, quoted from
+                 the public tickers endpoint so the rows are live before any key exists.
+                 A row is a click away from becoming the traded instrument. -->
+            <div class="watchlist" data-if="block.id === 'watchlist'">
+              <div class="watchlist__rows" data-each="market.watchRows" data-as="row">
+                <button type="button" class="watchlist__row" data-action="click"
+                        data-fn="lists.focus" :data-symbol="row.symbol"
+                        :class="row.active ? 'watchlist__row is-active' : 'watchlist__row'">
+                  <span class="watchlist__sym">{{row.symbol}}</span>
+                  <span class="watchlist__price num">{{row.price}}</span>
+                  <span class="watchlist__chg num" :class="'watchlist__chg num tone--' + row.tone">{{row.change}}</span>
+                </button>
+              </div>
+              <label class="field field--row watchlist__auto">
+                <input type="checkbox" data-action="change" data-fn="lists.auto"
+                       :checked="settings.autoWatchlist !== false">
+                <span class="label">Desk picks the instruments, by traded volume.</span>
+              </label>
+            </div>
             <!-- An alert set in under three seconds: level, direction, done. -->
-            <div class="alerts" data-if="block.id === 'watchlist'">
+            <div class="alerts" data-if="block.id === 'alerts'">
               <form class="alerts__form" data-action="submit.prevent" data-fn="alerts.create"
                     :data-instrument="market.focus">
                 <input type="number" name="price" class="field__input" placeholder="level"
