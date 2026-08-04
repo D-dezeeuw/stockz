@@ -119,6 +119,15 @@ export const SETTINGS_SCHEMA = Object.freeze([
     default: 4,
   },
   {
+    key: 'tradesPerHourTarget',
+    group: 'trading',
+    label: 'Target trades per hour',
+    kind: 'number',
+    min: 0,
+    step: 5,
+    default: 20,
+  },
+  {
     key: 'spreadLimitBps',
     group: 'trading',
     label: 'Alert when spread exceeds (bps)',
