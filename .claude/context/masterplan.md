@@ -3482,16 +3482,16 @@
 **What:** The user fades micro range edges: entries at fresh support/resistance touches with tight stops.
 **How:** Swing-point and level-cluster fns build micro S/R; a touch-reject fn fires fades via the strategy engine.
 
-- [ ] **T21.6.1 - Branch and scaffold range module** - What: An isolated branch for the range-fade strategy. How: git checkout -b feature/f21-6-range-fade; create src/strategies/rangeFade.js.
-- [ ] **T21.6.2 - Build swingPoints fn** - What: Fresh local highs and lows found as they form. How: Implement swingPoints(ticks, fractalWindow) detecting confirmed swing highs and lows over the lookback.
-- [ ] **T21.6.3 - Build levelCluster fn** - What: Nearby swings merged into tradable S/R levels with touch counts. How: Implement levelCluster(swings, mergeTicks) grouping levels and tracking touches per level.
-- [ ] **T21.6.4 - Build touchReject fn** - What: The setup: price touches a level and prints rejection. How: Implement touchReject(level, lastTicks, rejectTicks) confirming a reversal print off the level.
-- [ ] **T21.6.5 - Build fadeSignal fn** - What: The entry: fade the touch with a stop just beyond the level. How: Implement fadeSignal(level, side, stopBufferTicks) returning entry direction and stop price.
-- [ ] **T21.6.6 - Wire into engine** - What: Levels and fades update live from the tick stream. How: addSystem() on the tick channel maintaining levels in state and emitting trigger('strategy:signal') on setups.
-- [ ] **T21.6.7 - Build levelBreak fn** - What: Broken levels invalidate instantly so fades never fight breakouts. How: Implement levelBreak(level, price, breakTicks) pruning the level set and force-exiting open fades.
-- [ ] **T21.6.8 - Level overlay on micro-charts** - What: S/R lines drawn on the phase-13 sparkline for instant context. How: Push level prices into the chart overlay hook; the hand-rolled canvas draws dashed lines in theme colors.
-- [ ] **T21.6.9 - Write single unit tests** - What: Level logic verified fn by fn. How: One Vitest test each for swingPoints, levelCluster, touchReject, fadeSignal and levelBreak; targeted runs only.
-- [ ] **T21.6.10 - Verify on ranging replay and merge** - What: Fades fire at edges and stand down on breakouts. How: Replay a ranging session recording, check entries and invalidations, ESLint, merge to main.
+- [x] **T21.6.1 - Branch and scaffold range module** - What: An isolated branch for the range-fade strategy. How: git checkout -b feature/f21-6-range-fade; create src/strategies/rangeFade.js.
+- [x] **T21.6.2 - Build swingPoints fn** - What: Fresh local highs and lows found as they form. How: Implement swingPoints(ticks, fractalWindow) detecting confirmed swing highs and lows over the lookback.
+- [x] **T21.6.3 - Build levelCluster fn** - What: Nearby swings merged into tradable S/R levels with touch counts. How: Implement levelCluster(swings, mergeTicks) grouping levels and tracking touches per level.
+- [x] **T21.6.4 - Build touchReject fn** - What: The setup: price touches a level and prints rejection. How: Implement touchReject(level, lastTicks, rejectTicks) confirming a reversal print off the level.
+- [x] **T21.6.5 - Build fadeSignal fn** - What: The entry: fade the touch with a stop just beyond the level. How: Implement fadeSignal(level, side, stopBufferTicks) returning entry direction and stop price.
+- [x] **T21.6.6 - Wire into engine** - What: Levels and fades update live from the tick stream. How: addSystem() on the tick channel maintaining levels in state and emitting trigger('strategy:signal') on setups.
+- [x] **T21.6.7 - Build levelBreak fn** - What: Broken levels invalidate instantly so fades never fight breakouts. How: Implement levelBreak(level, price, breakTicks) pruning the level set and force-exiting open fades.
+- [x] **T21.6.8 - Level overlay on micro-charts** - What: S/R lines drawn on the phase-13 sparkline for instant context. How: Push level prices into the chart overlay hook; the hand-rolled canvas draws dashed lines in theme colors.
+- [x] **T21.6.9 - Write single unit tests** - What: Level logic verified fn by fn. How: One Vitest test each for swingPoints, levelCluster, touchReject, fadeSignal and levelBreak; targeted runs only.
+- [x] **T21.6.10 - Verify on ranging replay and merge** - What: Fades fire at edges and stand down on breakouts. How: Replay a ranging session recording, check entries and invalidations, ESLint, merge to main.
 
 ### F21.7 - Session-Open Drive
 

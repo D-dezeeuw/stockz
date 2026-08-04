@@ -12,6 +12,20 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ### Added
 
+- **Micro range fade** — most of a scalping session is not trending: price oscillates between
+  two levels everyone can see, and the trade is to sell the top and buy the bottom with a stop
+  just beyond, because when the band finally breaks it breaks fast. Levels are built from
+  **confirmed swings**, so one always arrives a few prints late — that lateness is not a
+  defect to engineer away, since a level called at the moment of the extreme is just the last
+  price, and fading the last price is not a strategy. Nearby swings merge, because a level
+  touched at 100.01, 100.00 and 99.99 is one level and treating it as three both triples the
+  count and makes each look untested. **The invalidation matters more than the entry**: a
+  broken level is deleted and any open fade closes immediately, so this never fights a
+  breakout — range traders do not lose money on ranges, they lose it on the one that ended.
+  Conviction rises with touch count and is deliberately **capped**, because a level tested ten
+  times is one about to break. The levels are published to the micro-chart overlay muted and
+  finely dashed: they are an inference about the market, not a fact about the account like an
+  entry, and drawing them at the same weight would misstate how much to trust them.
 - **Tape pressure shift** — where the imbalance strategy reads intention, this one reads
   what happened: who crossed the spread. The signal is the **shift, not the level** — a tape
   running at 70% buy volume all session is just an instrument with a bid to it, and by the

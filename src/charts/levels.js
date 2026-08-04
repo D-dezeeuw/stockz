@@ -17,6 +17,7 @@ import { priceToY, formatPrice } from './scale.js'
 export const LEVEL_DASH = Object.freeze({
   last: Object.freeze([]),
   entry: Object.freeze([6, 4]),
+  level: Object.freeze([1, 4]),
   stop: Object.freeze([2, 3]),
   target: Object.freeze([8, 3]),
 })
@@ -144,6 +145,21 @@ export function chartLevels(context = {}) {
       label: `${formatPrice(entry, tickSize)} × ${position?.size ?? 0}`,
       color: levelColor(position, price, palette),
       kind: 'entry',
+    })
+  }
+
+  // Support and resistance found by the range-fade strategy. Dashed and muted: these are
+  // somebody's *inference* about the market, not a fact about the account like an entry, and
+  // drawing them at the same weight would be a lie about how much to trust them.
+  for (const level of Array.isArray(context.supports) ? context.supports : []) {
+    const at = Number(level?.px)
+    if (!Number.isFinite(at)) continue
+
+    levels.push({
+      price: at,
+      label: `${formatPrice(at, tickSize)} ×${Number(level?.touches) || 1}`,
+      color: palette.inkMuted ?? palette.ink ?? '#7a8c7a',
+      kind: 'level',
     })
   }
 
