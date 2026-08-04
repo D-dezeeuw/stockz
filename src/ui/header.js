@@ -1,4 +1,4 @@
-import { setValue, appState } from '../app/engine.js'
+import { setValue, appState, watch } from '../app/engine.js'
 import { PATHS } from '../state/paths.js'
 import { registerAction } from '../actions/registry.js'
 import { ACTIONS } from '../actions/names.js'
@@ -17,10 +17,10 @@ export const SECTIONS = Object.freeze(['dashboard', 'trade', 'journal', 'analyti
 
 /** Which blocks belong to which section. A block absent from a set is hidden there. */
 export const SECTION_BLOCKS = Object.freeze({
-  dashboard: ['watchlist', 'chart', 'book', 'tape', 'ticket', 'positions', 'hud', 'strategies', 'scoreboard', 'alerts', 'bot', 'journal'],
+  dashboard: ['watchlist', 'chart', 'book', 'tape', 'ticket', 'positions', 'hud', 'strategies', 'scoreboard', 'alerts', 'bot', 'journal', 'analytics'],
   trade: ['chart', 'book', 'tape', 'ticket', 'positions', 'hud', 'strategies', 'bot'],
   journal: ['journal', 'positions', 'alerts'],
-  analytics: ['journal', 'hud', 'chart', 'strategies', 'scoreboard', 'alerts'],
+  analytics: ['analytics', 'journal', 'hud', 'chart', 'strategies', 'scoreboard', 'alerts'],
 })
 
 /**
@@ -102,6 +102,46 @@ export function toggleOverlay(_state, payload = {}) {
 
   setValue(PATHS.ui.modal, next)
   return next
+}
+
+/**
+ * The blocks the grid should render right now.
+ *
+ * `SECTION_BLOCKS` and `blockInSection` have described this since the header shipped, but
+ * nothing ever called them: the grid bound straight to `settings.blocks`, so every section
+ * rendered all thirteen blocks and the nav only moved a highlight. Switching to `trade` is
+ * supposed to clear the screen of everything that is not trading.
+ *
+ * Derived rather than filtered in place — `settings.blocks` is the persisted layout, and
+ * narrowing it would make a section switch destroy the blocks the other sections need.
+ *
+ * @param {object} [state] - engine state.
+ * @returns {object[]} the blocks for the active section, hidden ones dropped.
+ */
+export function sectionBlocks(state = appState) {
+  const all = Array.isArray(state?.settings?.blocks) ? state.settings.blocks : []
+  const section = String(state?.ui?.section ?? 'dashboard')
+
+  return all.filter((block) => block?.visible !== false && blockInSection(section, block?.id))
+}
+
+/**
+ * Keep the rendered grid in step with the section and the layout.
+ *
+ * @param {{watch?: Function}} [deps] - injectable watcher, for tests.
+ * @returns {object[]} what was written on the initial pass.
+ */
+export function mountSectionBlocks(deps = {}) {
+  const { watch: watcher = watch } = deps
+  const sync = () => setValue(PATHS.ui.gridBlocks, sectionBlocks())
+
+  watcher([PATHS.ui.section, PATHS.settings.blocks], sync)
+
+  // Once up front: the registry is committed during boot, and waiting for the first change
+  // would leave the desk empty until the trader touched something.
+  const first = sectionBlocks()
+  setValue(PATHS.ui.gridBlocks, first)
+  return first
 }
 
 /**

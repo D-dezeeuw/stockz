@@ -47,6 +47,18 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ### Fixed
 
+- **The section nav only moved a highlight.** `SECTION_BLOCKS` and `blockInSection` have
+  described which blocks belong to which section since the header shipped, and nothing ever
+  called them — the grid bound straight at `settings.blocks`, so all thirteen blocks rendered
+  in every section. Switching to `trade` is supposed to clear the screen of everything that
+  is not trading; now it does. The grid reads a derived `ui.gridBlocks` rather than filtering
+  the layout in place, because `settings.blocks` is the persisted arrangement and narrowing
+  it would make a section switch destroy the blocks the other sections need. Per-block
+  `visible` is honoured on the same path, so hiding a block finally hides it.
+- **The Analytics block could not be seen from anywhere.** It was added to the registry at
+  order 12 and listed in no section set — invisible the moment the grid started honouring
+  those sets. It is in the dashboard and analytics sections now, and a test asserts every
+  seeded block is reachable from at least one section, so the next one cannot go missing.
 - **Nothing on the desk responded to a click, and most of it never rendered.** Three
   independent breaks in how the HTML talks to Spektrum, each fatal on its own, all invisible
   to the entire test suite:

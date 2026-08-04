@@ -8,9 +8,12 @@ import {
   venueLeds,
   sessionClock,
   toggleOverlay,
+  sectionBlocks,
+  mountSectionBlocks,
   svgAttr,
   registerHeaderActions,
 } from './header.js'
+import { DEFAULT_BLOCKS } from '../blocks/seed.js'
 import { appState, setValue, tick, resetState } from '../app/engine.js'
 import { PATHS } from '../state/paths.js'
 import { clearActions, actionNames, dispatchAction } from '../actions/registry.js'
@@ -44,6 +47,15 @@ describe('blockInSection', () => {
     // An unknown section shows everything rather than an empty screen.
     expect(blockInSection('nonsense', 'watchlist')).toBe(true)
     expect(SECTION_BLOCKS.dashboard).toContain('hud')
+
+    // Every seeded block must be reachable from somewhere. `analytics` was added to the
+    // registry at order 12 and listed in no section, so once the grid actually honoured
+    // these sets it would have rendered nowhere at all - a block that exists, is
+    // maintained, and can never be seen.
+    for (const block of DEFAULT_BLOCKS) {
+      const sections = Object.keys(SECTION_BLOCKS).filter((s) => blockInSection(s, block.id))
+      expect(sections.length, `block "${block.id}" belongs to no section`).toBeGreaterThan(0)
+    }
   })
 })
 
@@ -93,6 +105,59 @@ describe('toggleOverlay', () => {
     toggleOverlay({}, { modal: 'settings' })
     tick()
     expect(toggleOverlay({}, { modal: 'hotkeys' })).toBe('hotkeys')
+  })
+})
+
+describe('sectionBlocks', () => {
+  it('narrows the layout to the active section and drops hidden blocks', () => {
+    const state = {
+      ui: { section: 'trade' },
+      settings: {
+        blocks: [
+          { id: 'ticket' },
+          { id: 'book' },
+          { id: 'watchlist' }, // not in the trade set
+          { id: 'chart', visible: false }, // in the set, but switched off
+        ],
+      },
+    }
+
+    expect(sectionBlocks(state).map((b) => b.id)).toEqual(['ticket', 'book'])
+
+    // An unknown section falls back to the dashboard set, same as blockInSection.
+    expect(sectionBlocks({ ...state, ui: { section: 'nowhere' } }).map((b) => b.id)).toEqual([
+      'ticket',
+      'book',
+      'watchlist',
+    ])
+
+    expect(sectionBlocks({})).toEqual([])
+    expect(sectionBlocks({ settings: { blocks: 'not an array' } })).toEqual([])
+  })
+})
+
+describe('mountSectionBlocks', () => {
+  it('publishes the grid once at boot and again whenever section or layout moves', () => {
+    setValue(PATHS.settings.blocks, [{ id: 'ticket' }, { id: 'watchlist' }])
+    setValue(PATHS.ui.section, 'trade')
+    tick()
+
+    const watched = []
+    const first = mountSectionBlocks({ watch: (paths, fn) => watched.push({ paths, fn }) })
+
+    // Published up front - waiting for the first change would leave the desk empty.
+    expect(first.map((b) => b.id)).toEqual(['ticket'])
+    tick()
+    expect(appState.ui.gridBlocks.map((b) => b.id)).toEqual(['ticket'])
+
+    // And it watches both inputs, so either one moving repaints the grid.
+    expect(watched[0].paths).toEqual([PATHS.ui.section, PATHS.settings.blocks])
+
+    setValue(PATHS.ui.section, 'dashboard')
+    tick()
+    watched[0].fn()
+    tick()
+    expect(appState.ui.gridBlocks.map((b) => b.id)).toEqual(['ticket', 'watchlist'])
   })
 })
 
