@@ -12,6 +12,18 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ### Added
 
+- **VWAP, ATR and rolling stddev** — volume and volatility context on the same closure API
+  and the same O(1) budget. The stddev uses **Welford**, not the textbook
+  `E[x²] − E[x]²`: on instrument prices — numbers near 60000 whose variance is near 1 —
+  the textbook form subtracts two nearly equal large numbers and loses most of its
+  significant digits, which is how a band indicator ends up returning a negative variance.
+  True range counts the **gap**, because a gap straight through a bar otherwise reads as a
+  quiet bar, the single most dangerous thing a volatility number can say. A print with no
+  size does not move VWAP, since counting it would quietly turn a volume-weighted average
+  into a plain mean, and `zscore` returns 0 rather than Infinity on a flat series — a dead
+  market is not the most extreme move ever recorded. VWAP re-anchors at the trading day
+  roll by re-running each strategy's `init`, which is how the reset reaches indicators the
+  registry never sees: they are built inside `init` in the first place.
 - **EMA and RSI as incremental indicators** — these run on every tick of every instrument
   of every running strategy, the hottest path in the desk, so they are closures over a
   handful of numbers with an `update(x)` that allocates nothing and does O(1) work: no

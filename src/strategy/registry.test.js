@@ -13,6 +13,7 @@ import {
   tuneStrategy,
   showParamForm,
   tickStrategies,
+  rollStrategySessions,
 } from './registry.js'
 import { defineStrategy } from './contract.js'
 import { ACTIONS } from '../actions/names.js'
@@ -252,5 +253,31 @@ describe('tickStrategies', () => {
     tick()
     expect(appState.strategy.signals[run.key].action).toBe('flat')
     expect(appState.strategy.running[0].action).toBe('flat')
+  })
+})
+
+describe('rollStrategySessions', () => {
+  it('rebuilds indicators at the day roll, so VWAP is never yesterday’s anchor', () => {
+    let inits = 0
+    registerStrategy(
+      defineStrategy({
+        id: 'anchored',
+        init: () => ({ n: (inits += 1) }),
+        onTick: () => null,
+        onCandle: () => null,
+      }),
+    )
+    const bus = fakeBus()
+    const run = startStrategy('anchored', 'okx:BTC-USDT', { subscribe: bus.subscribe })
+
+    // The first tick of a session is not a roll — there is nothing to carry over yet.
+    expect(rollStrategySessions(86400000)).toEqual([])
+    expect(rollStrategySessions(86400000 + 3600000)).toEqual([])
+
+    // The next day rebuilds every run's indicators by re-running its init.
+    expect(rollStrategySessions(86400000 * 2)).toEqual([run.key])
+    expect(run.memory).toEqual({ n: 2 })
+
+    expect(rollStrategySessions(NaN)).toEqual([])
   })
 })
