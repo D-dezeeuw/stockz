@@ -417,3 +417,10 @@
   font-size: var(--font-size-xs, 0.6875rem);
   letter-spacing: 0.04em;
 }
+
+/* The rate meter and the bench. Orange before the ceiling, because a meter read only at
+   the limit is a meter that never helped. */
+.label.is-hot,
+.bot__cooldown {
+  color: var(--orange);
+}

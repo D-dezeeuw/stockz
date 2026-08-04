@@ -12,6 +12,22 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ### Added
 
+- **Signal-to-order mapper, rate throttle and losing-streak cooldown** — the translation from
+  "a strategy thinks this" to "the venue is asked for that" is a pure function, so everything
+  it decides is inspectable in a test rather than argued about after a fill. A passive entry
+  sits **behind** the touch; in front of it is a market order wearing a limit order's name.
+  Sizes floor onto the venue grid rather than rounding, because a cap that is sometimes
+  exceeded is not a cap — and the quotient is rounded before flooring, since `70000.2 / 0.1`
+  is `700001.9999999999` in floating point and a naive floor drops a value that was already
+  exactly on the grid by a whole tick. Equity-percent sizing is offered and is **not** the
+  default: it sounds safer than a fixed size and is more dangerous in a drawdown, because it
+  sizes up relative to what is left. The two guards exist for one reason — a bot's failure
+  mode is not being wrong once, it is being wrong *quickly and repeatedly*. The throttle is a
+  sliding window pruned lazily inside the check, so no timer keeps a backgrounded tab awake;
+  the cooldown counts **consecutive realised losses** rather than drawdown, because three
+  losers in a row is evidence about the strategy while three among ten is evidence about
+  nothing. Gate order is arming → permission → rate → bench, cheapest first, so a disarmed
+  desk never touches the throttle's window at all.
 - **Master arm switch and per-strategy opt-in** — the bot's arm is a **different flag** from
   the ticket's, and nothing reads across: manual trading must not stop because the bot was
   disarmed, and the bot must not start because somebody armed the ticket to click a button.

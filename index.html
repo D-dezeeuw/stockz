@@ -565,6 +565,13 @@
                 <span data-if="!bot.status.armed">○ DISARMED</span>
               </button>
               <p class="label">{{bot.status.enabled}} strategies enabled · {{bot.status.queued}} queued · shift+A</p>
+              <!-- The meter is read before the ceiling is hit, which is the only time
+                   reading it helps. -->
+              <p class="label" :class="bot.limits.hot ? 'label is-hot' : 'label'">{{bot.limits.used}}/{{bot.limits.limit}} per min · {{bot.limits.streak}} loss streak</p>
+              <div class="field field--row" data-if="bot.limits.cooldownLabel">
+                <span class="label bot__cooldown">benched {{bot.limits.cooldownLabel}}</span>
+                <button type="button" class="chip" data-action="click" data-fn="bot.resume">resume</button>
+              </div>
               <button type="button" class="chip" data-action="click"
                       data-fn="bot.disableAll">revoke all</button>
               <!-- Every decision with its reason: "why did it not take that" must be

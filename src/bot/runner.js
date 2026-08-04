@@ -2,6 +2,8 @@ import { setValue, appState } from '../app/engine.js'
 import { PATHS } from '../state/paths.js'
 import { createRing } from '../pipeline/ring.js'
 import { submit } from '../exec/engine.js'
+import { mapSignalToOrder, rulesFor } from './mapper.js'
+import { throttleGate, cooldownGate, clearCooldown } from './throttle.js'
 import { emitAlert } from '../alerts/bus.js'
 import { registerAction } from '../actions/registry.js'
 import { ACTIONS } from '../actions/names.js'
@@ -145,7 +147,15 @@ export function decide(signal, context = {}) {
   const strategy = String(signal?.source ?? signal?.strategyId ?? '')
   const instrument = String(signal?.instrument ?? '')
 
-  const base = [() => armGate(), () => optInGate(strategy)]
+  // The order is the point: arming, then permission, then the rate ceiling, then the
+  // bench. Each is cheaper than the one after it and each rules out more, so a disarmed
+  // desk never touches the throttle's window at all.
+  const base = [
+    () => armGate(),
+    () => optInGate(strategy),
+    (sig, ctx) => throttleGate(sig, ctx),
+    (sig, ctx) => cooldownGate(sig, ctx),
+  ]
   const verdict = runGates(signal, { ...context, now, gates: [...base, ...(context.gates ?? [])] })
 
   return pushDecision({
@@ -167,25 +177,16 @@ export function decide(signal, context = {}) {
  */
 export async function dispatchOrder(signal, options = {}) {
   const send = typeof options.send === 'function' ? options.send : submit
-  const action = String(signal?.action ?? '')
-  const instrument = String(signal?.instrument ?? '')
-  if (!instrument || (action !== 'buy' && action !== 'sell')) {
-    return { ok: false, clientId: '', reason: 'not an entry' }
-  }
+  const strategy = String(signal?.source ?? signal?.strategyId ?? '')
+  const mapped = mapSignalToOrder(signal, { ...rulesFor(strategy), ...(options.rules ?? {}) })
+  // Refused at the mapper is refused before the network: an order with a size that rounds
+  // to zero is not worth a round trip to find out.
+  if (!mapped.ok) return { ok: false, clientId: '', reason: mapped.reason }
 
   // Straight through `submit`, which means `prepare()`: the same validation, capability
   // check, grid rounding and both guards a hand-typed order passes. A second execution path
   // is a second answer to "is this order sane".
-  return send({
-    venue: 'okx',
-    instrument,
-    side: action,
-    size: Number(options.size) || Number(appState.settings?.botSize) || 0,
-    type: 'market',
-    // Tagged so the journal, the scoreboard and a later audit can all tell a bot order
-    // from a clicked one without inferring it.
-    origin: 'bot',
-  })
+  return send(mapped.order)
 }
 
 /**
@@ -375,6 +376,7 @@ export function registerBotActions() {
     setAutoEnabled(payload?.strategy, payload?.checked ?? payload?.value !== 'false'),
   )
   registerAction(ACTIONS.bot.disableAll, () => disableAllAuto())
+  registerAction(ACTIONS.bot.resume, () => clearCooldown(Date.now()))
 
   return ACTIONS.bot.toggleArm
 }

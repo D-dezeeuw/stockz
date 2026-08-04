@@ -1,5 +1,6 @@
 import { setValue, appState } from '../app/engine.js'
 import { attributeClose } from '../strategy/scoreboard.js'
+import { onFillClosed } from '../bot/throttle.js'
 import { PATHS } from '../state/paths.js'
 
 /**
@@ -67,6 +68,9 @@ export function appendRealization(event) {
   // that instrument — the execution layer deliberately does not know who asked, and
   // threading a strategy id through the order path would couple the two for one statistic.
   attributeClose(entries[entries.length - 1])
+  // And into the bot's loss streak. Consecutive realised losses is the signal that a
+  // strategy has stopped matching the market, which is a different claim from drawdown.
+  onFillClosed(entries[entries.length - 1].amount, entries[entries.length - 1].ts)
 
   return entries
 }

@@ -3784,48 +3784,48 @@
 **What:** Signals become correctly sized, correctly routed orders without any manual math.
 **How:** Pure fn mapSignalToOrder(sig, rules) in src/bot/mapper.js producing venue-ready order objects using phase-15 size rules and the phase-12 instrument registry.
 
-- [ ] **T23.4.1 - Branch signal mapper** - What: Isolated work on the mapper. How: git checkout -b feature/f23.4-signal-mapper from an up-to-date main.
-- [ ] **T23.4.2 - Mapper module** - What: A single pure function owns signal-to-order translation. How: Create src/bot/mapper.js exporting mapSignalToOrder(sig, rules) returning {instrument, side, type, size, price}.
-- [ ] **T23.4.3 - Size rules** - What: Order size follows the trader's chosen rule automatically. How: Apply per-strategy fixed-size or pct-of-equity sizing from settings state inside the mapper.
-- [ ] **T23.4.4 - Side and type mapping** - What: Signal direction becomes the right order verb. How: Map sig.direction to buy/sell and pick market vs limit (with offset ticks) from the strategy config.
-- [ ] **T23.4.5 - Instrument routing** - What: Orders reach the right venue symbol every time. How: Resolve sig.instrument to an OKX v5 instId or EToro symbol through the phase-12 instrument registry.
-- [ ] **T23.4.6 - Lot and tick snapping** - What: No order rejected for bad increments. How: Implement snapToStep(value, step) and apply venue lot size and tick size steps to size and price.
-- [ ] **T23.4.7 - Invalid signal rejection** - What: Malformed signals never reach a venue. How: Return {error, reason} for missing or NaN fields and log the reason via pushDecision.
-- [ ] **T23.4.8 - Wire mapper into pipeline** - What: Every passing signal is mapped before dispatch. How: Call mapSignalToOrder in the decide() pass path ahead of the submitOrder dispatch step.
-- [ ] **T23.4.9 - Single unit tests for mapper fns** - What: Mapping proven once per function. How: One Vitest test each for mapSignalToOrder and snapToStep in mapper.test.js with targeted npx vitest run -t.
-- [ ] **T23.4.10 - Merge signal mapper** - What: The mapper lands on main. How: Green targeted tests plus ESLint, merge feature/f23.4-signal-mapper into main, delete the branch.
+- [x] **T23.4.1 - Branch signal mapper** - What: Isolated work on the mapper. How: git checkout -b feature/f23.4-signal-mapper from an up-to-date main.
+- [x] **T23.4.2 - Mapper module** - What: A single pure function owns signal-to-order translation. How: Create src/bot/mapper.js exporting mapSignalToOrder(sig, rules) returning {instrument, side, type, size, price}.
+- [x] **T23.4.3 - Size rules** - What: Order size follows the trader's chosen rule automatically. How: Apply per-strategy fixed-size or pct-of-equity sizing from settings state inside the mapper.
+- [x] **T23.4.4 - Side and type mapping** - What: Signal direction becomes the right order verb. How: Map sig.direction to buy/sell and pick market vs limit (with offset ticks) from the strategy config.
+- [x] **T23.4.5 - Instrument routing** - What: Orders reach the right venue symbol every time. How: Resolve sig.instrument to an OKX v5 instId or EToro symbol through the phase-12 instrument registry.
+- [x] **T23.4.6 - Lot and tick snapping** - What: No order rejected for bad increments. How: Implement snapToStep(value, step) and apply venue lot size and tick size steps to size and price.
+- [x] **T23.4.7 - Invalid signal rejection** - What: Malformed signals never reach a venue. How: Return {error, reason} for missing or NaN fields and log the reason via pushDecision.
+- [x] **T23.4.8 - Wire mapper into pipeline** - What: Every passing signal is mapped before dispatch. How: Call mapSignalToOrder in the decide() pass path ahead of the submitOrder dispatch step.
+- [x] **T23.4.9 - Single unit tests for mapper fns** - What: Mapping proven once per function. How: One Vitest test each for mapSignalToOrder and snapToStep in mapper.test.js with targeted npx vitest run -t.
+- [x] **T23.4.10 - Merge signal mapper** - What: The mapper lands on main. How: Green targeted tests plus ESLint, merge feature/f23.4-signal-mapper into main, delete the branch.
 
 ### F23.5 - Orders-per-minute throttle
 
 **What:** A hard ceiling on order rate keeps the bot fast but never runaway.
 **How:** Sliding-window timestamp ring in src/bot/throttle.js checked by throttleGate against a settings limit, pruned lazily per call.
 
-- [ ] **T23.5.1 - Branch order throttle** - What: Isolated work on rate limiting. How: git checkout -b feature/f23.5-order-throttle from an up-to-date main.
-- [ ] **T23.5.2 - Throttle module** - What: A reusable rate limiter for the bot. How: Create src/bot/throttle.js exporting createThrottle(limitPerMin) whose allow(now) uses a timestamp ring plus head pointer, O(1) amortized.
-- [ ] **T23.5.3 - Throttle setting** - What: The trader sets their own orders-per-minute ceiling. How: Add bot.maxOrdersPerMin (default 30) to settings state with a numeric field in the phase-7 settings panel.
-- [ ] **T23.5.4 - Gate wiring** - What: Over-limit signals are rejected instantly with a reason. How: Implement throttleGate calling throttle.allow(Date.now()) and pushing reason 'throttled' via pushDecision on reject.
-- [ ] **T23.5.5 - Count intended orders** - What: Dry-run stats predict live stats exactly. How: Record a timestamp for every order that passes gates, whether dispatched live or logged dry.
-- [ ] **T23.5.6 - Lazy window pruning** - What: No timers, no background cost. How: Prune expired timestamps inside allow(now) by advancing the head pointer, keeping the throttle allocation-free.
-- [ ] **T23.5.7 - Live rate meter** - What: The trader sees n/limit usage at all times. How: Bind a computed bot.ordersLastMin in the bot block showing {{bot.ordersLastMin}}/limit, turning orange above 80%.
-- [ ] **T23.5.8 - Reset on disarm** - What: A re-armed bot starts with a clean window. How: Clear the timestamp ring from a watch on bot.armChanged when masterArmed goes false.
-- [ ] **T23.5.9 - Single unit tests for throttle fns** - What: Rate logic proven once per function. How: One Vitest test each for createThrottle and allow using vi.useFakeTimers, run with npx vitest run -t.
-- [ ] **T23.5.10 - Merge order throttle** - What: The throttle lands on main. How: Green targeted tests plus ESLint, merge feature/f23.5-order-throttle into main, delete the branch.
+- [x] **T23.5.1 - Branch order throttle** - What: Isolated work on rate limiting. How: git checkout -b feature/f23.5-order-throttle from an up-to-date main.
+- [x] **T23.5.2 - Throttle module** - What: A reusable rate limiter for the bot. How: Create src/bot/throttle.js exporting createThrottle(limitPerMin) whose allow(now) uses a timestamp ring plus head pointer, O(1) amortized.
+- [x] **T23.5.3 - Throttle setting** - What: The trader sets their own orders-per-minute ceiling. How: Add bot.maxOrdersPerMin (default 30) to settings state with a numeric field in the phase-7 settings panel.
+- [x] **T23.5.4 - Gate wiring** - What: Over-limit signals are rejected instantly with a reason. How: Implement throttleGate calling throttle.allow(Date.now()) and pushing reason 'throttled' via pushDecision on reject.
+- [x] **T23.5.5 - Count intended orders** - What: Dry-run stats predict live stats exactly. How: Record a timestamp for every order that passes gates, whether dispatched live or logged dry.
+- [x] **T23.5.6 - Lazy window pruning** - What: No timers, no background cost. How: Prune expired timestamps inside allow(now) by advancing the head pointer, keeping the throttle allocation-free.
+- [x] **T23.5.7 - Live rate meter** - What: The trader sees n/limit usage at all times. How: Bind a computed bot.ordersLastMin in the bot block showing {{bot.ordersLastMin}}/limit, turning orange above 80%.
+- [x] **T23.5.8 - Reset on disarm** - What: A re-armed bot starts with a clean window. How: Clear the timestamp ring from a watch on bot.armChanged when masterArmed goes false.
+- [x] **T23.5.9 - Single unit tests for throttle fns** - What: Rate logic proven once per function. How: One Vitest test each for createThrottle and allow using vi.useFakeTimers, run with npx vitest run -t.
+- [x] **T23.5.10 - Merge order throttle** - What: The throttle lands on main. How: Green targeted tests plus ESLint, merge feature/f23.5-order-throttle into main, delete the branch.
 
 ### F23.6 - Losing-streak cooldown
 
 **What:** The bot benches itself after a losing streak so tilt losses stop compounding.
 **How:** Consecutive-loss counter fed by phase-18 realized fills; hitting the streak limit starts a timed cooldown enforced by cooldownGate.
 
-- [ ] **T23.6.1 - Branch loss cooldown** - What: Isolated work on the cooldown. How: git checkout -b feature/f23.6-loss-cooldown from an up-to-date main.
-- [ ] **T23.6.2 - Streak counter** - What: The bot knows exactly how many losers in a row. How: Implement onFillClosed(pnl) incrementing bot.lossStreak on negative realized PnL and resetting on a win, fed by phase-18 fill events.
-- [ ] **T23.6.3 - Cooldown starter** - What: The bench happens automatically at the limit. How: Implement startCooldown(untilTs) setting bot.cooldownUntil when the streak reaches bot.cooldownAfterLosses.
-- [ ] **T23.6.4 - Cooldown gate** - What: No auto orders while benched. How: Implement cooldownGate rejecting signals while Date.now() < bot.cooldownUntil with reason 'cooldown'.
-- [ ] **T23.6.5 - Cooldown settings** - What: Streak length and bench time are the trader's call. How: Add bot.cooldownAfterLosses (default 3) and bot.cooldownMinutes (default 10) numeric fields to the phase-7 settings panel.
-- [ ] **T23.6.6 - Countdown UI** - What: The trader sees exactly when the bot returns. How: Bind a computed mm:ss remaining value in the bot block, styled orange with a subtle pulse from phase-3 tokens.
-- [ ] **T23.6.7 - Manual clear action** - What: One click ends the bench early, no dialog. How: defineFn clearCooldown zeroing bot.cooldownUntil, bound with data-action to a small RESUME button.
-- [ ] **T23.6.8 - Cooldown feed entries** - What: Bench start and end are on the record. How: Push cooldown-start and cooldown-end entries with streak details via pushDecision.
-- [ ] **T23.6.9 - Single unit tests for cooldown fns** - What: Cooldown logic proven once per function. How: One Vitest test each for onFillClosed, startCooldown, cooldownGate and clearCooldown with targeted -t runs.
-- [ ] **T23.6.10 - Merge loss cooldown** - What: The cooldown lands on main. How: Green targeted tests plus ESLint, merge feature/f23.6-loss-cooldown into main, delete the branch.
+- [x] **T23.6.1 - Branch loss cooldown** - What: Isolated work on the cooldown. How: git checkout -b feature/f23.6-loss-cooldown from an up-to-date main.
+- [x] **T23.6.2 - Streak counter** - What: The bot knows exactly how many losers in a row. How: Implement onFillClosed(pnl) incrementing bot.lossStreak on negative realized PnL and resetting on a win, fed by phase-18 fill events.
+- [x] **T23.6.3 - Cooldown starter** - What: The bench happens automatically at the limit. How: Implement startCooldown(untilTs) setting bot.cooldownUntil when the streak reaches bot.cooldownAfterLosses.
+- [x] **T23.6.4 - Cooldown gate** - What: No auto orders while benched. How: Implement cooldownGate rejecting signals while Date.now() < bot.cooldownUntil with reason 'cooldown'.
+- [x] **T23.6.5 - Cooldown settings** - What: Streak length and bench time are the trader's call. How: Add bot.cooldownAfterLosses (default 3) and bot.cooldownMinutes (default 10) numeric fields to the phase-7 settings panel.
+- [x] **T23.6.6 - Countdown UI** - What: The trader sees exactly when the bot returns. How: Bind a computed mm:ss remaining value in the bot block, styled orange with a subtle pulse from phase-3 tokens.
+- [x] **T23.6.7 - Manual clear action** - What: One click ends the bench early, no dialog. How: defineFn clearCooldown zeroing bot.cooldownUntil, bound with data-action to a small RESUME button.
+- [x] **T23.6.8 - Cooldown feed entries** - What: Bench start and end are on the record. How: Push cooldown-start and cooldown-end entries with streak details via pushDecision.
+- [x] **T23.6.9 - Single unit tests for cooldown fns** - What: Cooldown logic proven once per function. How: One Vitest test each for onFillClosed, startCooldown, cooldownGate and clearCooldown with targeted -t runs.
+- [x] **T23.6.10 - Merge loss cooldown** - What: The cooldown lands on main. How: Green targeted tests plus ESLint, merge feature/f23.6-loss-cooldown into main, delete the branch.
 
 ### F23.7 - Per-instrument position cap
 

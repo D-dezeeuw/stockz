@@ -160,17 +160,27 @@ describe('dispatchOrder', () => {
     expect(result.ok).toBe(true)
     expect(sent[0]).toMatchObject({
       venue: 'okx',
-      instrument: 'okx:BTC-USDT',
+      // Routed to the venue's own symbol rather than the desk's qualified one.
+      instrument: 'BTC-USDT',
       side: 'buy',
       type: 'market',
       size: 0.05,
       // Tagged so the journal and an audit can tell a bot order from a clicked one.
       origin: 'bot',
+      strategy: 'momentum-burst',
     })
 
     // An exit signal is not an entry to place; flattening is the position layer's job.
     expect((await dispatchOrder(signal({ action: 'flat' }), { send: async () => ({}) })).ok).toBe(false)
     expect((await dispatchOrder(signal({ instrument: '' }), { send: async () => ({}) })).ok).toBe(false)
+
+    // Refused at the mapper is refused before the network: a size that rounds to zero is
+    // not worth a round trip to find out.
+    const refused = await dispatchOrder(signal(), {
+      rules: { size: 0.0001, lotSize: 0.001, mid: 1 },
+      send: async () => ({ ok: true }),
+    })
+    expect(refused).toMatchObject({ ok: false, reason: 'size rounds to zero' })
   })
 })
 
