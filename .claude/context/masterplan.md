@@ -4452,16 +4452,16 @@
 **What:** Replayed ticks light up every dashboard block - charts, book, tape - exactly like live data, no forked code paths.
 **How:** Emit replayed ticks into the same normalized Spektrum addValue stream the live feed uses, behind a feed.source flag.
 
-- [ ] **T27.4.1 - Integration feature branch** - What: Pipeline wiring isolated until proven. How: git switch -c feature/replay-pipeline from main.
-- [ ] **T27.4.2 - Feed source state** - What: The desk always knows whether it is watching live or replay. How: setTradeFeedSource() guarding setValue('feed.source', 'live'|'replay') transitions.
-- [ ] **T27.4.3 - Replay tick emission** - What: Replay data flows down the identical pipe as OKX ticks. How: emitReplayTick() pushing through the same addValue('ticks') path the phase 11 pipeline normalizers feed.
-- [ ] **T27.4.4 - Live feed mute** - What: No live ticks contaminate a replay session. How: Pause OKX v5 WebSocket channel subscriptions on replay start and restore them on exit.
-- [ ] **T27.4.5 - Block compatibility pass** - What: Micro-charts, order book, and tape render replay data untouched. How: Drive each block from a recording in the Vite dev server and fix any live-only assumption found.
-- [ ] **T27.4.6 - Replay mode badge** - What: Zero chance of mistaking replay for live money. How: Header chip REPLAY rendered with data-if="feed.source == 'replay'" in warning orange.
-- [ ] **T27.4.7 - Clock override** - What: Time-based blocks show the recorded moment, not wall time. How: replayNow() returning the current replay timestamp, consumed wherever blocks read session time.
-- [ ] **T27.4.8 - Exit replay action** - What: One click back to live with a clean slate. How: exitReplay() stops the player, clears replay state, and re-subscribes live channels atomically.
-- [ ] **T27.4.9 - Integration unit tests** - What: Source switching and emission functions each verified once. How: One Vitest test per fn (setTradeFeedSource, emitReplayTick, replayNow, exitReplay) via vitest run -t.
-- [ ] **T27.4.10 - Integration merge** - What: Replay powers the whole dashboard from main. How: Lint plus targeted tests green, merge feature/replay-pipeline into main.
+- [x] **T27.4.1 - Integration feature branch** - What: Pipeline wiring isolated until proven. How: git switch -c feature/replay-pipeline from main.
+- [x] **T27.4.2 - Feed source state** - What: The desk always knows whether it is watching live or replay. How: setTradeFeedSource() guarding setValue('feed.source', 'live'|'replay') transitions.
+- [x] **T27.4.3 - Replay tick emission** - What: Replay data flows down the identical pipe as OKX ticks. How: emitReplayTick() pushing through the same addValue('ticks') path the phase 11 pipeline normalizers feed.
+- [x] **T27.4.4 - Live feed mute** - What: No live ticks contaminate a replay session. How: Pause OKX v5 WebSocket channel subscriptions on replay start and restore them on exit.
+- [x] **T27.4.5 - Block compatibility pass** - What: Micro-charts, order book, and tape render replay data untouched. How: Drive each block from a recording in the Vite dev server and fix any live-only assumption found.
+- [x] **T27.4.6 - Replay mode badge** - What: Zero chance of mistaking replay for live money. How: Header chip REPLAY rendered with data-if="feed.source == 'replay'" in warning orange.
+- [x] **T27.4.7 - Clock override** - What: Time-based blocks show the recorded moment, not wall time. How: replayNow() returning the current replay timestamp, consumed wherever blocks read session time.
+- [x] **T27.4.8 - Exit replay action** - What: One click back to live with a clean slate. How: exitReplay() stops the player, clears replay state, and re-subscribes live channels atomically.
+- [x] **T27.4.9 - Integration unit tests** - What: Source switching and emission functions each verified once. How: One Vitest test per fn (setTradeFeedSource, emitReplayTick, replayNow, exitReplay) via vitest run -t.
+- [x] **T27.4.10 - Integration merge** - What: Replay powers the whole dashboard from main. How: Lint plus targeted tests green, merge feature/replay-pipeline into main.
 
 ### F27.5 - Headless Backtest Runner
 

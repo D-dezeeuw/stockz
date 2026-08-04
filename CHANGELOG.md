@@ -12,6 +12,17 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ### Added
 
+- **F27.4 — playback drives the whole desk.** Replayed ticks go down the same pipe as live
+  ones, so the ladder, tape and charts render a recording without a forked code path. The
+  live feed is *muted* while playback runs rather than left going underneath, where its
+  ticks would interleave with the recorded ones and quietly corrupt the thing being
+  studied — and it is restored on exit, so leaving replay gives back a working desk rather
+  than a silent one that needs a reload. Time-based blocks read the recorded moment through
+  `feedNow()`, because a session clock showing 14:05 over a book from yesterday morning is
+  the most confusing thing this desk could display. An orange PLAYBACK badge sits in the
+  header, not inside the block being replayed: a warning that only shows where you are
+  already looking is a warning for somebody who did not need it.
+
 - **Market replay got its own name.** Phase 25's journal time-travel and phase 27's tick
   replay are different features that happen to share the word "replay", and the first draft
   of phase 27 dodged the clash with awkward names (`stepTick`, `tickSpeed`, `unload`) rather

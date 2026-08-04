@@ -5,6 +5,7 @@ import { registerAction } from '../actions/registry.js'
 import { ACTIONS } from '../actions/names.js'
 import { pushToast } from '../ui/toast.js'
 import { openRecordingDb, readChunks, listSessions } from './recordings.js'
+import { setFeedSource } from './source.js'
 import { createLogger } from '../utils/log.js'
 
 /**
@@ -126,6 +127,9 @@ export async function loadReplay(sessionId, deps = {}) {
   const session = (await listSessions(db)).find((row) => String(row?.id) === id)
   player = { id, ticks, cursor: 0, playing: false, handle: null }
 
+  // The desk switches stream as the recording loads, which mutes the live feed: ticks
+  // arriving underneath a replay would interleave with the recorded ones.
+  setFeedSource('playback', deps)
   publishPlayer({ active: true, total: ticks.length, cursor: 0, playing: false, label: String(session?.label ?? id) })
   log.info(`loaded ${id}: ${ticks.length} ticks`)
 
@@ -148,6 +152,8 @@ export function stepTick(deps = {}) {
   // Onto the live bus, so the ladder, tape, chart and strategies all replay without
   // knowing they are not live.
   emit(tick)
+  // The recorded moment, so time-based blocks show when this happened rather than now.
+  setValue(PATHS.playback.at, Number(tick?.ts) || 0)
   publishPlayer({ cursor: player.cursor })
 
   return tick
@@ -246,6 +252,8 @@ export function exitReplay(_state, payload = {}) {
   pauseReplay(payload)
   player = null
 
+  setFeedSource('live', payload)
+  setValue(PATHS.playback.at, 0)
   publishPlayer({ active: false, cursor: 0, total: 0, playing: false, label: '' })
   pushToast('back to live', 'success')
 

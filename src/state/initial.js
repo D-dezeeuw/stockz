@@ -208,6 +208,8 @@ export function initialState(overrides = {}) {
 
     // recorded markets, and the transport that plays them back
     [PATHS.playback.recording]: null,
+    [PATHS.playback.source]: 'live',
+    [PATHS.playback.at]: 0,
     [PATHS.playback.library]: [],
     [PATHS.playback.transport]: {
       active: false,

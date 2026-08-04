@@ -270,6 +270,9 @@ export const PATHS = Object.freeze({
     // The transport, as one object: its fields always move together, and a path each would
     // repaint the block up to five times for one action.
     transport: 'playback.transport',
+    // Which stream the desk is watching, and the recorded moment it is showing.
+    source: 'playback.source',
+    at: 'playback.at',
   }),
   analytics: Object.freeze({
     // The one switch every analytics number obeys, and the trade list it scopes to. The
