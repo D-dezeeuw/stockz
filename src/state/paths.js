@@ -226,6 +226,7 @@ export const PATHS = Object.freeze({
     lastBlock: 'breaker.lastBlock',
     blocked: 'breaker.blocked',
     killLatencyMs: 'breaker.killLatencyMs',
+    flattenPending: 'breaker.flattenPending',
   }),
   strategy: Object.freeze({
     registered: 'strategy.registered',

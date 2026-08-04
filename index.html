@@ -150,6 +150,11 @@
         <b>KILLED</b>
         <span class="kill__why truncate">{{breaker.reason}} · re-arm</span>
       </button>
+      <!-- Anything the flatten has not finished closing. Red until empty, because a wipe
+           that half-worked and looked finished is worse than one that visibly failed. -->
+      <span class="pending" data-each="inst in breaker.flattenPending">
+        <b class="pending__inst">{{inst}}</b>
+      </span>
     </header>
 
     <!-- The grid: every cell identical in size, driven entirely by the block registry.

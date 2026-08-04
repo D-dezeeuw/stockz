@@ -49,6 +49,25 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
   control a stray press can hit is its own emergency. Press-to-cancel latency is recorded, the
   ticket flashes the refusal under alternating class names so a second identical block still
   replays, and the saves counter says whether the cap is doing anything or just sitting there.
+- **The trip reaction: one wipe, one implementation** — a trip clears the slate through a single
+  orchestrator rather than at each call site, because two wipe paths drift and the one that
+  drifts is the one nobody exercises until the day it matters. **Disarm, cancel, flatten**, all
+  three dispatched in the same synchronous turn and none of them awaited. A failed venue call
+  gets exactly one retry: a loop would keep firing cancels into a venue already refusing them,
+  at the worst possible moment to be generating load. Not every code wipes — a losing streak
+  pauses entries and leaves the book alone, since flattening over a bad run realises losses the
+  trader never asked to take. Two bugs this closed, both of which would have made the wipe a
+  no-op exactly when it fired: the halt latch was rejecting **its own flatten**, since a tripped
+  breaker refused every order including the reduce-only closes it had just sent — exits are now
+  exempt by flag or by sign, and a desk that stopped itself and then trapped the trader in the
+  position it stopped over was the worst outcome available; and `closeIntent` carried
+  `reduceOnly` onto **spot and eToro**, where the flag is unsupported and the order is refused
+  outright, so FLAT ALL had been silently doing nothing on those venues. Whatever is still open
+  after a wipe is listed in the header in red until it empties: a flatten that half-worked and
+  looked finished is more dangerous than one that visibly failed, because the trader walks away
+  believing they are flat. The trip codes moved to a leaf module — the enum had lived beside the
+  code that reaches into the bot runner, and the first lookup table keyed by a code found it
+  still in its temporal dead zone.
 
 ## [0.23.0] — 2026-08-04 — Phase 23: Auto-Trade Bot Runner
 

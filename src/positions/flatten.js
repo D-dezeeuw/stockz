@@ -3,6 +3,7 @@ import { registerAction } from '../actions/registry.js'
 import { ACTIONS } from '../actions/names.js'
 import { openPositions, positionKey } from './store.js'
 import { submit as execSubmit } from '../exec/engine.js'
+import { capabilityFor } from '../exec/capabilities.js'
 import { pushToast } from '../ui/toast.js'
 
 /**
@@ -24,16 +25,23 @@ export function closeIntent(position) {
   const qty = Number(position?.qty) || 0
   if (qty === 0 || !position?.instrument) return null
 
-  return {
+  const intent = {
     venue: position.venue,
     symbol: position.instrument,
-    // Opposite side, absolute size, reduce-only: three properties that together make an
-    // overshoot into a fresh position in the other direction impossible.
+    // Opposite side, absolute size, market: an exit that does not fill is not an exit.
     side: qty > 0 ? 'sell' : 'buy',
     size: Math.abs(qty),
     type: 'market',
-    reduceOnly: true,
   }
+
+  // Reduce-only only where the venue honours it. Spot has no position to reduce and eToro
+  // has no such flag, and an intent carrying it there is refused outright as unsupported —
+  // which would make FLAT ALL, and a breaker trip's own flatten, silently do nothing on
+  // exactly those venues. The size is already exactly what is held, so the overshoot the
+  // flag guards against cannot happen without the flag either.
+  if (capabilityFor(position.venue, position.instrument).reduceOnly) intent.reduceOnly = true
+
+  return intent
 }
 
 /**

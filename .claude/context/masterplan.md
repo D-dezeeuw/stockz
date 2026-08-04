@@ -3983,16 +3983,16 @@
 **What:** One trip wipes the slate: all orders cancelled, all positions flat, all bots off.
 **How:** executeTripAction() disarms bots then fires venue cancel-all and reduce-only market flattens over OKX v5 and EToro REST in parallel.
 
-- [ ] **T24.6.1 - Branch trip action** - What: Isolated work on the trip reaction. How: git checkout -b feature/f24.6-trip-action from an up-to-date main.
-- [ ] **T24.6.2 - Orchestrator fn** - What: One function owns the full slate-wipe sequence. How: Implement executeTripAction(code) running disarm, cancel-all and flatten-all with per-venue calls issued in parallel via Promise.allSettled.
-- [ ] **T24.6.3 - Cancel-all per venue** - What: Every resting order dies at once. How: Implement cancelAll() posting OKX v5 /api/v5/trade/cancel-batch-orders with HMAC-signed headers and issuing EToro REST order deletes.
-- [ ] **T24.6.4 - Flatten-all per venue** - What: Every open position goes to flat at market. How: Implement flattenAll() sending reduce-only market closes per position from the phase-18 snapshot to OKX and EToro.
-- [ ] **T24.6.5 - Single retry pass** - What: One transient venue hiccup does not leave exposure. How: Retry each failed cancel or flatten exactly once after 500ms via setTimeout, then surface the failure - no retry loops.
-- [ ] **T24.6.6 - Flatten-pending state** - What: The trader sees anything not yet flat. How: Maintain breaker.flattenPending as a list of instruments cleared by phase-18 position updates, rendered red until empty.
-- [ ] **T24.6.7 - Trip-code action map** - What: Each trip does exactly what it should, nothing more. How: Encode TRIP_ACTIONS mapping codes 1 and 4 to full flatten plus disarm and code 3 to pause-only, consumed by a watch on breaker.tripped.
-- [ ] **T24.6.8 - In-flight guard** - What: A double trip never double-flattens. How: Add an in-flight boolean checked and set synchronously at the top of executeTripAction.
-- [ ] **T24.6.9 - Single unit tests for trip fns** - What: The wipe proven once per function. How: One Vitest test each for executeTripAction, cancelAll and flattenAll using vi.mock on fetch, targeted npx vitest run -t.
-- [ ] **T24.6.10 - Merge trip action** - What: The trip reaction lands on main. How: Green targeted tests plus ESLint, merge feature/f24.6-trip-action into main, delete the branch.
+- [x] **T24.6.1 - Branch trip action** - What: Isolated work on the trip reaction. How: git checkout -b feature/f24.6-trip-action from an up-to-date main.
+- [x] **T24.6.2 - Orchestrator fn** - What: One function owns the full slate-wipe sequence. How: Implement executeTripAction(code) running disarm, cancel-all and flatten-all with per-venue calls issued in parallel via Promise.allSettled.
+- [x] **T24.6.3 - Cancel-all per venue** - What: Every resting order dies at once. How: Implement cancelAll() posting OKX v5 /api/v5/trade/cancel-batch-orders with HMAC-signed headers and issuing EToro REST order deletes.
+- [x] **T24.6.4 - Flatten-all per venue** - What: Every open position goes to flat at market. How: Implement flattenAll() sending reduce-only market closes per position from the phase-18 snapshot to OKX and EToro.
+- [x] **T24.6.5 - Single retry pass** - What: One transient venue hiccup does not leave exposure. How: Retry each failed cancel or flatten exactly once after 500ms via setTimeout, then surface the failure - no retry loops.
+- [x] **T24.6.6 - Flatten-pending state** - What: The trader sees anything not yet flat. How: Maintain breaker.flattenPending as a list of instruments cleared by phase-18 position updates, rendered red until empty.
+- [x] **T24.6.7 - Trip-code action map** - What: Each trip does exactly what it should, nothing more. How: Encode TRIP_ACTIONS mapping codes 1 and 4 to full flatten plus disarm and code 3 to pause-only, consumed by a watch on breaker.tripped.
+- [x] **T24.6.8 - In-flight guard** - What: A double trip never double-flattens. How: Add an in-flight boolean checked and set synchronously at the top of executeTripAction.
+- [x] **T24.6.9 - Single unit tests for trip fns** - What: The wipe proven once per function. How: One Vitest test each for executeTripAction, cancelAll and flattenAll using vi.mock on fetch, targeted npx vitest run -t.
+- [x] **T24.6.10 - Merge trip action** - What: The trip reaction lands on main. How: Green targeted tests plus ESLint, merge feature/f24.6-trip-action into main, delete the branch.
 
 ### F24.7 - Header breaker LEDs
 

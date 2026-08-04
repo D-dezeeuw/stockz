@@ -77,6 +77,32 @@
   }
 }
 
+/*
+ * What the flatten has not finished closing. Red and loud until the list empties, because a
+ * wipe that half-worked and looked finished is more dangerous than one that visibly failed:
+ * the trader walks away believing they are flat.
+ */
+.pending {
+  display: inline-flex;
+  gap: var(--sp-1);
+  align-items: center;
+}
+
+/* No list, no chrome. The container is always mounted so the each-binding has somewhere to
+   render; empty it must take up nothing at all. */
+.pending:empty {
+  display: none;
+}
+
+.pending__inst {
+  padding: 1px var(--sp-1);
+  border: 1px solid var(--orange-hot);
+  border-radius: var(--radius-1);
+  color: var(--orange-hot);
+  font-size: var(--fs-0);
+  letter-spacing: 0.04em;
+}
+
 /* The pause stamp. Across the vitals, not inside them. */
 .paused {
   display: flex;
