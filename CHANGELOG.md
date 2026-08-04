@@ -12,6 +12,14 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ### Added
 
+- **Burst-click queue** — four clicks in 300ms mean four orders, each at the price its
+  own click saw, drained serially in click order. The payload is frozen on the click
+  rather than re-priced on the way out: an order that quietly repriced itself while
+  queued is worse than a rejected one. The queue lives *outside* the reactive tree —
+  `setValue` lands a frame later, and a burst arrives well inside one frame, so a queue
+  read back from state drains the same click twice. Past the cap, clicks are refused
+  visibly, because a click that vanishes silently looks like one that never registered.
+  (F15.8)
 - **Order feedback** — a toast for the trader who glances and a generated tone for the
   one who does not, on fills, rejects and cancels only: a toast per partial on a sweeping
   fill is noise, and interrupting for a working order teaches the trader to ignore

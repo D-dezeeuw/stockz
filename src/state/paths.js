@@ -79,6 +79,7 @@ export const PATHS = Object.freeze({
     tapeFloors: 'settings.tapeFloors',
     qtyPresets: 'settings.qtyPresets',
     volume: 'settings.volume',
+    maxBurst: 'settings.maxBurst',
   }),
   market: Object.freeze({
     venues: 'market.venues',
@@ -110,6 +111,7 @@ export const PATHS = Object.freeze({
     dayPnl: 'trade.dayPnl',
     buyingPower: 'trade.buyingPower',
     lastReject: 'trade.lastReject',
+    queue: 'trade.queue',
     ticketPrice: 'trade.ticketPrice',
     ticketSide: 'trade.ticketSide',
     ticketSize: 'trade.ticketSize',

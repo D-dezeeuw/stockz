@@ -274,6 +274,8 @@
                 <button type="button" class="ticket__go ticket__go--sell" data-action="click"
                         data-fn="ticket.submit" data-side="sell" :disabled="!trade.armed">SELL</button>
               </div>
+              <!-- Backlog building under machine-gun clicking. -->
+              <span class="chip chip--warn" data-if="trade.queue.length > 0">queued {{trade.queue.length}}</span>
               <!-- Why the last click did not send, in the trader's own words. -->
               <p class="ticket__reject" data-if="trade.lastReject">{{trade.lastReject}}</p>
               <button type="button" class="ticket__arm" data-action="click" data-fn="ticket.arm"

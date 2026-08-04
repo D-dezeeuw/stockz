@@ -8,13 +8,18 @@ import {
   resetSubmit,
 } from './submit.js'
 import { clearActions, dispatchAction } from '../actions/registry.js'
+import { resetQueue } from './queue.js'
 import { appState, setValue, tick, resetState } from '../app/engine.js'
 
 beforeEach(() => {
   clearActions()
   resetState()
   resetSubmit()
+  resetQueue()
 })
+
+/** Let the queue's microtask drain run. */
+const settle = () => new Promise((resolve) => setTimeout(resolve, 0))
 
 /** Put the desk in a state where an order could actually go out. */
 function armDesk(overrides = {}) {
@@ -100,7 +105,7 @@ describe('primePayload', () => {
 })
 
 describe('registerSubmitAction', () => {
-  it('paints the order in the same frame as the click and refuses a cold desk', () => {
+  it('paints the order in the same frame as the click and refuses a cold desk', async () => {
     const sent = []
     const name = registerSubmitAction({ send: (order) => sent.push(order), now: () => 5000 })
     expect(name).toBe('ticket.submit')
@@ -119,12 +124,16 @@ describe('registerSubmitAction', () => {
       state: 'pending',
       ts: 5000,
     })
+    // The row is painted before the send has even started — that is the whole point.
+    expect(sent).toHaveLength(0)
+    await settle()
     expect(sent).toHaveLength(1)
     expect(sent[0].clOrdId).toBe(appState.trade.orders[0].clOrdId)
 
     // The button pressed wins over whatever the ticket last held.
     dispatchAction(name, { side: 'sell' })
     tick()
+    await settle()
     expect(appState.trade.orders[1].side).toBe('sell')
     expect(appState.trade.lastReject).toBe('')
 
