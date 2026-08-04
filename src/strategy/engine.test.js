@@ -17,7 +17,12 @@ describe('describeStrategies', () => {
     })
     // The composite ships as an ordinary built-in rather than as a special case, so the
     // runs list, the quarantine and the budget all treat it like a member.
-    expect(summaries.map((s) => s.id)).toEqual(['noop', 'momentum-burst', 'composite'])
+    expect(summaries.map((s) => s.id)).toEqual([
+      'noop',
+      'momentum-burst',
+      'vwap-revert',
+      'composite',
+    ])
     expect(BUILTIN_STRATEGIES).toContain(noopStrategy)
 
     // Which hooks a strategy actually implements is otherwise buried in its module.

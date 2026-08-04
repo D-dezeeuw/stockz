@@ -2,6 +2,7 @@ import { defineStrategy, createStrategyContext, toSignal, resolveParams } from '
 import { noopStrategy } from './builtin/noop.js'
 import { compositeStrategy } from './composite.js'
 import { momentumStrategy } from './builtin/momentum.js'
+import { vwapRevertStrategy } from './builtin/vwap-revert.js'
 import { safeInvoke } from './sandbox.js'
 
 /**
@@ -16,7 +17,12 @@ export { defineStrategy, createStrategyContext, toSignal, resolveParams }
 export { HOOKS, SIGNAL_ACTIONS, NEUTRAL_SIGNAL, validateStrategyShape } from './contract.js'
 
 /** Strategies that ship with the desk. */
-export const BUILTIN_STRATEGIES = Object.freeze([noopStrategy, momentumStrategy, compositeStrategy])
+export const BUILTIN_STRATEGIES = Object.freeze([
+  noopStrategy,
+  momentumStrategy,
+  vwapRevertStrategy,
+  compositeStrategy,
+])
 
 /**
  * Summarise strategies for the inspector.
