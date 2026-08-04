@@ -44,6 +44,17 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ### Added
 
+- **F26.10 — the performance report leaves the app.** Everything the analytics section
+  knows, frozen into one snapshot: JSON for a machine, markdown for a person, PNGs for the
+  charts. A dashboard that can only be read on the screen it renders on is one nobody
+  reviews away from the desk, and away from the desk is the only time a trader is calm. The
+  snapshot carries its period *and* the bounds that period resolved to, because a report
+  headed "week" with no dates stops being readable the moment there are two in a folder;
+  filenames lead with a zero-padded date so a folder sorts itself. `downloadFile` learned to
+  carry a Blob through unchanged — stringifying one yields the literal text `[object Blob]`,
+  so a PNG down that path would have landed on disk as a 15-byte file with an image
+  extension.
+
 - **F26.9 — one period switch over every analytics number.** Day, week, month or all time,
   and every KPI tile, chart and ranking obeys it: a dashboard where the tiles said "today"
   while the heatmap said "everything" would be worse than one that only ever showed all

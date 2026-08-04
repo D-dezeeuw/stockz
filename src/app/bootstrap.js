@@ -50,6 +50,7 @@ import { startEquityChart } from '../analytics/equity.js'
 import { startHeatmap } from '../analytics/heatmap.js'
 import { registerRankingActions } from '../analytics/instruments.js'
 import { registerPeriodActions, mountPeriod } from '../analytics/period.js'
+import { registerReportActions } from '../analytics/report.js'
 import { startHistogram } from '../analytics/holdtime.js'
 import { startStreakStrip } from '../analytics/streaks.js'
 import { startFeeBars } from '../analytics/fees.js'
@@ -183,6 +184,7 @@ export function bootstrap(options = {}) {
   startHeatmap()
   registerRankingActions()
   registerPeriodActions()
+  registerReportActions()
   startHistogram()
   startStreakStrip()
   startFeeBars()

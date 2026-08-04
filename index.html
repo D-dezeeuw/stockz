@@ -524,6 +524,11 @@
                       data-period="all"
                       :class="analytics.period === 'all' ? 'chip chip--on' : 'chip'">all</button>
             </div>
+            <div class="period__out" data-if="block.id === 'analytics'">
+              <button type="button" class="chip" data-action="click" data-fn="analytics.exportJson">json</button>
+              <button type="button" class="chip" data-action="click" data-fn="analytics.copySummary">copy</button>
+              <button type="button" class="chip" data-action="click" data-fn="analytics.exportCharts">png</button>
+            </div>
             <div class="kpis" data-if="block.id === 'analytics'" data-each="analytics.kpis" data-as="k">
               <div class="kpi" :class="'kpi kpi--' + k.tone">
                 <span class="kpi__value">{{k.value}}</span>
