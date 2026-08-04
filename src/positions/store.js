@@ -2,6 +2,7 @@ import { setValue } from '../app/engine.js'
 import { PATHS } from '../state/paths.js'
 import { makePosition, applyFill, unrealizedPnl, sideOf, DUST } from './math.js'
 import { splitSymbol } from '../lists/ops.js'
+import { appendRealization, flushLedger } from './ledger.js'
 
 /**
  * The positions book.
@@ -100,6 +101,18 @@ export function ingestFill(fill) {
     ts: fill?.ts,
   })
 
+  // A close is booked the moment it happens: the ledger is the session's only honest
+  // scoreboard, and reconstructing it later from order history is a different, worse job.
+  if (realized !== 0) {
+    appendRealization({
+      instrument: key,
+      amount: realized,
+      fee: fill?.fee,
+      ts: fill?.ts,
+      qty: magnitude,
+    })
+  }
+
   return { key, position: upsertPosition(key, position), realized }
 }
 
@@ -187,6 +200,7 @@ export function flushPositions() {
   const rows = openPositions()
   setValue(PATHS.trade.positions, rows)
   setValue(PATHS.trade.pnl, pnlTotals())
+  flushLedger()
 
   return true
 }

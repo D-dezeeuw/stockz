@@ -25,9 +25,10 @@ describe('applyDefaultBindings', () => {
       payload: { side: 'buy' },
     })
     expect(resolveKey('KeyS').payload).toEqual({ side: 'sell' })
-    // F flattens outright. Escape routes through the panic gesture: one tap closes,
-    // two flatten — a key pressed as often as Escape must not fire a flatten on the first.
-    expect(resolveKey('KeyF').action).toBe('orders.cancelAll')
+    // F flattens positions, C cancels orders — two different exits, because a trader
+    // with working orders and no position wants only one of them.
+    expect(resolveKey('KeyF').action).toBe('positions.flattenAll')
+    expect(resolveKey('KeyC').action).toBe('orders.cancelAll')
     expect(resolveKey('Escape').action).toBe('keys.panic')
     expect(resolveKey('shift+ArrowUp').payload).toEqual({ ticks: 10 })
 

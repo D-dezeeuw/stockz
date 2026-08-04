@@ -42,6 +42,7 @@
   <link rel="stylesheet" href="./src/styles/states.css">
   <link rel="stylesheet" href="./src/styles/ladder.css">
   <link rel="stylesheet" href="./src/styles/ticket.css">
+  <link rel="stylesheet" href="./src/styles/positions.css">
   <link rel="stylesheet" href="./src/styles/utilities.css">
 
   <!-- The UI engine, straight from the CDN. Pinned to an exact version: the live page
@@ -289,7 +290,28 @@
               <button type="button" class="ticket__arm" data-action="click" data-fn="ticket.arm"
                       :class="trade.armed ? 'ticket__arm ticket__arm--on' : 'ticket__arm'">{{trade.armed ? 'ARMED' : 'SAFE'}}</button>
             </div>
-            <p class="label" data-if="block.id !== 'book' &amp;&amp; block.id !== 'tape' &amp;&amp; block.id !== 'ticket'">ready</p>
+            <!-- Positions: exposure, entry, live P&L, and a one-click exit per row. -->
+            <div class="positions" data-if="block.id === 'positions'">
+              <div class="positions__totals">
+                <span :class="trade.pnl.unrealized >= 0 ? 'pnl pnl--up' : 'pnl pnl--down'">{{fmt.signed(trade.pnl.unrealized)}}</span>
+                <span class="label">open</span>
+                <span :class="trade.score.net >= 0 ? 'pnl pnl--up' : 'pnl pnl--down'">{{fmt.signed(trade.score.net)}}</span>
+                <span class="label">day · {{trade.score.wins}}/{{trade.score.count}}</span>
+                <button type="button" class="ticket__cancel" data-action="click"
+                        data-fn="positions.flattenAll">FLAT ALL</button>
+              </div>
+              <div class="positions__rows" data-each="p in trade.positions">
+                <div class="positions__row" :class="'positions__row positions__row--' + p.side">
+                  <span class="positions__inst">{{p.instrument}}</span>
+                  <span class="positions__qty">{{p.qty}}</span>
+                  <span class="positions__avg">{{fmt.price(p.avgPx)}}</span>
+                  <span :class="p.unrealized >= 0 ? 'pnl pnl--up' : 'pnl pnl--down'">{{fmt.signed(p.unrealized)}}</span>
+                  <button type="button" class="chip" data-action="click" data-fn="positions.flatten"
+                          :data-key="p.key">×</button>
+                </div>
+              </div>
+            </div>
+            <p class="label" data-if="block.id !== 'book' &amp;&amp; block.id !== 'tape' &amp;&amp; block.id !== 'ticket' &amp;&amp; block.id !== 'positions'">ready</p>
           </div>
         </div>
       </section>
