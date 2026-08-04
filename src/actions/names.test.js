@@ -14,6 +14,7 @@ import { registerTapeActions } from '../book/tape.js'
 import { registerCompactActions } from '../hud/compact.js'
 import { registerAlertActions } from '../alerts/price.js'
 import { registerToastActions } from '../ui/toast.js'
+import { registerNotifyActions } from '../alerts/notify.js'
 import { registerStrategyActions } from '../strategy/registry.js'
 import { registerTicketActions } from '../ticket/actions.js'
 import { registerSizingActions } from '../ticket/sizing.js'
@@ -57,6 +58,7 @@ describe('allActionNames', () => {
       'alerts.remove',
       'alerts.toggle',
       'alerts.testSound',
+      'alerts.enableNative',
       'book.prefill',
       'book.setGroup',
       'book.setFloor',
@@ -109,6 +111,7 @@ describe('allActionNames', () => {
     registerCompactActions()
     registerAlertActions()
     registerToastActions()
+    registerNotifyActions()
     registerStrategyActions()
     registerTicketActions()
     registerSizingActions()
