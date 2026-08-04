@@ -2249,16 +2249,16 @@
 **What:** A book you can trust - the scalper never trades off a stale or corrupted ladder.
 **How:** OKX v5 books channel snapshot and update apply fns with CRC32 checksum verification, seqId ordering, and worker offload.
 
-- [ ] **T14.2.1 - Branch book state work** - What: Book correctness built in isolation. How: git checkout -b feature/14-2-book-state from main.
-- [ ] **T14.2.2 - Define the book store shape** - What: One canonical depth source for ladder and metrics. How: Spektrum value holding sorted bid and ask arrays of price/size pairs plus seqId and timestamp.
-- [ ] **T14.2.3 - Implement applySnapshot** - What: A clean book on every subscribe. How: Pure fn replacing state from the OKX books channel snapshot action, sorting bids desc and asks asc.
-- [ ] **T14.2.4 - Implement applyUpdate** - What: Depth accurate to the last delta. How: Pure fn inserting, replacing, or deleting levels by price from update actions while preserving sort order.
-- [ ] **T14.2.5 - Implement crc32 per OKX spec** - What: Corruption detectable on every frame. How: Pure crc32 fn over the colon-joined top-25 bid/ask price:size string exactly as OKX v5 documents.
-- [ ] **T14.2.6 - Verify checksum and trigger resync** - What: A bad book heals itself without user action. How: Compare computed crc32 to the frame's cs field; on mismatch unsubscribe and resubscribe via the phase 9 socket client.
-- [ ] **T14.2.7 - Detect seqId gaps** - What: Missed deltas never silently skew depth. How: hasSeqGap fn comparing prevSeqId to stored seqId, routing gaps into the same resync path.
-- [ ] **T14.2.8 - Offload apply and crc to the worker** - What: Book math never blocks the UI thread. How: Run applyUpdate and crc32 inside the phase 11 feed Worker, posting compact arrays to the store.
-- [ ] **T14.2.9 - Write single unit tests for book fns** - What: Apply and checksum math locked. How: One Vitest test each for applySnapshot, applyUpdate, crc32, and hasSeqGap, run individually via vitest run -t.
-- [ ] **T14.2.10 - Verify and merge book state** - What: A provably consistent book behind the ladder. How: Soak against live OKX books frames with zero mismatches logged, then merge feature/14-2-book-state into main.
+- [x] **T14.2.1 - Branch book state work** - What: Book correctness built in isolation. How: git checkout -b feature/14-2-book-state from main.
+- [x] **T14.2.2 - Define the book store shape** - What: One canonical depth source for ladder and metrics. How: Spektrum value holding sorted bid and ask arrays of price/size pairs plus seqId and timestamp.
+- [x] **T14.2.3 - Implement applySnapshot** - What: A clean book on every subscribe. How: Pure fn replacing state from the OKX books channel snapshot action, sorting bids desc and asks asc.
+- [x] **T14.2.4 - Implement applyUpdate** - What: Depth accurate to the last delta. How: Pure fn inserting, replacing, or deleting levels by price from update actions while preserving sort order.
+- [x] **T14.2.5 - Implement crc32 per OKX spec** - What: Corruption detectable on every frame. How: Pure crc32 fn over the colon-joined top-25 bid/ask price:size string exactly as OKX v5 documents.
+- [x] **T14.2.6 - Verify checksum and trigger resync** - What: A bad book heals itself without user action. How: Compare computed crc32 to the frame's cs field; on mismatch unsubscribe and resubscribe via the phase 9 socket client.
+- [x] **T14.2.7 - Detect seqId gaps** - What: Missed deltas never silently skew depth. How: hasSeqGap fn comparing prevSeqId to stored seqId, routing gaps into the same resync path.
+- [ ] **T14.2.8 - Offload apply and crc to the worker** - What: Book math never blocks the UI thread. How: Run applyUpdate and crc32 inside the phase 11 feed Worker, posting compact arrays to the store. **Deferred:** phase 11 shipped no Worker (the rAF flush was enough), and crc32 over 50 levels costs microseconds — revisit if a profile ever shows it on the frame budget.
+- [x] **T14.2.9 - Write single unit tests for book fns** - What: Apply and checksum math locked. How: One Vitest test each for applySnapshot, applyUpdate, crc32, and hasSeqGap, run individually via vitest run -t.
+- [x] **T14.2.10 - Verify and merge book state** - What: A provably consistent book behind the ladder. How: Soak against live OKX books frames with zero mismatches logged, then merge feature/14-2-book-state into main.
 
 ### F14.3 - Time & Sales Tape
 

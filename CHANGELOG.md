@@ -12,6 +12,13 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ### Added
 
+- **Checksum-validated book state** — depth maintained by deltas is the one structure
+  that goes *silently* wrong: a dropped update leaves size resting at a price nobody is
+  quoting, and the ladder keeps rendering it confidently. Every applied frame is hashed
+  against OKX's CRC32 (matched to zlib in the signed 32-bit space the venue publishes in)
+  and checked for sequence gaps; either failure marks the book invalid and triggers a
+  resubscribe rather than a repair, because a book that has been wrong once can only be
+  replaced. (F14.2)
 - **Depth ladder** — bid/ask levels with proportional size bars, cumulative size (what a
   sweep through a level would actually cost), and a spread row quoting the cost in
   *ticks*, the unit that decides whether a scalp clears its own cost. Both sides share
