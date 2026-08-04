@@ -87,6 +87,7 @@ export function initialState(overrides = {}) {
     },
     [PATHS.ui.hudRow]: [],
     [PATHS.ui.strategyForm]: [],
+    [PATHS.ui.compositeWeights]: [],
     [PATHS.ui.hud]: {
       latencyMs: 0,
       latencyGrade: 'warn',

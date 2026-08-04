@@ -12,6 +12,20 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ### Added
 
+- **Weighted vote composition** — running four strategies on one instrument does not give a
+  trader four edges, it gives them four buttons and a decision to make in the half second
+  they do not have. The composite makes that decision the same way every time: a weighted
+  sum of direction × conviction, with a **dead zone** in the middle. The dead zone is the
+  whole point — without it a blend landing at 0.02 one tick and −0.02 the next goes long,
+  short, long off noise, at two spreads and a fee each time, which is how a "consensus"
+  system loses money faster than any of its members would alone. **Expired members do not
+  vote**: a strategy that has gone quiet is not abstaining in favour of the others, its last
+  opinion simply is not evidence, and the blend expires with its shakiest member because a
+  consensus is only as current as the oldest opinion inside it. Weights are stored **raw**
+  and normalised on read — storing the normalised value would rewrite every other slider, so
+  the next drag would renormalise against numbers nobody chose and the sliders would fight
+  the hand. The blend never votes on itself, and it registers as an ordinary strategy, so
+  the runs list, the quarantine, the tick budget and the history all treat it like a member.
 - **Signal history** — the question after a bad trade is never "what is the strategy saying
   now" but "what was it saying when I clicked", and live state cannot answer it: it holds
   one signal per run and overwrites it every tick. So every emission is appended to a

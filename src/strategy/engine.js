@@ -1,5 +1,6 @@
 import { defineStrategy, createStrategyContext, toSignal, resolveParams } from './contract.js'
 import { noopStrategy } from './builtin/noop.js'
+import { compositeStrategy } from './composite.js'
 import { safeInvoke } from './sandbox.js'
 
 /**
@@ -14,7 +15,7 @@ export { defineStrategy, createStrategyContext, toSignal, resolveParams }
 export { HOOKS, SIGNAL_ACTIONS, NEUTRAL_SIGNAL, validateStrategyShape } from './contract.js'
 
 /** Strategies that ship with the desk. */
-export const BUILTIN_STRATEGIES = Object.freeze([noopStrategy])
+export const BUILTIN_STRATEGIES = Object.freeze([noopStrategy, compositeStrategy])
 
 /**
  * Summarise strategies for the inspector.

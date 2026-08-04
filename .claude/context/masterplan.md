@@ -3379,16 +3379,16 @@
 **What:** Blend several strategies into one composite signal so the desk trades a consensus, not a cacophony.
 **How:** composeSignals summing dir*strength*weight across member runs, normalized weights with a slider UI, published as a virtual run in the registry.
 
-- [ ] **T20.10.1 - Cut composition branch** - What: Final engine feature in its own lane. How: Create feature/f20.10-weighted-vote from main.
-- [ ] **T20.10.2 - normalizeWeights fn** - What: Weights always sum to one no matter what users type. How: Pure fn scaling a weight map proportionally with an equal-split fallback for all-zero input.
-- [ ] **T20.10.3 - composeSignals fn** - What: Many opinions become one directional score. How: Pure fn summing dir*strength*weight over live member signals, ignoring expired ones via isExpired.
-- [ ] **T20.10.4 - voteThreshold fn** - What: Weak consensus stays flat instead of flip-flopping. How: Pure fn mapping the composite score to -1/0/1 with a configurable dead zone from the param schema.
-- [ ] **T20.10.5 - compositeTtl fn** - What: The blend expires when its shakiest member does. How: Pure fn taking the minimum remaining ttl across contributing member signals.
-- [ ] **T20.10.6 - Virtual composite run** - What: The blend behaves like any other strategy. How: Register the composition as a defineStrategy descriptor whose onTick calls composeSignals and publishSignal.
-- [ ] **T20.10.7 - Weight persistence** - What: Your blend recipe survives reloads. How: Store the weight map under strategy.params.composite via spektrum/persist.
-- [ ] **T20.10.8 - Weights editor UI** - What: Tune member influence with live sliders. How: data-each over members emitting range inputs bound by data-model, re-normalized on input via the watch on the slice.
-- [ ] **T20.10.9 - Single tests per vote fn** - What: Normalization, composition, threshold and ttl proven alone. How: One Vitest test per fn with conflicting-signal fixtures, run via separate -t filters.
-- [ ] **T20.10.10 - Merge composition** - What: Consensus signals ready for the bot runner. How: Green lint and targeted runs, then merge feature/f20.10 to main.
+- [x] **T20.10.1 - Cut composition branch** - What: Final engine feature in its own lane. How: Create feature/f20.10-weighted-vote from main.
+- [x] **T20.10.2 - normalizeWeights fn** - What: Weights always sum to one no matter what users type. How: Pure fn scaling a weight map proportionally with an equal-split fallback for all-zero input.
+- [x] **T20.10.3 - composeSignals fn** - What: Many opinions become one directional score. How: Pure fn summing dir*strength*weight over live member signals, ignoring expired ones via isExpired.
+- [x] **T20.10.4 - voteThreshold fn** - What: Weak consensus stays flat instead of flip-flopping. How: Pure fn mapping the composite score to -1/0/1 with a configurable dead zone from the param schema.
+- [x] **T20.10.5 - compositeTtl fn** - What: The blend expires when its shakiest member does. How: Pure fn taking the minimum remaining ttl across contributing member signals.
+- [x] **T20.10.6 - Virtual composite run** - What: The blend behaves like any other strategy. How: Register the composition as a defineStrategy descriptor whose onTick calls composeSignals and publishSignal.
+- [x] **T20.10.7 - Weight persistence** - What: Your blend recipe survives reloads. How: Store the weight map under strategy.params.composite via spektrum/persist.
+- [x] **T20.10.8 - Weights editor UI** - What: Tune member influence with live sliders. How: data-each over members emitting range inputs bound by data-model, re-normalized on input via the watch on the slice.
+- [x] **T20.10.9 - Single tests per vote fn** - What: Normalization, composition, threshold and ttl proven alone. How: One Vitest test per fn with conflicting-signal fixtures, run via separate -t filters.
+- [x] **T20.10.10 - Merge composition** - What: Consensus signals ready for the bot runner. How: Green lint and targeted runs, then merge feature/f20.10 to main.
 
 ---
 

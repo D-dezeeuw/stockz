@@ -14,6 +14,7 @@ import {
   showParamForm,
   tickStrategies,
   rollStrategySessions,
+  tuneWeight,
 } from './registry.js'
 import { defineStrategy } from './contract.js'
 import { ACTIONS } from '../actions/names.js'
@@ -177,13 +178,13 @@ describe('resetStrategies', () => {
 describe('registerStrategyActions', () => {
   it('registers the built-ins once and wires the stop button', () => {
     expect(registerStrategyActions()).toBe(ACTIONS.strategy.stop)
-    expect(knownStrategies().map((s) => s.id)).toEqual(['noop'])
+    expect(knownStrategies().map((s) => s.id)).toEqual(['noop', 'composite'])
 
     // Boot may run twice in a hot reload. The action registry rejects the duplicate — its
     // job — but the built-ins must not be registered a second time behind it.
     clearActions()
     registerStrategyActions()
-    expect(knownStrategies()).toHaveLength(1)
+    expect(knownStrategies()).toHaveLength(2)
 
     const bus = fakeBus()
     const run = startStrategy('noop', 'okx:BTC-USDT', { subscribe: bus.subscribe })
@@ -279,5 +280,23 @@ describe('rollStrategySessions', () => {
     expect(run.memory).toEqual({ n: 2 })
 
     expect(rollStrategySessions(NaN)).toEqual([])
+  })
+})
+
+describe('tuneWeight', () => {
+  it('republishes the whole editor, because one slider moving moves them all', () => {
+    registerStrategy(stub())
+    registerStrategy(stub('breakout'))
+    const bus = fakeBus()
+    const a = startStrategy('mean-rev', 'okx:BTC-USDT', { subscribe: bus.subscribe })
+    const b = startStrategy('breakout', 'okx:BTC-USDT', { subscribe: bus.subscribe })
+
+    tuneWeight({ member: a.key, value: 3 })
+    tick()
+    tuneWeight({ member: b.key, value: 1 })
+    tick()
+
+    // An editor that only updated the dragged row would lie about every other one.
+    expect(appState.ui.compositeWeights.map((r) => r.pct)).toEqual([75, 25])
   })
 })

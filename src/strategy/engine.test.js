@@ -7,16 +7,17 @@ describe('describeStrategies', () => {
   it('answers the first question asked of a strategy that is not firing', () => {
     const summaries = describeStrategies()
 
-    expect(summaries).toEqual([
-      {
-        id: 'noop',
-        name: 'No-op (reference)',
-        // budgetMs is merged in by defineStrategy: every strategy carries a tick budget
-        // whether or not its author thought about one.
-        params: ['budgetMs', 'label'],
-        hooks: ['init', 'onTick', 'onCandle'],
-      },
-    ])
+    expect(summaries[0]).toEqual({
+      id: 'noop',
+      name: 'No-op (reference)',
+      // budgetMs is merged in by defineStrategy: every strategy carries a tick budget
+      // whether or not its author thought about one.
+      params: ['budgetMs', 'label'],
+      hooks: ['init', 'onTick', 'onCandle'],
+    })
+    // The composite ships as an ordinary built-in rather than as a special case, so the
+    // runs list, the quarantine and the budget all treat it like a member.
+    expect(summaries.map((s) => s.id)).toEqual(['noop', 'composite'])
     expect(BUILTIN_STRATEGIES).toContain(noopStrategy)
 
     // Which hooks a strategy actually implements is otherwise buried in its module.

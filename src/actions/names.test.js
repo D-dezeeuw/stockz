@@ -45,6 +45,7 @@ describe('allActionNames', () => {
       'strategy.stop',
       'strategy.setParam',
       'strategy.resume',
+      'strategy.setWeight',
       'book.prefill',
       'book.setGroup',
       'book.setFloor',
