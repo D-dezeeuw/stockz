@@ -1,0 +1,84 @@
+/*
+ * Watchlist.
+ *
+ * The block a scalper scans rather than reads: symbol, price, move. Three columns, tabular
+ * figures so the decimal points line up down the column, and the move carries the only
+ * colour on the row — green up, orange down, exactly as everywhere else on the desk.
+ *
+ * Every row is a button. Picking what to trade is one click with no aiming, because the
+ * whole row is the target.
+ */
+
+.watchlist {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2, 0.5rem);
+  height: 100%;
+  font-variant-numeric: tabular-nums;
+}
+
+.watchlist__rows {
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  min-height: 0;
+  flex: 1 1 auto;
+}
+
+.watchlist__row {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 0.8fr;
+  gap: var(--space-2, 0.5rem);
+  align-items: baseline;
+  width: 100%;
+  padding: var(--space-1, 0.25rem) var(--space-1, 0.25rem);
+  border: 0;
+  border-left: 2px solid transparent;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.watchlist__row:hover {
+  background: var(--surface-2, rgba(255, 255, 255, 0.04));
+}
+
+/* The focused instrument is the one the ticket, chart and book are all pointed at, so it
+   is marked on the edge rather than by colour — colour on this desk means direction. */
+.watchlist__row.is-active {
+  border-left-color: var(--green, #00e676);
+  background: var(--surface-2, rgba(255, 255, 255, 0.04));
+}
+
+.watchlist__sym {
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.watchlist__price {
+  text-align: right;
+}
+
+.watchlist__chg {
+  text-align: right;
+}
+
+.watchlist__chg.tone--up {
+  color: var(--green, #00e676);
+}
+
+.watchlist__chg.tone--down {
+  color: var(--orange, #ff9100);
+}
+
+.watchlist__chg.tone--flat {
+  color: var(--text-dim, #7d8b83);
+}
+
+.watchlist__auto {
+  flex: 0 0 auto;
+  gap: var(--space-1, 0.25rem);
+  align-items: center;
+}

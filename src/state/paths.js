@@ -103,6 +103,7 @@ export const PATHS = Object.freeze({
     presets: 'settings.presets',
     watchlists: 'settings.watchlists',
     activeListId: 'settings.activeListId',
+    autoWatchlist: 'settings.autoWatchlist',
     soundEnabled: 'settings.soundEnabled',
     defaultSize: 'settings.defaultSize',
     sizePresets: 'settings.sizePresets',
@@ -162,6 +163,9 @@ export const PATHS = Object.freeze({
     venues: 'market.venues',
     instruments: 'market.instruments',
     focus: 'market.focus',
+    // Rendered watchlist rows: symbol plus its own last/change, so the block can quote
+    // every row at once. The rest of `market.*` describes the focused instrument only.
+    watchRows: 'market.watchRows',
     ticks: 'market.ticks',
     bid: 'market.bid',
     ask: 'market.ask',

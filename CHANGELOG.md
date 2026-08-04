@@ -42,8 +42,37 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
   now scans **every ref** plus `dist/`, reports `commit:file` instead of burying the finding
   in a minified line, and exits non-zero so it can gate a publish.
 
+### Added
+
+- **The watchlist, which had never existed.** The block shipped in phase 2 with a title and
+  an empty state, and the `lists/` module behind it — create, add, remove, reorder, search,
+  all tested — was wired to no UI whatsoever. The block's body was, in fact, the price-alert
+  form, sitting under a heading that said Watchlist. There are rows now: symbol, price and
+  24h move, green up and orange down, one click to point the chart, book and ticket at an
+  instrument. The alert form moved to the Alert Log block, where it belongs.
+- **It fills itself in.** A desk that opens empty and waits to be told what to watch cannot
+  start without a human. The instruments are the top pairs by *real traded volume*, ranked
+  from OKX's public tickers endpoint — 1,335 spot pairs down to the eight worth scalping,
+  re-ranked every fifteen minutes and re-quoted every four seconds. Stablecoin pairs are
+  excluded despite topping every volume table, because `USDC-USDT` is the biggest book on
+  the venue and moves half a basis point a day; cross-quoted pairs like `ETH-BTC` are
+  excluded because their volume is denominated in BTC and cannot be ranked against a dollar
+  figure. The endpoint needs no credentials, so the rows are live on a first visit before a
+  single key has been entered.
+- **The trader's override.** A checkbox on the block, and a setting in the drawer: turn it
+  off and the desk stops re-ranking and the list is yours. The desk only ever rebuilds its
+  own list — a hand-made list is never touched, because "the desk manages a list for you"
+  must not mean "the desk edits your lists".
+
 ### Fixed
 
+- **Four blocks were stuck on the placeholder they shipped with.** `updateBlock` was pure
+  and nothing ever committed its result, so a block's status was whatever `seed.js` declared
+  at boot, forever. The watchlist, journal and analytics blocks were all seeded `empty` and
+  rendered "nothing to show yet" however much they actually held; the chart was seeded
+  `loading` and never stopped. `setBlockStatus` commits the change, and skips the write when
+  there is no change to make — it runs on every quote refresh, and a needless write
+  re-renders the whole grid.
 - **Every unparameterised OKX call signed itself as 1 January 1970.** `okxRequest` defaulted
   `ts` to `0`, so any caller that did not pass a clock — `reconcile()` among them, which
   polls positions every thirty seconds — built its signature over an epoch timestamp. OKX

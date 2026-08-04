@@ -12,6 +12,7 @@ import {
   toggleBlock,
   currentBlocks,
   commitBlocks,
+  setBlockStatus,
 } from './registry.js'
 import { appState, tick, resetState } from '../app/engine.js'
 
@@ -96,6 +97,24 @@ describe('updateBlock', () => {
     // The id is not patchable — it is the identity the grid keys on.
     expect(ids(updateBlock(blocks, 'a', { id: 'hijacked' }))).toEqual(['a', 'b'])
     expect(updateBlock(null, 'a', {})).toEqual([])
+  })
+})
+
+describe('setBlockStatus', () => {
+  it('commits a status change, and writes nothing when there is none to make', () => {
+    commitBlocks([{ id: 'watchlist', title: 'Watchlist', status: 'empty' }])
+    tick()
+
+    // The committing counterpart to updateBlock, which is pure and so reached nothing on
+    // its own — every block was stuck on whatever seed.js declared.
+    expect(setBlockStatus('watchlist', 'ready')).toBe(true)
+    tick()
+    expect(currentBlocks()[0].status).toBe('ready')
+
+    // No write when nothing changes: this runs on every quote refresh, and a needless
+    // setValue re-renders every block in the grid.
+    expect(setBlockStatus('watchlist', 'ready')).toBe(false)
+    expect(setBlockStatus('nosuchblock', 'ready')).toBe(false)
   })
 })
 

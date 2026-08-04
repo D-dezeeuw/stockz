@@ -142,6 +142,7 @@ export function initialState(overrides = {}) {
     [PATHS.market.instruments]: [],
     [PATHS.market.focus]: '',
     [PATHS.market.ticks]: 0,
+    [PATHS.market.watchRows]: [],
     [PATHS.market.bid]: 0,
     [PATHS.market.ask]: 0,
     [PATHS.market.quoteTs]: 0,

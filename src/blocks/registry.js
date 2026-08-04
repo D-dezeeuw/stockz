@@ -93,6 +93,29 @@ export function updateBlock(blocks, id, patch = {}) {
 }
 
 /**
+ * Set a block's status in state.
+ *
+ * The committing counterpart to `updateBlock`, which is pure and therefore reached nothing
+ * on its own. Without this every block was stuck on whatever `seed.js` declared: the
+ * watchlist, journal and analytics blocks shipped as `empty` and rendered "nothing to show
+ * yet" permanently, however much they held.
+ *
+ * @param {string} id - block id.
+ * @param {string} status - a BLOCK_STATUS member.
+ * @returns {boolean} true when a block changed.
+ */
+export function setBlockStatus(id, status) {
+  const blocks = currentBlocks()
+  const current = blocks.find((block) => block?.id === id)
+  // No write when nothing changes: this runs on every quote refresh, and a needless
+  // setValue re-renders every block in the grid.
+  if (!current || current.status === status) return false
+
+  commitBlocks(updateBlock(blocks, id, { status }))
+  return true
+}
+
+/**
  * Move a block to a new position, renumbering the rest.
  *
  * @param {object[]} blocks - current registry.

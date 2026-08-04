@@ -124,6 +124,7 @@ export const ACTIONS = Object.freeze({
     move: 'lists.move',
     setActive: 'lists.setActive',
     manage: 'lists.manage',
+    auto: 'lists.auto',
   }),
   keys: Object.freeze({
     submit: 'keys.submit',
