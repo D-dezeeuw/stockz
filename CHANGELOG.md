@@ -10,6 +10,13 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ## [Unreleased]
 
+## [0.25.0] — 2026-08-04 — Phase 25: Trade Journal & Time-Travel Audit
+
+A venue reports executions; a trader thinks in scalps. The journal closes that gap — fills
+paired into round trips, each carrying where it actually made or lost its money, annotated
+in the trader's own words, pinned so the moment can be stood in again, sliced by the
+question being asked, and exported as a file they own.
+
 ### Added
 
 - **Fills paired into round trips** — a venue reports executions; a trader thinks in scalps.
@@ -1588,7 +1595,8 @@ with a test policy and a live URL.
   literal `APP_VERSION` (a JSON import is bundler-only), guarded by a test that fails if
   it drifts from `package.json`; static assets moved from `public/` to the repo root.
 
-[Unreleased]: https://github.com/D-dezeeuw/stockz/compare/v0.24.0...HEAD
+[Unreleased]: https://github.com/D-dezeeuw/stockz/compare/v0.25.0...HEAD
+[0.25.0]: https://github.com/D-dezeeuw/stockz/compare/v0.24.0...v0.25.0
 [0.24.0]: https://github.com/D-dezeeuw/stockz/compare/v0.23.0...v0.24.0
 [0.23.0]: https://github.com/D-dezeeuw/stockz/compare/v0.22.0...v0.23.0
 [0.22.0]: https://github.com/D-dezeeuw/stockz/compare/v0.21.0...v0.22.0

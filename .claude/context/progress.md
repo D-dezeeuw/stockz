@@ -5,11 +5,86 @@ in `masterplan.md`, and knows where the project stands. Rewritten at every phase
 
 ---
 
-## Status: Phase 24 closed (v0.24.0) · Phase 25 next
+## Status: Phase 25 closed (v0.25.0) · Phase 26 next
 
 **Live:** https://d-dezeeuw.github.io/stockz/ (Pages serves `main` root — pushing is deploying)
-**Tests:** 1022, one per function, all passing individually. Every gated file >80% branches.
+**Tests:** 1120, one per function, all passing individually. Every gated file >80% branches.
 **Branch model:** everything merges to `main`; no feature branches outstanding.
+
+## Phase 25 — Trade Journal & Time-Travel Audit (closed)
+
+| Feature | What now exists | Where |
+| --- | --- | --- |
+| F25.1 | `normalizeFill`, `splitCrossingFill`, `matchLots`, `makeTrade`, `pairFills`, `journalTrades`, `openLots`, `saveOpenLots`, `loadOpenLots`, `resetJournal`, `onJournalFill`, `journalState` | `src/journal/pairing.js`, `types.js` |
+| F25.2 | `holdTime`, `formatHold`, `slippage`, `sumFees`, `maeMfe`, `netPnl`, `rMultiple`, `enrichTrade`, `refreshJournalRows`; `recordTick`, `ticksBetween`, `resetTicks` | `src/journal/metrics.js`, `ticks.js` |
+| F25.3 | `normalizeTag`, `annotationFor`, `addTag`, `removeTag`, `setNote`, `suggestTags`, `tagCatalog`, `publishAnnotations`, `saveAnnotations`, `loadAnnotations`, `registerTagActions`, `resetAnnotations` | `src/journal/tags.js` |
+| F25.4 | `checkpointLabel`, `pinTrade`, `addPin`, `checkpoints`, `jumpToCheckpoint`, `pinLive`, `returnToLive`, `registerCheckpointActions`, `resetCheckpoints` | `src/journal/checkpoints.js` |
+| F25.5 | `isSecretKey`, `redactSecrets`, `buildEnvelope`, `exportSession`, `exportName`, `downloadFile`, `registerExportActions`, `auditExport` | `src/journal/export.js` |
+| F25.6 | `validateSession`, `loadSession`, `replayState`, `stepReplay`, `seekReplay`, `publishStep`, `setSpeed`, `liveOnly`, `exitReplay`, `importFile`, `registerImportActions`, `resetReplay` | `src/journal/import.js` |
+| F25.7 | `matchesFilters`, `filterTrades`, `sortTrades`, `journalInstruments`, `refreshFiltered`, `setFilter`, `toggleSort`, `clearFilters`, `registerFilterActions` | `src/journal/filters.js` |
+| F25.8 | `fixed`, `isoOrBlank`, `toCsvField`, `toCsvRow`, `buildCsv`, `csvName`, `exportCsv`, `registerCsvActions` | `src/journal/csv.js` |
+| F25.9 | `dayKey`, `groupByDay`, `daySummary`, `dailyRows`, `refreshDays`, `toggleDay`, `registerSummaryActions` | `src/journal/summary.js` |
+| F25.10 | `retentionPolicy`, `pruneTrades`, `pruneTicks`, `pruneCheckpoints`, `archiveBeforePrune`, `storageUsage`, `runRetention`, `scheduleRetention`, `registerRetentionActions` | `src/journal/retention.js` |
+
+**The unit is the round trip, never the fill.** Forty executions across six partial exits is
+one decision. Matching is **FIFO and not configurable**: a journal exists to be trusted later,
+and a policy that can change retroactively makes every past entry depend on a setting nobody
+remembers the value of.
+
+**The data flow**: `ingestFill` (positions/store.js) → `onJournalFill` → `pairFills` → pins
+via `pinTrade`. The okx frame flush calls `recordTick` and `refreshFiltered`, and
+`refreshFiltered` re-derives the rows (`refreshJournalRows`) and the day scorecard
+(`refreshDays`) on the way through, so there is one publish rather than three views of one
+list. Enrichment happens on publish, not at close: a trade that closed a second ago is still
+having its MAE/MFE filled in behind it.
+
+**Two hard gates, both on the order path in `exec/engine.js`'s `submit()`:** `liveOnly()`
+refuses every order while a session is being replayed, and phase 24's `isExit` exempts closes
+from the halt. The replay gate is raised before the payload lands — one frame of a live ticket
+over replayed prices is one frame too many.
+
+**Secrets never leave.** `redactSecrets` matches on **key name**, deep, rather than against a
+list of known paths: a path list goes stale the first time somebody adds a field and fails
+silently. `auditExport` re-checks the finished *text*, because the guarantee that matters is
+about the bytes that leave.
+
+New state: the whole `journal.*` and `replay.*` namespaces. New settings: `maxDays`,
+`maxTrades`, `maxCheckpoints`. New stylesheet: `src/styles/journal.css`. New utility:
+`.visually-hidden` in `utilities.css`.
+
+**Deviations in phase 25, all deliberate:**
+- **No IndexedDB anywhere.** Tick recordings are a bounded in-memory ring per instrument
+  (`ticks.js`), annotations and open lots are `localStorage`. The plan repeatedly assumes an
+  IDB tick store; none exists and nothing else in this codebase uses IDB. A trade older than
+  the trail honestly reports no excursion rather than one reconstructed from candles the
+  trader was never looking at.
+- No gzip/`CompressionStream` on export, and no drag-and-drop import — a file input behind a
+  styled label covers it, and the sessions this produces are kilobytes.
+- `closeIntent` now sets `reduceOnly` only where the venue honours it (fixed in phase 24).
+
+### Gotchas a fresh context should not rediscover
+
+- **Spektrum expressions do not carry `Math`** (or other globals). Anything needing rounding
+  is formatted into a `*Label` field by the publishing function — see `winRateLabel`,
+  `storage.label`. A binding that silently evaluates to nothing is the worst kind of broken.
+- **`fmt.pct` signs its output and expects a percentage**, not a 0..1 ratio.
+- **`Number(null)` is a finite zero.** Anywhere "missing" must differ from zero — CSV cells,
+  for one — check for null/undefined/'' *before* coercing.
+- **A `data-each` container may not also carry `data-if`.** Style the empty container away
+  with `:empty` instead.
+- **`@container` queries never match here** — nothing declares a `container-type`. Use the
+  40rem media breakpoint the grid already uses.
+- **A new state namespace needs three edits**: `PERSISTED_NAMESPACES`-adjacent list in
+  `paths.js`, the `PATHS` block, and `initialState()`; `paths.test.js` and `initial.test.js`
+  both assert the two match exactly.
+- **Every new action name needs `names.test.js` updated twice**: the expected list, and the
+  register call that proves something registers it.
+
+## Next up — Phase 26
+
+Read `.claude/context/masterplan.md` at `### F26.1` and start there. Phase 30's plan text still
+assumes a `gh-pages` branch that no longer exists — Pages serves `main` root — and must be
+revised when it is reached.
 
 ## Phase 24 — Circuit Breakers & Risk Kill Switch (closed)
 
@@ -104,13 +179,6 @@ so one number configured half a breaker.
 - **`spektrum-devtools` throws one unhandled `reading 'length'` error during
   `bootstrap.test.js`** in jsdom. Pre-existing, unrelated to any phase's changes, and does not
   fail the suite.
-
-## Next up — Phase 25
-
-Read `.claude/context/masterplan.md` at `### F25.1` and start there. Nothing about phase 25
-has been decided yet beyond what the masterplan says. Phase 30's plan text still assumes a
-`gh-pages` branch that no longer exists — Pages serves `main` root — and must be revised
-when it is reached.
 
 ## Phase 23 — Auto-Trade Bot Runner (closed)
 
