@@ -1108,8 +1108,9 @@
         <label class="field field--row keys__live">
           <input type="checkbox" data-action="change" data-fn="keys.liveTrading"
                  :checked="trade.mode === 'live'">
-          <span class="label">Trade live with real funds. Off = paper: orders are
-            simulated against the book and never sent to a venue.</span>
+          <span class="label">Trade live with real funds — the autopilot keeps trading and
+            its orders go to the venue. Off = paper: orders are simulated against the book
+            and never sent.</span>
         </label>
         <p class="label keys__mode" :class="trade.mode === 'live' ? 'label keys__mode is-live' : 'label keys__mode'">
           {{trade.mode === 'live' ? 'LIVE — orders go to the venue' : 'PAPER — nothing leaves this browser'}}

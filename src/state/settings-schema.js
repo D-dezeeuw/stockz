@@ -136,7 +136,7 @@ export const SETTINGS_SCHEMA = Object.freeze([
   {
     key: 'autopilot',
     group: 'risk',
-    label: 'Autopilot: run strategies automatically (paper only)',
+    label: 'Autopilot: run strategies automatically (paper, and live once ticked)',
     kind: 'toggle',
     default: true,
   },
