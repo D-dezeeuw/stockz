@@ -15,6 +15,7 @@ import { setWeight, publishWeights } from './composite.js'
 import { applyPreset, presetNames, presetDirty } from './presets.js'
 import { recordFire, flushScoreboard, resetScoreboard, saveScoreboard } from './scoreboard.js'
 import { routeSignalAlert } from '../alerts/signals.js'
+import { enqueueSignal } from '../bot/runner.js'
 
 /**
  * Who is registered, and what is running where.
@@ -164,6 +165,9 @@ export function startStrategy(strategyId, instrument, options = {}) {
     recordFire({ ...run.signal, strategyId: strategy.id, instrument: run.instrument })
     // And onto the alert bus, so a fire reaches a trader looking at the order book.
     routeSignalAlert(run.signal, { strategyId: strategy.id, name: strategy.name })
+    // And into the bot's intake. Queued rather than acted on: the runner's own clock is
+    // what bounds how much a burst can do in one frame.
+    enqueueSignal({ ...run.signal, source: strategy.id })
   })
 
   runs.set(key, run)

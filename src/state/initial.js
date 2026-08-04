@@ -128,6 +128,7 @@ export function initialState(overrides = {}) {
     [PATHS.settings.strategyStats]: [],
     [PATHS.settings.alerts]: [],
     [PATHS.settings.alertToggles]: {},
+    [PATHS.settings.botStrategies]: {},
     [PATHS.settings.tapeFloors]: {},
     [PATHS.settings.chords]: {},
     [PATHS.settings.watchlists]: [],
@@ -192,6 +193,10 @@ export function initialState(overrides = {}) {
     [PATHS.strategy.quarantined]: [],
     [PATHS.strategy.signals]: {},
     [PATHS.strategy.scoreboard]: [],
+
+    // the auto-trader
+    [PATHS.bot.decisions]: [],
+    [PATHS.bot.status]: { armed: false, enabled: 0, queued: 0 },
 
     // alerts
     [PATHS.alerts.fired]: null,

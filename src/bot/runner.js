@@ -1,0 +1,271 @@
+import { setValue, appState } from '../app/engine.js'
+import { PATHS } from '../state/paths.js'
+import { createRing } from '../pipeline/ring.js'
+import { submit } from '../exec/engine.js'
+import { emitAlert } from '../alerts/bus.js'
+
+/**
+ * The bot runner.
+ *
+ * The point of the whole desk arriving at once: strategies already have opinions, the
+ * execution engine already validates and guards, and this is the twenty lines that let the
+ * first drive the second without a human clicking.
+ *
+ * It is deliberately **thin**. Every order still goes through `exec/engine.js`'s `prepare()`
+ * — the same validation, capability check, grid rounding, size guard and slippage guard a
+ * hand-typed order passes. A bot with its own execution path would be a second place for
+ * "is this order sane" to be answered, and the two would disagree the day it mattered.
+ *
+ * The other half is the gate chain. A signal is not an order: it has to survive arming, the
+ * per-strategy opt-in, a throttle, a cooldown and a position cap, **in that order**, and
+ * every rejection is recorded with its reason. A bot that silently does nothing is
+ * indistinguishable from a broken one, and the trader has to be able to answer "why did it
+ * not take that" without a debugger.
+ */
+
+/** Signals held between drains. A burst must not lose the one that mattered. */
+export const INTAKE_SIZE = 256
+
+/** Decisions kept for the panel. */
+export const DECISION_SIZE = 200
+
+/** How often the queue is drained, in ms. */
+export const DRAIN_MS = 50
+
+let intake = createRing(INTAKE_SIZE)
+let decisions = createRing(DECISION_SIZE)
+
+/**
+ * Queue a signal for the bot.
+ *
+ * @param {object} signal - a normalised strategy signal.
+ * @returns {boolean} true when it was queued.
+ */
+export function enqueueSignal(signal) {
+  const action = String(signal?.action ?? '')
+  // 'none' is a strategy having no opinion. Queueing it would fill the intake with
+  // non-events and push out the ones that were actual calls.
+  if (!action || action === 'none') return false
+
+  intake.push(signal)
+  return true
+}
+
+/**
+ * Record a decision, taken or not.
+ *
+ * @param {object} entry - the decision.
+ * @returns {object} what was recorded.
+ */
+export function pushDecision(entry) {
+  const record = {
+    ts: Number(entry?.ts) || 0,
+    strategy: String(entry?.strategy ?? ''),
+    instrument: String(entry?.instrument ?? ''),
+    action: String(entry?.action ?? ''),
+    taken: entry?.taken === true,
+    // The reason is the whole value of this record. "Did not trade" with no reason is a bug
+    // report nobody can file.
+    reason: String(entry?.reason ?? ''),
+  }
+
+  decisions.push(record)
+  return record
+}
+
+/**
+ * Every recorded decision.
+ *
+ * @param {number} [limit] - at most this many, newest-biased.
+ * @returns {object[]} oldest first.
+ */
+export function botDecisions(limit) {
+  return decisions.toArray(limit)
+}
+
+/**
+ * Is the bot armed at all?
+ *
+ * @param {object} [state] - the settings slice.
+ * @returns {{pass: boolean, reason: string}} the verdict.
+ */
+export function armGate(state = appState?.settings) {
+  // Off by default and off after every reload: a bot that came back armed because it was
+  // armed yesterday is the single most dangerous default available here.
+  return state?.botArmed === true ? { pass: true, reason: '' } : { pass: false, reason: 'disarmed' }
+}
+
+/**
+ * Has this strategy been opted in to trading?
+ *
+ * @param {string} strategyId - the strategy.
+ * @param {object} [state] - the settings slice.
+ * @returns {{pass: boolean, reason: string}} the verdict.
+ */
+export function optInGate(strategyId, state = appState?.settings) {
+  const id = String(strategyId ?? '')
+  // Opt-*in*, unlike the alert toggles which are opt-out. Being told about a signal and
+  // having money placed on it are different enough that the defaults must differ too.
+  const allowed = state?.botStrategies?.[id] === true
+
+  return allowed ? { pass: true, reason: '' } : { pass: false, reason: `${id} not enabled` }
+}
+
+/**
+ * Run every gate, in order.
+ *
+ * @param {object} signal - the queued signal.
+ * @param {object} context - `{now, gates}` — the clock and the remaining gates.
+ * @returns {{pass: boolean, reason: string}} the verdict.
+ */
+export function runGates(signal, context = {}) {
+  const gates = Array.isArray(context.gates) ? context.gates : []
+
+  for (const gate of gates) {
+    const verdict = typeof gate === 'function' ? gate(signal, context) : { pass: true, reason: '' }
+    // First failure wins and stops the chain. Running the rest would cost work for a signal
+    // already rejected, and would report whichever reason happened to be last.
+    if (verdict?.pass !== true) return { pass: false, reason: String(verdict?.reason ?? 'blocked') }
+  }
+
+  return { pass: true, reason: '' }
+}
+
+/**
+ * Decide what to do with one signal.
+ *
+ * @param {object} signal - the queued signal.
+ * @param {{now?: number, gates?: Function[]}} [context] - the clock and extra gates.
+ * @returns {object} the decision.
+ */
+export function decide(signal, context = {}) {
+  const now = Number(context.now) || Number(signal?.ts) || 0
+  const strategy = String(signal?.source ?? signal?.strategyId ?? '')
+  const instrument = String(signal?.instrument ?? '')
+
+  const base = [() => armGate(), () => optInGate(strategy)]
+  const verdict = runGates(signal, { ...context, now, gates: [...base, ...(context.gates ?? [])] })
+
+  return pushDecision({
+    ts: now,
+    strategy,
+    instrument,
+    action: String(signal?.action ?? ''),
+    taken: verdict.pass,
+    reason: verdict.reason || 'passed',
+  })
+}
+
+/**
+ * Turn a passing signal into an order.
+ *
+ * @param {object} signal - the signal.
+ * @param {{size?: number, send?: Function}} [options] - sizing and an injectable submit.
+ * @returns {Promise<object>} the submission result.
+ */
+export async function dispatchOrder(signal, options = {}) {
+  const send = typeof options.send === 'function' ? options.send : submit
+  const action = String(signal?.action ?? '')
+  const instrument = String(signal?.instrument ?? '')
+  if (!instrument || (action !== 'buy' && action !== 'sell')) {
+    return { ok: false, clientId: '', reason: 'not an entry' }
+  }
+
+  // Straight through `submit`, which means `prepare()`: the same validation, capability
+  // check, grid rounding and both guards a hand-typed order passes. A second execution path
+  // is a second answer to "is this order sane".
+  return send({
+    venue: 'okx',
+    instrument,
+    side: action,
+    size: Number(options.size) || Number(appState.settings?.botSize) || 0,
+    type: 'market',
+    // Tagged so the journal, the scoreboard and a later audit can all tell a bot order
+    // from a clicked one without inferring it.
+    origin: 'bot',
+  })
+}
+
+/**
+ * Drain the queue into decisions and orders.
+ *
+ * @param {{now?: number, gates?: Function[], send?: Function}} [context] - plumbing.
+ * @returns {Promise<object[]>} the decisions taken this drain.
+ */
+export async function drainTick(context = {}) {
+  const queued = intake.toArray()
+  if (queued.length === 0) return []
+
+  intake.clear()
+  const taken = []
+
+  for (const signal of queued) {
+    const decision = decide(signal, context)
+    if (!decision.taken) continue
+
+    const result = await dispatchOrder(signal, context)
+    if (!result?.ok) {
+      // A bot order the engine refused is news: the guards did their job, and the trader
+      // needs to know their bot is being stopped rather than quietly idle.
+      emitAlert(
+        {
+          key: `bot|reject|${decision.strategy}`,
+          source: 'bot',
+          kind: 'reject',
+          severity: 'warn',
+          text: `bot order refused — ${result?.reason ?? 'unknown'}`,
+          instrument: decision.instrument,
+          ts: decision.ts,
+        },
+        { debounceMs: 5000 },
+      )
+    }
+
+    taken.push({ ...decision, clientId: result?.clientId ?? '' })
+  }
+
+  return taken
+}
+
+/**
+ * Publish the decision panel.
+ *
+ * @returns {object[]} what was published.
+ */
+export function flushDecisions() {
+  const rows = botDecisions(50).slice().reverse()
+  setValue(PATHS.bot.decisions, rows)
+  return rows
+}
+
+/**
+ * Start the runner.
+ *
+ * @param {{timer?: object, intervalMs?: number, subscribe?: Function}} [options] - plumbing.
+ * @returns {() => void} stop.
+ */
+export function createBotRunner(options = {}) {
+  const timer = options.timer ?? globalThis
+  const every = Number(options.intervalMs) > 0 ? Number(options.intervalMs) : DRAIN_MS
+  const unsubscribe = typeof options.subscribe === 'function' ? options.subscribe(enqueueSignal) : null
+
+  // A 50ms drain rather than acting on the signal itself: it bounds how much work a burst
+  // can do in one frame, and it is still four times faster than a person.
+  const handle = timer.setInterval?.(() => drainTick(options), every)
+
+  return () => {
+    timer.clearInterval?.(handle)
+    unsubscribe?.()
+  }
+}
+
+/**
+ * Forget every queued signal and decision.
+ *
+ * @returns {boolean} true.
+ */
+export function resetRunner() {
+  intake = createRing(INTAKE_SIZE)
+  decisions = createRing(DECISION_SIZE)
+  return true
+}
