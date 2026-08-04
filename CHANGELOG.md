@@ -12,6 +12,16 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ### Added
 
+- **F27.2 — the recording library.** Recordings are only useful if the right one can be
+  found, and a session identified by `rec-lz4k9x-3f0a` is one nobody will ever pick
+  deliberately — so every row carries when, how long, which instruments and how many ticks,
+  plus a label the trader types themselves, because "CPI spike 14:30" is the only name that
+  still means something next week. Size is shown because recordings are the one thing here
+  that grows without bound, and a cost nobody can see is a cost nobody prunes; it is
+  measured from the stored chunks rather than a number written at record time, which would
+  drift the moment the tick shape changed. Delete reclaims the space in one transaction and
+  takes the row off screen immediately, with no confirm step.
+
 - **F27.1 — the tick recorder.** Capture what actually happened so it can be replayed
   later: the market worth studying is never the one in front of you, it is the fifteen
   minutes that already went wrong, and without a recording those minutes are gone the

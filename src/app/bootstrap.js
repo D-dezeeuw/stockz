@@ -52,6 +52,7 @@ import { registerRankingActions } from '../analytics/instruments.js'
 import { registerPeriodActions, mountPeriod } from '../analytics/period.js'
 import { registerReportActions } from '../analytics/report.js'
 import { registerRecorderActions } from '../replay/recorder.js'
+import { registerLibraryActions, refreshLibrary } from '../replay/library.js'
 import { startHistogram } from '../analytics/holdtime.js'
 import { startStreakStrip } from '../analytics/streaks.js'
 import { startFeeBars } from '../analytics/fees.js'
@@ -187,6 +188,7 @@ export function bootstrap(options = {}) {
   registerPeriodActions()
   registerReportActions()
   registerRecorderActions()
+  registerLibraryActions()
   startHistogram()
   startStreakStrip()
   startFeeBars()
@@ -232,6 +234,8 @@ export function bootstrap(options = {}) {
   showKeyUrl(doc)
   applyTheme(doc?.documentElement?.getAttribute?.('data-theme') || preferredTheme(), doc)
   // Analytics obey the period switch from the first paint, not from the first change.
+  // The library loads off the critical path: it is an IndexedDB read nobody is waiting on.
+  refreshLibrary().catch(() => [])
   const unperiod = mountPeriod()
   const derived = registerDerived()
   wireEngineErrors()

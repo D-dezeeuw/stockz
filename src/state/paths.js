@@ -262,6 +262,7 @@ export const PATHS = Object.freeze({
     // restored from a closed tab would claim a capture that is not running.
     recording: 'replay.recording',
     sessions: 'replay.sessions',
+    library: 'replay.library',
   }),
   analytics: Object.freeze({
     // The one switch every analytics number obeys, and the trade list it scopes to. The

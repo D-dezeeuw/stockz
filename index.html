@@ -534,6 +534,24 @@
                 {{replay.recording ? 'recording…' : 'record'}}
               </button>
             </div>
+            <!-- The library. A session called `rec-lz4k9x-3f0a` is one nobody will ever
+                 pick deliberately, so every row carries what a trader recognises it by -
+                 and the size, because recordings are the one thing here that grows without
+                 bound and an unseen cost is never pruned. -->
+            <div class="library" data-if="block.id === 'journal'" data-each="replay.library" data-as="rec">
+              <div class="library__row">
+                <input class="library__label" type="text" :value="rec.label"
+                       data-action="change" data-fn="replay.renameRecording" :data-id="rec.id"
+                       aria-label="Recording name">
+                <span class="library__meta label truncate">{{rec.instrumentLabel}}</span>
+                <span class="library__meta num">{{rec.duration}}</span>
+                <span class="library__meta num">{{rec.tickLabel}}</span>
+                <span class="library__meta num">{{rec.sizeLabel}}</span>
+                <button type="button" class="library__x" data-action="click"
+                        data-fn="replay.deleteRecording" :data-id="rec.id"
+                        aria-label="Delete recording">×</button>
+              </div>
+            </div>
             <div class="period__out" data-if="block.id === 'analytics'">
               <button type="button" class="chip" data-action="click" data-fn="analytics.exportJson">json</button>
               <button type="button" class="chip" data-action="click" data-fn="analytics.copySummary">copy</button>
