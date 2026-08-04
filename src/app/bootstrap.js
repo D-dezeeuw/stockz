@@ -14,7 +14,7 @@ import { registerHeaderActions, mountSectionBlocks } from '../ui/header.js'
 import { registerThemeActions, applyTheme, preferredTheme } from '../ui/theme.js'
 import { restoreSettings, persistSettings } from '../state/persist.js'
 import { registerSettingsActions } from '../ui/settings.js'
-import { registerKeyActions, adoptKeys, promptForKeys } from '../ui/keys.js'
+import { registerKeyActions, adoptKeys, promptForKeys, showKeyUrl } from '../ui/keys.js'
 import { registerListActions } from '../lists/state.js'
 import { startWatchlist, registerWatchActions } from '../lists/watch.js'
 import { startAutopilot } from '../bot/autopilot.js'
@@ -217,6 +217,9 @@ export function bootstrap(options = {}) {
   // A live-mode desk with no credentials cannot place an order, and finding that out on the
   // first click is finding out too late.
   promptForKeys()
+  // The bookmark reflects whatever boot just adopted — from a link, the cache or dev env —
+  // so opening the modal on a desk that already has keys shows the URL for those keys.
+  showKeyUrl(doc)
   applyTheme(doc?.documentElement?.getAttribute?.('data-theme') || preferredTheme(), doc)
   const derived = registerDerived()
   wireEngineErrors()

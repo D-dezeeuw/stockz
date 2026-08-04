@@ -207,6 +207,54 @@ export function adoptKeysFromEnv(bag) {
   return keyPresence()
 }
 
+/**
+ * Build the bookmarkable URL for whatever the vault currently holds.
+ *
+ * The reverse of `parseKeyParams`, and the point of the whole URL-param path: enter the
+ * keys once, keep the link, and every later visit opens a desk that is already
+ * authenticated — including on a machine where nothing was ever remembered.
+ *
+ * **A link like this is a credential.** It goes wherever links go: browser history, a
+ * synced bookmark bar, a `Referer` header, a screen share, the clipboard. Anyone holding it
+ * holds the keys. That is the trade being made deliberately here, and the only sane way to
+ * take it is with a trade-only venue key behind an IP allowlist, which cannot move funds
+ * however it leaks. The desk still scrubs the params out of the address bar on arrival, so
+ * the link is only as exposed as wherever it is kept.
+ *
+ * Partial sets are included on purpose: a URL with just the OKX pair is useful to somebody
+ * who has not signed up to eToro, and refusing to build one until every venue is filled in
+ * would be a rule with no beneficiary.
+ *
+ * @param {string} [base] - the desk's URL; defaults to the current page.
+ * @returns {string} the URL, or '' when the vault is empty.
+ */
+export function buildKeyUrl(base = globalThis.location?.href ?? '') {
+  const params = new URLSearchParams()
+
+  for (const [param, [venue, field]] of Object.entries(PARAM_MAP)) {
+    const value = getKey(venue, field)
+    if (value) params.set(param, value)
+  }
+  if ([...params.keys()].length === 0) return ''
+
+  let url
+  try {
+    // Absolute only, with no fallback base. A bookmark that is not a real address is not a
+    // bookmark, and resolving against a placeholder origin the way `scrubKeyParams` does
+    // would hand back a `local.invalid` link that looks like it works and never will.
+    url = new URL(String(base))
+  } catch {
+    return ''
+  }
+
+  // Existing credential params are dropped first, so building a link from a desk that was
+  // itself opened by one cannot end up with two copies of a rotated key.
+  for (const param of Object.keys(PARAM_MAP)) url.searchParams.delete(param)
+  for (const [param, value] of params) url.searchParams.set(param, value)
+
+  return url.toString()
+}
+
 /** Where remembered credentials live. */
 export const KEYS_CACHE_KEY = 'stockz.keys.v1'
 

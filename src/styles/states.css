@@ -249,3 +249,45 @@
   color: var(--ink-muted);
   overflow-wrap: anywhere;
 }
+
+/*
+ * The bookmark URL.
+ *
+ * Boxed in orange rather than presented as a neutral field, because this string is every
+ * credential the desk holds and it should not look like a settings row. The warning is
+ * part of the control, not a footnote under it.
+ */
+.keys__url {
+  display: grid;
+  gap: var(--sp-1);
+  padding: var(--sp-2);
+  border: 1px solid var(--orange-dim);
+  border-radius: var(--radius-1);
+}
+
+.keys__url .row {
+  gap: var(--sp-1);
+}
+
+.keys__url input {
+  flex: 1 1 auto;
+  min-inline-size: 0;
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: var(--fs-0);
+  /* Never wrapped: a URL broken across lines invites a partial copy, and half a
+     credential set is a link that silently fails to authenticate. */
+  white-space: nowrap;
+  overflow-x: auto;
+}
+
+/* The live/paper line, which decides whether money is real. */
+.keys__mode {
+  color: var(--ink-muted);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.keys__mode.is-live {
+  color: var(--orange);
+  font-weight: 700;
+}

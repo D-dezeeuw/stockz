@@ -1001,9 +1001,21 @@
           <span class="label">Remember on this browser, so a revisit does not re-ask —
             stored unencrypted, so use a trade-only key with an IP allowlist.</span>
         </label>
-        <p class="label keys__note">Or open the desk with
-          <code>?okxKey=…&amp;okxSecret=…&amp;okxPass=…</code> — read once, then wiped from the
-          address bar so it never reaches history or a screen share.</p>
+        <!-- The bookmark. Built from whatever the vault holds, so it is always the keys
+             the desk is actually carrying. Deliberately not bound to state: this string is
+             every credential at once, and state reaches history and journal exports. -->
+        <div class="keys__url" style="display:none">
+          <p class="label">Bookmark this and the desk opens authenticated — on any machine,
+            with nothing remembered. <b>The link is the keys.</b> Keep it somewhere you would
+            keep a password, and use a trade-only venue key with an IP allowlist.</p>
+          <div class="row">
+            <input type="text" class="field__input mono" data-key-url readonly
+                   aria-label="Bookmark URL containing your credentials">
+            <button type="button" class="btn" data-action="click" data-fn="keys.copyUrl">copy</button>
+          </div>
+        </div>
+        <p class="label keys__note">The params are read once on arrival, then wiped from the
+          address bar, so an open desk never shows them in a screen share.</p>
 
         <div class="row row--between">
           <button type="button" class="btn btn--warn" data-action="click" data-fn="keys.lock">

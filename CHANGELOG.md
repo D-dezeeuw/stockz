@@ -44,6 +44,24 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ### Added
 
+- **A bookmark URL built from the keys you just entered.** The desk has read credentials
+  from URL params since phase 7 and there was no way to produce such a URL — the modal
+  described the format and left you to assemble it by hand. Enter the keys once and the
+  modal now shows the link; bookmark it and every later visit opens a desk that is already
+  authenticated, including on a machine where nothing was ever remembered. It rebuilds on
+  every save, so it always carries the keys the vault is actually holding rather than the
+  set it held when the modal opened, and building one from a desk that was itself opened by
+  a link cannot leave a rotated key sitting next to its replacement. A lock clears it along
+  with everything else.
+
+  **The link is the credential**, and the UI says so rather than burying it: it goes
+  wherever links go — history, a synced bookmark bar, a `Referer` header, a screen share,
+  the clipboard — and anyone holding it holds the keys. The copy toast warns rather than
+  congratulates. The only sane way to take that trade is a trade-only venue key behind an IP
+  allowlist, which cannot move funds however it leaks, and the modal says that too. The
+  string itself is written straight onto a DOM node and never into Spektrum state, for the
+  same reason the key fields are unbound: state reaches history, `serialize()`, devtools
+  dumps and journal exports, and this one string is every credential at once.
 - **A fixed universe of forty instruments: twenty crypto, twenty stocks.** Ranking a
   watchlist by live volume churns its membership under the trader between glances, and the
   top of an exchange's volume table is mostly stablecoin pairs that do not move. A list that

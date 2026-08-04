@@ -13,6 +13,8 @@ import {
   toggleRemember,
   applyRemember,
   toggleLiveTrading,
+  showKeyUrl,
+  copyKeyUrl,
   promptForKeys,
 } from './keys.js'
 import { clearKeys, hasKeys, setKeys, KEYS_CACHE_KEY } from '../venues/vault.js'
@@ -151,6 +153,7 @@ describe('registerKeyActions', () => {
       ACTIONS.keys.lock,
       ACTIONS.keys.remember,
       ACTIONS.keys.liveTrading,
+      ACTIONS.keys.copyUrl,
     ])
     expect(actionNames()).toContain('keys.lock')
 
@@ -207,6 +210,71 @@ describe('applyRemember', () => {
     expect(applyRemember(false)).toBe(true)
     // Switching it off takes the copy with it rather than leaving one behind until a lock.
     expect(localStorage.getItem(KEYS_CACHE_KEY)).toBeNull()
+  })
+})
+
+/** The modal's URL row, as it exists in index.html. */
+function urlRow() {
+  document.body.innerHTML =
+    '<div class="keys__url" style="display:none"><input type="text" data-key-url></div>'
+  return document.querySelector('[data-key-url]')
+}
+
+describe('showKeyUrl', () => {
+  it('writes the link onto the DOM node and hides the row when there is nothing to show', () => {
+    const field = urlRow()
+
+    // Nothing yet: an empty box captioned "your bookmark" invites a click that copies
+    // nothing, so the whole row stays hidden.
+    expect(showKeyUrl()).toBe('')
+    expect(field.value).toBe('')
+    expect(field.closest('.keys__url').style.display).toBe('none')
+
+    setKeys('okx', OKX)
+    const url = showKeyUrl()
+    expect(url).toContain('okxKey=ak')
+    expect(field.value).toBe(url)
+    expect(field.closest('.keys__url').style.display).toBe('')
+
+    // It lives in one DOM node and nowhere else. State is recorded into history, returned
+    // by serialize() and exported with the journal, and this string is every credential
+    // the desk holds at once.
+    tick()
+    expect(JSON.stringify(appState) + serialize()).not.toContain('okxKey=ak')
+
+    // A lock takes the link with it, or the lock undoes itself for anyone still looking.
+    clearKeys()
+    expect(showKeyUrl()).toBe('')
+    expect(field.value).toBe('')
+
+    document.body.innerHTML = ''
+    expect(showKeyUrl()).toBe('')
+  })
+})
+
+describe('copyKeyUrl', () => {
+  it('copies the link, and says so rather than failing silently with nothing to copy', () => {
+    urlRow()
+    const written = []
+    const clipboard = { writeText: async (text) => written.push(text) }
+
+    expect(copyKeyUrl({}, { clipboard })).toBe('')
+    tick()
+    expect(written).toEqual([])
+    expect(appState.ui.toasts[0].message).toMatch(/nothing to bookmark/)
+
+    setKeys('okx', OKX)
+    const url = copyKeyUrl({}, { clipboard })
+    expect(url).toContain('okxSecret=sk')
+    expect(written).toEqual([url])
+    tick()
+    // Warned, not congratulated: the thing just put on the clipboard is a credential.
+    expect(appState.ui.toasts[0].message).toMatch(/contains your keys/)
+
+    // A browser that refuses clipboard access must not leave a button that silently did
+    // nothing - the text is selected either way.
+    expect(() => copyKeyUrl({}, { clipboard: null })).not.toThrow()
+    document.body.innerHTML = ''
   })
 })
 
