@@ -2,6 +2,7 @@ import { describe, it, expect, beforeEach } from 'vitest'
 import {
   SORT_KEYS,
   OUTCOMES,
+  BOOKS,
   matchesFilters,
   filterTrades,
   sortTrades,
@@ -40,7 +41,17 @@ describe('matchesFilters', () => {
     expect(matchesFilters(ROWS[2], { outcome: 'wins' })).toBe(false)
     expect(matchesFilters(ROWS[2], { outcome: 'losses' })).toBe(false)
     expect(matchesFilters(ROWS[2], { outcome: 'all' })).toBe(true)
+
+    // A win rate computed over practice and real mixed together is a number that means
+    // nothing, so the two are separable — while both stay in the record.
+    expect(matchesFilters({ net: 1 }, { book: 'live' })).toBe(true)
+    expect(matchesFilters({ net: 1 }, { book: 'paper' })).toBe(false)
+    expect(matchesFilters({ net: 1, paper: true }, { book: 'paper' })).toBe(true)
+    expect(matchesFilters({ net: 1, paper: true }, { book: 'live' })).toBe(false)
+    expect(matchesFilters({ net: 1, paper: true }, { book: 'all' })).toBe(true)
+
     expect(OUTCOMES).toContain('wins')
+    expect(BOOKS).toContain('paper')
   })
 })
 
@@ -118,6 +129,12 @@ describe('setFilter', () => {
     // Re-selecting the active value clears it, so no filter needs a second control to undo.
     expect(setFilter('tag', 'fomo').tag).toBe('')
 
+    // Practice and real are separable, and re-selecting clears back to 'all' rather than
+    // to '' — a book filter matching nothing is not the off state.
+    expect(setFilter('book', 'paper').book).toBe('paper')
+    tick()
+    expect(setFilter('book', 'paper').book).toBe('all')
+
     expect(setFilter('nonsense', 'x')).toBeDefined()
   })
 })
@@ -142,6 +159,8 @@ describe('clearFilters', () => {
       instrument: '',
       tag: '',
       outcome: 'all',
+      // 'all', not '': an empty book is not "both", it is a filter matching nothing.
+      book: 'all',
       sort: 'closeTs',
       dir: 'desc',
     })

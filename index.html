@@ -435,6 +435,15 @@
                 <option :value="inst.id"
                         :selected="inst.id === journal.filters.instrument">{{inst.name}}</option>
               </select>
+              <!-- Practice and real, separable. Both are kept — a paper trade dropped
+                   from the record is a lesson lost — but a win rate over the two mixed
+                   together is a number that means nothing. -->
+              <button type="button" class="chip" data-action="click" data-fn="journal.filter"
+                      data-key="book" data-value="paper"
+                      :class="journal.filters.book === 'paper' ? 'chip chip--on' : 'chip'">paper</button>
+              <button type="button" class="chip" data-action="click" data-fn="journal.filter"
+                      data-key="book" data-value="live"
+                      :class="journal.filters.book === 'live' ? 'chip chip--on' : 'chip'">live</button>
               <button type="button" class="chip" data-action="click" data-fn="journal.filter"
                       data-key="outcome" data-value="wins"
                       :class="journal.filters.outcome === 'wins' ? 'chip chip--on' : 'chip'">wins</button>
@@ -473,7 +482,7 @@
             </div>
             <div class="journal" data-if="block.id === 'journal'" data-each="journal.filtered" data-as="t">
               <div class="journal__row" :class="t.net >= 0 ? 'journal__row journal__row--up' : 'journal__row journal__row--down'">
-                <span class="journal__inst">{{t.instrument}}</span>
+                <span class="journal__inst">{{t.instrument}}<b class="pos-paper" data-if="t.paper">P</b></span>
                 <span class="journal__side">{{t.side}}</span>
                 <span class="journal__qty tnum">{{t.qty}}</span>
                 <span class="journal__px tnum">{{fmt.price(t.entryPx)}} → {{fmt.price(t.exitPx)}}</span>

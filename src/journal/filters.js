@@ -36,11 +36,14 @@ export const SORT_KEYS = Object.freeze(['closeTs', 'net', 'hold', 'qty'])
 /** What the outcome filter can be. */
 export const OUTCOMES = Object.freeze(['all', 'wins', 'losses'])
 
+/** Which record to look at: both, practice only, or real only. */
+export const BOOKS = Object.freeze(['all', 'paper', 'live'])
+
 /**
  * Does one trade survive the filters?
  *
  * @param {object} trade - the enriched trade.
- * @param {{instrument?: string, tag?: string, outcome?: string}} [filters] - the slice.
+ * @param {{instrument?: string, tag?: string, outcome?: string, book?: string}} [filters] - the slice.
  * @returns {boolean} true when it belongs in the list.
  */
 export function matchesFilters(trade, filters = {}) {
@@ -56,6 +59,14 @@ export function matchesFilters(trade, filters = {}) {
   // win-rate becomes a number that flatters rather than informs.
   if (outcome === 'wins' && net <= 0) return false
   if (outcome === 'losses' && net >= 0) return false
+
+  // Practice and real, separable. Both are kept — a paper trade dropped from the record is
+  // a lesson lost — but a win rate computed over the two mixed together is a number that
+  // means nothing, and the default is 'all' only because most sessions are one or the
+  // other anyway.
+  const book = String(filters.book ?? 'all')
+  if (book === 'paper' && trade?.paper !== true) return false
+  if (book === 'live' && trade?.paper === true) return false
 
   return true
 }
@@ -162,15 +173,18 @@ export function refreshFiltered(rows = refreshJournalRows(), filters = appState.
  */
 export function setFilter(key, value) {
   const name = String(key ?? '')
-  if (!['instrument', 'tag', 'outcome', 'sort', 'dir'].includes(name)) {
+  if (!['instrument', 'tag', 'outcome', 'book', 'sort', 'dir'].includes(name)) {
     return appState.journal?.filters ?? {}
   }
 
   const current = { ...(appState.journal?.filters ?? {}) }
   // Re-selecting the active value clears it, so every chip is its own off switch and no
-  // filter needs a second control to undo it.
+  // filter needs a second control to undo it. `book` and `outcome` clear to 'all' rather
+  // than to '' — an empty book is not "both", it is a filter that matches nothing.
   const next = String(value ?? '')
-  current[name] = current[name] === next && name !== 'sort' && name !== 'dir' ? '' : next
+  const cycles = name !== 'sort' && name !== 'dir'
+  const empty = name === 'book' || name === 'outcome' ? 'all' : ''
+  current[name] = cycles && current[name] === next ? empty : next
 
   setValue(PATHS.journal.filters, current)
   refreshFiltered(undefined, current)
@@ -204,7 +218,7 @@ export function toggleSort(key) {
  * @returns {object} the empty filter set.
  */
 export function clearFilters() {
-  const cleared = { instrument: '', tag: '', outcome: 'all', sort: 'closeTs', dir: 'desc' }
+  const cleared = { instrument: '', tag: '', outcome: 'all', book: 'all', sort: 'closeTs', dir: 'desc' }
   setValue(PATHS.journal.filters, cleared)
   refreshFiltered(undefined, cleared)
 
