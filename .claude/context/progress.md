@@ -5,28 +5,24 @@ in `masterplan.md`, and knows where the project stands. Rewritten at every phase
 
 ---
 
-## Status: delivering — phase 26, F26.10 next
+## Status: Phase 26 closed (v0.26.0) — phase 27 next
 
-**The pause is lifted.** The owner restarted delivery on 2026-08-04: *"Continue the
-masterplan fully automatically."* The earlier "Pause after Phase 25" order no longer
-applies. Delivery runs to phase 30 without stopping for approval, per CLAUDE.md.
+Delivery is running unattended to phase 30 on the owner's instruction (2026-08-04:
+*"Work until all phases are complete do not stop before completion"*). The earlier
+"pause after phase 25" order is lifted.
 
-**Where phase 26 stands:** F26.1–F26.9 are merged to `main` and green. F26.9 (period
-selector) was delivered from scratch on `feature/f26-9-period-selector` — only
-`src/analytics/period.js` survived from the branch parked before the pause, because
-everything else on it predated a session's worth of work on `main`. **F26.10 (performance
-report export) is the last feature before the phase closes as `v0.26.0`.**
+**Phase 26 — Analytics & Performance Dashboard — is closed and released as `v0.26.0`.**
+All ten features are on `main` and green: KPI tiles, equity curve, hour heatmap,
+instrument ranking, hold-time distribution, streaks, fee analysis, drawdown curve, the
+period selector (F26.9) and the report export (F26.10).
 
-The hourly masterplan watchdog (`trig_014GA2EKv5ub8HCd7vrqgyA5`) was deleted during the
-pause and has not been recreated; delivery is currently paced by a `/loop`. If a pause is
-ever needed again, **delete** the trigger rather than disabling it — disabling was tried
-first and did not hold, it fired again on its next tick.
+**Next: phase 27 — Market Replay & Backtesting**, starting at F27.1 (tick session
+recorder). Nothing is parked; `main` is clean.
 
-**Between phase 25 and here**, a long run of owner-reported defects was fixed outside the
-masterplan: the whole DOM binding contract (every action was a no-op, all 37 `data-each`
-used Vue syntax, an SVG binding aborted the bind walk), the credential flow, venue
-endpoints, a self-populating 40-instrument watchlist, real paper execution, and the
-autopilot. See `CHANGELOG.md` under `[Unreleased]`.
+**Note for whoever picks this up:** F26.9's original branch was cut before a long
+defect-fixing run and had gone stale enough that merging it would have reverted a
+session's work. Only `src/analytics/period.js` was salvaged. Check `git diff main..<branch>`
+before merging any branch that predates a gap in the log.
 
 ## Status: Phase 25 closed (v0.25.0)
 

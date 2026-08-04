@@ -10,6 +10,16 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ## [Unreleased]
 
+## [0.26.0] — 2026-08-04 — Phase 26: Analytics & Performance Dashboard
+
+Ten features: KPI tiles, the equity curve, the hour heatmap, instrument ranking, hold-time
+distribution, streaks, fee analysis, the drawdown curve, one period switch over all of it,
+and the report export that takes the whole picture out of the app.
+
+Shipped alongside a long run of owner-reported defect work — the DOM binding contract, the
+credential flow, venue endpoints, a self-populating forty-instrument watchlist, real paper
+execution and the autopilot — all recorded below.
+
 ### Security
 
 - **Remembered credentials are stored in the clear, and the UI says so.** The desk can

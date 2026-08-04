@@ -4365,32 +4365,32 @@
 **What:** One switch scopes every analytics number and chart to today, this week, this month or all time, so short-term form and long-term edge are both visible.
 **How:** A shared state.analytics.period value with filterByPeriod() feeding all analytics computeds, a segmented control UI and spektrum/persist memory.
 
-- [ ] **T26.9.1 - Cut period branch** - What: Period work isolated from main. How: git checkout -b feature/f26.9-period-selector from main.
-- [ ] **T26.9.2 - Model the period state** - What: One source of truth every analytics block obeys. How: state.analytics.period holding day, week, month or all, mutated only through a setPeriod defineFn using setValue.
-- [ ] **T26.9.3 - Implement periodRange()** - What: Correct timestamp bounds for any period keyword. How: Pure periodRange(period, now) in src/analytics/period.js returning start/end epochs with Monday week starts and calendar months.
-- [ ] **T26.9.4 - Implement filterByPeriod()** - What: Only in-period trades feed the stats. How: filterByPeriod(trades, range) returning trades whose closeTs falls inside the range, exposed as computed('analytics.trades').
-- [ ] **T26.9.5 - Rebase all analytics computeds** - What: Every KPI, chart and ranking obeys the selector automatically. How: Point kpis, equity, heatmap, ranking, holdtime, streaks, fees and drawdown computeds at analytics.trades instead of raw journal trades.
-- [ ] **T26.9.6 - Build the segmented control** - What: Day, week, month and all switchable in one click. How: Four-button segment in the analytics header bound with data-action to setPeriod, active state styled via a data-if class.
-- [ ] **T26.9.7 - Add keyboard cycling** - What: Periods flippable without leaving the keyboard. How: Register a bracket-key binding through the existing hotkey registry that cycles setPeriod through the four values.
-- [ ] **T26.9.8 - Persist and refresh** - What: The chosen period survives reload and charts repaint instantly. How: Sync analytics.period via spektrum/persist and trigger('analytics.repaint') so every canvas renderer redraws on change.
-- [ ] **T26.9.9 - Write single unit tests for period fns** - What: periodRange and filterByPeriod each proven once. How: One Vitest test per function in period.test.js with fixed fake-timer dates across a month boundary, run via vitest run -t.
-- [ ] **T26.9.10 - Verify and merge period selector** - What: Scoped analytics ship green. How: Run targeted tests, flip all four periods confirming every block re-scopes consistently, merge to main.
+- [x] **T26.9.1 - Cut period branch** - What: Period work isolated from main. How: git checkout -b feature/f26.9-period-selector from main.
+- [x] **T26.9.2 - Model the period state** - What: One source of truth every analytics block obeys. How: state.analytics.period holding day, week, month or all, mutated only through a setPeriod defineFn using setValue.
+- [x] **T26.9.3 - Implement periodRange()** - What: Correct timestamp bounds for any period keyword. How: Pure periodRange(period, now) in src/analytics/period.js returning start/end epochs with Monday week starts and calendar months.
+- [x] **T26.9.4 - Implement filterByPeriod()** - What: Only in-period trades feed the stats. How: filterByPeriod(trades, range) returning trades whose closeTs falls inside the range, exposed as computed('analytics.trades').
+- [x] **T26.9.5 - Rebase all analytics computeds** - What: Every KPI, chart and ranking obeys the selector automatically. How: Point kpis, equity, heatmap, ranking, holdtime, streaks, fees and drawdown computeds at analytics.trades instead of raw journal trades.
+- [x] **T26.9.6 - Build the segmented control** - What: Day, week, month and all switchable in one click. How: Four-button segment in the analytics header bound with data-action to setPeriod, active state styled via a data-if class.
+- [x] **T26.9.7 - Add keyboard cycling** - What: Periods flippable without leaving the keyboard. How: Register a bracket-key binding through the existing hotkey registry that cycles setPeriod through the four values.
+- [x] **T26.9.8 - Persist and refresh** - What: The chosen period survives reload and charts repaint instantly. How: Sync analytics.period via spektrum/persist and trigger('analytics.repaint') so every canvas renderer redraws on change.
+- [x] **T26.9.9 - Write single unit tests for period fns** - What: periodRange and filterByPeriod each proven once. How: One Vitest test per function in period.test.js with fixed fake-timer dates across a month boundary, run via vitest run -t.
+- [x] **T26.9.10 - Verify and merge period selector** - What: Scoped analytics ship green. How: Run targeted tests, flip all four periods confirming every block re-scopes consistently, merge to main.
 
 ### F26.10 - Performance Report Export
 
 **What:** The full analytics picture exports as a JSON snapshot, a shareable markdown summary and chart PNGs, so the edge can be reviewed outside the app.
 **How:** buildReport() assembling stats, reportMarkdown() text rendering and canvas.toBlob PNG capture, all downloadable from the analytics header.
 
-- [ ] **T26.10.1 - Cut report branch** - What: Report work stays off main. How: git checkout -b feature/f26.10-report-export from main.
-- [ ] **T26.10.2 - Implement buildReport()** - What: Every analytics number frozen into one snapshot object. How: Pure buildReport(state) in src/analytics/report.js collecting kpis, ranking, fees, streaks, drawdown and period metadata.
-- [ ] **T26.10.3 - Implement reportMarkdown()** - What: A paste-anywhere text summary of the period. How: reportMarkdown(report) rendering headings, a KPI table and top/bottom instruments as a markdown string.
-- [ ] **T26.10.4 - Capture chart PNGs** - What: The equity curve, heatmap and drawdown as image files. How: chartToPng(canvas, name) using canvas.toBlob('image/png') on each named chart canvas at its current DPR resolution.
-- [ ] **T26.10.5 - Download the JSON snapshot** - What: A machine-readable report file on disk. How: Serialize buildReport output through JSON.stringify into a Blob anchor download named stockz-report-<period>-YYYYMMDD.json.
-- [ ] **T26.10.6 - Copy markdown to clipboard** - What: The summary pasteable into chat or docs in one click. How: navigator.clipboard.writeText with the reportMarkdown string from a Copy Summary data-action, confirmed by a toast.
-- [ ] **T26.10.7 - Build the export menu** - What: All three export forms reachable from one header control. How: Dropdown in the analytics header with JSON, Markdown and PNG entries wired via data-action to the export fns.
-- [ ] **T26.10.8 - Name files consistently** - What: Reports sort chronologically in any folder. How: reportFilename(kind, period, date) helper producing stockz-report-<period>-YYYYMMDD.<ext> shared by all three paths.
-- [ ] **T26.10.9 - Write single unit tests for report fns** - What: buildReport, reportMarkdown and reportFilename each proven once. How: One Vitest test per function in report.test.js snapshotting markdown output, run via vitest run -t.
-- [ ] **T26.10.10 - Verify and merge report export** - What: Exports ship green and complete. How: Run targeted tests, generate all three artifacts for a fixture session and inspect them, then merge the feature branch to main.
+- [x] **T26.10.1 - Cut report branch** - What: Report work stays off main. How: git checkout -b feature/f26.10-report-export from main.
+- [x] **T26.10.2 - Implement buildReport()** - What: Every analytics number frozen into one snapshot object. How: Pure buildReport(state) in src/analytics/report.js collecting kpis, ranking, fees, streaks, drawdown and period metadata.
+- [x] **T26.10.3 - Implement reportMarkdown()** - What: A paste-anywhere text summary of the period. How: reportMarkdown(report) rendering headings, a KPI table and top/bottom instruments as a markdown string.
+- [x] **T26.10.4 - Capture chart PNGs** - What: The equity curve, heatmap and drawdown as image files. How: chartToPng(canvas, name) using canvas.toBlob('image/png') on each named chart canvas at its current DPR resolution.
+- [x] **T26.10.5 - Download the JSON snapshot** - What: A machine-readable report file on disk. How: Serialize buildReport output through JSON.stringify into a Blob anchor download named stockz-report-<period>-YYYYMMDD.json.
+- [x] **T26.10.6 - Copy markdown to clipboard** - What: The summary pasteable into chat or docs in one click. How: navigator.clipboard.writeText with the reportMarkdown string from a Copy Summary data-action, confirmed by a toast.
+- [x] **T26.10.7 - Build the export menu** - What: All three export forms reachable from one header control. How: Dropdown in the analytics header with JSON, Markdown and PNG entries wired via data-action to the export fns.
+- [x] **T26.10.8 - Name files consistently** - What: Reports sort chronologically in any folder. How: reportFilename(kind, period, date) helper producing stockz-report-<period>-YYYYMMDD.<ext> shared by all three paths.
+- [x] **T26.10.9 - Write single unit tests for report fns** - What: buildReport, reportMarkdown and reportFilename each proven once. How: One Vitest test per function in report.test.js snapshotting markdown output, run via vitest run -t.
+- [x] **T26.10.10 - Verify and merge report export** - What: Exports ship green and complete. How: Run targeted tests, generate all three artifacts for a fixture session and inspect them, then merge the feature branch to main.
 
 ---
 
