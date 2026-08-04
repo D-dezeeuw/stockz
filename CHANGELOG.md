@@ -12,6 +12,11 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ### Added
 
+- **Time & sales tape** — the flow, coloured by who crossed the spread. It answers what
+  the chart cannot: a price rising on small buys reads nothing like the same price rising
+  on one 40-lot sweep. Hard-capped at 500 prints and stored newest-first so the template
+  never reverses an array on a frame, with sizes shown as magnitude (`1.2M`) because the
+  eye is scanning for the outlier, not reading the lot. (F14.3)
 - **Checksum-validated book state** — depth maintained by deltas is the one structure
   that goes *silently* wrong: a dropped update leaves size resting at a price nobody is
   quoting, and the ladder keeps rendering it confidently. Every applied frame is hashed

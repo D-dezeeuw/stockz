@@ -113,3 +113,60 @@
     transition: none;
   }
 }
+
+/*
+ * The tape.
+ *
+ * Rows are inserted at the top constantly, so the flash animation must be
+ * compositor-only: an insert that triggers layout on a 500-row list is a frame lost
+ * every print, and prints are exactly what arrive fastest.
+ */
+
+.tape {
+  display: flex;
+  flex-direction: column;
+  font-variant-numeric: tabular-nums;
+  font-size: var(--font-size-sm, 0.75rem);
+  height: 100%;
+  overflow: hidden;
+}
+
+.tape__row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: var(--space-2, 0.5rem);
+  padding: 0 var(--space-2, 0.5rem);
+  animation: tape-flash 240ms ease-out;
+}
+
+.tape__row--buy .tape__price {
+  color: var(--green);
+}
+
+.tape__row--sell .tape__price {
+  color: var(--orange);
+}
+
+.tape__time {
+  color: var(--ink-muted);
+}
+
+.tape__size {
+  text-align: right;
+}
+
+/* Opacity only — no width, no colour, nothing the compositor cannot do alone. */
+@keyframes tape-flash {
+  from {
+    opacity: 0.35;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tape__row {
+    animation: none;
+  }
+}

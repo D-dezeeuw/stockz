@@ -69,6 +69,7 @@ export function initialState(overrides = {}) {
     [PATHS.market.ask]: 0,
     [PATHS.market.book]: { bids: [], asks: [], seqId: 0, ts: 0 },
     [PATHS.market.ladder]: { bids: [], asks: [], spread: null },
+    [PATHS.market.tape]: [],
     [PATHS.market.mid]: 0,
     [PATHS.market.spread]: 0,
     [PATHS.market.spreadBps]: 0,

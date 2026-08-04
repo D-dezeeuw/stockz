@@ -2265,16 +2265,16 @@
 **What:** A scrolling tape of prints colored by aggressor side - see who is hitting, in real time.
 **How:** OKX v5 trades channel mapped into a capped prints buffer rendered newest-first through Spektrum data-each.
 
-- [ ] **T14.3.1 - Branch tape work** - What: The flow view built on its own line. How: git checkout -b feature/14-3-tape from main.
-- [ ] **T14.3.2 - Map the trades channel** - What: Every print captured with price, size, side, and time. How: Adapter on the phase 11 pipeline mapping OKX trades messages to px/sz/side/ts records.
-- [ ] **T14.3.3 - Implement pushPrint** - What: A fast tape that never grows unbounded. How: Pure fn appending to a capped 500-entry buffer, dropping the oldest, returning the new array head.
-- [ ] **T14.3.4 - Scaffold the tape template** - What: Prints on screen newest at the top. How: src/blocks/tape.html with a data-each over the prints value in reverse insertion order.
-- [ ] **T14.3.5 - Implement sideClass** - What: Buy and sell aggression tells apart in a blink. How: Pure fn mapping side to green buy or orange sell CSS classes bound via :class.
-- [ ] **T14.3.6 - Implement formatTapeTime** - What: Millisecond-precision timestamps on every print. How: Pure fn rendering ts as hh:mm:ss.mmm reused in the tape time column.
-- [ ] **T14.3.7 - Implement formatSizeShort** - What: Big sizes readable instantly. How: Pure fn shortening sizes to 1.2K/3.4M style with one decimal, used in the size column.
-- [ ] **T14.3.8 - Flash new prints** - What: Fresh flow catches the eye without distraction. How: One-shot CSS keyframe on row insert using compositor-only opacity, no layout thrash.
-- [ ] **T14.3.9 - Write single unit tests for tape fns** - What: Buffer and formatting logic locked. How: One Vitest test each for pushPrint, sideClass, formatTapeTime, and formatSizeShort, run individually via vitest run -t.
-- [ ] **T14.3.10 - Verify and merge the tape** - What: Live flow streaming on the dashboard. How: Watch live OKX trades render correctly in Vite dev, targeted tests green, then merge feature/14-3-tape into main.
+- [x] **T14.3.1 - Branch tape work** - What: The flow view built on its own line. How: git checkout -b feature/14-3-tape from main.
+- [x] **T14.3.2 - Map the trades channel** - What: Every print captured with price, size, side, and time. How: Adapter on the phase 11 pipeline mapping OKX trades messages to px/sz/side/ts records.
+- [x] **T14.3.3 - Implement pushPrint** - What: A fast tape that never grows unbounded. How: Pure fn appending to a capped 500-entry buffer, dropping the oldest, returning the new array head.
+- [x] **T14.3.4 - Scaffold the tape template** - What: Prints on screen newest at the top. How: src/blocks/tape.html with a data-each over the prints value in reverse insertion order.
+- [x] **T14.3.5 - Implement sideClass** - What: Buy and sell aggression tells apart in a blink. How: Pure fn mapping side to green buy or orange sell CSS classes bound via :class.
+- [x] **T14.3.6 - Implement formatTapeTime** - What: Millisecond-precision timestamps on every print. How: Pure fn rendering ts as hh:mm:ss.mmm reused in the tape time column.
+- [x] **T14.3.7 - Implement formatSizeShort** - What: Big sizes readable instantly. How: Pure fn shortening sizes to 1.2K/3.4M style with one decimal, used in the size column.
+- [x] **T14.3.8 - Flash new prints** - What: Fresh flow catches the eye without distraction. How: One-shot CSS keyframe on row insert using compositor-only opacity, no layout thrash.
+- [x] **T14.3.9 - Write single unit tests for tape fns** - What: Buffer and formatting logic locked. How: One Vitest test each for pushPrint, sideClass, formatTapeTime, and formatSizeShort, run individually via vitest run -t.
+- [x] **T14.3.10 - Verify and merge the tape** - What: Live flow streaming on the dashboard. How: Watch live OKX trades render correctly in Vite dev, targeted tests green, then merge feature/14-3-tape into main.
 
 ### F14.4 - Imbalance Indicator
 

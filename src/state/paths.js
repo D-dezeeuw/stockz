@@ -82,6 +82,7 @@ export const PATHS = Object.freeze({
     ask: 'market.ask',
     book: 'market.book',
     ladder: 'market.ladder',
+    tape: 'market.tape',
     // derived (written by computed, never by hand)
     mid: 'market.mid',
     spread: 'market.spread',
