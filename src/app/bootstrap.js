@@ -49,6 +49,7 @@ import { registerRankingActions } from '../analytics/instruments.js'
 import { startHistogram } from '../analytics/holdtime.js'
 import { startStreakStrip } from '../analytics/streaks.js'
 import { startFeeBars } from '../analytics/fees.js'
+import { startUnderwater } from '../analytics/drawdown.js'
 import { registerKillActions } from '../breakers/kill.js'
 import { registerRearmActions, mountRelease } from '../breakers/rearm.js'
 import {
@@ -173,6 +174,7 @@ export function bootstrap(options = {}) {
   startHistogram()
   startStreakStrip()
   startFeeBars()
+  startUnderwater()
   loadAnnotations()
   pruneBreakerEvents(Date.now())
   // The daily-loss trip has no other reaction path — it publishes a code and returns a
