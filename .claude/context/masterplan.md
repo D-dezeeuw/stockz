@@ -4237,16 +4237,16 @@
 **What:** The four numbers that define an edge shown as always-live tiles, so the user knows in one glance whether the approach is working.
 **How:** Pure stat fns in src/analytics/kpis.js wired through Spektrum computed into a tile row inside a uniform analytics grid block.
 
-- [ ] **T26.1.1 - Cut KPI branch** - What: KPI work isolated from main. How: git checkout -b feature/f26.1-kpi-tiles from a freshly pulled main.
-- [ ] **T26.1.2 - Implement winRate()** - What: Honest percentage of winning scalps. How: Pure winRate(trades) in src/analytics/kpis.js counting netPnl > 0 over closed trades, returning null for an empty set.
-- [ ] **T26.1.3 - Implement expectancy()** - What: Expected value per trade in quote currency. How: expectancy(trades) computing winRate * avgWin + lossRate * avgLoss from enriched journal records.
-- [ ] **T26.1.4 - Implement profitFactor()** - What: Gross profit over gross loss as one durability number. How: profitFactor(trades) dividing summed winning netPnl by absolute summed losing netPnl, guarding divide-by-zero with Infinity.
-- [ ] **T26.1.5 - Implement avgWin() and avgLoss()** - What: Typical size of a winner versus a loser. How: avgWin(trades) and avgLoss(trades) averaging netPnl over each outcome subset, returned as signed quote-currency numbers.
-- [ ] **T26.1.6 - Scaffold the analytics block and tile row** - What: KPIs live in a standard dashboard tile. How: Create src/blocks/analytics/ registered into the uniform grid, with a four-tile flex row template using {{}} bindings.
-- [ ] **T26.1.7 - Wire KPIs reactively** - What: Tiles update the instant a trade closes. How: Spektrum computed('analytics.kpis') mapping the period-filtered trades through the five stat fns, bound into the tiles.
-- [ ] **T26.1.8 - Style the tiles** - What: Terminal-style KPI tiles legible in day and night themes. How: Monospace values with green/orange sign coloring from design-system custom properties and a dim label line per tile.
-- [ ] **T26.1.9 - Write single unit tests for KPI fns** - What: Each of the five stat functions proven by exactly one test. How: One Vitest test per fn in kpis.test.js with a mixed win/loss fixture, run via vitest run -t per name.
-- [ ] **T26.1.10 - Verify and merge KPI tiles** - What: KPIs land on main only when green. How: Run the targeted tests plus eslint src/analytics, cross-check tile values against a hand-computed fixture, merge to main.
+- [x] **T26.1.1 - Cut KPI branch** - What: KPI work isolated from main. How: git checkout -b feature/f26.1-kpi-tiles from a freshly pulled main.
+- [x] **T26.1.2 - Implement winRate()** - What: Honest percentage of winning scalps. How: Pure winRate(trades) in src/analytics/kpis.js counting netPnl > 0 over closed trades, returning null for an empty set.
+- [x] **T26.1.3 - Implement expectancy()** - What: Expected value per trade in quote currency. How: expectancy(trades) computing winRate * avgWin + lossRate * avgLoss from enriched journal records.
+- [x] **T26.1.4 - Implement profitFactor()** - What: Gross profit over gross loss as one durability number. How: profitFactor(trades) dividing summed winning netPnl by absolute summed losing netPnl, guarding divide-by-zero with Infinity.
+- [x] **T26.1.5 - Implement avgWin() and avgLoss()** - What: Typical size of a winner versus a loser. How: avgWin(trades) and avgLoss(trades) averaging netPnl over each outcome subset, returned as signed quote-currency numbers.
+- [x] **T26.1.6 - Scaffold the analytics block and tile row** - What: KPIs live in a standard dashboard tile. How: Create src/blocks/analytics/ registered into the uniform grid, with a four-tile flex row template using {{}} bindings.
+- [x] **T26.1.7 - Wire KPIs reactively** - What: Tiles update the instant a trade closes. How: Spektrum computed('analytics.kpis') mapping the period-filtered trades through the five stat fns, bound into the tiles.
+- [x] **T26.1.8 - Style the tiles** - What: Terminal-style KPI tiles legible in day and night themes. How: Monospace values with green/orange sign coloring from design-system custom properties and a dim label line per tile.
+- [x] **T26.1.9 - Write single unit tests for KPI fns** - What: Each of the five stat functions proven by exactly one test. How: One Vitest test per fn in kpis.test.js with a mixed win/loss fixture, run via vitest run -t per name.
+- [x] **T26.1.10 - Verify and merge KPI tiles** - What: KPIs land on main only when green. How: Run the targeted tests plus eslint src/analytics, cross-check tile values against a hand-computed fixture, merge to main.
 
 ### F26.2 - Equity Curve Chart
 

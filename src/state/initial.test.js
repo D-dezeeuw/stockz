@@ -13,6 +13,7 @@ describe('initialState', () => {
     const namespaces = new Set(Object.keys(state).map((k) => k.split('.')[0]))
     expect([...namespaces].sort()).toEqual([
       'alerts',
+      'analytics',
       'app',
       'bot',
       'breaker',

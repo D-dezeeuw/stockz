@@ -232,6 +232,9 @@ export function initialState(overrides = {}) {
     [PATHS.replay.label]: '',
     [PATHS.replay.error]: '',
 
+    // analytics
+    [PATHS.analytics.kpis]: [],
+
     // journal
     [PATHS.journal.trades]: [],
     [PATHS.journal.count]: 0,

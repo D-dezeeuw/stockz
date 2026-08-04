@@ -32,6 +32,7 @@ export const NAMESPACES = Object.freeze([
   'alerts',
   'bot',
   'breaker',
+  'analytics',
   'journal',
   'replay',
 ])
@@ -247,6 +248,9 @@ export const PATHS = Object.freeze({
     speed: 'replay.speed',
     label: 'replay.label',
     error: 'replay.error',
+  }),
+  analytics: Object.freeze({
+    kpis: 'analytics.kpis',
   }),
   journal: Object.freeze({
     trades: 'journal.trades',

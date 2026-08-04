@@ -10,6 +10,21 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ## [Unreleased]
 
+### Added
+
+- **The four numbers that say whether the edge is real** — a P&L says what happened; these say
+  whether it will keep happening, and the distinction is the whole point: a trader up six
+  hundred on the day with a profit factor of 1.02 has had a good day and does not have an
+  edge, and those two facts call for completely different next weeks. **Empty returns null,
+  never zero**, so the tile reads "—": a desk that has not traded has no win rate, and a red
+  0% for somebody who simply has not started is a readout that lies quietly. No losses at all
+  reports ∞ rather than a large number implying a measurement — four winners and no losers has
+  not proven anything, and ∞ reads as "not enough data" to anybody sensible. Scratches count
+  as neither wins nor losses throughout. Expectancy derives from the raw counts rather than
+  the displayed win rate, since multiplying a rounded rate by an average carries the error
+  into a number traders compare across weeks. Tone follows meaning rather than sign: the win
+  rate never goes red on the rate alone, because 40% with a 3:1 payoff is a fine strategy.
+
 ## [0.25.0] — 2026-08-04 — Phase 25: Trade Journal & Time-Travel Audit
 
 A venue reports executions; a trader thinks in scalps. The journal closes that gap — fills
