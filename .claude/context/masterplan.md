@@ -3299,16 +3299,16 @@
 **What:** Battle-tested EMA and RSI as pure incremental functions any strategy calls on every tick.
 **How:** O(1) update-state indicator fns in src/strategy/indicators/ with warmup flags and a crossover helper, allocation-free in the hot path.
 
-- [ ] **T20.5.1 - Branch trend indicators** - What: Focused branch for the first indicator pair. How: git checkout -b feature/f20.5-ema-rsi from main.
-- [ ] **T20.5.2 - createEma fn** - What: Smooth trend value updated in constant time. How: Closure holding alpha and last value, update(x) returning the new EMA without allocations.
-- [ ] **T20.5.3 - createRsi fn** - What: Overbought/oversold reading strategies rely on. How: Wilder-smoothed average gain/loss closure with update(x) returning 0..100.
-- [ ] **T20.5.4 - isWarm fn** - What: Strategies never act on half-baked indicator values. How: Pure fn comparing samples seen against period, exposed on both indicator states.
-- [ ] **T20.5.5 - crossed fn** - What: Clean crossover detection without per-strategy boilerplate. How: Pure fn comparing current and previous a/b pairs returning 1, -1 or 0.
-- [ ] **T20.5.6 - Reference-series verification** - What: Values provably match known-good math. How: Feed a recorded OKX tick fixture through both indicators and assert against precomputed expected series.
-- [ ] **T20.5.7 - Hot-path micro benchmark** - What: Indicators proven cheap enough for every tick. How: performance.now() loop over 100k updates in a Vitest bench-style check asserting a per-update ceiling.
-- [ ] **T20.5.8 - Indicator barrel and context wiring** - What: Strategies reach indicators as ctx.ind with zero imports. How: indicators/index.js barrel export injected into createStrategyContext.
-- [ ] **T20.5.9 - Single tests per indicator fn** - What: EMA, RSI, warmup and crossover each proven alone. How: One Vitest test per fn in separate -t runs with deterministic fixtures.
-- [ ] **T20.5.10 - Merge trend pair** - What: Core trend math available to every strategy. How: Lint plus targeted runs, merge feature/f20.5.
+- [x] **T20.5.1 - Branch trend indicators** - What: Focused branch for the first indicator pair. How: git checkout -b feature/f20.5-ema-rsi from main.
+- [x] **T20.5.2 - createEma fn** - What: Smooth trend value updated in constant time. How: Closure holding alpha and last value, update(x) returning the new EMA without allocations.
+- [x] **T20.5.3 - createRsi fn** - What: Overbought/oversold reading strategies rely on. How: Wilder-smoothed average gain/loss closure with update(x) returning 0..100.
+- [x] **T20.5.4 - isWarm fn** - What: Strategies never act on half-baked indicator values. How: Pure fn comparing samples seen against period, exposed on both indicator states.
+- [x] **T20.5.5 - crossed fn** - What: Clean crossover detection without per-strategy boilerplate. How: Pure fn comparing current and previous a/b pairs returning 1, -1 or 0.
+- [x] **T20.5.6 - Reference-series verification** - What: Values provably match known-good math. How: Feed a recorded OKX tick fixture through both indicators and assert against precomputed expected series.
+- [x] **T20.5.7 - Hot-path micro benchmark** - What: Indicators proven cheap enough for every tick. How: performance.now() loop over 100k updates in a Vitest bench-style check asserting a per-update ceiling.
+- [x] **T20.5.8 - Indicator barrel and context wiring** - What: Strategies reach indicators as ctx.ind with zero imports. How: indicators/index.js barrel export injected into createStrategyContext.
+- [x] **T20.5.9 - Single tests per indicator fn** - What: EMA, RSI, warmup and crossover each proven alone. How: One Vitest test per fn in separate -t runs with deterministic fixtures.
+- [x] **T20.5.10 - Merge trend pair** - What: Core trend math available to every strategy. How: Lint plus targeted runs, merge feature/f20.5.
 
 ### F20.6 - Volatility indicators: VWAP, ATR and stddev
 

@@ -1,4 +1,5 @@
 import { createLogger } from '../utils/log.js'
+import { indicatorKit } from './indicators/index.js'
 
 /**
  * The strategy contract.
@@ -147,9 +148,10 @@ export function createStrategyContext(options = {}) {
   return Object.freeze({
     instrument: String(options.instrument ?? ''),
     params: Object.freeze(resolveParams(strategy.params, options.params)),
-    // Indicator readings arrive as a plain snapshot: a strategy that could reach the live
-    // indicator store could also mutate it under the next strategy in the run.
-    ind: Object.freeze({ ...(options.ind ?? {}) }),
+    // The indicator toolkit plus whatever readings the desk already has. Frozen, and a
+    // snapshot rather than the live store — a strategy that could reach the store could
+    // mutate it under the next strategy in the run.
+    ind: Object.freeze(indicatorKit(options.ind)),
     log: options.log ?? createLogger(`strategy:${id}`),
     // The clock is injected. A strategy that reads the wall clock cannot be replayed, and
     // replay is how a signal gets explained after the fact.
