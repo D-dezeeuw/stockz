@@ -5,11 +5,55 @@ in `masterplan.md`, and knows where the project stands. Rewritten at every phase
 
 ---
 
-## Status: Phase 20 closed (v0.20.0) · Phase 21 next
+## Status: Phase 21 closed (v0.21.0) · Phase 22 next
 
 **Live:** https://d-dezeeuw.github.io/stockz/ (Pages serves `main` root — pushing is deploying)
-**Tests:** 741, one per function, all passing individually. Every gated file >80% branches.
+**Tests:** 815, one per function, all passing individually. Every gated file >80% branches.
 **Branch model:** everything merges to `main`; no feature branches outstanding.
+
+## Phase 21 — Built-in Scalping Strategies (closed)
+
+| Feature | What now exists | Where |
+| --- | --- | --- |
+| F21.1 | `tickVelocity`, `windowDelta`, `velocityBaseline`, `burstSignal`, `decayExit`, `momentumTick` | `src/strategy/builtin/momentum.js` |
+| F21.2 | `foldPrint`, `bandTouch`, `revertConfirm`, `vwapExit`, `revertTick` | `src/strategy/builtin/vwap-revert.js` |
+| F21.3 | `quotePrices`, `minSpreadGate`, `shouldRequote`, `inventorySkew`, `spreadTick` | `src/strategy/builtin/spread-capture.js` |
+| F21.4 | `depthImbalance`, `microPrice`, `imbalancePersist`, `imbalanceSignal`, `flipExit`, `imbalanceTick` | `src/strategy/builtin/book-imbalance.js` |
+| F21.5 | `classifyAggressor`, `aggressorRatio`, `ratioShift`, `pressureSignal`, `normalizeExit`, `pressureTick` | `src/strategy/builtin/tape-pressure.js` |
+| F21.6 | `swingPoints`, `levelCluster`, `touchReject`, `fadeSignal`, `levelBreak`, `fadeTick`, `publishLevels` | `src/strategy/builtin/range-fade.js` |
+| F21.7 | `sessionClock`, `openingRange`, `driveSignal`, `oneShotGuard`, `trailStop`, `driveTick` | `src/strategy/builtin/open-drive.js` |
+| F21.8 | `microRange`, `squeezeDetect`, `expansionTrigger`, `squeezeSignal`, `contractionExit`, `squeezeTick` | `src/strategy/builtin/vol-squeeze.js` |
+| F21.9 | `PRESETS`, `validatePreset`, `presetFor`, `applyPreset`, `customPresets`, `savePreset`, `presetDirty`, `presetNames` | `src/strategy/presets.js` |
+| F21.10 | `emptyStats`, `recordFire`, `recordOutcome`, `statsRollup`, `scoreboard`, `flushScoreboard`, `attributeClose`, `resetScoreboard`, `restoreScoreboard`, `saveScoreboard` | `src/strategy/scoreboard.js` |
+
+**Every strategy is a description, not a module with its own wiring.** Each is one
+`defineStrategy({...})` plus pure functions, added to `BUILTIN_STRATEGIES` in
+`src/strategy/engine.js`. None of them imports state, an action, or a venue.
+
+**`ctx.state` is the scratchpad** added in F21.1: the context stays frozen, but a strategy
+keeping a ring buffer or a running baseline has somewhere to put it with no per-tick
+allocation and nothing shared between two runs on two instruments.
+
+**The pattern every one of them follows**: measure against the instrument's *own* recent
+history, never an absolute threshold; require a *confirmation* before acting on a setup;
+and exit on a condition the entry premise no longer holds — not on a target alone.
+
+**Their exits are what makes them safe**, and each is a different lesson: a burst that has
+not paid in seconds was not a burst; a fade held "until it reverts" is the failure mode of
+mean reversion; a range trader loses money on the range that ended; a maker's real risk is
+inventory, not direction.
+
+New state: `strategy.scoreboard`, `market.levels` (S/R for the chart overlay). New
+settings: `settings.activePresets`, `settings.customPresets`, `settings.strategyStats`.
+New actions: `strategy.setPreset`, `strategy.resetScore`. New block: `scoreboard`.
+
+**Deviations in phase 21:** strategies live in `src/strategy/builtin/` rather than
+`src/strategies/` — one strategy namespace, not two. There is no `defineFn`/`trigger()`
+API as the plan's wording assumes; the phase-20 contract (`onTick` returning a signal) is
+the seam, and it is strictly better because a strategy cannot reach state at all. The
+IndexedDB replay verification each feature's T*.10 calls for waits on the phase-24
+recorder; each strategy's behaviour is proven instead by a scripted tick sequence through
+its own `*Tick` function.
 
 ## Phase 20 — Strategy Engine Core (closed)
 
@@ -467,15 +511,14 @@ go stale, and faults that reach the trader instead of the console.
 | F2.9 | `pushToast`, `dismissToast`, `expireToasts`, `describeEngineError`, `wireEngineErrors` | `src/ui/toast.js` |
 | F2.10 | `collectExpressions`, `renderPrecompileModule`, `cspMeta`, `npm run build:csp` | `src/app/csp.js`, `docs/csp.md` |
 
-## Next up: Phase 21 — Built-in Scalping Strategies
+## Next up: Phase 22 — Alerts & Notifications
 
 Read the phase's own section in `masterplan.md` — the plan is authoritative, and the
 "next up" guesses written at earlier closes have been wrong twice.
 
-- Everything a strategy needs exists: `defineStrategy` for the shape, `ctx.ind` for the
-  maths, the registry for lifecycle, the sandbox for its mistakes and the composite for
-  blending several. Phase 21's strategies should be *descriptions* — `defineStrategy({...})`
-  in `src/strategy/builtin/`, added to `BUILTIN_STRATEGIES`, nothing else.
+- The desk has plenty worth alerting on now: `hud/` knows latency, spread and slippage,
+  `strategy/` emits signals with reasons and ttls, `positions/` knows exposure and P&L, and
+  `book/integrity.js` already knows when a book has gone stale.
 - The recurring trap remains **`setValue` lands next tick** (fold locally, write once)
   and **object writes merge** (`clearedMap` is the pattern for clearing one).
 

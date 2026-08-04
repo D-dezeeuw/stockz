@@ -10,6 +10,13 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ## [Unreleased]
 
+## [0.21.0] — 2026-08-04 — Phase 21: Built-in Scalping Strategies
+
+Eight strategies out of the box, each a plain `defineStrategy` description on the phase-20
+engine: momentum burst, VWAP reversion, post-only spread capture, book imbalance, tape
+pressure, micro range fade, session-open drive and volatility squeeze — plus tuned preset
+packs and a live scoreboard that says which of them is actually earning.
+
 ### Added
 
 - **Live strategy scoreboard** — a desk running eight strategies has eight opinions and one
@@ -1113,7 +1120,8 @@ with a test policy and a live URL.
   literal `APP_VERSION` (a JSON import is bundler-only), guarded by a test that fails if
   it drifts from `package.json`; static assets moved from `public/` to the repo root.
 
-[Unreleased]: https://github.com/D-dezeeuw/stockz/compare/v0.20.0...HEAD
+[Unreleased]: https://github.com/D-dezeeuw/stockz/compare/v0.21.0...HEAD
+[0.21.0]: https://github.com/D-dezeeuw/stockz/compare/v0.20.0...v0.21.0
 [0.20.0]: https://github.com/D-dezeeuw/stockz/compare/v0.19.0...v0.20.0
 [0.19.0]: https://github.com/D-dezeeuw/stockz/compare/v0.18.0...v0.19.0
 [0.18.0]: https://github.com/D-dezeeuw/stockz/compare/v0.17.0...v0.18.0
