@@ -228,6 +228,9 @@ export function initialState(overrides = {}) {
     [PATHS.journal.count]: 0,
     [PATHS.journal.last]: null,
     [PATHS.journal.rows]: [],
+    [PATHS.journal.notes]: {},
+    [PATHS.journal.tagCatalog]: [],
+    [PATHS.journal.editing]: '',
 
     // alerts
     [PATHS.alerts.fired]: null,

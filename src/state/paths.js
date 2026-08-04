@@ -240,6 +240,9 @@ export const PATHS = Object.freeze({
     count: 'journal.count',
     last: 'journal.last',
     rows: 'journal.rows',
+    notes: 'journal.notes',
+    tagCatalog: 'journal.tagCatalog',
+    editing: 'journal.editing',
   }),
   strategy: Object.freeze({
     registered: 'strategy.registered',

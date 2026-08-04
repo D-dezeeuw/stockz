@@ -4102,16 +4102,16 @@
 **What:** The user can annotate any trade with free-text notes and reusable tags, turning the journal into a real learning tool.
 **How:** Tag and note state on each trade record, edited inline through Spektrum data-model bindings and defineFn actions, persisted with spektrum/persist.
 
-- [ ] **T25.3.1 - Cut annotation branch** - What: Notes work isolated from main. How: git checkout -b feature/f25.3-notes-tags from main.
-- [ ] **T25.3.2 - Model notes and tags state** - What: A durable home for annotations per trade. How: Add note string and tags array to the trade typedef plus a global state.journal.tagCatalog of known tags.
-- [ ] **T25.3.3 - Implement tag actions** - What: One-keystroke tagging of any trade. How: defineFn addTag(tradeId, tag) and removeTag(tradeId, tag) that update the trade and grow tagCatalog, exposed via data-action.
-- [ ] **T25.3.4 - Build inline note editor** - What: Notes typed directly in the journal row, no dialogs. How: data-model bound textarea revealed by a data-if edit flag per row, saving on blur through setValue.
-- [ ] **T25.3.5 - Render tag chips** - What: Tags visible as compact colored chips on each trade. How: data-each over trade.tags rendering chips with a remove data-action, styled in the money-hacker palette.
-- [ ] **T25.3.6 - Seed a preset tag palette** - What: Instant tagging vocabulary like plan, fomo, news, revenge. How: Ship a default tagCatalog array in src/journal/tags.js merged with user-created tags on load.
-- [ ] **T25.3.7 - Add tag autocomplete** - What: Existing tags suggested while typing to avoid near-duplicates. How: Bind the tag input to a datalist populated by data-each over tagCatalog with prefix filtering via a computed.
-- [ ] **T25.3.8 - Persist annotations** - What: Notes and tags survive reloads and sessions. How: Register journal notes, tags and tagCatalog paths with spektrum/persist to localStorage.
-- [ ] **T25.3.9 - Write single unit tests for tag fns** - What: addTag, removeTag and the suggestion filter each proven once. How: One Vitest test per function in tags.test.js, executed with vitest run -t per function.
-- [ ] **T25.3.10 - Verify and merge annotations** - What: Annotation feature reaches main green. How: Run targeted tests, tag and note a live paper trade end-to-end, merge feature branch to main.
+- [x] **T25.3.1 - Cut annotation branch** - What: Notes work isolated from main. How: git checkout -b feature/f25.3-notes-tags from main.
+- [x] **T25.3.2 - Model notes and tags state** - What: A durable home for annotations per trade. How: Add note string and tags array to the trade typedef plus a global state.journal.tagCatalog of known tags.
+- [x] **T25.3.3 - Implement tag actions** - What: One-keystroke tagging of any trade. How: defineFn addTag(tradeId, tag) and removeTag(tradeId, tag) that update the trade and grow tagCatalog, exposed via data-action.
+- [x] **T25.3.4 - Build inline note editor** - What: Notes typed directly in the journal row, no dialogs. How: data-model bound textarea revealed by a data-if edit flag per row, saving on blur through setValue.
+- [x] **T25.3.5 - Render tag chips** - What: Tags visible as compact colored chips on each trade. How: data-each over trade.tags rendering chips with a remove data-action, styled in the money-hacker palette.
+- [x] **T25.3.6 - Seed a preset tag palette** - What: Instant tagging vocabulary like plan, fomo, news, revenge. How: Ship a default tagCatalog array in src/journal/tags.js merged with user-created tags on load.
+- [x] **T25.3.7 - Add tag autocomplete** - What: Existing tags suggested while typing to avoid near-duplicates. How: Bind the tag input to a datalist populated by data-each over tagCatalog with prefix filtering via a computed.
+- [x] **T25.3.8 - Persist annotations** - What: Notes and tags survive reloads and sessions. How: Register journal notes, tags and tagCatalog paths with spektrum/persist to localStorage.
+- [x] **T25.3.9 - Write single unit tests for tag fns** - What: addTag, removeTag and the suggestion filter each proven once. How: One Vitest test per function in tags.test.js, executed with vitest run -t per function.
+- [x] **T25.3.10 - Verify and merge annotations** - What: Annotation feature reaches main green. How: Run targeted tests, tag and note a live paper trade end-to-end, merge feature branch to main.
 
 ### F25.4 - Checkpoint on Every Closed Trade
 

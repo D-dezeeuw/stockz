@@ -391,7 +391,30 @@
                 <span class="journal__excursion tnum" title="worst against / best in favour">{{fmt.signed(t.mae)}} / {{fmt.signed(t.mfe)}}</span>
                 <span class="journal__cost tnum" title="slippage · fees">{{fmt.signed(-t.slippage)}} · {{t.fees}}</span>
                 <span class="journal__net tnum">{{fmt.signed(t.net)}}</span>
+                <!-- The metrics say what happened; only the trader knows why they took it,
+                     and that is the half no arithmetic recovers. -->
+                <button type="button" class="journal__annotate" data-action="click"
+                        data-fn="journal.editNote" :data-id="t.id"
+                        :class="t.annotated ? 'journal__annotate is-on' : 'journal__annotate'"
+                        aria-label="Note and tags">✎</button>
+                <span class="journal__tags" data-each="tag in t.tags">
+                  <button type="button" class="chip journal__tag" data-action="click"
+                          data-fn="journal.removeTag" :data-id="t.id" :data-tag="tag">{{tag}}</button>
+                </span>
               </div>
+            </div>
+            <!-- The editor, one row at a time. No dialog, no save button: a save button in
+                 a journal is a note that does not get written. -->
+            <div class="journal__editor" data-if="block.id === 'journal' &amp;&amp; journal.editing">
+              <input type="text" class="field__input" list="journal-tags"
+                     placeholder="tag and press enter" data-action="change"
+                     data-fn="journal.addTag" :data-id="journal.editing">
+              <datalist id="journal-tags" data-each="tag in journal.tagCatalog">
+                <option :value="tag"></option>
+              </datalist>
+              <textarea class="field__input journal__note" rows="2" placeholder="why did I take this?"
+                        data-action="blur" data-fn="journal.setNote"
+                        :data-id="journal.editing"></textarea>
             </div>
             <!-- An alert set in under three seconds: level, direction, done. -->
             <div class="alerts" data-if="block.id === 'watchlist'">
