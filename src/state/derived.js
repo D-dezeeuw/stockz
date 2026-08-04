@@ -127,7 +127,14 @@ export function registerDerived() {
 
   // One computed for the whole ladder, not three: bids, asks and the spread row must
   // always come from the same book snapshot, or the ladder shows a spread that never was.
-  computed(PATHS.market.ladder, [PATHS.market.book], (state) => ladderView(state.market?.book))
+  computed(
+    PATHS.market.ladder,
+    [PATHS.market.book, PATHS.market.focus, PATHS.settings.priceGroups],
+    (state) =>
+      ladderView(state.market?.book, {
+        group: Number(state.settings?.priceGroups?.[state.market?.focus ?? '']) || 0,
+      }),
+  )
 
   computed(PATHS.trade.exposure, [PATHS.trade.positions], (state) =>
     exposureOf(state.trade?.positions),

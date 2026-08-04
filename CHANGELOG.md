@@ -12,6 +12,12 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ### Added
 
+- **Price grouping** — collapse the ladder to coarser steps and the resting size appears
+  behind the tick-level texture. Bids floor and asks ceil, so a grouped book is never
+  narrower than the real one and can never appear crossed; group sizes are whole
+  multiples of the tick, so no bucket boundary lands between quotable prices. The choice
+  is stored per instrument, because a granularity that reads well on BTC is meaningless
+  on a penny alt. (F14.7)
 - **Click-to-trade prefill** — the reason the ladder is DOM and not canvas: every price
   on it is a click target that loads the ticket, snapped to a tradable tick and carrying
   the desk's standard clip. Clicking a bid joins it; shift-clicking crosses it. Nothing

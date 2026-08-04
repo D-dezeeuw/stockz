@@ -75,6 +75,7 @@ export const PATHS = Object.freeze({
     bookDepth: 'settings.bookDepth',
     imbalanceThreshold: 'settings.imbalanceThreshold',
     whaleMultiplier: 'settings.whaleMultiplier',
+    priceGroups: 'settings.priceGroups',
   }),
   market: Object.freeze({
     venues: 'market.venues',

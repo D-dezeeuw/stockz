@@ -127,6 +127,14 @@ describe('ladderView', () => {
     expect(view.bids[1].pct).toBe(100)
     expect(view.asks[1].pct).toBe(50)
 
-    expect(ladderView(null)).toEqual({ bids: [], asks: [], spread: expect.any(Object) })
+    // Grouped, the bars scale against the aggregated sizes, not the raw levels.
+    const grouped = ladderView(book, { tickSize: 0.1, group: 0.5, depth: 5 })
+    expect(grouped.group).toBe(0.5)
+    expect(grouped.bids.map((r) => r.px)).toEqual([100, 99.5])
+    expect(grouped.bids[0].sz).toBe(2)
+    expect(grouped.bids[1].sz).toBe(9)
+    expect(grouped.bids[1].pct).toBe(100)
+
+    expect(ladderView(null)).toMatchObject({ bids: [], asks: [], group: 0 })
   })
 })

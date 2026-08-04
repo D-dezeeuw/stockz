@@ -150,6 +150,16 @@
             <!-- The ladder block. Rows are DOM, not canvas: they are click targets for
                  the order ticket, and a canvas row cannot be one. -->
             <div class="ladder" data-if="block.id === 'ladder'">
+              <!-- Granularity: whole multiples of the tick, so no bucket boundary ever
+                   lands between two quotable prices. -->
+              <div class="ladder__groups">
+                <button type="button" class="chip" data-action="click" data-fn="book.setGroup"
+                        data-group="0">1×</button>
+                <button type="button" class="chip" data-action="click" data-fn="book.setGroup"
+                        data-group="0.1">10×</button>
+                <button type="button" class="chip" data-action="click" data-fn="book.setGroup"
+                        data-group="0.5">50×</button>
+              </div>
               <!-- Pressure gauge: two widths that sum to 100, so no maths in the template. -->
               <div class="gauge" :class="market.imbalance.hot ? 'gauge gauge--hot' : 'gauge'">
                 <span class="gauge__seg gauge__seg--bid" :style="'width:' + market.imbalance.bidPct + '%'"></span>
