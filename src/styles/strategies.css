@@ -119,3 +119,18 @@
 .runs__param input[type='checkbox'] {
   justify-self: start;
 }
+
+/*
+ * A benched run. Bordered rather than hidden — the point of quarantine is that the trader
+ * can see what stopped and why, and put it back with one click.
+ */
+.runs__row--benched {
+  grid-template-columns: auto auto 1fr auto;
+  border-left: 2px solid var(--orange);
+  padding-left: var(--space-1, 0.25rem);
+}
+
+.runs__error {
+  color: var(--orange);
+  min-width: 0;
+}

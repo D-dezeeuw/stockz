@@ -3347,16 +3347,16 @@
 **What:** One crashing strategy can never take down the tick loop or its neighbors.
 **How:** Hook calls wrapped in Spektrum attempt(), consecutive-error tallies, automatic quarantine and a visible resume path.
 
-- [ ] **T20.8.1 - Start sandbox branch** - What: Isolated hardening work. How: Branch feature/f20.8-error-sandbox off main.
-- [ ] **T20.8.2 - safeInvoke fn** - What: Hook exceptions become data instead of crashes. How: Wrap each hook call in attempt(), returning {ok, value, error} with the runKey attached.
-- [ ] **T20.8.3 - errorTally fn** - What: Repeat offenders are counted precisely. How: Pure reducer incrementing consecutive errors per run and resetting to zero on any success.
-- [ ] **T20.8.4 - quarantine fn** - What: A flapping strategy is benched automatically. How: Call stopStrategy and mark the run quarantined when the tally hits 3, preserving its last error.
-- [ ] **T20.8.5 - Error ring log** - What: Recent failures stay inspectable after the fact. How: Push {runKey, error, ts} into a 64-slot ring exposed to spektrum/inspect.
-- [ ] **T20.8.6 - Quarantine state publication** - What: The desk sees who is benched and why. How: setValue strategies.quarantined with run summaries and last error messages.
-- [ ] **T20.8.7 - Resume action** - What: One click puts a fixed strategy back to work. How: Resume button in the runs block wired via data-action to clear the tally and restart the run.
-- [ ] **T20.8.8 - Crash-fixture strategy** - What: Isolation proven against a genuinely hostile plugin. How: A builtin test strategy throwing on every 5th tick, verified to quarantine while a sibling keeps emitting.
-- [ ] **T20.8.9 - Single tests per sandbox fn** - What: Wrapping, tallying and quarantine each proven alone. How: One Vitest test per fn with throwing stubs, run via separate -t filters.
-- [ ] **T20.8.10 - Merge sandbox** - What: A tick loop that survives bad code. How: Green lint and targeted runs, merge to main.
+- [x] **T20.8.1 - Start sandbox branch** - What: Isolated hardening work. How: Branch feature/f20.8-error-sandbox off main.
+- [x] **T20.8.2 - safeInvoke fn** - What: Hook exceptions become data instead of crashes. How: Wrap each hook call in attempt(), returning {ok, value, error} with the runKey attached.
+- [x] **T20.8.3 - errorTally fn** - What: Repeat offenders are counted precisely. How: Pure reducer incrementing consecutive errors per run and resetting to zero on any success.
+- [x] **T20.8.4 - quarantine fn** - What: A flapping strategy is benched automatically. How: Call stopStrategy and mark the run quarantined when the tally hits 3, preserving its last error.
+- [x] **T20.8.5 - Error ring log** - What: Recent failures stay inspectable after the fact. How: Push {runKey, error, ts} into a 64-slot ring exposed to spektrum/inspect.
+- [x] **T20.8.6 - Quarantine state publication** - What: The desk sees who is benched and why. How: setValue strategies.quarantined with run summaries and last error messages.
+- [x] **T20.8.7 - Resume action** - What: One click puts a fixed strategy back to work. How: Resume button in the runs block wired via data-action to clear the tally and restart the run.
+- [x] **T20.8.8 - Crash-fixture strategy** - What: Isolation proven against a genuinely hostile plugin. How: A builtin test strategy throwing on every 5th tick, verified to quarantine while a sibling keeps emitting.
+- [x] **T20.8.9 - Single tests per sandbox fn** - What: Wrapping, tallying and quarantine each proven alone. How: One Vitest test per fn with throwing stubs, run via separate -t filters.
+- [x] **T20.8.10 - Merge sandbox** - What: A tick loop that survives bad code. How: Green lint and targeted runs, merge to main.
 
 ### F20.9 - Signal history ring buffer
 

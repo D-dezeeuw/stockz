@@ -12,6 +12,20 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ### Added
 
+- **Sandboxed strategy errors** — a strategy is somebody's idea, written fast and tested
+  less; it will throw, and the only question is whether it takes the tick loop, its
+  neighbours and the feed with it. A throw becomes **data**: an `{ok, error}` result, a
+  consecutive-error tally, and at three in a row an automatic bench. Three rather than one,
+  because a single throw on a malformed frame is a bug worth surviving while three in a row
+  is a strategy that will keep throwing every tick until somebody looks — and any success
+  clears the tally, so a strategy that throws once an hour is never treated like one
+  throwing constantly. Quarantine **stops** the run rather than flagging it, since a benched
+  run whose subscription survived would keep throwing behind a UI that says it is off, and
+  it is visible and one-click reversible, because a strategy that vanished silently is
+  indistinguishable from one with nothing to say. There is now exactly **one** place a
+  strategy exception is caught; a second would mean two definitions of "it failed" and a
+  tally counting whichever fired. A deliberately hostile built-in throws on a schedule, so a
+  regression that lets an exception escape fails a test rather than a session.
 - **Per-strategy tick budget** — a strategy runs inside the same frame as the book, the tape
   and the order ticket, so a slow one does not just make itself late, it makes **the desk**
   late. Each run carries a declared budget (2ms by default, merged into every strategy's

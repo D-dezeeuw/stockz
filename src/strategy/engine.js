@@ -1,5 +1,6 @@
 import { defineStrategy, createStrategyContext, toSignal, resolveParams } from './contract.js'
 import { noopStrategy } from './builtin/noop.js'
+import { safeInvoke } from './sandbox.js'
 
 /**
  * The strategy engine's front door.
@@ -35,23 +36,26 @@ export function describeStrategies(strategies = BUILTIN_STRATEGIES) {
 /**
  * Run one hook of one strategy.
  *
+ * There is exactly one place a strategy exception is caught, and this is it. A second
+ * try/catch further out would mean two definitions of "the strategy failed", and the
+ * quarantine tally would count whichever one happened to fire.
+ *
  * @param {object} strategy - the strategy.
  * @param {string} hook - 'onTick' or 'onCandle'.
  * @param {object} ctx - the context.
  * @param {object} payload - the tick or candle.
- * @returns {import('./contract.js').Signal} the signal.
+ * @param {string} [runKey] - the run, for the error record.
+ * @returns {{signal: object, ok: boolean, error: string, runKey: string}} the outcome.
  */
-export function runHook(strategy, hook, ctx, payload) {
-  const fn = strategy?.[hook]
-  if (typeof fn !== 'function') return toSignal(null)
+export function runHook(strategy, hook, ctx, payload, runKey) {
+  const result = safeInvoke(strategy?.[hook], runKey, ctx, payload)
 
-  try {
-    return toSignal(fn(ctx, payload))
-  } catch (err) {
-    // A throwing strategy is silenced for this tick, not for the session, and never takes
-    // the frame down with it: the desk's own feed and ticket keep working while somebody's
-    // idea is broken.
-    ctx?.log?.warn?.(`${hook} threw: ${err?.message ?? err}`)
-    return toSignal(null)
+  // A throwing strategy is silenced for this tick, not for the session, and never takes
+  // the frame down with it: the desk's own feed and ticket keep working while somebody's
+  // idea is broken.
+  if (!result.ok && result.error !== 'not callable') {
+    ctx?.log?.warn?.(`${hook} threw: ${result.error}`)
   }
+
+  return { ...result, signal: toSignal(result.value) }
 }

@@ -172,6 +172,7 @@ export function initialState(overrides = {}) {
     // strategies
     [PATHS.strategy.registered]: [],
     [PATHS.strategy.running]: [],
+    [PATHS.strategy.quarantined]: [],
     [PATHS.strategy.signals]: {},
   }
 }
