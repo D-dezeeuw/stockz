@@ -15,6 +15,7 @@ export const ACTIONS = Object.freeze({
     setSection: 'ui.setSection',
     toggleOverlay: 'ui.toggleOverlay',
     setTheme: 'ui.setTheme',
+    setCandleInterval: 'ui.setCandleInterval',
   }),
   app: Object.freeze({
     reset: 'app.reset',
