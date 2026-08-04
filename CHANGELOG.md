@@ -44,6 +44,18 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ### Added
 
+- **A market mode, defaulting to Volatile.** The order-rate ceiling is what actually decides
+  how much trading happens, and it binds long before any other limit: signals arrive in
+  clusters, so a burst empties the window in seconds and everything behind it is refused.
+  Measured over a simulated hour, a 30/min ceiling turned ~200 signals away. `quiet` is
+  15/min, `normal` 30, `volatile` 120, and the desk now ships on **volatile**. The mode is a
+  preset — it writes `botMaxPerMin` and then stops mattering, so the number stays the single
+  source of truth and a hand-typed rate is not overwritten on the next read. It is watched
+  rather than bolted to one control, because the setting can move from the drawer, the
+  palette or a settings import. Worth knowing: raising the ceiling removes the throttle as
+  the binding constraint but barely moves throughput, because the real limiter is
+  structural — four strategies holding one position each.
+
 - **A bookmark URL built from the keys you just entered.** The desk has read credentials
   from URL params since phase 7 and there was no way to produce such a URL — the modal
   described the format and left you to assemble it by hand. Enter the keys once and the
@@ -113,6 +125,11 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ### Fixed
 
+- **The bot ran on two different clocks.** `decide` fell back to `signal.ts` — the *venue's*
+  timestamp on the tick that produced the signal — while the loss-streak cooldown is set
+  from the fill's local timestamp in the ledger. Two clocks decided when the bench ended, so
+  venue skew or a lagging feed left the throttle window and the cooldown disagreeing about
+  what time it was. The runner now stamps one local `now` per drain and passes it down.
 - **The bot opened positions and never closed them.** Strategies emit `flat` when a time
   stop, target or stop-loss fires, and `mapSignalToOrder` refuses those by design — closing
   is the position layer's job, because only it knows the size. Nothing ever carried them

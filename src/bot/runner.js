@@ -290,9 +290,18 @@ export function createBotRunner(options = {}) {
   const every = Number(options.intervalMs) > 0 ? Number(options.intervalMs) : DRAIN_MS
   const unsubscribe = typeof options.subscribe === 'function' ? options.subscribe(enqueueSignal) : null
 
+  // One clock for the whole bot, stamped per drain.
+  //
+  // Without it `decide` falls back to `signal.ts` — the *venue's* timestamp on the tick
+  // that produced the signal — while the loss-streak cooldown is set from the fill's local
+  // timestamp in the ledger. Two different clocks decide when the bench ends, so venue
+  // skew or a lagging feed makes the throttle window and the cooldown disagree about what
+  // time it is. Local time on both sides is the only pairing that cannot drift apart.
+  const clock = typeof options.clock === 'function' ? options.clock : () => Date.now()
+
   // A 50ms drain rather than acting on the signal itself: it bounds how much work a burst
   // can do in one frame, and it is still four times faster than a person.
-  const handle = timer.setInterval?.(() => drainTick(options), every)
+  const handle = timer.setInterval?.(() => drainTick({ now: clock(), ...options }), every)
 
   const stop = () => {
     timer.clearInterval?.(handle)
