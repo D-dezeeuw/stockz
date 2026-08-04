@@ -69,6 +69,7 @@ export function initialState(overrides = {}) {
     [PATHS.market.ticks]: 0,
     [PATHS.market.bid]: 0,
     [PATHS.market.ask]: 0,
+    [PATHS.market.quoteTs]: 0,
     [PATHS.market.book]: { bids: [], asks: [], seqId: 0, ts: 0 },
     [PATHS.market.bookStatus]: 'stale',
     [PATHS.market.ladder]: { bids: [], asks: [], spread: null },
@@ -92,6 +93,10 @@ export function initialState(overrides = {}) {
     [PATHS.trade.ticketSide]: 'buy',
     [PATHS.trade.ticketSize]: 0,
     [PATHS.trade.ticketFlash]: 0,
+    [PATHS.trade.ticketSymbol]: '',
+    [PATHS.trade.ticketMode]: 'market',
+    [PATHS.trade.ticketLimit]: 0,
+    [PATHS.trade.ticketSource]: 'market',
     [PATHS.trade.exposure]: 0,
     [PATHS.trade.openOrders]: 0,
 

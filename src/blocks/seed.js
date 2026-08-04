@@ -10,9 +10,9 @@ import { commitBlocks, currentBlocks, makeBlock, BLOCK_STATUS } from './registry
 export const DEFAULT_BLOCKS = Object.freeze([
   { id: 'watchlist', title: 'Watchlist', icon: 'chart', order: 0, status: BLOCK_STATUS.empty },
   { id: 'chart', title: 'Micro Chart', icon: 'chart', order: 1, status: BLOCK_STATUS.loading },
-  { id: 'book', title: 'Order Book', icon: 'chart', order: 2, status: BLOCK_STATUS.loading },
-  { id: 'tape', title: 'Time & Sales', icon: 'clock', order: 3, status: BLOCK_STATUS.loading },
-  { id: 'ticket', title: 'Order Ticket', icon: 'bolt', order: 4, status: BLOCK_STATUS.empty },
+  { id: 'book', title: 'Order Book', icon: 'chart', order: 2, status: BLOCK_STATUS.ready },
+  { id: 'tape', title: 'Time & Sales', icon: 'clock', order: 3, status: BLOCK_STATUS.ready },
+  { id: 'ticket', title: 'Order Ticket', icon: 'bolt', order: 4, status: BLOCK_STATUS.ready },
   { id: 'positions', title: 'Positions', icon: 'chart', order: 5, status: BLOCK_STATUS.empty },
   { id: 'hud', title: 'Scalper HUD', icon: 'gear', order: 6, status: BLOCK_STATUS.loading },
   { id: 'journal', title: 'Journal', icon: 'clock', order: 7, status: BLOCK_STATUS.empty },

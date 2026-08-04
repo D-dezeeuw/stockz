@@ -41,6 +41,7 @@
   <link rel="stylesheet" href="./src/styles/status.css">
   <link rel="stylesheet" href="./src/styles/states.css">
   <link rel="stylesheet" href="./src/styles/ladder.css">
+  <link rel="stylesheet" href="./src/styles/ticket.css">
   <link rel="stylesheet" href="./src/styles/utilities.css">
 
   <!-- The UI engine, straight from the CDN. Pinned to an exact version: the live page
@@ -149,7 +150,7 @@
           <div data-if="block.status === 'ready'">
             <!-- The ladder block. Rows are DOM, not canvas: they are click targets for
                  the order ticket, and a canvas row cannot be one. -->
-            <div class="ladder" data-if="block.id === 'ladder'"
+            <div class="ladder" data-if="block.id === 'book'"
                  :class="market.bookStatus === 'live' ? 'ladder' : 'ladder ladder--degraded'">
               <!-- Book health on the ladder itself: a frozen book looks exactly like a
                    quiet market, which is the dangerous state. -->
@@ -220,7 +221,48 @@
             </div>
             <div class="tape__spacer" data-if="block.id === 'tape'"
                  :style="'height:' + market.tapeWindow.bottomPad + 'px'"></div>
-            <p class="label" data-if="block.id !== 'ladder' &amp;&amp; block.id !== 'tape'">ready</p>
+            <!-- The ticket. Oversized buttons, one glance away, no confirm step: the
+                 arm toggle is the whole safety story on the fast path. -->
+            <div class="ticket" data-if="block.id === 'ticket'">
+              <div class="ticket__modes">
+                <button type="button" class="chip" data-action="click" data-fn="ticket.setMode"
+                        data-mode="market" :class="trade.ticketMode === 'market' ? 'chip chip--on' : 'chip'">MKT</button>
+                <button type="button" class="chip" data-action="click" data-fn="ticket.setMode"
+                        data-mode="bid" :class="trade.ticketMode === 'bid' ? 'chip chip--on' : 'chip'">BID</button>
+                <button type="button" class="chip" data-action="click" data-fn="ticket.setMode"
+                        data-mode="ask" :class="trade.ticketMode === 'ask' ? 'chip chip--on' : 'chip'">ASK</button>
+                <button type="button" class="chip" data-action="click" data-fn="ticket.setMode"
+                        data-mode="limit" :class="trade.ticketMode === 'limit' ? 'chip chip--on' : 'chip'">LMT</button>
+              </div>
+              <div class="ticket__sizes">
+                <button type="button" class="chip" data-action="click" data-fn="ticket.setSize"
+                        data-preset="0.25">¼</button>
+                <button type="button" class="chip" data-action="click" data-fn="ticket.setSize"
+                        data-preset="0.5">½</button>
+                <button type="button" class="chip" data-action="click" data-fn="ticket.setSize"
+                        data-preset="1">1×</button>
+                <button type="button" class="chip" data-action="click" data-fn="ticket.setSize"
+                        data-preset="2">2×</button>
+                <button type="button" class="chip" data-action="click" data-fn="ticket.setSize"
+                        data-preset="5">5×</button>
+              </div>
+              <!-- What it would send, before it is sent. -->
+              <p class="ticket__preview">
+                <span class="ticket__size">{{trade.ticketSize}}</span>
+                <span class="ticket__at">@</span>
+                <span class="ticket__price">{{fmt.price(trade.ticketPrice)}}</span>
+                <span class="label">{{trade.ticketSource}}</span>
+              </p>
+              <div class="ticket__buttons">
+                <button type="button" class="ticket__go ticket__go--buy" data-action="click"
+                        data-fn="ticket.setSide" data-side="buy">BUY</button>
+                <button type="button" class="ticket__go ticket__go--sell" data-action="click"
+                        data-fn="ticket.setSide" data-side="sell">SELL</button>
+              </div>
+              <button type="button" class="ticket__arm" data-action="click" data-fn="ticket.arm"
+                      :class="trade.armed ? 'ticket__arm ticket__arm--on' : 'ticket__arm'">{{trade.armed ? 'ARMED' : 'SAFE'}}</button>
+            </div>
+            <p class="label" data-if="block.id !== 'book' &amp;&amp; block.id !== 'tape' &amp;&amp; block.id !== 'ticket'">ready</p>
           </div>
         </div>
       </section>

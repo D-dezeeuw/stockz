@@ -1,0 +1,108 @@
+/*
+ * The order ticket.
+ *
+ * The buttons are oversized on purpose. Everything else on this desk optimises for
+ * information density; this one block optimises for hitting the right target without
+ * looking at it, because the moment a scalper is clicking BUY their eyes are on the tape.
+ */
+
+.ticket {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2, 0.5rem);
+  height: 100%;
+}
+
+.ticket__modes,
+.ticket__sizes {
+  display: flex;
+  gap: var(--space-1, 0.25rem);
+}
+
+.chip--on {
+  border-color: var(--green);
+  color: var(--green);
+  box-shadow: 0 0 6px color-mix(in srgb, var(--green) 35%, transparent);
+}
+
+.ticket__preview {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2, 0.5rem);
+  font-variant-numeric: tabular-nums;
+  margin: 0;
+}
+
+.ticket__price {
+  font-size: var(--font-size-lg, 1.125rem);
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.ticket__at {
+  color: var(--ink-muted);
+}
+
+.ticket__buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-2, 0.5rem);
+  flex: 1 1 auto;
+  min-height: 3rem;
+}
+
+.ticket__go {
+  border: 1px solid currentColor;
+  background: transparent;
+  font: inherit;
+  font-weight: 800;
+  font-size: var(--font-size-lg, 1.125rem);
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  /* No transition on press: a button that animates is a button that reports the click
+     later than it happened, and on this path the feedback is the point. */
+  transition: background-color 80ms linear;
+}
+
+.ticket__go--buy {
+  color: var(--green);
+}
+
+.ticket__go--buy:hover {
+  background: color-mix(in srgb, var(--green) 18%, transparent);
+}
+
+.ticket__go--sell {
+  color: var(--orange);
+}
+
+.ticket__go--sell:hover {
+  background: color-mix(in srgb, var(--orange) 18%, transparent);
+}
+
+/*
+ * SAFE / ARMED. One toggle for the session rather than a dialog per order — so it has to
+ * be unmissable, because it is the entire safety story on the fast path.
+ */
+.ticket__arm {
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--ink-muted);
+  font: inherit;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  padding-block: var(--space-1, 0.25rem);
+  cursor: pointer;
+}
+
+.ticket__arm--on {
+  border-color: var(--orange);
+  color: var(--orange);
+  box-shadow: 0 0 10px color-mix(in srgb, var(--orange) 40%, transparent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ticket__go {
+    transition: none;
+  }
+}
