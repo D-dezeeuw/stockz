@@ -293,6 +293,61 @@ export function runBacktest(config = {}, deps = {}) {
 }
 
 /**
+ * Run a backtest that owns nothing.
+ *
+ * `runBacktest` is the *desk's* run: one at a time, publishing progress, cancelling
+ * whatever came before. A sweep needs the opposite — eight of these in flight at once,
+ * none of them touching the block's progress bar and none of them cancelling each other.
+ * Sharing the singleton would have every lane in the pool kill the lane before it, and the
+ * sweep would finish with one result and no error.
+ *
+ * @param {object} config - the run.
+ * @param {object} [deps] - injectable plumbing.
+ * @returns {Promise<object|null>} the result, or null when it failed.
+ */
+export function runDetachedBacktest(config = {}, deps = {}) {
+  const strategy = findBacktestStrategy(config.strategyId)
+  if (!strategy) return Promise.resolve(null)
+
+  const request = {
+    type: 'run',
+    runId: String(config.runId ?? `bt-detached-${String(config.strategyId)}`),
+    sessionId: String(config.sessionId ?? ''),
+    strategyId: String(config.strategyId ?? ''),
+    instrument: String(config.instrument ?? ''),
+    params: config.params ?? {},
+    fillConfig: config.fillConfig ?? fillConfigFromSettings(),
+  }
+
+  const worker = spawnBacktestWorker(deps)
+
+  return new Promise((resolve) => {
+    const settle = (result) => {
+      worker?.terminate?.()
+      resolve(result)
+    }
+
+    if (worker) {
+      worker.onmessage = (event) => {
+        const message = event?.data
+        // Progress is dropped on purpose: eight lanes publishing into one bar would make it
+        // jitter between eight unrelated runs. The sweep counts completions instead.
+        if (message?.type === 'done') settle(message.result)
+        else if (message?.type === 'error') settle(null)
+      }
+      worker.onerror = () => settle(null)
+      worker.postMessage(request)
+      return
+    }
+
+    runRequest(request, (message) => {
+      if (message?.type === 'done') settle(message.result)
+      else if (message?.type === 'error') settle(null)
+    }, deps).catch(() => settle(null))
+  })
+}
+
+/**
  * Abort the running backtest.
  *
  * @returns {boolean} true when there was something to abort.

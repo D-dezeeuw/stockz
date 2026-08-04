@@ -40,6 +40,7 @@ import { registerLibraryActions } from '../playback/library.js'
 import { registerPlayerActions } from '../playback/player.js'
 import { registerBacktestActions } from '../backtest/runner.js'
 import { registerBacktestReportActions } from '../backtest/report.js'
+import { registerSweepActions } from '../backtest/sweep.js'
 import { registerStrategyActions } from '../strategy/registry.js'
 import { registerTicketActions } from '../ticket/actions.js'
 import { registerSizingActions } from '../ticket/sizing.js'
@@ -135,6 +136,9 @@ describe('allActionNames', () => {
       'backtest.cancel',
       'backtest.configure',
       'backtest.copyReport',
+      'backtest.sweep',
+      'backtest.sortSweep',
+      'backtest.applyCombo',
       'bot.toggleArm',
       'bot.setAuto',
       'bot.disableAll',
@@ -223,6 +227,7 @@ describe('allActionNames', () => {
     registerPlayerActions()
     registerBacktestActions()
     registerBacktestReportActions()
+    registerSweepActions()
     registerStrategyActions()
     registerTicketActions()
     registerSizingActions()

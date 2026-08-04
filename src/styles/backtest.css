@@ -125,5 +125,71 @@
 
 .backtest__out {
   display: flex;
+  flex-wrap: wrap;
+  align-items: center;
   gap: var(--sp-1);
+}
+
+/*
+ * The sweep table.
+ *
+ * One row per combo, coloured by where its P&L sits between the worst and the best. The
+ * point is that a winner should be visible without reading a number — a strategy that
+ * earns at exactly one setting and nowhere near it is a coincidence with a parameter
+ * attached, and a gradient shows that instantly where a sorted column does not.
+ */
+.sweep {
+  display: flex;
+  flex-direction: column;
+  min-block-size: 0;
+  font-variant-numeric: tabular-nums;
+  font-size: var(--fs-0);
+}
+
+.sweep__head,
+.sweep__row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 0.5fr 0.6fr 1fr 1.6fr;
+  gap: var(--sp-1);
+  align-items: baseline;
+}
+
+.sweep__col {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--ink-muted);
+  font: inherit;
+  text-align: start;
+  cursor: pointer;
+}
+
+.sweep__col:hover {
+  color: var(--green);
+}
+
+.sweep__rows {
+  overflow-y: auto;
+  min-block-size: 0;
+}
+
+.sweep__row {
+  padding-inline: var(--sp-1);
+  /* The gradient is mixed here rather than computed in JS: the tokens already know what
+     green and orange are in each theme, and a JS colour would be wrong in one of them. */
+  background: linear-gradient(
+    to right,
+    color-mix(in srgb, var(--orange) 14%, transparent),
+    color-mix(in srgb, var(--green) 18%, transparent) var(--heat, 50%),
+    transparent var(--heat, 50%)
+  );
+  cursor: pointer;
+}
+
+.sweep__row.is-best {
+  outline: 1px solid var(--green);
+}
+
+.sweep__cell {
+  min-inline-size: 0;
 }

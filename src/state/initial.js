@@ -231,6 +231,10 @@ export function initialState(overrides = {}) {
     [PATHS.backtest.stats]: null,
     [PATHS.backtest.tiles]: [],
     [PATHS.backtest.curve]: [],
+    [PATHS.backtest.sweep]: { done: 0, total: 0, active: false },
+    [PATHS.backtest.sweepRows]: [],
+    [PATHS.backtest.sweepView]: [],
+    [PATHS.backtest.sweepSort]: { key: 'net', dir: 'desc' },
     [PATHS.backtest.result]: null,
     [PATHS.backtest.summary]: {
       ran: false,

@@ -302,6 +302,12 @@ export const PATHS = Object.freeze({
     stats: 'backtest.stats',
     tiles: 'backtest.tiles',
     curve: 'backtest.curve',
+    // The sweep: raw rows for sorting and applying, the sorted+coloured view for the
+    // table, and the counter that says how far through the grid it is.
+    sweep: 'backtest.sweep',
+    sweepRows: 'backtest.sweepRows',
+    sweepView: 'backtest.sweepView',
+    sweepSort: 'backtest.sweepSort',
     // The last finished run, the always-shaped readout of it, and why the last one did
     // not finish. The summary exists because a template cannot read through a null result.
     result: 'backtest.result',

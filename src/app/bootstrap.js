@@ -56,6 +56,7 @@ import { registerLibraryActions, refreshLibrary } from '../playback/library.js'
 import { registerPlayerActions } from '../playback/player.js'
 import { registerBacktestActions } from '../backtest/runner.js'
 import { registerBacktestReportActions, startReportChart } from '../backtest/report.js'
+import { registerSweepActions } from '../backtest/sweep.js'
 import { setLevelSink } from '../strategy/builtin/range-fade.js'
 import { syncOkxClock } from '../venues/okx/clock.js'
 import { startHistogram } from '../analytics/holdtime.js'
@@ -197,6 +198,7 @@ export function bootstrap(options = {}) {
   registerPlayerActions()
   registerBacktestActions()
   registerBacktestReportActions()
+  registerSweepActions()
   startReportChart()
   // The one strategy with something to show gets its sink here rather than importing the
   // engine itself — see the note in range-fade.js.
