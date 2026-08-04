@@ -290,6 +290,20 @@ see `src/venues/okx/live.js` and `src/app/feeds.js`.)*
 
 ## Gotchas (learned the hard way — do not rediscover)
 
+- **`setValue` on an object MERGES; it never replaces.** `setValue(path, {})` is a no-op,
+  and `setValue(path, {a: 1})` over `{b: 2}` yields `{a: 1, b: 2}`. Setting a key to
+  `undefined` clears its *value* but leaves the key present (`Object.keys` still lists
+  it), so any map read back must treat an `undefined` entry as absent. Clearing a map
+  means writing every current key as `undefined` — see `clearedMap` in
+  `src/keys/overrides.js`. Arrays, by contrast, replace wholesale.
+- **`setValue` lands on the NEXT tick.** Anything writing the same path twice inside one
+  frame must fold locally and write once, or the second read misses the first write. This
+  cost a double-drained order queue and a cancel-all that cancelled 1 of 3 orders.
+- **The credential-shaped-path guard in `initial.test.js` matches `/key|secret|passphrase|token/i`.**
+  `settings.keyBindings` and `ui.hotkeyRows` both tripped it; they are now
+  `settings.chords` and `ui.chordSheet`. Rename rather than adding an exception — the
+  guard is worth more than the name.
+
 - **`replay(n)` applies history entries `[0, n)`** — `history.length` means "the
   present", not out of range. The first `devReplayTo` test assumed `n` was inclusive and
   failed.

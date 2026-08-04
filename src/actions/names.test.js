@@ -16,6 +16,7 @@ import { registerSizingActions } from '../ticket/sizing.js'
 import { registerSubmitAction } from '../ticket/submit.js'
 import { registerShortcutActions } from '../ticket/shortcuts.js'
 import { registerIntentAction } from '../ticket/intent.js'
+import { registerBindingActions } from '../keys/overrides.js'
 
 beforeEach(() => {
   clearActions()
@@ -54,6 +55,8 @@ describe('allActionNames', () => {
       'lists.manage',
       'keys.submit',
       'keys.lock',
+      'keys.rebind',
+      'keys.resetBindings',
       'settings.update',
       'settings.reset',
     ])
@@ -76,6 +79,7 @@ describe('allActionNames', () => {
     registerSubmitAction()
     registerShortcutActions()
     registerIntentAction()
+    registerBindingActions()
     expect(actionNames().sort()).toEqual(allActionNames().sort())
 
     // Every name follows <namespace>.<verb>, which is what registerAction enforces.

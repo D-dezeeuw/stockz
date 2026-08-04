@@ -1,5 +1,5 @@
 import { ACTIONS } from '../actions/names.js'
-import { registerBinding, clearBindings, allBindings } from './keymap.js'
+import { registerBinding, unregisterBinding, clearBindings, allBindings } from './keymap.js'
 import { setValue } from '../app/engine.js'
 import { PATHS } from '../state/paths.js'
 
@@ -74,9 +74,14 @@ export function applyDefaultBindings(overrides = {}) {
     })
   }
 
-  // Overrides land second so a trader's own chord always wins, and an override to an
-  // empty action is how a binding is switched off rather than deleted.
+  // Overrides land second so a trader's own chord always wins. An explicit `null`
+  // unbinds the chord entirely — that is how a key is switched off — while a missing or
+  // empty entry simply leaves the stock binding in place.
   for (const [chord, action] of Object.entries(overrides ?? {})) {
+    if (action === null) {
+      unregisterBinding(chord)
+      continue
+    }
     if (!action) continue
     registerBinding(chord, action, { label: `custom: ${action}` })
   }

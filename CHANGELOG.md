@@ -12,6 +12,13 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ### Added
 
+- **Key remapping** — muscle memory is the whole value of a layout and every trader
+  arrives with a different one, so the stock keys are a default rather than a decision.
+  Rebinds take effect live (one that needed a reload would be discovered by pressing the
+  old key and getting the old action), an old saved layout is migrated rather than
+  silently discarded, and a chord bound to an action that does not exist is refused — a
+  key that does nothing is worse than no key. Escape and `?` are reserved: a trader who
+  bound away their panic key finds out at exactly the wrong moment. (F16.3, F16.4)
 - **Hotkeys** — on a scalping desk the mouse is a latency tax, so every action is a chord
   away, dispatched through the *same* action the buttons use rather than a second
   implementation that would drift. Chords are built from `event.code`, the physical key,
