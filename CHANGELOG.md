@@ -97,6 +97,18 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
   "what happened" but "what did I see at the moment I clicked"; it clamps at both ends rather
   than wrapping, and the speed snaps to the offered set with ties going to the slower option —
   being asked to keep up is the failure mode here.
+- **The journal block, filter first** — a day's journal is a list nobody reads end to end. The
+  value is in slices: *every fomo tag*, *every loser on this instrument*, *the ten worst by
+  net*. Filters are **AND, never OR** — "losses tagged fomo on BTC" is a question people
+  actually ask and "losses or fomo or BTC" is not one, so offering the choice would make every
+  filter read ambiguous. A scratch counts as neither a win nor a loss, because calling it a
+  win is how a win-rate becomes a number that flatters rather than informs. Re-selecting an
+  active chip clears it, so every filter is its own off switch and none needs a second control
+  to undo. Sorting starts descending on a new column — the interesting end of biggest-loss and
+  longest-hold is the top — and defaults to newest-first rather than worst-first, because a
+  journal that opened on the day's disasters is a journal people stop opening. What the slice
+  *hides* is shown alongside it: a filter that quietly matched nothing looks exactly like a
+  day with no trades.
 
 ## [0.24.0] — 2026-08-04 — Phase 24: Circuit Breakers & Risk Kill Switch
 

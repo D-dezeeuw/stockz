@@ -39,6 +39,7 @@ import { registerTagActions, loadAnnotations } from '../journal/tags.js'
 import { registerCheckpointActions } from '../journal/checkpoints.js'
 import { registerExportActions } from '../journal/export.js'
 import { registerImportActions } from '../journal/import.js'
+import { registerFilterActions } from '../journal/filters.js'
 import { registerKillActions } from '../breakers/kill.js'
 import { registerRearmActions, mountRelease } from '../breakers/rearm.js'
 import {
@@ -149,6 +150,7 @@ export function bootstrap(options = {}) {
   registerCheckpointActions()
   registerExportActions()
   registerImportActions()
+  registerFilterActions()
   loadAnnotations()
   pruneBreakerEvents(Date.now())
   // The daily-loss trip has no other reaction path — it publishes a code and returns a

@@ -255,6 +255,10 @@ export const PATHS = Object.freeze({
     editing: 'journal.editing',
     checkpoints: 'journal.checkpoints',
     replaying: 'journal.replaying',
+    filters: 'journal.filters',
+    filtered: 'journal.filtered',
+    instruments: 'journal.instruments',
+    hidden: 'journal.hidden',
   }),
   strategy: Object.freeze({
     registered: 'strategy.registered',

@@ -27,6 +27,7 @@ import { registerTagActions } from '../journal/tags.js'
 import { registerCheckpointActions } from '../journal/checkpoints.js'
 import { registerExportActions } from '../journal/export.js'
 import { registerImportActions } from '../journal/import.js'
+import { registerFilterActions } from '../journal/filters.js'
 import { registerStrategyActions } from '../strategy/registry.js'
 import { registerTicketActions } from '../ticket/actions.js'
 import { registerSizingActions } from '../ticket/sizing.js'
@@ -90,6 +91,9 @@ describe('allActionNames', () => {
       'journal.jump',
       'journal.live',
       'journal.export',
+      'journal.filter',
+      'journal.sort',
+      'journal.clearFilters',
       'replay.step',
       'replay.seek',
       'replay.speed',
@@ -166,6 +170,7 @@ describe('allActionNames', () => {
     registerCheckpointActions()
     registerExportActions()
     registerImportActions()
+    registerFilterActions()
     registerStrategyActions()
     registerTicketActions()
     registerSizingActions()

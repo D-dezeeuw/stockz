@@ -242,6 +242,10 @@ export function initialState(overrides = {}) {
     [PATHS.journal.editing]: '',
     [PATHS.journal.checkpoints]: [],
     [PATHS.journal.replaying]: '',
+    [PATHS.journal.filters]: { instrument: '', tag: '', outcome: 'all', sort: 'closeTs', dir: 'desc' },
+    [PATHS.journal.filtered]: [],
+    [PATHS.journal.instruments]: [],
+    [PATHS.journal.hidden]: 0,
 
     // alerts
     [PATHS.alerts.fired]: null,

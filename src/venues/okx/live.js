@@ -26,7 +26,7 @@ import { refreshCaps } from '../../bot/caps.js'
 import { refreshSession as refreshBotSession } from '../../bot/session.js'
 import { refreshDaily, refreshLeds, resumeDue } from '../../breakers/index.js'
 import { recordTick } from '../../journal/ticks.js'
-import { refreshJournalRows } from '../../journal/metrics.js'
+import { refreshFiltered } from '../../journal/filters.js'
 import { evictStale } from '../../exec/latency.js'
 import { setValue, appState } from '../../app/engine.js'
 import { PATHS } from '../../state/paths.js'
@@ -198,7 +198,9 @@ export function flushFeed(focus, options = {}) {
   resumeDue(wall)
   // Re-derived rather than frozen at close: a trade that closed a second ago is still
   // having its excursion filled in behind it.
-  refreshJournalRows()
+  // The filtered slice is what the block reads; refreshing it re-derives the rows on the
+  // way through, so there is one publish rather than two views of the same list.
+  refreshFiltered()
   flushQuality(spreadBps())
   // Swept on the same frame: an order whose ack never came would otherwise sit in the
   // latency map for the life of the session.

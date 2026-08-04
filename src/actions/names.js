@@ -62,6 +62,9 @@ export const ACTIONS = Object.freeze({
     jump: 'journal.jump',
     live: 'journal.live',
     export: 'journal.export',
+    filter: 'journal.filter',
+    sort: 'journal.sort',
+    clearFilters: 'journal.clearFilters',
   }),
   replay: Object.freeze({
     step: 'replay.step',
