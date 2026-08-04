@@ -230,6 +230,7 @@ export const PATHS = Object.freeze({
     leds: 'breaker.leds',
     holdPct: 'breaker.holdPct',
     lastRearm: 'breaker.lastRearm',
+    log: 'breaker.log',
   }),
   strategy: Object.freeze({
     registered: 'strategy.registered',

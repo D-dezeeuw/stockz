@@ -35,6 +35,11 @@ import { registerSessionActions } from '../bot/session.js'
 import { watchThresholds, watchTrip, watchPending } from '../breakers/index.js'
 import { registerKillActions } from '../breakers/kill.js'
 import { registerRearmActions, mountRelease } from '../breakers/rearm.js'
+import {
+  registerLogActions as registerBreakerLogActions,
+  loadBreakerLog,
+  pruneBreakerEvents,
+} from '../breakers/log.js'
 import { onAlert } from '../alerts/bus.js'
 import { knownStrategies } from '../strategy/registry.js'
 import { connectFeeds } from './feeds.js'
@@ -125,6 +130,11 @@ export function bootstrap(options = {}) {
   registerKillActions()
   registerRearmActions()
   mountRelease()
+  registerBreakerLogActions()
+  // Read back and pruned once at boot: the record is for reviewing a session that has
+  // already happened, and thirty days of it is the most anybody looks back.
+  loadBreakerLog()
+  pruneBreakerEvents(Date.now())
   // The daily-loss trip has no other reaction path — it publishes a code and returns a
   // rejection — so without these the desk would halt with its orders still resting.
   watchTrip()

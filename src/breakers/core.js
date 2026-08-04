@@ -3,6 +3,7 @@ import { PATHS } from '../state/paths.js'
 import { emitAlert } from '../alerts/bus.js'
 import { killBot } from '../bot/runner.js'
 import { TRIP, TRIP_REASONS } from './codes.js'
+import { logBreakerEvent } from './log.js'
 
 /**
  * The circuit breakers.
@@ -129,6 +130,11 @@ export function tripBreaker(code, values = {}, options = {}) {
   // existed to prevent.
   const kill = typeof options.kill === 'function' ? options.kill : killBot
   kill(`breaker: ${reason}`, now)
+
+  // On the record with the numbers attached. "The breaker fired at 14:12" is trivia; "at
+  // 14:12 with the day at -412 against a -400 limit" answers the question actually being
+  // asked, which is always some version of *was it right to*.
+  logBreakerEvent({ kind: 'trip', code: trip, reason, ts: now, values })
 
   emitAlert(
     {
