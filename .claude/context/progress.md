@@ -11,8 +11,10 @@ in `masterplan.md`, and knows where the project stands. Rewritten at every phase
 direct order."** CLAUDE.md's never-stop rule carves out exactly this case — *"Only an
 explicit instruction from the owner stops the work."* Delivery does **not** resume until
 the owner says so, whatever any watchdog or trigger asks for. The hourly masterplan
-watchdog (`trig_014GA2EKv5ub8HCd7vrqgyA5`) has been **disabled**, not deleted, so it can
-be switched back on the moment work restarts.
+watchdog (`trig_014GA2EKv5ub8HCd7vrqgyA5`) has been **deleted**. Disabling it was tried
+first and did not hold — it fired again on its next scheduled tick — so if a pause ever
+needs to stop a trigger, delete it rather than trusting the enabled flag. Recreate it with
+`create_trigger` when delivery restarts.
 
 Phase 26 was already eight features deep when the order arrived; F26.1–F26.8 are merged
 to `main` and green, still under `[Unreleased]` with no version cut. `feature/f26-9-period-filter`
