@@ -7,6 +7,7 @@ import { setBlockStatus, BLOCK_STATUS } from '../blocks/registry.js'
 import { findBacktestStrategy, backtestStrategyOptions } from './strategies.js'
 import { runRequest } from './worker.js'
 import { resolveFillConfig } from './fills.js'
+import { DEFAULT_SEED, verifyDeterminism, hashRunResult } from './determinism.js'
 import { refreshReport } from './report.js'
 import { createLogger } from '../utils/log.js'
 
@@ -229,6 +230,9 @@ export function runBacktest(config = {}, deps = {}) {
     // the assumptions that were on screen when it started, even if the drawer moves while
     // it crunches.
     fillConfig: config.fillConfig ?? fillConfigFromSettings(),
+    // Recorded on the run rather than defaulted inside it: a result that does not carry
+    // its seed cannot be rerun, and a backtest nobody can repeat is an anecdote.
+    seed: Number(config.seed) || DEFAULT_SEED,
   }
   setValue(PATHS.backtest.fillConfig, request.fillConfig)
 
@@ -253,6 +257,9 @@ export function runBacktest(config = {}, deps = {}) {
 
     setValue(PATHS.backtest.result, result)
     setValue(PATHS.backtest.summary, backtestSummary(result))
+    // The outcome's fingerprint, published with the result: it is what somebody quotes
+    // when they say "mine gives a different number".
+    setValue(PATHS.backtest.hash, hashRunResult(result))
     // The statistics land with the result, not on a later frame: a report that appeared a
     // tick after the numbers it describes would show the previous run's stats beside this
     // run's headline for one paint.
@@ -317,6 +324,7 @@ export function runDetachedBacktest(config = {}, deps = {}) {
     instrument: String(config.instrument ?? ''),
     params: config.params ?? {},
     fillConfig: config.fillConfig ?? fillConfigFromSettings(),
+    seed: Number(config.seed) || DEFAULT_SEED,
   }
 
   const worker = spawnBacktestWorker(deps)
@@ -414,6 +422,65 @@ export function resetBacktestRunner() {
 }
 
 /**
+ * Prove the sim is deterministic, on the configuration currently selected.
+ *
+ * @param {object} state - engine state.
+ * @param {object} [payload] - injectable plumbing.
+ * @returns {Promise<object>} the verdict.
+ */
+export async function runDeterminismCheck(state, payload = {}) {
+  const config = { ...(state?.backtest?.config ?? appState?.backtest?.config ?? {}), ...payload }
+  const run = typeof payload.run === 'function' ? payload.run : (c) => runDetachedBacktest(c, payload)
+
+  setValue(PATHS.backtest.determinism, { checking: true, deterministic: false, hash: '', reason: '' })
+  const verdict = await verifyDeterminism(config, { run })
+
+  setValue(PATHS.backtest.determinism, {
+    checking: false,
+    deterministic: Boolean(verdict.deterministic),
+    // The hash on screen, not just a badge: it is what somebody quotes when they say
+    // "mine gives a different number", and a green tick alone cannot be compared.
+    hash: verdict.hashes?.[0] ?? '',
+    reason: String(verdict.reason ?? ''),
+  })
+  pushToast(
+    verdict.deterministic ? `deterministic · ${verdict.hashes[0]}` : `NOT deterministic: ${verdict.reason}`,
+    verdict.deterministic ? 'success' : 'warn',
+  )
+
+  return verdict
+}
+
+/**
+ * Rerun the last result with the seed it recorded.
+ *
+ * @param {object} state - engine state.
+ * @param {object} [payload] - injectable plumbing.
+ * @returns {Promise<object|null>} the result.
+ */
+export function rerunWithSeed(state, payload = {}) {
+  const last = state?.backtest?.result ?? appState?.backtest?.result
+  if (!last) {
+    pushToast('no run to repeat', 'warn')
+    return Promise.resolve(null)
+  }
+
+  // Every field that decided the outcome, taken from the run itself rather than from
+  // whatever the pickers currently say — the whole point is to repeat *that* run.
+  return runBacktest(
+    {
+      sessionId: last.sessionId,
+      strategyId: last.strategyId,
+      instrument: last.instrument,
+      params: last.params,
+      fillConfig: last.fillConfig,
+      seed: last.seed,
+    },
+    payload,
+  )
+}
+
+/**
  * Register the backtest actions.
  *
  * @returns {string[]} the registered names.
@@ -428,6 +495,12 @@ export function registerBacktestActions() {
   registerAction(ACTIONS.backtest.configure, setBacktestConfig, {
     description: 'Point the backtest launcher at a recording or strategy',
   })
+  registerAction(ACTIONS.backtest.verify, runDeterminismCheck, {
+    description: 'Run the backtest twice and compare the result hashes',
+  })
+  registerAction(ACTIONS.backtest.rerun, rerunWithSeed, {
+    description: 'Repeat the last run with the seed it recorded',
+  })
 
   // The strategy catalog is static, so it is written once rather than recomputed per
   // render. The recording list is not: it grows every time somebody hits REC, so it is
@@ -437,5 +510,11 @@ export function registerBacktestActions() {
     backtestRecordingOptions(state.playback?.library),
   )
 
-  return [ACTIONS.backtest.start, ACTIONS.backtest.cancel, ACTIONS.backtest.configure]
+  return [
+    ACTIONS.backtest.start,
+    ACTIONS.backtest.cancel,
+    ACTIONS.backtest.configure,
+    ACTIONS.backtest.verify,
+    ACTIONS.backtest.rerun,
+  ]
 }

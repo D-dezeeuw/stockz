@@ -1,5 +1,6 @@
 import { createStrategyContext, toSignal } from '../strategy/contract.js'
 import { createSandbox, invokeStrategy } from './sandbox.js'
+import { createSeededRng, DEFAULT_SEED, sumMoney } from './determinism.js'
 import {
   resolveFillConfig,
   orderFromSignal,
@@ -148,7 +149,12 @@ export function driveBacktest(options = {}) {
   const instrument = String(options.instrument ?? '')
   // The instrument decides spot versus swap on the fee card, so it is folded in here
   // rather than left to whoever remembered to pass it.
-  const fillConfig = resolveFillConfig({ instrument, ...(options.fillConfig ?? {}) })
+  const resolved = resolveFillConfig({ instrument, ...(options.fillConfig ?? {}) })
+  // One generator per run, created before the first tick and never replaced. Every draw
+  // the sim makes comes from here — that is the whole reason two runs of the same
+  // configuration can be expected to agree.
+  const seed = Number(options.seed ?? resolved.seed) || DEFAULT_SEED
+  const fillConfig = { ...resolved, seed, rng: createSeededRng(seed) }
 
   const all = Array.isArray(options.ticks) ? options.ticks : []
   // One instrument per run. A recording holds every symbol the desk was watching, and a
@@ -215,6 +221,10 @@ export function driveBacktest(options = {}) {
   sandbox.set('run.signals', signals.length)
   sandbox.set('run.fills', fills.length)
   sandbox.set('run.errors', errors)
+  // Summed as integers rather than accumulated float by float: rounding per addition makes
+  // the total depend on the order fills happened to arrive in, and a hash over an
+  // identical run must match.
+  sandbox.set('run.fees', sumMoney(fills.map((fill) => fill.fee)))
 
   return {
     signals,
@@ -223,7 +233,10 @@ export function driveBacktest(options = {}) {
     // limit that never came is a trade that never happened, and filling it at the end
     // would credit the strategy with the one fill it demonstrably did not get.
     unfilled: pending.length,
-    fillConfig,
+    seed,
+    // The generator itself never leaves: it is not serialisable, it would be posted across
+    // the worker boundary as `{}`, and the seed is the part worth keeping anyway.
+    fillConfig: resolved,
     played,
     total: ticks.length,
     errors,

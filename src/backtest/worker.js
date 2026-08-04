@@ -88,6 +88,9 @@ export async function runRequest(request, post, deps = {}) {
     // The assumptions travel with the request. A result whose fill assumptions were not
     // recorded is a number nobody can reproduce.
     fillConfig: request?.fillConfig,
+    // The seed travels with the request, so "rerun with this seed" is one field rather
+    // than a reconstruction.
+    seed: request?.seed,
     now: deps.now,
     cancelled: () => cancelled,
     onProgress: (update) => send({ type: 'progress', runId, ...update }),

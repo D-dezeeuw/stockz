@@ -1,0 +1,20 @@
+{
+  "id": "fixture-determinism",
+  "label": "determinism fixture",
+  "instrument": "BTC-USDT",
+  "note": "A tiny known-good tape. Small enough to read, long enough for a momentum strategy to fire, and committed so the pipeline has one outcome that must never change silently.",
+  "ticks": [
+    { "symbol": "BTC-USDT", "px": 100.0, "sz": 0.5, "side": "buy", "ts": 1785000000000 },
+    { "symbol": "BTC-USDT", "px": 100.2, "sz": 0.3, "side": "buy", "ts": 1785000000200 },
+    { "symbol": "BTC-USDT", "px": 100.7, "sz": 1.2, "side": "buy", "ts": 1785000000400 },
+    { "symbol": "BTC-USDT", "px": 101.4, "sz": 2.1, "side": "buy", "ts": 1785000000600 },
+    { "symbol": "BTC-USDT", "px": 101.1, "sz": 0.4, "side": "sell", "ts": 1785000000800 },
+    { "symbol": "BTC-USDT", "px": 100.6, "sz": 1.8, "side": "sell", "ts": 1785000001000 },
+    { "symbol": "BTC-USDT", "px": 99.8, "sz": 2.4, "side": "sell", "ts": 1785000001200 },
+    { "symbol": "BTC-USDT", "px": 99.1, "sz": 1.1, "side": "sell", "ts": 1785000001400 },
+    { "symbol": "BTC-USDT", "px": 99.6, "sz": 0.7, "side": "buy", "ts": 1785000001600 },
+    { "symbol": "BTC-USDT", "px": 100.3, "sz": 1.5, "side": "buy", "ts": 1785000001800 },
+    { "symbol": "BTC-USDT", "px": 100.9, "sz": 0.9, "side": "buy", "ts": 1785000002000 },
+    { "symbol": "BTC-USDT", "px": 100.4, "sz": 0.6, "side": "sell", "ts": 1785000002200 }
+  ]
+}

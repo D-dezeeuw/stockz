@@ -312,6 +312,9 @@ export const PATHS = Object.freeze({
     runs: 'backtest.runs',
     slots: 'backtest.slots',
     compare: 'backtest.compare',
+    // The outcome's fingerprint and the twice-run verdict on it.
+    hash: 'backtest.hash',
+    determinism: 'backtest.determinism',
     // The last finished run, the always-shaped readout of it, and why the last one did
     // not finish. The summary exists because a template cannot read through a null result.
     result: 'backtest.result',
