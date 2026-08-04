@@ -5,11 +5,38 @@ in `masterplan.md`, and knows where the project stands. Rewritten at every phase
 
 ---
 
-## Status: Phase 12 closed (v0.12.0) · Phase 13 next
+## Status: Phase 13 closed (v0.13.0) · Phase 14 next
 
 **Live:** https://d-dezeeuw.github.io/stockz/ (Pages serves `main` root — pushing is deploying)
-**Tests:** 262, one per function, all passing individually. Every gated file ≥85% branches.
+**Tests:** 319, one per function, all passing individually. Every gated file ≥85% branches.
 **Branch model:** everything merges to `main`; no feature branches outstanding.
+
+## Phase 13 — Micro-Charts & Sparklines (closed)
+
+| Feature | What now exists | Where |
+| --- | --- | --- |
+| F13.1, F13.8 | `sizeCanvas` (dPR), `chartPalette` (CSS tokens), `createRenderLoop`, `repaintOnTheme` | `src/charts/canvas.js` |
+| F13.2 | `mapRange`, `priceRange`, `priceToY`, `yToPrice`, `timeToX`, `xToTime`, `indexToX`, `autoRange`, `formatPrice`, `decimalsOf`, `composeTransform`, `applyTransform`, `candleGeometry`, `gridLines` | `src/charts/scale.js` |
+| F13.2, F13.3 | `axisRows`, `drawAxisGrid` | `src/charts/axis.js` |
+| F13.3 | `downsampleColumn`, `gapSplit`, `pulseRadius`, `trendUp`, `drawTickLine` | `src/charts/tickline.js` |
+| F13.4 | `candleBoxes`, `volumeScale`, `drawCandles`, `drawVolumeBand`, `closeY`, `registerCandleActions` | `src/charts/candlestick.js` |
+| F13.5 | `pointerToChart`, `trackPointer`, `snapToTick`, `crosshairReadout`, `formatClock`, `drawCrosshair` | `src/charts/crosshair.js` |
+| F13.6 | `layoutMarkers`, `clusterFills`, `hitTestMarker`, `drawMarkers` | `src/charts/markers.js` |
+| F13.7 | `levelColor`, `clampLevel`, `drawLevelLine`, `chartLevels`, `LEVEL_DASH` | `src/charts/levels.js` |
+| F13.9 | `shouldStop`, `coalesceMarks`, `overBudget`, `createScheduler`, `pauseWhenHidden`, `drawDebugHud`, `framesPerSecond` | `src/charts/loop.js` |
+| F13.3, F13.4 | `tickWindow`, `markOnTick`, `mountTickChart`, `mountCandleChart`, `startChart` | `src/charts/mount.js` |
+
+**Renderers are pure draw calls; `mount.js` is the only file that knows about both the
+pipeline and the canvas.** Every draw fn takes a palette — no renderer holds a hex
+literal. A tick never draws: it marks dirty, and the next frame draws once however many
+prints landed.
+
+`startChart` runs either standalone (own dirty-flag loop) or on the shared scheduler —
+pass `{scheduler, id, priority}`. The dashboard should use the shared one so sparklines
+(`priority: 'low'`) can never outvote the price chart for a frame.
+
+New state: `ui.candleInterval` (`1s`/`5s`/`1m`), `settings.debugCharts` (the debug axis
+grid + fps HUD). The `ui.setCandleInterval` action registers in `bootstrap.js`.
 
 ## Phase 12 — Watchlists & Instruments (closed)
 
@@ -172,26 +199,24 @@ go stale, and faults that reach the trader instead of the console.
 | F2.9 | `pushToast`, `dismissToast`, `expireToasts`, `describeEngineError`, `wireEngineErrors` | `src/ui/toast.js` |
 | F2.10 | `collectExpressions`, `renderPrecompileModule`, `cspMeta`, `npm run build:csp` | `src/app/csp.js`, `docs/csp.md` |
 
-## Next up: Phase 13 — Micro-Charts & Sparklines
+## Next up: Phase 14 — Order Book & Tape
 
-First feature **F13.1**. Canvas work: `sparklinePath` (SVG) exists for rows, but there is
-no canvas renderer yet.
+First feature **F14.1** (ladder component). Depth and flow: bid/ask ladder, time-and-sales
+tape, imbalance maths, whale detection — driven by OKX v5 `books` and `trades` channels.
 
-- Canvas core needs devicePixelRatio scaling and a `ResizeObserver` — `observeLayout` in
-  `src/blocks/layout.js` shows the injection pattern to copy.
-- Data comes from `candles()` / `recentTrades()` in `src/pipeline/`; no new state needed.
-- **`onThemeRepaint` in `src/state/systems.js` is the seam** — canvas cannot inherit CSS
-  custom properties, so renderers must subscribe and repaint on a theme flip.
-- A dirty-flag rAF loop: do nothing when nothing changed. The pipeline already coalesces
-  writes, so the chart should coalesce draws.
-- Pure scale/transform maths (price→y, time→x) is where the single tests go; the draw
-  calls themselves stay a thin untested edge.
+- `mapBook` already exists in `src/venues/okx/map.js`; the book state itself does not.
+  Checksum validation (T14.2.x) is the one place OKX's own CRC32 must be reproduced.
+- Ladder rows are **DOM, not canvas** — Spektrum `data-each` over derived arrays with
+  size bars as CSS width percentages. Only the charts are canvas.
+- The tape shares the pipeline's ring buffers (`recentTrades`), so it costs nothing extra.
+- Imbalance maths is pure and belongs in its own module with one test per function.
 
 ### Still outstanding across phases
 **No venue client is started at boot.** `bootstrap.js` still never calls
 `createOkxSocket`, so the desk runs on seeded state. Everything needed exists
-(`createOkxSocket`, `ingest`, `setVenueState`, `subscribeFrame`); this is a wiring job
-worth doing before any phase that needs live prices on screen.
+(`createOkxSocket`, `ingest`, `setVenueState`, `subscribeFrame`), and Phase 14 is the
+natural home for the wiring — it is the first phase whose whole point is live venue data
+on screen.
 
 ## Gotchas (learned the hard way — do not rediscover)
 

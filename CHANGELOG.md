@@ -10,6 +10,12 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ## [Unreleased]
 
+## [0.13.0] — 2026-08-04 — Phase 13: Micro-Charts & Sparklines
+
+Price action at tick resolution in every block: the raw wiggle, micro-candles with
+volume, a crosshair that snaps to real prints, your fills on the chart, and one shared
+frame heartbeat that stops dead when the market is quiet.
+
 ### Added
 
 - **Shared render loop** — one frame heartbeat for every chart layer instead of a
@@ -444,7 +450,8 @@ with a test policy and a live URL.
   literal `APP_VERSION` (a JSON import is bundler-only), guarded by a test that fails if
   it drifts from `package.json`; static assets moved from `public/` to the repo root.
 
-[Unreleased]: https://github.com/D-dezeeuw/stockz/compare/v0.12.0...HEAD
+[Unreleased]: https://github.com/D-dezeeuw/stockz/compare/v0.13.0...HEAD
+[0.13.0]: https://github.com/D-dezeeuw/stockz/compare/v0.12.0...v0.13.0
 [0.12.0]: https://github.com/D-dezeeuw/stockz/compare/v0.11.0...v0.12.0
 [0.11.0]: https://github.com/D-dezeeuw/stockz/compare/v0.10.0...v0.11.0
 [0.10.0]: https://github.com/D-dezeeuw/stockz/compare/v0.9.0...v0.10.0
