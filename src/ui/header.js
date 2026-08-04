@@ -105,6 +105,30 @@ export function toggleOverlay(_state, payload = {}) {
 }
 
 /**
+ * Write a value from state onto an element attribute.
+ *
+ * The escape hatch for SVG geometry. Spektrum's `:attr` assigns any non-kebab name as a
+ * *property*, and `points`, `d`, `x` and friends are read-only on SVG elements — the
+ * assignment throws, which aborts the whole bind walk and leaves the desk unbound and
+ * invisible. One `data-action="cycle"` subscription sets the attribute properly instead.
+ *
+ * @param {object} state - engine state.
+ * @param {{el?: Element, id?: string, attr?: string}} [payload] - the binding.
+ * @returns {string} what was written.
+ */
+export function svgAttr(state, payload = {}) {
+  const el = payload.el
+  const path = String(payload.id ?? '')
+  if (!el?.setAttribute || !path) return ''
+
+  const value = path.split('.').reduce((held, key) => held?.[key], state)
+  const text = String(value ?? '')
+  el.setAttribute(String(payload.attr ?? 'points'), text)
+
+  return text
+}
+
+/**
  * Register the header's actions.
  *
  * @returns {string[]} names registered by this call.
@@ -116,6 +140,9 @@ export function registerHeaderActions() {
     }),
     registerAction(ACTIONS.ui.toggleOverlay, toggleOverlay, {
       description: 'Open or close a UI overlay',
+    }),
+    registerAction(ACTIONS.ui.svgAttr, svgAttr, {
+      description: 'Write a state value onto an SVG attribute',
     }),
   ]
 }

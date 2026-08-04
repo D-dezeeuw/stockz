@@ -5,6 +5,7 @@ import {
   dispatchAction,
   actionNames,
   clearActions,
+  domPayload,
   setStatus,
   resetApp,
   registerCoreActions,
@@ -90,6 +91,48 @@ describe('setStatus', () => {
     expect(setStatus({}, {})).toBe('ready')
     expect(setStatus({}, { status: '   ' })).toBe('ready')
     expect(setStatus({})).toBe('ready')
+  })
+})
+
+describe('domPayload', () => {
+  it('turns what the engine hands a DOM handler into the payload actions expect', () => {
+    const btn = document.createElement('button')
+    btn.dataset.action = 'click'
+    btn.dataset.fn = 'ui.toggleOverlay'
+    btn.dataset.modal = 'keys'
+
+    const payload = domPayload(btn, appState, {}, undefined, undefined)
+    // data-* are the parameters; the engine's own attributes are plumbing.
+    expect(payload.modal).toBe('keys')
+    expect(payload.action).toBeUndefined()
+    expect(payload.fn).toBeUndefined()
+    expect(payload.el).toBe(btn)
+
+    // A form submit carries its named fields - this is what the key modal sends.
+    const form = document.createElement('form')
+    form.innerHTML =
+      '<input name="apiKey" value="ak"><input name="remember" type="checkbox" checked>'
+    const submitted = domPayload(form, appState, {}, undefined, { target: form })
+    expect(submitted.apiKey).toBe('ak')
+    expect(submitted.remember).toBe(true)
+    expect(submitted.event.target).toBe(form)
+
+    // A single bound control carries its own value; an explicit data-value wins.
+    const input = document.createElement('input')
+    input.value = 'BTC-USDT'
+    expect(domPayload(input, appState, {}, undefined, undefined).value).toBe('BTC-USDT')
+    expect(domPayload(input, appState, {}, 7, undefined).value).toBe(7)
+
+    const box = document.createElement('input')
+    box.type = 'checkbox'
+    expect(domPayload(box, appState, {}, undefined, undefined).value).toBe(false)
+
+    // Not a DOM call at all: dispatchAction and the bot runner pass payloads straight
+    // through and must keep working unchanged.
+    const direct = { section: 'trade' }
+    expect(domPayload(direct)).toBe(direct)
+    expect(domPayload(null)).toEqual({})
+    expect(domPayload(undefined)).toEqual({})
   })
 })
 
