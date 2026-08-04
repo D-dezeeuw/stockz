@@ -50,6 +50,7 @@
   <link rel="stylesheet" href="./src/styles/journal.css">
   <link rel="stylesheet" href="./src/styles/analytics.css">
   <link rel="stylesheet" href="./src/styles/backtest.css">
+  <link rel="stylesheet" href="./src/styles/mode.css">
   <link rel="stylesheet" href="./src/styles/utilities.css">
 
   <!-- The UI engine, straight from the CDN. Pinned to an exact version: the live page
@@ -103,6 +104,21 @@
       <!-- Unmissable, because the dangerous mistake is not a chart drawing the wrong data
            - it is a trader seeing a price they like on a book from an hour ago. -->
       <span class="badge badge--playback" data-if="playback.source === 'playback'">PLAYBACK</span>
+
+      <!-- Which money is real, always one click away and never ambiguous. Going live is a
+           press-and-hold rather than a dialog: speed is the product, and a confirm step is
+           wrong by this project's own rules — but a mode this expensive to get wrong must
+           be impossible to hit by accident. -->
+      <span class="mode" role="group" aria-label="Trading mode">
+        <button type="button" class="mode__seg" data-action="click" data-fn="trade.setMode"
+                data-mode="paper"
+                :class="trade.mode === 'paper' ? 'mode__seg mode__seg--paper is-on' : 'mode__seg mode__seg--paper'">PAPER</button>
+        <button type="button" class="mode__seg mode__seg--live"
+                :class="trade.mode === 'live' ? 'mode__seg mode__seg--live is-on' : 'mode__seg mode__seg--live'"
+                :style="'--held:' + (trade.holdPct * 100) + '%'"
+                data-action="pointerdown" data-fn="trade.holdLive"
+                title="hold to go live">LIVE<i class="mode__ring"></i></button>
+      </span>
       <span class="grow status-line num truncate">{{ui.statusLine}}</span>
 
       <!-- Venue LEDs: is the desk actually connected to anything? -->
@@ -188,11 +204,22 @@
       </span>
     </header>
 
+    <!-- Impossible to forget which money is real. Full width, orange, and above the grid
+         rather than inside it: "I thought I was on paper" is a sentence said after the
+         fact, and the only fix is a thing that cannot be looked past. -->
+    <div class="paper-strip" data-if="trade.mode === 'paper'" role="status">
+      <span>PAPER TRADING</span>
+      <span class="paper-strip__note">orders are simulated · nothing reaches a venue</span>
+    </div>
+
     <!-- The grid: every cell identical in size, driven entirely by the block registry.
          data-each binds the CONTAINER, and its first child is the repeated template. -->
     <main class="app-grid" data-each="ui.gridBlocks" data-as="block">
+      <!-- Trading blocks carry the mode as a class, so peripheral vision knows before the
+           eye reads anything. Only the blocks that can move money: accenting the whole
+           grid would make the accent mean "the app is open". -->
       <section class="block" :data-block-id="block.id"
-               :class="block.status === 'error' ? 'block has-error' : 'block'" tabindex="0">
+               :class="(block.status === 'error' ? 'block has-error' : 'block') + (trade.mode === 'paper' &amp;&amp; (block.id === 'ticket' || block.id === 'positions' || block.id === 'bot') ? ' is-paper' : '')" tabindex="0">
         <div class="block__bar">
           <span class="block__title">{{block.title}}</span>
           <span class="block__actions label">{{block.status}}</span>

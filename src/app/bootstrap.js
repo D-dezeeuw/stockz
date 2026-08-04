@@ -60,6 +60,7 @@ import { registerSweepActions } from '../backtest/sweep.js'
 import { registerCompareActions, startCompareChart, refreshRuns } from '../backtest/compare.js'
 import { setLevelSink } from '../strategy/builtin/range-fade.js'
 import { syncOkxClock } from '../venues/okx/clock.js'
+import { registerModeActions, applyModeParam } from '../exec/mode.js'
 import { startHistogram } from '../analytics/holdtime.js'
 import { startStreakStrip } from '../analytics/streaks.js'
 import { startFeeBars } from '../analytics/fees.js'
@@ -129,6 +130,10 @@ export function bootstrap(options = {}) {
   // read as off when `adoptKeys` asked.
   tick()
 
+  // Before any adapter binds. A link that opens the desk into paper has to win over the
+  // persisted mode, or the override is advice rather than an override.
+  applyModeParam(globalThis.location?.search ?? '')
+
   // Actions and derivations must exist before bindDOM: data-fn attributes would bind to
   // nothing, and derived paths would render as blanks on the first paint.
   // Formatters must exist before bindDOM: a binding calling fmt.price() would otherwise
@@ -197,6 +202,7 @@ export function bootstrap(options = {}) {
   registerRecorderActions()
   registerLibraryActions()
   registerPlayerActions()
+  registerModeActions()
   registerBacktestActions()
   registerBacktestReportActions()
   registerSweepActions()

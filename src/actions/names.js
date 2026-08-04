@@ -97,6 +97,11 @@ export const ACTIONS = Object.freeze({
     speed: 'playback.speed',
     exit: 'playback.exit',
   }),
+  trade: Object.freeze({
+    setMode: 'trade.setMode',
+    holdLive: 'trade.holdLive',
+    releaseLive: 'trade.releaseLive',
+  }),
   backtest: Object.freeze({
     start: 'backtest.start',
     cancel: 'backtest.cancel',
