@@ -104,6 +104,8 @@ export const PATHS = Object.freeze({
     tradesPerHourTarget: 'settings.tradesPerHourTarget',
     compactHud: 'settings.compactHud',
     strategyParams: 'settings.strategyParams',
+    activePresets: 'settings.activePresets',
+    customPresets: 'settings.customPresets',
     chords: 'settings.chords',
   }),
   market: Object.freeze({

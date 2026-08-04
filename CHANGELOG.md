@@ -12,6 +12,20 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ### Added
 
+- **Scalper preset packs** — eight strategies at five or six params each is forty numbers,
+  and a trader who has to pick all of them before their first trade will pick none of them
+  and run the defaults forever. A pack is one decision instead of forty, and the three names
+  mean the same thing across every strategy, which is the only reason having three is useful:
+  *conservative* fires less on more confirmation and will sit out moves that paid, *standard*
+  is the strategy as designed, *aggressive* fires more on thinner evidence with bigger tails
+  both ways. Values are tuned for **one-second scalping**, not for the daily-bar settings
+  these indicators are usually quoted with. A pack is **merged onto** the current tuning
+  rather than replacing it, so one that tunes four of six params leaves the other two alone,
+  and it goes through **the same coercion as a hand edit** — a pack authored against an older
+  schema is exactly as untrusted as a typed value, and letting one bypass the clamp would be
+  the single path by which an out-of-range param reaches a strategy. Saving a custom pack
+  refuses built-in names, which would strand the original with no way back, and a picker
+  showing "standard" over params that are no longer standard marks itself dirty.
 - **Volatility squeeze expansion** — volatility mean-reverts far more reliably than price
   does: a market that has gone quiet will get loud again, and the only questions are when
   and which way. This answers "when" with a percentile of the instrument's **own** recent

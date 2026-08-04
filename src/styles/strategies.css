@@ -21,7 +21,7 @@
 
 .runs__row {
   display: grid;
-  grid-template-columns: 1fr auto auto auto auto;
+  grid-template-columns: 1fr auto auto auto auto auto;
   align-items: center;
   gap: var(--space-2, 0.5rem);
   padding: var(--space-1, 0.25rem) 0;
@@ -190,4 +190,11 @@
 .runs__weight .num {
   text-align: right;
   font-variant-numeric: tabular-nums;
+}
+
+/* A preset that has been edited away from says so, because a picker showing "standard"
+   over params that are no longer standard is worse than no picker at all. */
+.runs__preset.is-dirty {
+  border-color: var(--orange);
+  color: var(--orange);
 }

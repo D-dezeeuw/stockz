@@ -15,6 +15,8 @@ import {
   tickStrategies,
   rollStrategySessions,
   tuneWeight,
+  pickPreset,
+  presetPicker,
 } from './registry.js'
 import { defineStrategy } from './contract.js'
 import { ACTIONS } from '../actions/names.js'
@@ -309,5 +311,32 @@ describe('tuneWeight', () => {
 
     // An editor that only updated the dragged row would lie about every other one.
     expect(appState.ui.compositeWeights.map((r) => r.pct)).toEqual([75, 25])
+  })
+})
+
+describe('pickPreset', () => {
+  it('reaches a running strategy, since a preset that waits for a restart is not used', () => {
+    registerStrategyActions()
+    const bus = fakeBus()
+    const run = startStrategy('momentum-burst', 'okx:BTC-USDT', { subscribe: bus.subscribe })
+
+    const next = pickPreset({ strategy: 'momentum-burst', value: 'aggressive' })
+    tick()
+
+    expect(next.multiple).toBe(2)
+    expect(run.ctx.params.multiple).toBe(2)
+
+    expect(pickPreset({ strategy: 'momentum-burst', value: 'nope' })).toBeNull()
+    expect(pickPreset({ strategy: 'nope', value: 'standard' })).toBeNull()
+  })
+})
+
+describe('presetPicker', () => {
+  it('defaults to standard, so a fresh desk is never on no preset at all', () => {
+    registerStrategyActions()
+
+    expect(presetPicker('momentum-burst')).toMatchObject({ active: 'standard', dirty: false })
+    expect(presetPicker('momentum-burst').names).toContain('aggressive')
+    expect(presetPicker('nope')).toEqual({ names: [], active: '', dirty: false })
   })
 })
