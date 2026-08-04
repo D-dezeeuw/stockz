@@ -59,6 +59,9 @@ export const PATHS = Object.freeze({
     statusLine: 'ui.statusLine',
     theme: 'ui.theme',
     section: 'ui.section',
+    // What the grid actually renders: settings.blocks narrowed to the active section.
+    // Derived, never edited - the layout itself stays in settings.blocks so it persists.
+    gridBlocks: 'ui.gridBlocks',
     modal: 'ui.modal',
     toasts: 'ui.toasts',
     columns: 'ui.columns',

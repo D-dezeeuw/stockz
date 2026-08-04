@@ -43,6 +43,7 @@ export function initialState(overrides = {}) {
     [PATHS.ui.statusLine]: '',
     [PATHS.ui.theme]: 'night',
     [PATHS.ui.section]: 'dashboard',
+    [PATHS.ui.gridBlocks]: [],
     [PATHS.ui.modal]: '',
     [PATHS.ui.toasts]: [],
     [PATHS.ui.columns]: 1,

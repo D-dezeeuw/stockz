@@ -10,7 +10,7 @@ import { wireEngineErrors } from '../ui/toast.js'
 import { registerFormatters } from '../ui/format-bindings.js'
 import { seedBlocks } from '../blocks/seed.js'
 import { registerLayoutActions, observeLayout } from '../blocks/layout.js'
-import { registerHeaderActions } from '../ui/header.js'
+import { registerHeaderActions, mountSectionBlocks } from '../ui/header.js'
 import { registerThemeActions, applyTheme, preferredTheme } from '../ui/theme.js'
 import { restoreSettings, persistSettings } from '../state/persist.js'
 import { registerSettingsActions } from '../ui/settings.js'
@@ -218,6 +218,9 @@ export function bootstrap(options = {}) {
   registerSystems({ now: makeBootClock(now) })
   seedBlocks()
   seedLists()
+  // After the registry is seeded and before bindDOM, so the grid has its blocks on the
+  // very first frame rather than painting empty and filling in a tick later.
+  mountSectionBlocks()
 
   // Bindings after every action is registered, so a chord can never point at a name
   // that does not exist yet.
