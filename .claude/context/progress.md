@@ -5,11 +5,45 @@ in `masterplan.md`, and knows where the project stands. Rewritten at every phase
 
 ---
 
-## Status: Phase 16 closed (v0.16.0) · Phase 17 next
+## Status: Phase 17 closed (v0.17.0) · Phase 18 next
 
 **Live:** https://d-dezeeuw.github.io/stockz/ (Pages serves `main` root — pushing is deploying)
-**Tests:** 482, one per function, all passing individually. Every gated file >80% branches.
+**Tests:** 546, one per function, all passing individually. Every gated file >80% branches.
 **Branch model:** everything merges to `main`; no feature branches outstanding.
+
+## Phase 17 — Order Types & Execution Engine (closed)
+
+| Feature | What now exists | Where |
+| --- | --- | --- |
+| F17.1 | `makeIntent`, `advanceOrderState`, `normalizeReject`, `isSettled`, `roundToLotTick` | `src/exec/types.js` |
+| F17.1 | `registerAdapter`, `adapterFor`, `prepare`, `deskMarket`, `submit`, `apply`, `cancel`, `publish`, `liveOrders`, `startEngine` | `src/exec/engine.js` |
+| F17.1 | `isAdapter`, `supportsIntent` | `src/exec/adapters/contract.js` |
+| F17.2 | `okxOrdType`, `buildOkxOrder`, `createOkxAdapter` · `buildEtoroOrder`, `createEtoroAdapter` | `src/exec/adapters/` |
+| F17.3 | `applyTif`, `downgradeTif`, `iocTransitions`, `intentWithTif` | `src/exec/tif.js` |
+| F17.4 | `instrumentKind`, `capabilityFor`, `capabilityFlags`, `isEmulated` | `src/exec/capabilities.js` |
+| F17.5 | `offsetsFromTicks`, `makeBracket`, `bracketPlan`, `oppositeLeg` | `src/exec/bracket.js` |
+| F17.6 | `linkOco`, `siblingOf`, `resolveFill`, `resolveOcoRace`, `closePair`, `linkBracketExits` | `src/exec/oco.js` |
+| F17.7 | `nextTrailStop`, `bestPrice`, `startTrail`, `advanceTrail`, `stopTrail` | `src/exec/trail.js` |
+| F17.8 | `deviationBps`, `checkSlippage`, `checkSize` | `src/exec/guard.js` |
+| F17.9 | `amendDiff`, `amendRoute`, `takeLock`, `releaseLock`, `amendOrder`, `cancelReplace` | `src/exec/amend.js` |
+| F17.10 | `setPrefix`, `issueId`, `claimId`, `dedupeOnReconnect` · `stampLatency`, `latencyFor`, `latencySummary` | `src/exec/ids.js`, `src/exec/latency.js` |
+
+**`prepare()` is the choke point.** Every order — ticket, hotkey, repeat-last, and later
+strategies — passes through it, which is where validation, capability checks, grid
+rounding and both guards live. A check that lived in the ticket and not in a hotkey would
+not be a check.
+
+**One transition table, imported not restated.** `advanceOrderState` reads `TRANSITIONS`
+from `ticket/lifecycle.js`; the adapters' capability flags are *derived* from
+`capabilities.js`. Both are enforced by test — duplicating either is how the desk ends up
+showing one status while acting on another.
+
+**`src/ticket/send.js` was deleted**, subsumed by the engine. Its credential check moved
+into the OKX adapter, where needing keys is a property of the venue rather than of
+execution.
+
+**Deferred in phase 17:** T17.2.5 WS-first submission (nothing logs into the private
+socket yet; `buildLoginFrame` exists from phase 9 and the adapter's `place` is the seam).
 
 ## Phase 16 — Hotkeys & Command Palette (closed)
 
@@ -299,18 +333,21 @@ go stale, and faults that reach the trader instead of the console.
 | F2.9 | `pushToast`, `dismissToast`, `expireToasts`, `describeEngineError`, `wireEngineErrors` | `src/ui/toast.js` |
 | F2.10 | `collectExpressions`, `renderPrecompileModule`, `cspMeta`, `npm run build:csp` | `src/app/csp.js`, `docs/csp.md` |
 
-## Next up: Phase 17 — Multi-Instrument Workspace
+## Next up: Phase 18 — Positions & Live PnL
 
-First feature **F17.1**. Trading more than one pair at once: per-instrument state,
-switching without losing context, and a layout that holds several at a time.
+First feature **F18.1** (positions store core). Exact exposure and P&L to the tick, fed
+by execution fills and live marks, with one-tap flatten.
 
-- `market.focus` already carries a venue-qualified symbol, and the feed re-subscribes on
-  focus change (`connectFeeds` watches it). Per-instrument *state* is the new part.
-- The book, tape and candle stores are already keyed by symbol
-  (`bookFor(symbol)`, `recentTrades(symbol)`, `candles(symbol, tf)`); only the *flush*
-  into state is single-focus. That flush is the seam to widen.
-- `resetImbalance()` on symbol change is the existing precedent for what must be dropped
-  rather than carried across instruments.
+- **Fills already flow**: `exec/engine.js` `apply()` publishes every transition, and
+  `ticket/lifecycle.js` holds the order list. Positions derive from those fills plus the
+  mark, so nothing new needs to reach the venue.
+- `trade.positions` already exists and `trade.exposure` is already a computed over it
+  (`state/derived.js`) — the store is what has been missing, not the wiring.
+- Flatten is `orders.cancelAll` plus a reduce-only market close per position; the
+  reduce-only flag and the guard path both exist (`exec/guard.js`, `makeIntent`).
+- **Average entry is the trap**: a partial fill at a new price changes the average, and
+  the naive version (overwriting entry with the last fill price) silently misstates every
+  P&L that follows.
 
 ### Still outstanding across phases
 *(none — the boot-time feed gap recorded here through phase 13 was closed in phase 14;
