@@ -10,6 +10,25 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ## [Unreleased]
 
+### Security
+
+- **A production build inlined live credentials into a published asset.** `vite.config.js`
+  set `envPrefix: 'STOCKZ_'` — which is an *allowlist for publication*, not a guard: Vite
+  hardcodes every matching variable into the browser bundle as a string literal. The
+  credentials were named `STOCKZ_OKX_*` and `STOCKZ_ETORO_*`, so they were on the publish
+  list by construction, and the `gh-pages` deploy of 2026-08-03 (`99be0a6`) shipped the OKX
+  key, secret and passphrase, both eToro keys and the LLM key in
+  `assets/index-dAHRgWW4.js`. The comment above the setting described it as a safety
+  measure, which is the exact inversion that made it easy to miss.
+  Production now builds with `envPrefix: 'STOCKZ_PUBLIC_'` — a prefix nothing is named
+  after — so a `vite build` **cannot** carry a credential whatever is in the shell; dev
+  keeps `STOCKZ_` for local `.env` convenience, because a dev bundle is never published.
+  Verified with a canary variable that no longer reaches `dist/`.
+- **The secret scanner could not have caught it.** `check:secrets` ran `git grep` against
+  the working tree, and the exposed bundle lived on a branch that is never checked out. It
+  now scans **every ref** plus `dist/`, reports `commit:file` instead of burying the finding
+  in a minified line, and exits non-zero so it can gate a publish.
+
 ### Fixed
 
 - **The key modal had no way to open it.** It has existed since phase 7 with a close button

@@ -12,9 +12,17 @@ import { defineConfig } from 'vite'
 export default defineConfig(({ mode }) => ({
   base: mode === 'production' ? '/stockz/' : '/',
 
-  // Only STOCKZ_-prefixed vars reach import.meta.env — nothing else from the shell
-  // can leak into the bundle (see .claude/context/integrations.md).
-  envPrefix: 'STOCKZ_',
+  // `envPrefix` is an ALLOWLIST FOR PUBLICATION, not a guard. Every matching var is
+  // hardcoded into the browser bundle as a string literal at build time. This was set to
+  // 'STOCKZ_' — the same prefix as the credentials — and a production build duly inlined
+  // the live OKX key, secret, passphrase, both eToro keys and the LLM key into a deployed
+  // asset. The prefix did not protect them; it selected them.
+  //
+  // So production gets a prefix nothing is named after: a `vite build` now *cannot* carry a
+  // credential, whatever is in the shell. Dev keeps STOCKZ_ for the local-.env convenience,
+  // because a dev bundle is never published. Anything genuinely meant for the browser goes
+  // under STOCKZ_PUBLIC_, where the name says so out loud.
+  envPrefix: mode === 'production' ? 'STOCKZ_PUBLIC_' : 'STOCKZ_',
 
   server: {
     port: 5173,
