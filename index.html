@@ -560,6 +560,16 @@
                    desk; a nag here would be something to click through and learn to ignore. -->
               <p class="streaks__tilt" data-if="analytics.streaks.tilt">{{analytics.streaks.current}} losses in a row — this is where days get away</p>
             </div>
+            <!-- The number that quietly decides whether this is a business or a hobby. A
+                 strategy making twelve basis points against a venue charging ten is a job
+                 the trader is doing for the exchange, and nothing else here says so: the
+                 P&L is already net and the win rate does not care. -->
+            <div class="fees" data-if="block.id === 'analytics'">
+              <span class="fees__ratio" :class="'fees__ratio fees__ratio--' + analytics.fees.tone">{{analytics.fees.ratioLabel}}</span>
+              <span class="label">of gross eaten by fees · {{analytics.fees.fees}} on {{analytics.fees.gross}}</span>
+              <canvas id="fees-canvas" class="fees__bars"></canvas>
+              <span class="fees__venue label" data-each="v in analytics.venueFees">{{v.venue}} {{v.fees}} ({{v.fills}} fills)</span>
+            </div>
             <!-- An alert set in under three seconds: level, direction, done. -->
             <div class="alerts" data-if="block.id === 'watchlist'">
               <form class="alerts__form" data-action="submit" data-fn="alerts.create"

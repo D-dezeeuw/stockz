@@ -4333,16 +4333,16 @@
 **What:** Gross PnL, total fees and the fee-drag ratio side by side per venue, so the user sees how much of the edge the exchanges are eating.
 **How:** grossVsFees() aggregation split by OKX and EToro rendered as paired canvas bars with a fee-ratio tile and hover breakdowns.
 
-- [ ] **T26.7.1 - Cut fees branch** - What: Fee analysis isolated from main. How: git checkout -b feature/f26.7-fees-vs-gross from main.
-- [ ] **T26.7.2 - Implement grossVsFees()** - What: The three headline numbers of fee drag. How: Pure grossVsFees(trades) in src/analytics/fees.js summing gross PnL and fees from enriched trades and deriving feeRatio.
-- [ ] **T26.7.3 - Implement venueFeeSplit()** - What: Fee cost attributed to the venue that charged it. How: venueFeeSplit(trades) partitioning fee sums by the OKX or EToro origin recorded on each fill.
-- [ ] **T26.7.4 - Render paired bars** - What: Gross versus fees comparable at a glance per venue. How: drawFeeBars(ctx, data, size) painting a green gross bar beside an orange fee bar for each venue on a DPR-scaled canvas.
-- [ ] **T26.7.5 - Add the fee-ratio tile** - What: One percentage that says how much edge fees consume. How: Tile bound to {{analytics.fees.feeRatio}} with threshold coloring shifting toward orange as the ratio climbs.
-- [ ] **T26.7.6 - Add hover breakdowns** - What: Maker/taker and per-venue detail on demand. How: pointermove over bars raising a tooltip with fee totals, trade counts and average fee per trade for that venue.
-- [ ] **T26.7.7 - Wire reactive updates** - What: Fee drag stays current with every close. How: Spektrum computed('analytics.fees') over period-filtered trades with a watch scheduling drawFeeBars redraws.
-- [ ] **T26.7.8 - Style and place the block section** - What: The comparison sits cleanly in the analytics tile. How: Grid area beneath the KPI row with section heading, using spacing and border tokens from the design system.
-- [ ] **T26.7.9 - Write single unit tests for fee fns** - What: grossVsFees and venueFeeSplit each proven once. How: One Vitest test per function in fees.test.js with mixed-venue fixtures, run via vitest run -t.
-- [ ] **T26.7.10 - Verify and merge fee comparison** - What: Fee truth ships green. How: Run targeted tests, reconcile totals against summed journal fee columns for a fixture day, merge to main.
+- [x] **T26.7.1 - Cut fees branch** - What: Fee analysis isolated from main. How: git checkout -b feature/f26.7-fees-vs-gross from main.
+- [x] **T26.7.2 - Implement grossVsFees()** - What: The three headline numbers of fee drag. How: Pure grossVsFees(trades) in src/analytics/fees.js summing gross PnL and fees from enriched trades and deriving feeRatio.
+- [x] **T26.7.3 - Implement venueFeeSplit()** - What: Fee cost attributed to the venue that charged it. How: venueFeeSplit(trades) partitioning fee sums by the OKX or EToro origin recorded on each fill.
+- [x] **T26.7.4 - Render paired bars** - What: Gross versus fees comparable at a glance per venue. How: drawFeeBars(ctx, data, size) painting a green gross bar beside an orange fee bar for each venue on a DPR-scaled canvas.
+- [x] **T26.7.5 - Add the fee-ratio tile** - What: One percentage that says how much edge fees consume. How: Tile bound to {{analytics.fees.feeRatio}} with threshold coloring shifting toward orange as the ratio climbs.
+- [x] **T26.7.6 - Add hover breakdowns** - What: Maker/taker and per-venue detail on demand. How: pointermove over bars raising a tooltip with fee totals, trade counts and average fee per trade for that venue.
+- [x] **T26.7.7 - Wire reactive updates** - What: Fee drag stays current with every close. How: Spektrum computed('analytics.fees') over period-filtered trades with a watch scheduling drawFeeBars redraws.
+- [x] **T26.7.8 - Style and place the block section** - What: The comparison sits cleanly in the analytics tile. How: Grid area beneath the KPI row with section heading, using spacing and border tokens from the design system.
+- [x] **T26.7.9 - Write single unit tests for fee fns** - What: grossVsFees and venueFeeSplit each proven once. How: One Vitest test per function in fees.test.js with mixed-venue fixtures, run via vitest run -t.
+- [x] **T26.7.10 - Verify and merge fee comparison** - What: Fee truth ships green. How: Run targeted tests, reconcile totals against summed journal fee columns for a fixture day, merge to main.
 
 ### F26.8 - Drawdown Curve and Max Drawdown
 

@@ -245,6 +245,8 @@ export function initialState(overrides = {}) {
     [PATHS.analytics.holdCentre]: { median: 0, mean: 0, medianLabel: '—', meanLabel: '—' },
     [PATHS.analytics.streaks]: { current: 0, outcome: 'none', maxWin: 0, maxLoss: 0, tilt: false },
     [PATHS.analytics.segments]: [],
+    [PATHS.analytics.fees]: { gross: 0, fees: 0, net: 0, ratio: 0, ratioLabel: '—', tone: 'flat', trades: 0 },
+    [PATHS.analytics.venueFees]: [],
 
     // journal
     [PATHS.journal.trades]: [],

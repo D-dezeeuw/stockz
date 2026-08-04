@@ -89,6 +89,17 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
   six losers in March is not a reason to warn every session since. Scratches **break** a run
   rather than extending or ending it, since folding a break-even trade into either side
   produces a record streak nobody ever had.
+- **What the exchanges are eating** — the number that quietly decides whether a scalping desk
+  is a business or a hobby. A strategy making twelve basis points a trade against a venue
+  charging ten is not marginal; it is a job the trader is doing for the exchange, and nothing
+  else on this dashboard says so — the P&L is already net and the win rate does not care.
+  Fees are attributed to **the venue that charged them**, taken from the fill rather than the
+  trade, because a round trip can open on one venue and close on another and folding both
+  legs into whichever opened it misattributes exactly the cost being measured. The ratio is
+  fees over **gross**, never over net: over net it runs to infinity as a desk approaches
+  break-even and then flips sign, at precisely the moment a readable number matters most. A
+  losing day reads "—" rather than 0%. Both bars share one scale, since side-by-side bars on
+  independent scales are how a chart makes 90% fee drag look like a fair fight.
 
 ## [0.25.0] — 2026-08-04 — Phase 25: Trade Journal & Time-Travel Audit
 

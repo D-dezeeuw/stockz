@@ -48,6 +48,7 @@ import { startHeatmap } from '../analytics/heatmap.js'
 import { registerRankingActions } from '../analytics/instruments.js'
 import { startHistogram } from '../analytics/holdtime.js'
 import { startStreakStrip } from '../analytics/streaks.js'
+import { startFeeBars } from '../analytics/fees.js'
 import { registerKillActions } from '../breakers/kill.js'
 import { registerRearmActions, mountRelease } from '../breakers/rearm.js'
 import {
@@ -171,6 +172,7 @@ export function bootstrap(options = {}) {
   registerRankingActions()
   startHistogram()
   startStreakStrip()
+  startFeeBars()
   loadAnnotations()
   pruneBreakerEvents(Date.now())
   // The daily-loss trip has no other reaction path — it publishes a code and returns a
