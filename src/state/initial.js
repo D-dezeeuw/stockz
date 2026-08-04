@@ -204,6 +204,14 @@ export function initialState(overrides = {}) {
     [PATHS.bot.capped]: [],
     [PATHS.bot.session]: { signals: 0, orders: 0, dry: 0, blocked: 0, startedAt: 0 },
 
+    // the safety net
+    [PATHS.breaker.tripped]: 0,
+    [PATHS.breaker.reason]: '',
+    [PATHS.breaker.at]: 0,
+    [PATHS.breaker.values]: {},
+    [PATHS.breaker.dayPnl]: 0,
+    [PATHS.breaker.dailyPct]: 0,
+
     // alerts
     [PATHS.alerts.fired]: null,
     [PATHS.alerts.log]: [],

@@ -11,6 +11,7 @@ import { ingestFill } from '../positions/store.js'
 import { captureIntent, scoreFill } from '../hud/quality.js'
 import { recordFee } from '../hud/fees.js'
 import { routeExecAlert } from '../alerts/exec.js'
+import { dailyLossCheck, breakerRejection, TRIP } from '../breakers/index.js'
 import { createLogger } from '../utils/log.js'
 
 const log = createLogger('exec')
@@ -135,6 +136,13 @@ export async function submit(input, deps = {}) {
   const market = deskMarket()
   const { ok, intent, reason } = prepare(input, market)
   if (!ok) return { ok: false, clientId: '', reason }
+
+  // The safety net, once, on the one path every order takes — before any venue send and
+  // after validation, so the size being checked is the size that would actually go. It is
+  // primitive comparisons against a cached threshold: it costs under a microsecond, which
+  // is the only reason it can afford to be here at all.
+  const trip = dailyLossCheck({ position: intent.size, now: at })
+  if (trip !== TRIP.NONE) return breakerRejection(trip)
 
   const clientId = intent.clientId || issueId(at)
   // Claimed before the network call: a duplicate id at the venue is either a rejection

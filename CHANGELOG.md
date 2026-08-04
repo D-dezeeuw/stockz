@@ -10,6 +10,27 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ## [Unreleased]
 
+### Added
+
+- **Circuit breakers: the core and the daily loss limit** — the one safety net on a desk built
+  entirely around not slowing the trader down, which is why the rule that shapes the module is
+  that **a breaker never asks**. No confirm dialog, no "are you sure", no modal in the order
+  path — not because dialogs are unfashionable but because a breaker that asks is one that gets
+  clicked through at exactly the moment it was built for. A trip is a state change and a
+  rejection object; the trader finds out because the desk stopped, and stopping is the feature.
+  The check is primitive comparisons against a **cached** threshold object, rebuilt from a watch
+  on settings — nothing on the hot path reads settings, walks a list or allocates, and the daily
+  limit is stored **pre-negated** so it is one `<=`. A benchmark holds it under a microsecond a
+  call, because a net that cost a millisecond is a net people turn off. The **latch** matters as
+  much as the check: one trip fires exactly one reaction chain, and without it a failing market
+  would fire the flatten path forty times a second. The day's number is **realised plus
+  unrealised**, since a trader holding a large loser has already lost the money and a breaker
+  counting only closed trades would let somebody sit through the exact drawdown it exists to
+  stop — recomputed on the frame flush rather than per tick, so the order path reads one
+  already-computed number. On a trip the bot is killed **first and synchronously**: anything
+  that queued the disarm would leave a window for one more order, and "one more" is the order
+  the breaker existed to prevent.
+
 ## [0.23.0] — 2026-08-04 — Phase 23: Auto-Trade Bot Runner
 
 Strategies pull their own trigger. A thin loop turns signals into orders through the same

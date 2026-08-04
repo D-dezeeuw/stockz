@@ -15,6 +15,7 @@
  *   strategy.*  registered strategies and their live signals
  *   alerts.*    what the desk has tapped the trader on the shoulder about
  *   bot.*       what the auto-trader decided, and why
+ *   breaker.*   whether the desk has stopped itself, and what stopped it
  *
  * Credentials are absent on purpose: state flows into history, `serialize()` and journal
  * exports, so keys live only in the in-memory vault.
@@ -30,6 +31,7 @@ export const NAMESPACES = Object.freeze([
   'strategy',
   'alerts',
   'bot',
+  'breaker',
 ])
 
 /** Namespaces that survive a reload (written to localStorage by spektrum/persist). */
@@ -210,6 +212,14 @@ export const PATHS = Object.freeze({
     cooldownUntil: 'bot.cooldownUntil',
     capped: 'bot.capped',
     session: 'bot.session',
+  }),
+  breaker: Object.freeze({
+    tripped: 'breaker.tripped',
+    reason: 'breaker.reason',
+    at: 'breaker.at',
+    values: 'breaker.values',
+    dayPnl: 'breaker.dayPnl',
+    dailyPct: 'breaker.dailyPct',
   }),
   strategy: Object.freeze({
     registered: 'strategy.registered',
