@@ -24,7 +24,6 @@ import { connectFeeds } from './feeds.js'
 import { registerTicketActions } from '../ticket/actions.js'
 import { registerSizingActions } from '../ticket/sizing.js'
 import { registerSubmitAction } from '../ticket/submit.js'
-import { sendOrder } from '../ticket/send.js'
 import { registerShortcutActions } from '../ticket/shortcuts.js'
 import { registerIntentAction } from '../ticket/intent.js'
 import { applyDefaultBindings } from '../keys/defaults.js'
@@ -34,6 +33,7 @@ import { registerPaletteActions } from '../keys/palette.js'
 import { trackBlockFocus } from '../keys/scopes.js'
 import { registerPanicAction } from '../keys/panic.js'
 import { registerCaptureActions } from '../keys/capture.js'
+import { startEngine, submit as execSubmit } from '../exec/engine.js'
 import { createRepeater, guardRepeat } from '../keys/repeat.js'
 import { appVersion } from './version.js'
 
@@ -88,8 +88,11 @@ export function bootstrap(options = {}) {
   registerSizingActions()
   // The venue call is injected rather than imported inside the action, so the fast path
   // can be exercised end to end without a network.
-  registerSubmitAction({ send: sendOrder })
-  registerShortcutActions({ send: sendOrder })
+  // The engine is the one door orders go through. It comes up before the submit action
+  // so a click in the first frame has an adapter to reach.
+  startEngine()
+  registerSubmitAction({ send: sendViaEngine })
+  registerShortcutActions({ send: sendViaEngine })
   registerIntentAction({ submit: submitFromIntent })
   registerBindingActions()
   registerPaletteActions()
@@ -139,6 +142,26 @@ export function bootstrap(options = {}) {
     },
     feeds,
   }
+}
+
+/**
+ * Send a ticket payload through the execution engine.
+ *
+ * The ticket speaks OKX payload shape (phase 15); the engine speaks intents. This is the
+ * one translation, kept named rather than inline so the coverage gate can see it.
+ *
+ * @param {object} payload - the venue payload the ticket built.
+ * @returns {Promise<object>} the engine's outcome.
+ */
+export function sendViaEngine(payload) {
+  return execSubmit({
+    symbol: payload?.instId,
+    side: payload?.side,
+    size: Number(payload?.sz),
+    price: Number(payload?.px) || 0,
+    type: payload?.ordType === 'market' ? 'market' : 'limit',
+    clientId: payload?.clOrdId,
+  })
 }
 
 /**

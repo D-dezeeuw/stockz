@@ -2734,16 +2734,16 @@
 **What:** One execution core every ticket, hotkey and bot talks to, tracking each order from intent to fill.
 **How:** src/exec/engine.js ES module with a Spektrum-registered orders store and a venue adapter contract implemented by OKX and EToro adapters.
 
-- [ ] **T17.1.1 - Branch and scaffold exec module** - What: A clean home for all execution code. How: Create feature/exec-engine-core off main; scaffold src/exec/ with engine.js, types.js and adapters/ as ES modules under Vite.
-- [ ] **T17.1.2 - Order intent shape** - What: One normalized order object for every venue. How: Write makeIntent() in types.js producing {venue, instrument, side, size, price, tif, flags} with input validation.
-- [ ] **T17.1.3 - Order state machine** - What: Predictable order lifecycle with no impossible states. How: defineFn advanceOrderState() covering pending->submitted->acked->partial->filled/rejected/canceled transitions as a pure table lookup.
-- [ ] **T17.1.4 - Orders store registration** - What: Live order book state any block can bind to. How: addSystem('exec') registering an orders map keyed by clientOrderId, mutated only via setValue commits.
-- [ ] **T17.1.5 - Venue adapter contract** - What: Venue quirks isolated behind one interface. How: Define adapter shape {submit, cancel, amend, capabilities} in adapters/contract.js that OKX and EToro adapters implement.
-- [ ] **T17.1.6 - Execution event bus** - What: Downstream phases (HUD, positions, journal) hear every order change. How: trigger('exec:update', {id, prev, next}) on each state transition so consumers use watch() instead of polling.
-- [ ] **T17.1.7 - Rejection normalizer** - What: One readable reject reason instead of raw venue codes. How: Write normalizeReject() mapping OKX sCode values and EToro error bodies to a single reason enum plus original payload.
-- [ ] **T17.1.8 - Engine bootstrap wiring** - What: Engine alive from app start with zero manual init. How: Import and start the engine in main.js during the Spektrum run() boot sequence loaded via the unpkg importmap.
-- [ ] **T17.1.9 - Single unit tests for core fns** - What: Each new function locked by its one test. How: One Vitest test each for makeIntent, advanceOrderState and normalizeReject; run only those test files with vitest run path filters.
-- [ ] **T17.1.10 - Verify and merge** - What: Feature lands on main only when green. How: Run ESLint plus this feature's Vitest tests, then merge feature/exec-engine-core into main.
+- [x] **T17.1.1 - Branch and scaffold exec module** - What: A clean home for all execution code. How: Create feature/exec-engine-core off main; scaffold src/exec/ with engine.js, types.js and adapters/ as ES modules under Vite.
+- [x] **T17.1.2 - Order intent shape** - What: One normalized order object for every venue. How: Write makeIntent() in types.js producing {venue, instrument, side, size, price, tif, flags} with input validation.
+- [x] **T17.1.3 - Order state machine** - What: Predictable order lifecycle with no impossible states. How: defineFn advanceOrderState() covering pending->submitted->acked->partial->filled/rejected/canceled transitions as a pure table lookup.
+- [x] **T17.1.4 - Orders store registration** - What: Live order book state any block can bind to. How: addSystem('exec') registering an orders map keyed by clientOrderId, mutated only via setValue commits.
+- [x] **T17.1.5 - Venue adapter contract** - What: Venue quirks isolated behind one interface. How: Define adapter shape {submit, cancel, amend, capabilities} in adapters/contract.js that OKX and EToro adapters implement.
+- [x] **T17.1.6 - Execution event bus** - What: Downstream phases (HUD, positions, journal) hear every order change. How: trigger('exec:update', {id, prev, next}) on each state transition so consumers use watch() instead of polling.
+- [x] **T17.1.7 - Rejection normalizer** - What: One readable reject reason instead of raw venue codes. How: Write normalizeReject() mapping OKX sCode values and EToro error bodies to a single reason enum plus original payload.
+- [x] **T17.1.8 - Engine bootstrap wiring** - What: Engine alive from app start with zero manual init. How: Import and start the engine in main.js during the Spektrum run() boot sequence loaded via the unpkg importmap.
+- [x] **T17.1.9 - Single unit tests for core fns** - What: Each new function locked by its one test. How: One Vitest test each for makeIntent, advanceOrderState and normalizeReject; run only those test files with vitest run path filters.
+- [x] **T17.1.10 - Verify and merge** - What: Feature lands on main only when green. How: Run ESLint plus this feature's Vitest tests, then merge feature/exec-engine-core into main.
 
 ### F17.2 - Market & limit order submission
 
