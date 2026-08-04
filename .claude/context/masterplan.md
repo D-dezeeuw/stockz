@@ -3434,16 +3434,16 @@
 **What:** The user earns the spread passively: post-only quotes on both sides collect maker fills all session.
 **How:** Quote-pricing and requote fns from phase-14 book tops emitting post-only order intents to the phase-17 execution engine.
 
-- [ ] **T21.3.1 - Branch and scaffold spread module** - What: Independent delivery of the market-making scalp. How: git checkout -b feature/f21-3-spread-capture; create src/strategies/spreadCapture.js.
-- [ ] **T21.3.2 - Build quotePrices fn** - What: Correct passive prices on both sides of the book. How: Implement quotePrices(bestBid, bestAsk, offsetTicks, tickSize) returning bid and ask quote prices.
-- [ ] **T21.3.3 - Build minSpreadGate fn** - What: Quotes go out only when the spread pays after fees. How: Implement minSpreadGate(spreadTicks, minTicks, makerFeeBps) using the OKX maker fee as input.
-- [ ] **T21.3.4 - Build shouldRequote fn** - What: Less churn: requotes only when the book moves beyond tolerance. How: Implement shouldRequote(currentQuotes, bookTop, toleranceTicks) returning a boolean per side.
-- [ ] **T21.3.5 - Build inventorySkew fn** - What: Position mean-reverts itself: quotes lean against open inventory. How: Implement inventorySkew(position, maxInventory, skewTicks) shifting both quote prices.
-- [ ] **T21.3.6 - Wire quoting loop** - What: Live two-sided quoting driven by the book feed. How: addSystem() on the phase-14 book-top channel emitting post-only order intents via trigger('order:intent') to phase-17.
-- [ ] **T21.3.7 - Wire cancel-replace flow** - What: Stale quotes replaced fast but throttled against rate limits. How: Emit cancel-replace intents on shouldRequote hits with a throttleMs param enforced via addAsync scheduling.
-- [ ] **T21.3.8 - Params and quote status row** - What: offsetTicks, minTicks and maxInventory tunable; live quotes and fill count visible. How: setValue-backed params plus a HUD row with {{bidQuote}} and {{askQuote}} bindings and a fill counter.
-- [ ] **T21.3.9 - Write single unit tests** - What: Quote math verified per function. How: One Vitest test each for quotePrices, minSpreadGate, shouldRequote and inventorySkew; run only those tests.
-- [ ] **T21.3.10 - Verify intent log and merge** - What: Correct intents proven without risking capital. How: Replay a book recording, assert emitted intents in a dry-run intent log, ESLint, merge to main.
+- [x] **T21.3.1 - Branch and scaffold spread module** - What: Independent delivery of the market-making scalp. How: git checkout -b feature/f21-3-spread-capture; create src/strategies/spreadCapture.js.
+- [x] **T21.3.2 - Build quotePrices fn** - What: Correct passive prices on both sides of the book. How: Implement quotePrices(bestBid, bestAsk, offsetTicks, tickSize) returning bid and ask quote prices.
+- [x] **T21.3.3 - Build minSpreadGate fn** - What: Quotes go out only when the spread pays after fees. How: Implement minSpreadGate(spreadTicks, minTicks, makerFeeBps) using the OKX maker fee as input.
+- [x] **T21.3.4 - Build shouldRequote fn** - What: Less churn: requotes only when the book moves beyond tolerance. How: Implement shouldRequote(currentQuotes, bookTop, toleranceTicks) returning a boolean per side.
+- [x] **T21.3.5 - Build inventorySkew fn** - What: Position mean-reverts itself: quotes lean against open inventory. How: Implement inventorySkew(position, maxInventory, skewTicks) shifting both quote prices.
+- [x] **T21.3.6 - Wire quoting loop** - What: Live two-sided quoting driven by the book feed. How: addSystem() on the phase-14 book-top channel emitting post-only order intents via trigger('order:intent') to phase-17.
+- [x] **T21.3.7 - Wire cancel-replace flow** - What: Stale quotes replaced fast but throttled against rate limits. How: Emit cancel-replace intents on shouldRequote hits with a throttleMs param enforced via addAsync scheduling.
+- [x] **T21.3.8 - Params and quote status row** - What: offsetTicks, minTicks and maxInventory tunable; live quotes and fill count visible. How: setValue-backed params plus a HUD row with {{bidQuote}} and {{askQuote}} bindings and a fill counter.
+- [x] **T21.3.9 - Write single unit tests** - What: Quote math verified per function. How: One Vitest test each for quotePrices, minSpreadGate, shouldRequote and inventorySkew; run only those tests.
+- [x] **T21.3.10 - Verify intent log and merge** - What: Correct intents proven without risking capital. How: Replay a book recording, assert emitted intents in a dry-run intent log, ESLint, merge to main.
 
 ### F21.4 - Order-Book Imbalance Signal
 

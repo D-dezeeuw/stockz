@@ -12,6 +12,19 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ### Added
 
+- **Post-only spread capture** — the only strategy here that earns rather than predicts. It
+  quotes both sides passively and has no opinion about direction at all, which means its
+  risks and its failure modes are entirely different from the other two. Three of them shape
+  the module: a spread that does not cover the **round-trip** maker fee is a losing quote,
+  and a maker who forgets the second fill loses money at a perfectly steady rate; requoting
+  on every book flicker is how a maker gets rate-limited, and a cancelled quote is one that
+  was not in the queue when the fill came, so a drift of exactly the tolerance is not drift;
+  and **inventory is the real risk** — passive fills pile up on one side in a trend, turning
+  a market maker into a directional trader who did not choose to be one, so the quotes lean
+  against the position and the lean is clamped, because a quote pushed arbitrarily far never
+  fills and never filling is not the same as getting flat. It emits `flat` with its quotes
+  in the reason, never buy or sell: putting a maker's inventory into the directional pipeline
+  would mean something else entirely.
 - **VWAP mean reversion bands** — the other half of the scalper's book and deliberately the
   momentum strategy's opposite: this one fades. Price stretched several sigma from the
   session's volume-weighted fair value tends to snap back, because the move was one

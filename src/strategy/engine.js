@@ -3,6 +3,7 @@ import { noopStrategy } from './builtin/noop.js'
 import { compositeStrategy } from './composite.js'
 import { momentumStrategy } from './builtin/momentum.js'
 import { vwapRevertStrategy } from './builtin/vwap-revert.js'
+import { spreadCaptureStrategy } from './builtin/spread-capture.js'
 import { safeInvoke } from './sandbox.js'
 
 /**
@@ -21,6 +22,7 @@ export const BUILTIN_STRATEGIES = Object.freeze([
   noopStrategy,
   momentumStrategy,
   vwapRevertStrategy,
+  spreadCaptureStrategy,
   compositeStrategy,
 ])
 
