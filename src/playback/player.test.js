@@ -84,9 +84,9 @@ describe('loadReplay', () => {
     tick()
 
     expect(loaded.ticks).toHaveLength(3)
-    expect(appState.replay.player.active).toBe(true)
-    expect(appState.replay.player.total).toBe(3)
-    expect(appState.replay.player.label).toBe('CPI spike')
+    expect(appState.playback.transport.active).toBe(true)
+    expect(appState.playback.transport.total).toBe(3)
+    expect(appState.playback.transport.label).toBe('CPI spike')
 
     // A recording with no ticks is not something to enter replay for.
     expect(await loadReplay('missing', { db })).toBeNull()
@@ -106,7 +106,7 @@ describe('stepTick', () => {
     const seen = []
     expect(stepTick({ publish: (t) => seen.push(t) }).px).toBe(1)
     tick()
-    expect(appState.replay.player.cursor).toBe(1)
+    expect(appState.playback.transport.cursor).toBe(1)
     // The same bus the live feed uses - a strategy tested against a separate playback path
     // is a strategy tested against something other than the desk.
     expect(seen).toHaveLength(1)
@@ -134,7 +134,7 @@ describe('playReplay', () => {
     const seen = []
     expect(playReplay({ timer, publish: (t) => seen.push(t) })).toBe(true)
     tick()
-    expect(appState.replay.player.playing).toBe(true)
+    expect(appState.playback.transport.playing).toBe(true)
     // The first tick goes immediately; the gap to the second is scheduled.
     expect(seen).toHaveLength(1)
     expect(timer.queue[0][1]).toBe(100)
@@ -145,7 +145,7 @@ describe('playReplay', () => {
     tick()
     // The last tick has nothing after it, so playback stops rather than spinning.
     expect(seen).toHaveLength(3)
-    expect(appState.replay.player.playing).toBe(false)
+    expect(appState.playback.transport.playing).toBe(false)
 
     // Playing twice is one playback, not two pumps racing the same cursor.
     playReplay({ timer, publish: () => {} })
@@ -168,7 +168,7 @@ describe('pauseReplay', () => {
     expect(pauseReplay({ timer })).toBe(true)
     tick()
 
-    expect(appState.replay.player.playing).toBe(false)
+    expect(appState.playback.transport.playing).toBe(false)
     // The cursor survives a pause - that is the difference between pause and exit.
     expect(currentPlayer().cursor).toBe(1)
 
@@ -186,7 +186,7 @@ describe('seekToTick', () => {
 
     expect(seekToTick(2)).toBe(2)
     tick()
-    expect(appState.replay.player.cursor).toBe(2)
+    expect(appState.playback.transport.cursor).toBe(2)
 
     // A click at the very end of the timeline is a seek to the end, not a mistake.
     expect(seekToTick(999)).toBe(3)
@@ -202,7 +202,7 @@ describe('setReplaySpeed', () => {
   it('snaps to a speed the transport can show', () => {
     expect(setReplaySpeed({}, { speed: 25 })).toBe(25)
     tick()
-    expect(appState.replay.player.speed).toBe(25)
+    expect(appState.playback.transport.speed).toBe(25)
 
     // The DOM sends a control's text as `value`.
     expect(setReplaySpeed({}, { value: 5 })).toBe(5)
@@ -223,8 +223,8 @@ describe('exitReplay', () => {
     expect(exitReplay({}, { timer: fakeTimer() })).toBe(true)
     tick()
 
-    expect(appState.replay.player.active).toBe(false)
-    expect(appState.replay.player.total).toBe(0)
+    expect(appState.playback.transport.active).toBe(false)
+    expect(appState.playback.transport.total).toBe(0)
     expect(currentPlayer()).toBeNull()
     expect(appState.ui.toasts[0].message).toContain('back to live')
 
@@ -236,13 +236,13 @@ describe('publishPlayer', () => {
   it('writes the transport as one object, merging rather than replacing', () => {
     publishPlayer({ active: true, total: 9 })
     tick()
-    expect(appState.replay.player).toMatchObject({ active: true, total: 9, cursor: 0 })
+    expect(appState.playback.transport).toMatchObject({ active: true, total: 9, cursor: 0 })
 
     // The fields always move together, so a patch keeps the rest - five separate path
     // writes would repaint the block up to five times for one action.
     publishPlayer({ cursor: 4 })
     tick()
-    expect(appState.replay.player).toMatchObject({ active: true, total: 9, cursor: 4 })
+    expect(appState.playback.transport).toMatchObject({ active: true, total: 9, cursor: 4 })
   })
 })
 
@@ -262,13 +262,13 @@ describe('resetPlayer', () => {
 describe('registerPlayerActions', () => {
   it('registers the transport', () => {
     expect(registerPlayerActions()).toEqual([
-      ACTIONS.replay.play,
-      ACTIONS.replay.pause,
-      ACTIONS.replay.load,
-      ACTIONS.replay.stepTick,
-      ACTIONS.replay.tickSpeed,
-      ACTIONS.replay.unload,
+      ACTIONS.playback.play,
+      ACTIONS.playback.pause,
+      ACTIONS.playback.load,
+      ACTIONS.playback.step,
+      ACTIONS.playback.speed,
+      ACTIONS.playback.exit,
     ])
-    expect(actionNames()).toContain('replay.play')
+    expect(actionNames()).toContain('playback.play')
   })
 })

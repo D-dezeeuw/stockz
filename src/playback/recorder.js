@@ -127,7 +127,7 @@ export async function startRecording(deps = {}) {
     if (buffer.length >= perChunk) flush().catch(() => 0)
   })
 
-  setValue(PATHS.replay.recording, { id: session.id, startedAt, ticks: 0 })
+  setValue(PATHS.playback.recording, { id: session.id, startedAt, ticks: 0 })
   log.info(`recording ${session.id}`)
 
   active = {
@@ -139,7 +139,7 @@ export async function startRecording(deps = {}) {
 
       const row = finalizeSession(session, now())
       await putRecord(db, SESSION_STORE, row)
-      setValue(PATHS.replay.recording, null)
+      setValue(PATHS.playback.recording, null)
       active = null
 
       pushToast(`recorded ${row.ticks} ticks`, 'success')
@@ -162,7 +162,7 @@ export async function stopRecording() {
 
 /** @returns {boolean} true while a recording is running. */
 export function isRecording(state = appState) {
-  return Boolean(state?.replay?.recording?.id)
+  return Boolean(state?.playback?.recording?.id)
 }
 
 /**
@@ -188,9 +188,9 @@ export function resetRecorder() {
  * @returns {string[]} the registered names.
  */
 export function registerRecorderActions() {
-  registerAction(ACTIONS.replay.record, toggleRecording, {
+  registerAction(ACTIONS.playback.record, toggleRecording, {
     description: 'Start or stop recording ticks',
   })
 
-  return [ACTIONS.replay.record]
+  return [ACTIONS.playback.record]
 }

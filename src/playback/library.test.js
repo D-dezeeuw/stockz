@@ -109,7 +109,7 @@ describe('refreshLibrary', () => {
 
     const rows = await refreshLibrary({ db })
     tick()
-    expect(appState.replay.library).toHaveLength(2)
+    expect(appState.playback.library).toHaveLength(2)
     expect(rows[0].id).toBe('rec-new')
 
     await deleteSession(db, 'rec-old')
@@ -152,7 +152,7 @@ describe('deleteRecording', () => {
     tick()
     // Off the view immediately: a row that survives a delete the trader watched happen
     // reads as a desk that ignored them.
-    expect(appState.replay.library.map((r) => r.id)).toEqual(['rec-new'])
+    expect(appState.playback.library.map((r) => r.id)).toEqual(['rec-new'])
     expect(appState.ui.toasts[0].message).toContain('deleted')
 
     expect(await deleteRecording({}, { id: '', db })).toBe(false)
@@ -167,7 +167,7 @@ describe('renameRecording', () => {
 
     expect(await renameRecording({}, { id: 'rec-new', label: 'CPI spike 14:30', db })).toBe('CPI spike 14:30')
     tick()
-    expect(appState.replay.library.find((r) => r.id === 'rec-new').label).toBe('CPI spike 14:30')
+    expect(appState.playback.library.find((r) => r.id === 'rec-new').label).toBe('CPI spike 14:30')
 
     // The DOM sends an input's text as `value`; both shapes are accepted.
     expect(await renameRecording({}, { id: 'rec-new', value: ' trimmed ', db })).toBe('trimmed')
@@ -184,9 +184,9 @@ describe('renameRecording', () => {
 describe('registerLibraryActions', () => {
   it('registers delete and rename', () => {
     expect(registerLibraryActions()).toEqual([
-      ACTIONS.replay.deleteRecording,
-      ACTIONS.replay.renameRecording,
+      ACTIONS.playback.deleteRecording,
+      ACTIONS.playback.renameRecording,
     ])
-    expect(actionNames()).toContain('replay.deleteRecording')
+    expect(actionNames()).toContain('playback.deleteRecording')
   })
 })

@@ -12,6 +12,13 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ### Added
 
+- **Market replay got its own name.** Phase 25's journal time-travel and phase 27's tick
+  replay are different features that happen to share the word "replay", and the first draft
+  of phase 27 dodged the clash with awkward names (`stepTick`, `tickSpeed`, `unload`) rather
+  than fixing it. Recorded-market playback now lives under its own `playback.*` namespace,
+  its own `src/playback/` directory and plainly-named actions — `playback.play`,
+  `playback.step`, `playback.speed`, `playback.exit`. Phase 25's `replay.*` is untouched.
+
 - **F27.3 — the replay transport.** A video editor for markets: load a session, play it at
   1x to 50x, pause, step one tick, jump anywhere. The point is not to watch — it is to stop
   on the tick where the decision went wrong and look at the book as it was. Ticks are
@@ -20,9 +27,8 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
   separate playback path is a strategy tested against something other than the desk. Gaps
   are clamped at two seconds *before* scaling, so a four-minute quiet stretch is skipped
   rather than merely shortened and nobody concludes the player has hung. It keeps its own
-  `replay.player` object and its own action names rather than fighting phase 25's journal
-  trade replay for `replay.active` and `replay.step` — different features that happen to
-  share a word.
+  namespace (see above) rather than fighting phase 25's journal trade replay for
+  `replay.active` and `replay.step`.
 
 - **F27.2 — the recording library.** Recordings are only useful if the right one can be
   found, and a session identified by `rec-lz4k9x-3f0a` is one nobody will ever pick
