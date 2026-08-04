@@ -1,5 +1,4 @@
 import { startOkxFeed } from '../venues/okx/live.js'
-import { startProbe, probeEtoro } from '../hud/rtt.js'
 import { hasKeys } from '../venues/vault.js'
 import { appState, watch } from './engine.js'
 import { PATHS } from '../state/paths.js'
@@ -64,9 +63,10 @@ export function connectFeeds(options = {}) {
     okx.focusOn(String(appState.market?.focus ?? '')),
   )
 
-  // Venue lag is measured continuously, jittered so the two probes never align.
-  const stopProbe = startProbe('etoro', () => probeEtoro())
-
+  // EToro lag is timed inside `etoroRequest` from the calls the desk already makes. The
+  // synthetic probe that used to live here asked for `/status`, which EToro does not
+  // publish — it 404ed every few seconds forever and reported the venue as dead whatever
+  // it was actually doing.
   return {
     okx,
     // Reported so the settings drawer can say why trading is unavailable without
@@ -74,7 +74,6 @@ export function connectFeeds(options = {}) {
     authenticated: hasKeys('okx'),
     stop: () => {
       unwatch?.()
-      stopProbe()
       okx.stop()
     },
   }

@@ -119,6 +119,21 @@ describe('okxRequest', () => {
     })
     expect(dead.ok).toBe(false)
     expect(dead.error).toMatch(/OKX unreachable: offline/)
+
+    // A call that does not pass `ts` signs with *now*. It used to default to 0, which
+    // stamped every unparameterised request 1970-01-01 — OKX rejects anything more than
+    // 30 seconds off its clock, so `reconcile` (which passes no options) got a flat 401
+    // that reads exactly like a bad API key. Every test passed because every test
+    // supplied a ts of its own.
+    const now = []
+    await okxRequest({
+      path: '/api/v5/account/positions',
+      fetch: fakeFetch({ code: '0', data: [] }, now),
+      subtle: webcrypto.subtle,
+    })
+    const stamp = now[0].init.headers['OK-ACCESS-TIMESTAMP']
+    expect(stamp.startsWith('1970')).toBe(false)
+    expect(Math.abs(Date.parse(stamp) - Date.now())).toBeLessThan(30000)
   })
 })
 

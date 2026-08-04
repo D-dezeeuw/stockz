@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach } from 'vitest'
 import {
   classifyRtt,
   pingOkx,
-  probeEtoro,
+  reportRtt,
   recordRtt,
   worstRtt,
   flushRtt,
@@ -80,27 +80,22 @@ describe('pingOkx', () => {
   })
 })
 
-describe('probeEtoro', () => {
-  it('times a REST probe and reports failure as unknown, not as slow', async () => {
-    let clock = 0
-    expect(
-      await probeEtoro({
-        request: async () => ({ ok: true }),
-        clock: () => (clock += 120),
-      }),
-    ).toBe(120)
+describe('reportRtt', () => {
+  it('records a reading and publishes it, which recordRtt alone does not', () => {
+    expect(reportRtt('etoro', 100)).toEqual({ ms: 100, tier: 'warn' })
+    tick()
 
-    // Reporting a timeout as "3000ms" would drag a smoothed average around long after
-    // the venue came back.
-    expect(await probeEtoro({ request: async () => ({ ok: false }), clock: () => 0 })).toBe(-1)
-    expect(
-      await probeEtoro({
-        request: async () => {
-          throw new Error('offline')
-        },
-        clock: () => 0,
-      }),
-    ).toBe(-1)
+    // The point of the pair: a caller outside the probe loop gets it on screen without
+    // having to remember to flush.
+    expect(appState.ui.rtt.etoro).toEqual({ ms: 100, tier: 'warn' })
+    expect(appState.ui.rtt.worst.venue).toBe('etoro')
+
+    // A failure replaces the reading outright rather than smoothing into it.
+    expect(reportRtt('etoro', -1)).toEqual({ ms: -1, tier: 'unknown' })
+    tick()
+    expect(appState.ui.rtt.etoro.ms).toBe(-1)
+
+    expect(reportRtt('', 50)).toEqual({ ms: -1, tier: 'unknown' })
   })
 })
 

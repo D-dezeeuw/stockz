@@ -44,6 +44,22 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ### Fixed
 
+- **Every unparameterised OKX call signed itself as 1 January 1970.** `okxRequest` defaulted
+  `ts` to `0`, so any caller that did not pass a clock — `reconcile()` among them, which
+  polls positions every thirty seconds — built its signature over an epoch timestamp. OKX
+  rejects anything more than 30 seconds off its own clock, so the desk got a flat `401` on
+  every position fetch, and a 401 reads exactly like a rejected API key. The same zero fed
+  the client-side rate limiter, which saw every call land at the same instant. `ts` now
+  defaults to `Date.now()` in `okxRequest`, `signRequest` and `buildLoginFrame`. The tests
+  passed throughout because every one of them supplied a timestamp of its own, so nothing
+  ever exercised the default; the test now asserts an unparameterised call signs within 30
+  seconds of now.
+- **The eToro latency probe asked for an endpoint that does not exist.** It polled
+  `GET /status` every few seconds; eToro publishes no such path, so it 404ed forever and
+  recorded the venue as unreachable no matter how eToro was actually behaving — a health
+  check that could only ever report ill health. Latency is now timed inside `etoroRequest`
+  from the calls the desk already makes: no invented endpoint, nothing spent on the rate
+  budget, and it measures the latency that actually matters rather than a synthetic one.
 - **The section nav only moved a highlight.** `SECTION_BLOCKS` and `blockInSection` have
   described which blocks belong to which section since the header shipped, and nothing ever
   called them — the grid bound straight at `settings.blocks`, so all thirteen blocks rendered

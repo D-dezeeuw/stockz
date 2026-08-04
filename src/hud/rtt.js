@@ -1,6 +1,5 @@
 import { setValue } from '../app/engine.js'
 import { PATHS } from '../state/paths.js'
-import { etoroRequest } from '../venues/etoro/rest.js'
 import { ewma } from './metrics.js'
 
 /**
@@ -79,24 +78,6 @@ export function pingOkx(socket, deps = {}) {
 }
 
 /**
- * Time an EToro REST probe.
- *
- * @param {{request?: Function, clock?: () => number}} [deps] - plumbing.
- * @returns {Promise<number>} the round trip in ms, or -1 when it failed.
- */
-export async function probeEtoro(deps = {}) {
-  const { request = etoroRequest, clock = () => globalThis.performance?.now?.() ?? 0 } = deps
-  const started = clock()
-
-  const result = await request({ method: 'GET', path: '/status' }).catch(() => null)
-  // A failed probe is -1, not a large number: reporting a timeout as "3000ms" would let
-  // it drag a smoothed average around long after the venue came back.
-  if (!result?.ok) return -1
-
-  return Number((clock() - started).toFixed(3))
-}
-
-/**
  * Record a reading for a venue.
  *
  * @param {string} venue - the venue.
@@ -114,6 +95,23 @@ export function recordRtt(venue, ms) {
 
   readings = { ...readings, [key]: { ms: next, tier: classifyRtt(next) } }
   return readings[key]
+}
+
+/**
+ * Record a reading and publish it.
+ *
+ * What a caller outside the probe loop wants: `recordRtt` alone updates the module's
+ * readings and nothing on screen changes until something else flushes.
+ *
+ * @param {string} venue - the venue.
+ * @param {number} ms - the measurement.
+ * @returns {{ms: number, tier: string}} the smoothed reading.
+ */
+export function reportRtt(venue, ms) {
+  const reading = recordRtt(venue, ms)
+  flushRtt()
+
+  return reading
 }
 
 /**

@@ -88,7 +88,9 @@ export async function signRequest(req) {
 
   if (!apiKey || !secret || !passphrase) return {}
 
-  const ts = okxTimestamp(req.ts ?? 0)
+  // Now, never the epoch: OKX rejects a timestamp more than 30 seconds off its own clock,
+  // and a signature dated 1970 fails as a 401 that looks like a rejected key.
+  const ts = okxTimestamp(req.ts ?? Date.now())
   const sign = await hmacSha256(
     prehashString({ ts, method: req.method, path: req.path, body: req.body }),
     secret,
@@ -121,7 +123,7 @@ export async function buildLoginFrame(options = {}) {
 
   if (!apiKey || !secret || !passphrase) return null
 
-  const seconds = Math.floor((options.ts ?? 0) / 1000).toString()
+  const seconds = Math.floor((options.ts ?? Date.now()) / 1000).toString()
   const sign = await hmacSha256(`${seconds}GET/users/self/verify`, secret, options.subtle)
 
   return {
