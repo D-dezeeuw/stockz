@@ -315,3 +315,11 @@
   flex: 0 0 auto;
   margin-block-end: var(--sp-1);
 }
+
+/* The export row. Beside the period switch because both act on the same snapshot. */
+.period__out {
+  display: flex;
+  gap: var(--sp-1);
+  flex: 0 0 auto;
+  margin-block-end: var(--sp-1);
+}

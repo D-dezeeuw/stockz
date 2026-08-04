@@ -58,6 +58,9 @@ export const ACTIONS = Object.freeze({
   analytics: Object.freeze({
     setPeriod: 'analytics.setPeriod',
     cyclePeriod: 'analytics.cyclePeriod',
+    exportJson: 'analytics.exportJson',
+    copySummary: 'analytics.copySummary',
+    exportCharts: 'analytics.exportCharts',
     pickInstrument: 'analytics.pickInstrument',
     expandRanking: 'analytics.expandRanking',
   }),

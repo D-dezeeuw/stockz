@@ -34,6 +34,7 @@ import { registerSummaryActions } from '../journal/summary.js'
 import { registerRetentionActions } from '../journal/retention.js'
 import { registerRankingActions } from '../analytics/instruments.js'
 import { registerPeriodActions } from '../analytics/period.js'
+import { registerReportActions } from '../analytics/report.js'
 import { registerStrategyActions } from '../strategy/registry.js'
 import { registerTicketActions } from '../ticket/actions.js'
 import { registerSizingActions } from '../ticket/sizing.js'
@@ -93,6 +94,9 @@ describe('allActionNames', () => {
       'breaker.copyLog',
       'analytics.setPeriod',
       'analytics.cyclePeriod',
+      'analytics.exportJson',
+      'analytics.copySummary',
+      'analytics.exportCharts',
       'analytics.pickInstrument',
       'analytics.expandRanking',
       'journal.addTag',
@@ -195,6 +199,7 @@ describe('allActionNames', () => {
     registerRetentionActions()
     registerRankingActions()
     registerPeriodActions()
+    registerReportActions()
     registerStrategyActions()
     registerTicketActions()
     registerSizingActions()

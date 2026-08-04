@@ -139,7 +139,8 @@ export function exportName(now = 0) {
 /**
  * Put a file on the trader's disk.
  *
- * @param {{name: string, text: string}} file - the file.
+ * @param {{name: string, text: string|Blob}} file - the file; `text` may be a Blob for
+ *   binary payloads such as a chart PNG.
  * @param {{doc?: Document, url?: object}} [deps] - injectable plumbing.
  * @returns {boolean} true when the download was triggered.
  */
@@ -151,7 +152,12 @@ export function downloadFile(file, deps = {}) {
   // The MIME type travels with the file rather than being hard-coded: a CSV served as JSON
   // is a CSV some spreadsheets refuse to open by double-click.
   const type = String(file?.type ?? 'application/json')
-  const href = url.createObjectURL(new Blob([String(file?.text ?? '')], { type }))
+  // A Blob passes straight through. Stringifying one yields the literal text
+  // "[object Blob]", so a PNG down this path would land on disk as a 15-byte file with an
+  // image extension — the kind of corruption that looks like a browser problem.
+  const payload = file?.text
+  const body = payload instanceof Blob ? payload : new Blob([String(payload ?? '')], { type })
+  const href = url.createObjectURL(body)
   const anchor = doc.createElement('a')
   anchor.href = href
   anchor.download = String(file?.name ?? 'stockz-session.json')
