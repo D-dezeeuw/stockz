@@ -13,12 +13,18 @@ import { createLogger } from '../utils/log.js'
  * and `startStrategy` had no callers anywhere, so the runner drained an empty queue
  * forever and the Auto-Trade block was decoration.
  *
- * **Paper only, by construction.** This arms the bot when the desk is on paper and disarms
- * it the instant the desk goes live. Switching to live is therefore always a two-step
- * decision — flip the mode, then arm deliberately — because "it was trading a minute ago"
- * is the worst possible reason for real money to start moving. The arm state is not
- * persisted either, so a reload lands disarmed and on paper regardless of how the last
- * session ended.
+ * **The live-trading checkbox is the whole decision.** It sits behind the key modal, it
+ * cannot be ticked without credentials, and ticking it is a deliberate act with an
+ * unmissable label. So the autopilot keeps flying across the switch rather than grounding
+ * itself: a desk that stopped trading the moment its owner said "trade for real" would be
+ * a desk that does the opposite of what it was told, and the trader would reasonably
+ * conclude the live mode was broken.
+ *
+ * What does *not* move is everything downstream. The kill switch, the daily-loss and
+ * consecutive-loss breakers, the per-instrument caps and the orders-per-minute throttle
+ * all apply exactly as they do on paper — live changes which adapter the order reaches,
+ * not which gates it passes. And neither the mode nor the arm state is persisted, so a
+ * reload always lands disarmed and on paper however the last session ended.
  *
  * **It follows focus.** Strategies read the tick bus, and the venue socket streams the
  * focused instrument only, so running them on all forty watchlist rows would give
@@ -54,8 +60,9 @@ export const AUTOPILOT_STRATEGIES = Object.freeze([
  * @returns {boolean} true when it may run.
  */
 export function autopilotEnabled(state = appState) {
-  // Opt-out rather than opt-in, but only because it cannot reach a venue: this is gated on
-  // paper mode below, and a paper desk that sits idle teaches its owner nothing.
+  // Opt-out rather than opt-in. On paper that is free — a paper desk that sits idle
+  // teaches its owner nothing. Live, the opt-in that matters happened at the key modal,
+  // where the trader entered credentials and ticked live trading.
   return state?.settings?.autopilot !== false
 }
 
@@ -94,7 +101,7 @@ export function flyOn(instrument, options = {}) {
  * @returns {boolean} whether the bot is armed after this call.
  */
 export function syncArm() {
-  const armed = autopilotEnabled() && paperMode()
+  const armed = autopilotEnabled()
 
   // Opting each strategy in as well: the runner gates on both, and an armed bot with no
   // strategy opted in is armed in name only.
@@ -102,18 +109,19 @@ export function syncArm() {
   setValue(PATHS.settings.botStrategies, opted)
   setValue(PATHS.settings.botArmed, armed)
 
-  // Dry run comes *off* on paper, and goes back on for live.
+  // Dry run comes off in both modes.
   //
-  // Dry run predates paper mode, and stacking them means nothing happens twice over: dry
-  // run logs an order and returns a fake id, so a paper desk produced no fills, no
-  // positions and no P&L — the exact "why is nothing trading" this is here to answer.
-  // Paper mode is the simulation now, and it is a stronger one, because it books the fill
-  // and cannot reach a venue by construction.
+  // It predates paper mode, and stacking the two means nothing happens twice over: dry run
+  // logs an order and returns a fake id, so a paper desk produced no fills, no positions
+  // and no P&L — the exact "why is nothing trading" this function exists to answer. Paper
+  // mode is the simulation now, and a stronger one, because it books the fill and cannot
+  // reach a venue by construction.
   //
-  // Going live puts it back, deliberately: a bot armed by hand against real money should
-  // start by telling you what it *would* do. That is a safety posture, and a mode change
-  // is exactly when a safety posture should reset rather than be inherited.
-  setValue(PATHS.settings.botDryRun, !paperMode())
+  // Live, leaving dry run on would be the same bug wearing a safety label: the trader
+  // ticked live trading, and a desk that answered by narrating orders it declined to send
+  // has not been made safer, only quieter. The gates that actually stop a bad session —
+  // breakers, caps, throttle, kill switch — are downstream of here and unchanged.
+  setValue(PATHS.settings.botDryRun, false)
 
   return armed
 }
@@ -143,7 +151,7 @@ export function startAutopilot(options = {}) {
   const unmode = watch([PATHS.trade.mode], point)
   point()
 
-  log.info(`autopilot: ${AUTOPILOT_STRATEGIES.join(', ')} on paper`)
+  log.info(`autopilot: ${AUTOPILOT_STRATEGIES.join(', ')} on ${paperMode() ? 'paper' : 'LIVE'}`)
   return () => {
     unfocus?.()
     unmode?.()

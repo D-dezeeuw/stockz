@@ -56,7 +56,7 @@ describe('flyOn', () => {
 })
 
 describe('syncArm', () => {
-  it('arms only on paper, and grounds the bot the moment the desk goes live', () => {
+  it('arms in both modes and never leaves dry run stacked on top', () => {
     // Paper is the default, so a fresh desk flies.
     expect(syncArm()).toBe(true)
     tick()
@@ -68,27 +68,33 @@ describe('syncArm', () => {
     // positions and no P&L - the exact "why is nothing trading".
     expect(appState.settings.botDryRun).toBe(false)
 
-    // "It was trading a minute ago" is the worst possible reason for real money to start
-    // moving, so going live disarms rather than carrying on.
+    // Live keeps flying. Ticking live trading in the key modal — which cannot be done
+    // without credentials — is the decision; a desk that stopped trading the moment its
+    // owner said "trade for real" would do the opposite of what it was told.
     setValue(PATHS.trade.mode, 'live')
+    tick()
+    expect(syncArm()).toBe(true)
+    tick()
+    expect(appState.settings.botArmed).toBe(true)
+    expect(appState.settings.botStrategies['momentum-burst']).toBe(true)
+    // And dry run stays off here too: narrating orders it declines to send is the same
+    // bug wearing a safety label. The gates that actually stop a bad session — breakers,
+    // caps, throttle, kill switch — are downstream of this and unchanged.
+    expect(appState.settings.botDryRun).toBe(false)
+
+    // The one switch that does ground it is its own.
+    setValue(PATHS.trade.mode, 'paper')
+    setValue(PATHS.settings.autopilot, false)
     tick()
     expect(syncArm()).toBe(false)
     tick()
     expect(appState.settings.botArmed).toBe(false)
     expect(appState.settings.botStrategies['momentum-burst']).toBe(false)
-    // Live puts it back: a bot armed by hand against real money should start by saying
-    // what it would do.
-    expect(appState.settings.botDryRun).toBe(true)
-
-    setValue(PATHS.trade.mode, 'paper')
-    setValue(PATHS.settings.autopilot, false)
-    tick()
-    expect(syncArm()).toBe(false)
   })
 })
 
 describe('startAutopilot', () => {
-  it('follows focus while on paper and grounds everything when it cannot act', () => {
+  it('follows focus in both modes and grounds everything when switched off', () => {
     setValue(PATHS.market.focus, 'okx:BTC-USDT')
     tick()
 
@@ -102,13 +108,25 @@ describe('startAutopilot', () => {
     tick()
     expect(liveRuns().every((run) => run.instrument === 'SOL-USDT')).toBe(true)
 
-    // Going live stops it dead rather than leaving strategies firing signals nobody acts on.
+    // Going live keeps the set flying — the same strategies, now reaching the real
+    // adapter. Only which adapter the order arrives at changes; every gate it passes on
+    // the way is the same one.
     setValue(PATHS.trade.mode, 'live')
+    tick()
+    expect(liveRuns()).toHaveLength(AUTOPILOT_STRATEGIES.length)
+    expect(appState.settings.botArmed).toBe(true)
+
+    // Switching the autopilot itself off does ground it: leaving strategies running while
+    // the bot cannot act fills the log with signals nobody acted on and makes the desk
+    // look busy doing nothing.
+    setValue(PATHS.settings.autopilot, false)
+    setValue(PATHS.trade.mode, 'paper')
     tick()
     expect(liveRuns()).toEqual([])
     expect(appState.settings.botArmed).toBe(false)
 
-    setValue(PATHS.trade.mode, 'paper')
+    setValue(PATHS.settings.autopilot, true)
+    setValue(PATHS.trade.mode, 'live')
     tick()
     expect(liveRuns()).toHaveLength(AUTOPILOT_STRATEGIES.length)
 
