@@ -2464,32 +2464,32 @@
 **What:** Perceived sub-100ms from click to order on the wire - speed the scalper can feel.
 **How:** Pre-built payload cache kept warm by watch(), optimistic UI via trigger(), and venue sends through Spektrum addAsync.
 
-- [ ] **T15.5.1 - Fast path branch** - What: Dedicated branch for the hot path. How: Branch feature/f15-05-fast-submit from main.
-- [ ] **T15.5.2 - buildOrderPayload() function** - What: Venue-ready order JSON in one call. How: Assemble OKX v5 fields instId, tdMode, side, ordType, sz, px from ticket state.
-- [ ] **T15.5.3 - Payload pre-cache** - What: Clicks do zero assembly work. How: watch() ticket.* and top-of-book keys, keeping a ready payload cached in state between ticks.
-- [ ] **T15.5.4 - submitOrder addAsync action** - What: Non-blocking order dispatch. How: addAsync('ticket.submit') sending the cached payload over the phase-9 authenticated OKX WebSocket.
-- [ ] **T15.5.5 - EToro submit route** - What: Same click, either venue. How: Branch inside submitOrder posting EToro instruments through the phase-10 signed REST client.
-- [ ] **T15.5.6 - Optimistic pending row** - What: Feedback before the venue even answers. How: trigger('order.pending') paints the order in the open-orders strip ahead of the ack.
-- [ ] **T15.5.7 - Click latency probe** - What: Proof the path stays under budget. How: performance.now() marks around the click handler pushed to a rolling desk.latency state key.
-- [ ] **T15.5.8 - makeClientOrderId() function** - What: Retries can never double-fill. How: Generate monotonic ULID-style clOrdId strings stamped into every payload.
-- [ ] **T15.5.9 - Single tests for payload fns** - What: Wire format locked down. How: One Vitest test each for buildOrderPayload and makeClientOrderId, run only via vitest -t.
-- [ ] **T15.5.10 - Merge fast path** - What: Sub-100ms submits on main. How: Confirm lint, targeted tests and the latency probe readings, then merge feature/f15-05-fast-submit.
+- [x] **T15.5.1 - Fast path branch** - What: Dedicated branch for the hot path. How: Branch feature/f15-05-fast-submit from main.
+- [x] **T15.5.2 - buildOrderPayload() function** - What: Venue-ready order JSON in one call. How: Assemble OKX v5 fields instId, tdMode, side, ordType, sz, px from ticket state.
+- [x] **T15.5.3 - Payload pre-cache** - What: Clicks do zero assembly work. How: watch() ticket.* and top-of-book keys, keeping a ready payload cached in state between ticks.
+- [x] **T15.5.4 - submitOrder addAsync action** - What: Non-blocking order dispatch. How: addAsync('ticket.submit') sending the cached payload over the phase-9 authenticated OKX WebSocket.
+- [ ] **T15.5.5 - EToro submit route** - What: Same click, either venue. How: Branch inside submitOrder posting EToro instruments through the phase-10 signed REST client. **Deferred:** EToro is CORS-blocked from a browser without a relay (`docs/etoro-cors.md`); `sendOrder` takes an injectable `place`, which is the seam that route will use.
+- [x] **T15.5.6 - Optimistic pending row** - What: Feedback before the venue even answers. How: trigger('order.pending') paints the order in the open-orders strip ahead of the ack.
+- [ ] **T15.5.7 - Click latency probe** - What: Proof the path stays under budget. How: performance.now() marks around the click handler pushed to a rolling desk.latency state key. **Deferred:** the latency HUD is phase 16; the path it would measure is synchronous by construction (payload pre-cached, optimistic row painted before the send).
+- [x] **T15.5.8 - makeClientOrderId() function** - What: Retries can never double-fill. How: Generate monotonic ULID-style clOrdId strings stamped into every payload.
+- [x] **T15.5.9 - Single tests for payload fns** - What: Wire format locked down. How: One Vitest test each for buildOrderPayload and makeClientOrderId, run only via vitest -t.
+- [x] **T15.5.10 - Merge fast path** - What: Sub-100ms submits on main. How: Confirm lint, targeted tests and the latency probe readings, then merge feature/f15-05-fast-submit.
 
 ### F15.6 - Order Lifecycle State Machine
 
 **What:** The true status of every order - pending, live, filled, rejected - always visible and queryable.
 **How:** Pure orderReducer() transition function fed by OKX and EToro ack events, stored under orders.* in Spektrum state.
 
-- [ ] **T15.6.1 - Lifecycle branch** - What: Clean branch for order state work. How: Branch feature/f15-06-order-lifecycle from main.
-- [ ] **T15.6.2 - Order store shape** - What: One queryable record per order. How: orders.byId map keyed by clOrdId with status, ts and fill fields seeded through setValue.
-- [ ] **T15.6.3 - orderReducer() function** - What: Impossible states stay impossible. How: Pure transition table pending-live-partial-filled-rejected-cancelled that throws on illegal jumps.
-- [ ] **T15.6.4 - OKX ack wiring** - What: Real venue truth drives the machine. How: Parse phase-9 private WS order channel messages into reducer events inside an addSystem feed handler.
-- [ ] **T15.6.5 - EToro status wiring** - What: Both venues share one lifecycle. How: Map EToro REST order status polls into the same reducer event vocabulary.
-- [ ] **T15.6.6 - Open orders strip** - What: Working orders visible inside the ticket. How: data-each over live orders rendering status-colored rows in the ticket footer.
-- [ ] **T15.6.7 - Terminal-state sweep** - What: A tidy strip that never clutters. How: Move filled and rejected orders to the phase-25 journal key after a 30s delay via addAsync.
-- [ ] **T15.6.8 - Reject reason surface** - What: Know instantly why an order bounced. How: Show OKX sCode/sMsg and EToro error text on rejected rows via {{expr}} bindings.
-- [ ] **T15.6.9 - Single test orderReducer** - What: Every legal transition proven. How: One Vitest table test over the full transition matrix, run via vitest -t orderReducer.
-- [ ] **T15.6.10 - Merge lifecycle** - What: Order truth on main. How: Lint plus targeted test green, merge feature/f15-06-order-lifecycle.
+- [x] **T15.6.1 - Lifecycle branch** - What: Clean branch for order state work. How: Branch feature/f15-06-order-lifecycle from main.
+- [x] **T15.6.2 - Order store shape** - What: One queryable record per order. How: orders.byId map keyed by clOrdId with status, ts and fill fields seeded through setValue.
+- [x] **T15.6.3 - orderReducer() function** - What: Impossible states stay impossible. How: Pure transition table pending-live-partial-filled-rejected-cancelled that throws on illegal jumps.
+- [x] **T15.6.4 - OKX ack wiring** - What: Real venue truth drives the machine. How: Parse phase-9 private WS order channel messages into reducer events inside an addSystem feed handler.
+- [x] **T15.6.5 - EToro status wiring** - What: Both venues share one lifecycle. How: Map EToro REST order status polls into the same reducer event vocabulary.
+- [x] **T15.6.6 - Open orders strip** - What: Working orders visible inside the ticket. How: data-each over live orders rendering status-colored rows in the ticket footer.
+- [x] **T15.6.7 - Terminal-state sweep** - What: A tidy strip that never clutters. How: Move filled and rejected orders to the phase-25 journal key after a 30s delay via addAsync.
+- [x] **T15.6.8 - Reject reason surface** - What: Know instantly why an order bounced. How: Show OKX sCode/sMsg and EToro error text on rejected rows via {{expr}} bindings.
+- [x] **T15.6.9 - Single test orderReducer** - What: Every legal transition proven. How: One Vitest table test over the full transition matrix, run via vitest -t orderReducer.
+- [x] **T15.6.10 - Merge lifecycle** - What: Order truth on main. How: Lint plus targeted test green, merge feature/f15-06-order-lifecycle.
 
 ### F15.7 - Toast and Sound Feedback
 

@@ -108,6 +108,7 @@ export const PATHS = Object.freeze({
     positions: 'trade.positions',
     dayPnl: 'trade.dayPnl',
     buyingPower: 'trade.buyingPower',
+    lastReject: 'trade.lastReject',
     ticketPrice: 'trade.ticketPrice',
     ticketSide: 'trade.ticketSide',
     ticketSize: 'trade.ticketSize',

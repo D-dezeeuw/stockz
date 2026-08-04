@@ -12,6 +12,18 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ### Added
 
+- **One-click submit** — the payload is assembled *before* the click, so the click reads
+  it, paints an optimistic order row in the same frame, and sends. Waiting for the ack to
+  paint would put a network round trip inside the one interaction that must feel instant.
+  Client order ids are monotonic and unique within a millisecond, which is what makes a
+  retry after a timeout safe rather than a coin flip on a double fill. A market price is
+  sent as a market order, never as a limit at the crossed price. (F15.5)
+- **Order lifecycle** — an explicit transition table, where terminal really is terminal.
+  It deliberately does *not* throw on an illegal transition: venues resend acks, deliver
+  them out of order, and sometimes report a fill before the ack that created the order,
+  and taking the desk down over a redundant message is worse than ignoring it. An
+  acknowledgement is `live`, never `filled` — treating one as the other is how a desk
+  double-sizes its next trade. (F15.6)
 - **Sizing** — percentage chips off buying power, clip multiples, absolute steps and
   typing all land on one clamp-and-round path, because a size the venue rejects costs a
   full round trip and the fill that mattered is gone by the time the rejection returns.
