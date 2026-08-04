@@ -2750,16 +2750,16 @@
 **What:** Instant market hits and precise limit placement from one call, with zero venue-specific code in the UI.
 **How:** submitMarket()/submitLimit() composing intents into OKX v5 trade endpoints and EToro REST orders through the adapter layer.
 
-- [ ] **T17.2.1 - Branch and stub submit API** - What: Stable public functions the ticket can code against today. How: Create feature/exec-market-limit; stub submitMarket() and submitLimit() in engine.js delegating to the adapter contract.
-- [ ] **T17.2.2 - OKX order payload builder** - What: Correct OKX orders on the first try. How: Write buildOkxOrder() mapping an intent to OKX v5 POST /api/v5/trade/order fields (instId, tdMode, ordType, sz, px).
-- [ ] **T17.2.3 - EToro order payload builder** - What: The same intent works on EToro untouched. How: Write buildEtoroOrder() mapping the intent to the EToro REST order body with direction and units fields.
-- [ ] **T17.2.4 - Signed REST submission path** - What: Orders authenticated without keys ever touching the repo. How: Route REST submits through the phase-9 HMAC-signed fetch using keys from the phase-8 access layer (STOCKZ_OKX_* via import.meta.env in dev).
-- [ ] **T17.2.5 - WS-first submission for OKX** - What: Lower submit latency on the fast venue. How: Send OKX orders over the private WebSocket 'order' op with automatic REST fallback when the socket is down.
-- [ ] **T17.2.6 - Lot and tick rounding** - What: No rejects from off-grid sizes or prices. How: Write roundToLotTick() clamping size to lotSz and price to tickSz from instrument metadata before any submit.
-- [ ] **T17.2.7 - Ack ingestion** - What: The store reflects venue acceptance within milliseconds. How: Parse OKX and EToro acks into a submitted->acked transition attaching the venue orderId to the store record.
-- [ ] **T17.2.8 - Ticket wiring** - What: The Rapid Order Entry ticket fires real orders. How: Bind the phase-15 ticket's data-action="submitOrder" handler to submitMarket/submitLimit picking by ticket mode.
-- [ ] **T17.2.9 - Single unit tests for builders** - What: Payload math provably correct per venue. How: One Vitest test each for buildOkxOrder, buildEtoroOrder and roundToLotTick, each run targeting only its own file.
-- [ ] **T17.2.10 - Verify and merge** - What: Submission path proven before landing. How: ESLint plus the feature's tests green, then merge feature/exec-market-limit into main.
+- [x] **T17.2.1 - Branch and stub submit API** - What: Stable public functions the ticket can code against today. How: Create feature/exec-market-limit; stub submitMarket() and submitLimit() in engine.js delegating to the adapter contract.
+- [x] **T17.2.2 - OKX order payload builder** - What: Correct OKX orders on the first try. How: Write buildOkxOrder() mapping an intent to OKX v5 POST /api/v5/trade/order fields (instId, tdMode, ordType, sz, px).
+- [x] **T17.2.3 - EToro order payload builder** - What: The same intent works on EToro untouched. How: Write buildEtoroOrder() mapping the intent to the EToro REST order body with direction and units fields.
+- [x] **T17.2.4 - Signed REST submission path** - What: Orders authenticated without keys ever touching the repo. How: Route REST submits through the phase-9 HMAC-signed fetch using keys from the phase-8 access layer (STOCKZ_OKX_* via import.meta.env in dev).
+- [ ] **T17.2.5 - WS-first submission for OKX** - What: Lower submit latency on the fast venue. How: Send OKX orders over the private WebSocket 'order' op with automatic REST fallback when the socket is down. **Deferred:** the private (authenticated) socket is not yet connected — `buildLoginFrame` exists from phase 9 but nothing logs in. The adapter's `place` is injectable, which is the seam the WS path will use.
+- [x] **T17.2.6 - Lot and tick rounding** - What: No rejects from off-grid sizes or prices. How: Write roundToLotTick() clamping size to lotSz and price to tickSz from instrument metadata before any submit.
+- [x] **T17.2.7 - Ack ingestion** - What: The store reflects venue acceptance within milliseconds. How: Parse OKX and EToro acks into a submitted->acked transition attaching the venue orderId to the store record.
+- [x] **T17.2.8 - Ticket wiring** - What: The Rapid Order Entry ticket fires real orders. How: Bind the phase-15 ticket's data-action="submitOrder" handler to submitMarket/submitLimit picking by ticket mode.
+- [x] **T17.2.9 - Single unit tests for builders** - What: Payload math provably correct per venue. How: One Vitest test each for buildOkxOrder, buildEtoroOrder and roundToLotTick, each run targeting only its own file.
+- [x] **T17.2.10 - Verify and merge** - What: Submission path proven before landing. How: ESLint plus the feature's tests green, then merge feature/exec-market-limit into main.
 
 ### F17.3 - IOC, FOK & post-only time-in-force
 
@@ -2862,32 +2862,32 @@
 **What:** Move a working order's price or size in one action instead of cancel-and-retype - queue position kept where the venue allows.
 **How:** amendOrder() using OKX POST /api/v5/trade/amend-order natively and cancel/replace emulation on EToro, wired to row nudge actions.
 
-- [ ] **T17.9.1 - Branch and amend request shape** - What: A minimal, explicit amend contract. How: Create feature/exec-amend; add amend request {orderId, newPx, newSz} with a no-op detector to types.js.
-- [ ] **T17.9.2 - Amend router function** - What: The right mechanism chosen automatically per venue. How: defineFn amendOrder(req) diffing current vs requested and routing to native amend or cancelReplace via capabilityFor.
-- [ ] **T17.9.3 - OKX native amend call** - What: Price moves without losing the order. How: Map the request to OKX POST /api/v5/trade/amend-order with a reqId echoed back for ack correlation.
-- [ ] **T17.9.4 - EToro cancel/replace** - What: Amend semantics preserved on the REST-only venue. How: Write cancelReplace() submitting the replacement only after the cancel ack, carrying the clientOrderId lineage forward.
-- [ ] **T17.9.5 - Optimistic store update** - What: The UI shows the new price the instant you act. How: Apply pending px/sz to the store record immediately, marked inflight, reconciled on the venue ack.
-- [ ] **T17.9.6 - Reject rollback** - What: A failed amend leaves the truth on screen. How: Restore prior px/sz from the stored snapshot when the venue rejects, emitting one exec:update with the reject reason.
-- [ ] **T17.9.7 - Row nudge actions** - What: Price nudged a tick from the working-orders row. How: Bind +tick/-tick data-action buttons per row calling amendOrder; phase 16 later maps hotkeys onto the same intents.
-- [ ] **T17.9.8 - Inflight lock per order** - What: No interleaved replaces corrupting an order. How: Per-orderId inflight flag queuing at most one follow-up amend, applied when the current ack lands.
-- [ ] **T17.9.9 - Single unit tests for amend fns** - What: Routing and replace logic pinned. How: One Vitest test each for amendOrder and cancelReplace, each run targeting only its own test file.
-- [ ] **T17.9.10 - Verify and merge** - What: Amend flow lands green. How: ESLint plus feature tests pass, merge feature/exec-amend into main.
+- [x] **T17.9.1 - Branch and amend request shape** - What: A minimal, explicit amend contract. How: Create feature/exec-amend; add amend request {orderId, newPx, newSz} with a no-op detector to types.js.
+- [x] **T17.9.2 - Amend router function** - What: The right mechanism chosen automatically per venue. How: defineFn amendOrder(req) diffing current vs requested and routing to native amend or cancelReplace via capabilityFor.
+- [x] **T17.9.3 - OKX native amend call** - What: Price moves without losing the order. How: Map the request to OKX POST /api/v5/trade/amend-order with a reqId echoed back for ack correlation.
+- [x] **T17.9.4 - EToro cancel/replace** - What: Amend semantics preserved on the REST-only venue. How: Write cancelReplace() submitting the replacement only after the cancel ack, carrying the clientOrderId lineage forward.
+- [x] **T17.9.5 - Optimistic store update** - What: The UI shows the new price the instant you act. How: Apply pending px/sz to the store record immediately, marked inflight, reconciled on the venue ack.
+- [x] **T17.9.6 - Reject rollback** - What: A failed amend leaves the truth on screen. How: Restore prior px/sz from the stored snapshot when the venue rejects, emitting one exec:update with the reject reason.
+- [x] **T17.9.7 - Row nudge actions** - What: Price nudged a tick from the working-orders row. How: Bind +tick/-tick data-action buttons per row calling amendOrder; phase 16 later maps hotkeys onto the same intents.
+- [x] **T17.9.8 - Inflight lock per order** - What: No interleaved replaces corrupting an order. How: Per-orderId inflight flag queuing at most one follow-up amend, applied when the current ack lands.
+- [x] **T17.9.9 - Single unit tests for amend fns** - What: Routing and replace logic pinned. How: One Vitest test each for amendOrder and cancelReplace, each run targeting only its own test file.
+- [x] **T17.9.10 - Verify and merge** - What: Amend flow lands green. How: ESLint plus feature tests pass, merge feature/exec-amend into main.
 
 ### F17.10 - Client order IDs, reconnect dedupe & latency stamps
 
 **What:** Every order traceable end to end with submit->ack->fill timings - and never a doubled order after a reconnect.
 **How:** Monotonic clOrdId generator, idempotent resubmit dedupe on WS reconnect, performance.now() stamping aggregated into a latency computed.
 
-- [ ] **T17.10.1 - Branch and id/latency modules** - What: Dedicated homes for identity and timing code. How: Create feature/exec-ids-latency; scaffold src/exec/ids.js and src/exec/latency.js as ES modules.
-- [ ] **T17.10.2 - Client order id generator** - What: Sortable, collision-free ids on every submit. How: Write makeClientOrderId() combining a session prefix with a base36 counter, kept within the OKX clOrdId charset and length limits.
-- [ ] **T17.10.3 - Id registry** - What: A duplicate submission is impossible by construction. How: Set-backed registry consulted in the submit pipeline, rejecting reused ids in O(1) before any network call.
-- [ ] **T17.10.4 - Reconnect dedupe** - What: Reconnects never re-fire orders already working at the venue. How: Write dedupeOnReconnect() diffing the OKX open-orders snapshot against the registry and suppressing matched resubmits.
-- [ ] **T17.10.5 - Latency stamping** - What: Exact timing captured on every transition. How: Write stampLatency() recording submitAt/ackAt/fillAt with performance.now() onto the store record at each state change.
-- [ ] **T17.10.6 - Latency summary function** - What: Honest p50/p95 numbers for the desk. How: Write latencySummary() computing submit->ack and ack->fill percentiles over a rolling window of the last 100 orders.
-- [ ] **T17.10.7 - Latency computed for the HUD** - What: Live latency stats other phases can bind without coupling. How: Expose computed('exec.latency') from latencySummary output for the phase-19 HUD to consume.
-- [ ] **T17.10.8 - Slow-venue tint** - What: Degrading venue latency visible peripherally. How: Class binding turning the latency readout orange when p95 submit->ack exceeds the user's threshold setting.
-- [ ] **T17.10.9 - Single unit tests for id/latency fns** - What: All four new functions locked by one test each. How: One Vitest test each for makeClientOrderId, dedupeOnReconnect, stampLatency and latencySummary, run per file.
-- [ ] **T17.10.10 - Verify and merge** - What: The execution phase closes green. How: Run ESLint plus this feature's Vitest tests, then merge feature/exec-ids-latency into main.
+- [x] **T17.10.1 - Branch and id/latency modules** - What: Dedicated homes for identity and timing code. How: Create feature/exec-ids-latency; scaffold src/exec/ids.js and src/exec/latency.js as ES modules.
+- [x] **T17.10.2 - Client order id generator** - What: Sortable, collision-free ids on every submit. How: Write makeClientOrderId() combining a session prefix with a base36 counter, kept within the OKX clOrdId charset and length limits.
+- [x] **T17.10.3 - Id registry** - What: A duplicate submission is impossible by construction. How: Set-backed registry consulted in the submit pipeline, rejecting reused ids in O(1) before any network call.
+- [x] **T17.10.4 - Reconnect dedupe** - What: Reconnects never re-fire orders already working at the venue. How: Write dedupeOnReconnect() diffing the OKX open-orders snapshot against the registry and suppressing matched resubmits.
+- [x] **T17.10.5 - Latency stamping** - What: Exact timing captured on every transition. How: Write stampLatency() recording submitAt/ackAt/fillAt with performance.now() onto the store record at each state change.
+- [x] **T17.10.6 - Latency summary function** - What: Honest p50/p95 numbers for the desk. How: Write latencySummary() computing submit->ack and ack->fill percentiles over a rolling window of the last 100 orders.
+- [x] **T17.10.7 - Latency computed for the HUD** - What: Live latency stats other phases can bind without coupling. How: Expose computed('exec.latency') from latencySummary output for the phase-19 HUD to consume.
+- [x] **T17.10.8 - Slow-venue tint** - What: Degrading venue latency visible peripherally. How: Class binding turning the latency readout orange when p95 submit->ack exceeds the user's threshold setting.
+- [x] **T17.10.9 - Single unit tests for id/latency fns** - What: All four new functions locked by one test each. How: One Vitest test each for makeClientOrderId, dedupeOnReconnect, stampLatency and latencySummary, run per file.
+- [x] **T17.10.10 - Verify and merge** - What: The execution phase closes green. How: Run ESLint plus this feature's Vitest tests, then merge feature/exec-ids-latency into main.
 
 ---
 

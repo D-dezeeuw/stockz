@@ -1,10 +1,12 @@
-import { makeIntent, advanceOrderState, isSettled } from './types.js'
+import { makeIntent, advanceOrderState, isSettled, roundToLotTick } from './types.js'
 import { isAdapter, supportsIntent } from './adapters/contract.js'
 import { createOkxAdapter } from './adapters/okx.js'
+import { createEtoroAdapter } from './adapters/etoro.js'
 import { checkSlippage, checkSize } from './guard.js'
 import { appState } from '../app/engine.js'
 import { ingestOrderEvents } from '../ticket/lifecycle.js'
-import { makeClientOrderId } from '../ticket/submit.js'
+import { issueId, claimId, resetIds } from './ids.js'
+import { stampLatency, resetLatency } from './latency.js'
 import { createLogger } from '../utils/log.js'
 
 const log = createLogger('exec')
@@ -21,6 +23,15 @@ const log = createLogger('exec')
  * for the reason the rest of this desk does: acks arrive faster than frames, and a
  * per-ack state write would re-render the order list several times to show one change.
  */
+
+/**
+ * The monotonic clock the latency stamps use.
+ *
+ * @returns {number} milliseconds since an arbitrary origin.
+ */
+export function monotonic() {
+  return globalThis.performance?.now?.() ?? 0
+}
 
 /** venue -> adapter. */
 const adapters = new Map()
@@ -73,6 +84,12 @@ export function prepare(input, market = deskMarket()) {
 
   // The guards run here, in the one place every order passes, rather than in each caller
   // — a check the ticket does and a hotkey forgets is not a check.
+  // Snapped to the venue's grid before the guards run, so a size that rounds down under
+  // a limit is judged as what will actually be sent rather than as what was typed.
+  const snapped = roundToLotTick(built.intent, market)
+  built.intent.size = snapped.size || built.intent.size
+  if (built.intent.type === 'limit') built.intent.price = snapped.price || built.intent.price
+
   const sized = checkSize(built.intent.size, market.maxSize)
   if (!sized.ok) return { ok: false, intent: null, reason: sized.reason }
 
@@ -93,6 +110,8 @@ export function deskMarket() {
     maxBps: Number(appState.settings?.maxDeviationBps) || 0,
     maxSize: Number(appState.settings?.maxPosition) || 0,
     bookStatus: String(appState.market?.bookStatus ?? ''),
+    lotSize: Number(appState.market?.lotSize) || 0,
+    tickSize: Number(appState.market?.tickSize) || 0,
   }
 }
 
@@ -104,13 +123,20 @@ export function deskMarket() {
  * @returns {Promise<{ok: boolean, clientId: string, reason: string}>} the outcome.
  */
 export async function submit(input, deps = {}) {
-  const { now = () => Date.now() } = deps
+  // A monotonic clock for the latency legs, wall time for the order record: mixing them
+  // is how a session that crosses a clock adjustment reports negative latencies.
+  const { now = () => Date.now(), clock = monotonic } = deps
   const at = now()
 
   const { ok, intent, reason } = prepare(input)
   if (!ok) return { ok: false, clientId: '', reason }
 
-  const clientId = intent.clientId || makeClientOrderId(at)
+  const clientId = intent.clientId || issueId(at)
+  // Claimed before the network call: a duplicate id at the venue is either a rejection
+  // or, worse, a second order.
+  if (intent.clientId && !claimId(intent.clientId).ok) {
+    return { ok: false, clientId, reason: 'duplicate id' }
+  }
   const order = { ...intent, clientId, state: 'pending', filled: 0, ts: at }
   live.set(clientId, order)
 
@@ -118,7 +144,10 @@ export async function submit(input, deps = {}) {
   // acted, or a slow venue looks like a click that did nothing.
   publish([{ clOrdId: clientId, instId: intent.instrument, side: intent.side, sz: String(intent.size), px: intent.price ? String(intent.price) : '', state: 'pending', ts: at }])
 
+  stampLatency(clientId, 'submit', clock())
+
   const result = await adapterFor(intent.venue).submit({ ...intent, clientId })
+  stampLatency(clientId, 'ack', clock())
   if (!result?.ok) {
     apply(clientId, 'rejected', { reason: result?.message ?? result?.reason, ts: now() })
     return { ok: false, clientId, reason: result?.reason ?? 'unknown' }
@@ -143,6 +172,8 @@ export function apply(clientId, state, detail = {}) {
 
   const { state: next, changed } = advanceOrderState(order.state, state)
   if (!changed) return order
+
+  if (next === 'filled' || next === 'partial') stampLatency(id, 'fill', monotonic())
 
   const updated = {
     ...order,
@@ -210,6 +241,10 @@ export function liveOrders() {
 export function resetEngine() {
   adapters.clear()
   live.clear()
+  // A fresh engine is a fresh session: the id registry and latency window belong to the
+  // session, and carrying them over would refuse ids from a desk that no longer exists.
+  resetIds()
+  resetLatency()
   return true
 }
 
@@ -221,5 +256,6 @@ export function resetEngine() {
  */
 export function startEngine(deps = {}) {
   registerAdapter(deps.okx ?? createOkxAdapter())
+  registerAdapter(deps.etoro ?? createEtoroAdapter())
   return [...adapters.keys()]
 }

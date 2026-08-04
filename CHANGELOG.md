@@ -10,8 +10,32 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ## [Unreleased]
 
+## [0.17.0] — 2026-08-04 — Phase 17: Order Types & Execution Engine
+
+One door for every order: validated, identified, guarded and normalised before it reaches
+a venue. Time-in-force, brackets, OCO, trailing stops, amend-in-place, a slippage guard,
+reconnect dedupe and latency stamps — with venue quirks confined to adapters that declare
+what they can honestly do.
+
 ### Added
 
+- **Amend in place** — cancel-and-retype loses queue position, and on a maker order the
+  queue *is* the edge, so where the venue can move an order in place it does. An inflight
+  lock keeps at most one follow-up: a trader nudging six times wants the sixth price, not
+  all six sent in sequence, and two amends racing leave the order somewhere nobody chose.
+  On the emulated route the replacement goes out only *after* the cancel is acknowledged,
+  since sending both at once risks a moment holding double the size. (F17.9)
+- **Client ids, reconnect dedupe and latency** — a reconnect is the dangerous moment: the
+  desk knows what it sent, the venue knows what it has, and reconciling them badly doubles
+  a position silently. The dedupe makes that a set difference, and names the orphans (the
+  venue's orders this session never sent — usually another tab) rather than adopting them.
+  Latency is stamped on a monotonic clock and reported at p95, because an average hides
+  the one submit in twenty that took a second, and that one is the whole story when a desk
+  feels unreliable. (F17.10)
+- **EToro adapter and grid rounding** — units rather than size, direction rather than
+  side, no time-in-force beyond GTC: absorbed in the adapter and declared honestly rather
+  than approximated. Sizes round *down* and prices to *nearest* before the guards judge
+  them, so an order is checked as what will actually be sent. (F17.2)
 - **OCO** — the moment one exit fills the other stops being protection and becomes an
   unhedged order that will happily open a new position the next time price touches it.
   The sibling lookup is a Map, not a scan, because this runs on the fill path where every
@@ -701,7 +725,8 @@ with a test policy and a live URL.
   literal `APP_VERSION` (a JSON import is bundler-only), guarded by a test that fails if
   it drifts from `package.json`; static assets moved from `public/` to the repo root.
 
-[Unreleased]: https://github.com/D-dezeeuw/stockz/compare/v0.16.0...HEAD
+[Unreleased]: https://github.com/D-dezeeuw/stockz/compare/v0.17.0...HEAD
+[0.17.0]: https://github.com/D-dezeeuw/stockz/compare/v0.16.0...v0.17.0
 [0.16.0]: https://github.com/D-dezeeuw/stockz/compare/v0.15.0...v0.16.0
 [0.15.0]: https://github.com/D-dezeeuw/stockz/compare/v0.14.0...v0.15.0
 [0.14.0]: https://github.com/D-dezeeuw/stockz/compare/v0.13.0...v0.14.0

@@ -75,6 +75,14 @@ describe('prepare', () => {
     expect(prepare(order({ price: 1000 }), market).reason).toContain('bps from mid')
     expect(prepare(order({ size: 50 }), market).reason).toBe('size over 5')
     expect(prepare(order(), market).ok).toBe(true)
+
+    // Snapped to the grid before the guards judge it: a size that rounds down under the
+    // limit is judged as what will be sent, not as what was typed.
+    const grid = { ...market, lotSize: 0.01, tickSize: 0.1 }
+    expect(prepare(order({ size: 1.279, price: 100.04 }), grid).intent).toMatchObject({
+      size: 1.27,
+      price: 100,
+    })
   })
 })
 
@@ -108,6 +116,13 @@ describe('submit', () => {
 
     // An intent the engine refuses never reaches the venue at all.
     expect(await submit(order({ size: 0 }))).toMatchObject({ ok: false, reason: 'no size' })
+
+    // A client id cannot be used twice: at the venue that is either a rejection or,
+    // worse, a second order.
+    resetEngine()
+    registerAdapter(fakeAdapter())
+    await submit(order({ clientId: 'once' }))
+    expect(await submit(order({ clientId: 'once' }))).toMatchObject({ reason: 'duplicate id' })
   })
 })
 
@@ -183,8 +198,9 @@ describe('liveOrders', () => {
 
 describe('startEngine', () => {
   it('brings up the venues this build supports', () => {
-    expect(startEngine({ okx: fakeAdapter() })).toEqual(['okx'])
+    expect(startEngine({ okx: fakeAdapter() })).toEqual(['okx', 'etoro'])
     expect(adapterFor('okx')).toBeTruthy()
+    expect(adapterFor('etoro')).toBeTruthy()
   })
 })
 
@@ -207,11 +223,11 @@ describe('deskMarket', () => {
     setValue('settings.maxPosition', 3)
     tick()
 
-    expect(deskMarket()).toEqual({ mid: 100, maxBps: 250, maxSize: 3, bookStatus: 'live' })
+    expect(deskMarket()).toMatchObject({ mid: 100, maxBps: 250, maxSize: 3, bookStatus: 'live' })
 
     // An empty desk yields zeroes, which the guards read as "no limit configured"
     // rather than as "block everything".
     resetState()
-    expect(deskMarket()).toEqual({ mid: 0, maxBps: 0, maxSize: 0, bookStatus: '' })
+    expect(deskMarket()).toMatchObject({ mid: 0, maxBps: 0, maxSize: 0, bookStatus: '' })
   })
 })

@@ -78,6 +78,8 @@ export function initialState(overrides = {}) {
     [PATHS.market.bid]: 0,
     [PATHS.market.ask]: 0,
     [PATHS.market.quoteTs]: 0,
+    [PATHS.market.tickSize]: 0.01,
+    [PATHS.market.lotSize]: 0.0001,
     [PATHS.market.book]: { bids: [], asks: [], seqId: 0, ts: 0 },
     [PATHS.market.bookStatus]: 'stale',
     [PATHS.market.ladder]: { bids: [], asks: [], spread: null },
