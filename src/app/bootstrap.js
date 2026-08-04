@@ -14,6 +14,7 @@ import { restoreSettings, persistSettings } from '../state/persist.js'
 import { registerSettingsActions } from '../ui/settings.js'
 import { registerKeyActions, adoptKeys } from '../ui/keys.js'
 import { registerListActions, seedLists } from '../lists/state.js'
+import { registerCandleActions } from '../charts/candlestick.js'
 import { appVersion } from './version.js'
 
 /**
@@ -59,6 +60,7 @@ export function bootstrap(options = {}) {
   registerSettingsActions()
   registerKeyActions()
   registerListActions()
+  registerCandleActions()
   adoptKeys()
   applyTheme(doc?.documentElement?.getAttribute?.('data-theme') || preferredTheme(), doc)
   const derived = registerDerived()
