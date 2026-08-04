@@ -5,11 +5,48 @@ in `masterplan.md`, and knows where the project stands. Rewritten at every phase
 
 ---
 
-## Status: Phase 13 closed (v0.13.0) · Phase 14 next
+## Status: Phase 14 closed (v0.14.0) · Phase 15 next
 
 **Live:** https://d-dezeeuw.github.io/stockz/ (Pages serves `main` root — pushing is deploying)
-**Tests:** 319, one per function, all passing individually. Every gated file ≥85% branches.
+**Tests:** 388, one per function, all passing individually. Every gated file >80% branches.
 **Branch model:** everything merges to `main`; no feature branches outstanding.
+
+## Phase 14 — Order Book & Tape (closed)
+
+| Feature | What now exists | Where |
+| --- | --- | --- |
+| F14.1, F14.7 | `sizeToPct`, `formatSize`, `ladderRows`, `spreadRow`, `visibleMax`, `ladderView` | `src/book/ladder.js` |
+| F14.2 | `emptyBook`, `applySnapshot`, `applyUpdate`, `mergeSide`, `sortSide`, `crc32`, `checksumString`, `verifyChecksum`, `hasSeqGap`, `ingestFrame` | `src/book/book.js` |
+| F14.2 | `applyBookFrame`, `bookFor`, `flushBook`, `onResync`, `resetBooks` | `src/book/state.js` |
+| F14.3, F14.8 | `pushPrint`, `toPrint`, `sideClass`, `formatTapeTime`, `formatSizeShort`, `tapeRows`, `flushTape`, `passesFilter`, `hiddenCount`, `filterTape`, `registerTapeActions` | `src/book/tape.js` |
+| F14.4 | `sumDepth`, `computeImbalance`, `emaSmooth`, `imbalanceGauge`, `updateImbalance`, `resetImbalance` | `src/book/imbalance.js` |
+| F14.5 | `rollingMedian`, `isWhale`, `multiplierFor`, `flagWhales`, `emitWhale`, `trimWhales` | `src/book/whale.js` |
+| F14.6 | `sideForColumn`, `ticketFromClick`, `registerPrefillActions` | `src/book/prefill.js` |
+| F14.7 | `bucketPrice`, `groupLevels`, `groupSizes`, `groupBook`, `registerGroupingActions` | `src/book/grouping.js` |
+| F14.9 | `visibleRange`, `createPrintBuffer`, `shouldAutoscroll`, `trackScroll` | `src/book/window.js` |
+| F14.10 | `nextBookStatus`, `backoffDelay`, `isBookStale`, `canTradeBook`, `setBookStatus`, `scheduleResync` | `src/book/integrity.js` |
+| — | `channelsFor`, `routeFrame`, `flushFeed`, `startOkxFeed` — **the live feed** | `src/venues/okx/live.js` |
+| — | `shouldConnect`, `connectFeeds`, `feedOptions` | `src/app/feeds.js` |
+
+**The desk is live.** `live.js` is the only module that knows both a WebSocket frame and
+a state path. It subscribes `trades` / `books5` / `tickers` for the focused instrument and
+flushes book+tape+imbalance once per animation frame. **`books5` is a snapshot channel** —
+every frame replaces the book, so there are no deltas to lose (the full delta+CRC path in
+`book.js` is built and tested, and is what the `books` channel would use).
+
+**Feeds are opt-in.** `bootstrap({feeds: true})` — set only in `main.js`. Node 22 has a
+global `WebSocket`, so an environment check alone would make every test in the suite dial
+OKX for real.
+
+New state: `market.book`, `market.bookStatus`, `market.ladder` (computed),
+`market.tape`, `market.tapeHidden`, `market.tapeWindow`, `market.imbalance`,
+`market.whales`, `market.whaleCount`, `trade.ticket*`. New settings: `bookDepth`,
+`imbalanceThreshold`, `whaleMultiplier`, `priceGroups`, `tapeFloors`.
+
+**Deferred in phase 14** (all recorded in the plan with reasons): T14.2.8 worker offload
+(no Worker exists; crc32 over 50 levels is microseconds), T14.9.8 print-storm benchmark
+(needs the phase 24 recorder + a real browser profile), T14.10.7 IndexedDB postmortems
+(phase 24 store; `ingestFrame` already returns the offending frame and reason).
 
 ## Phase 13 — Micro-Charts & Sparklines (closed)
 
@@ -199,17 +236,18 @@ go stale, and faults that reach the trader instead of the console.
 | F2.9 | `pushToast`, `dismissToast`, `expireToasts`, `describeEngineError`, `wireEngineErrors` | `src/ui/toast.js` |
 | F2.10 | `collectExpressions`, `renderPrecompileModule`, `cspMeta`, `npm run build:csp` | `src/app/csp.js`, `docs/csp.md` |
 
-## Next up: Phase 14 — Order Book & Tape
+## Next up: Phase 15 — Order Entry & Execution
 
-First feature **F14.1** (ladder component). Depth and flow: bid/ask ladder, time-and-sales
-tape, imbalance maths, whale detection — driven by OKX v5 `books` and `trades` channels.
+First feature **F15.1**. The ticket itself: hotkeys, size presets, market/limit, and the
+one-click send that everything so far exists to serve.
 
-- `mapBook` already exists in `src/venues/okx/map.js`; the book state itself does not.
-  Checksum validation (T14.2.x) is the one place OKX's own CRC32 must be reproduced.
-- Ladder rows are **DOM, not canvas** — Spektrum `data-each` over derived arrays with
-  size bars as CSS width percentages. Only the charts are canvas.
-- The tape shares the pipeline's ring buffers (`recentTrades`), so it costs nothing extra.
-- Imbalance maths is pure and belongs in its own module with one test per function.
+- The ticket's state already exists — `trade.ticketPrice/Side/Size/Flash`, written by
+  `book.prefill` (F14.6). Order entry reads it rather than inventing its own.
+- `placeOrder` / `cancelOrder` are already in `src/venues/okx/rest.js` with rate limiting.
+- **Live trading needs keys**; the public feed does not. `connectFeeds` reports
+  `authenticated` for exactly this.
+- `canTradeBook(market.bookStatus)` is the guard to reuse — no order should price off a
+  ladder the desk has already declared stale.
 
 ### Still outstanding across phases
 *(none — the boot-time feed gap recorded here through phase 13 was closed in phase 14;

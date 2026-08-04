@@ -10,6 +10,12 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ## [Unreleased]
 
+## [0.14.0] — 2026-08-04 — Phase 14: Order Book & Tape
+
+Depth and flow read like a pro desk — a checksum-validated ladder that is a click target,
+a tape coloured by who crossed, pressure and whales called out — and the moment the whole
+thing has been waiting for: a live venue feed actually driving it.
+
 ### Added
 
 - **The desk is live** — until now every phase built machinery that nothing started:
@@ -519,7 +525,8 @@ with a test policy and a live URL.
   literal `APP_VERSION` (a JSON import is bundler-only), guarded by a test that fails if
   it drifts from `package.json`; static assets moved from `public/` to the repo root.
 
-[Unreleased]: https://github.com/D-dezeeuw/stockz/compare/v0.13.0...HEAD
+[Unreleased]: https://github.com/D-dezeeuw/stockz/compare/v0.14.0...HEAD
+[0.14.0]: https://github.com/D-dezeeuw/stockz/compare/v0.13.0...v0.14.0
 [0.13.0]: https://github.com/D-dezeeuw/stockz/compare/v0.12.0...v0.13.0
 [0.12.0]: https://github.com/D-dezeeuw/stockz/compare/v0.11.0...v0.12.0
 [0.11.0]: https://github.com/D-dezeeuw/stockz/compare/v0.10.0...v0.11.0
