@@ -3514,16 +3514,16 @@
 **What:** The user enters the moment compressed volatility expands, catching the first leg of a fresh move.
 **How:** 1s-bucket micro-range, squeeze-percentile and expansion-trigger fns registered via defineFn on the engine.
 
-- [ ] **T21.8.1 - Branch and scaffold squeeze module** - What: A separate branch for the volatility play. How: git checkout -b feature/f21-8-vol-squeeze; create src/strategies/volSqueeze.js.
-- [ ] **T21.8.2 - Build microRange fn** - What: Volatility measured as 1-second bucket high-low ranges. How: Implement microRange(state, tick) bucketing ticks per second and emitting closed-bucket ranges.
-- [ ] **T21.8.3 - Build squeezeDetect fn** - What: Quiet markets flagged when the range percentile drops. How: Implement squeezeDetect(ranges, lookback, pctThreshold) comparing current range to its rolling percentile.
-- [ ] **T21.8.4 - Build expansionTrigger fn** - What: The entry moment: a bucket range explodes past the squeeze average. How: Implement expansionTrigger(bucket, squeezeAvg, k, closeDelta) returning direction from the delta sign.
-- [ ] **T21.8.5 - Build squeezeSignal fn** - What: One combined call: only expansions out of a confirmed squeeze fire. How: Implement squeezeSignal(squeezeActive, expansion) gating the trigger by squeeze state.
-- [ ] **T21.8.6 - Wire into engine** - What: Bucket ranges and signals update live every second. How: addSystem() on the tick channel driving the bucket pipeline and emitting trigger('strategy:signal').
-- [ ] **T21.8.7 - Build contractionExit fn** - What: Exits when the move stalls back into contraction or hits target. How: Implement contractionExit(position, bucket, squeezeAvg, targetTicks) wired into the exit hook.
-- [ ] **T21.8.8 - Params and squeeze lamp** - What: lookback, pctThreshold and k tunable; a pulsing lamp shows squeeze-on. How: setValue params plus a data-if lamp element pulsing via CSS animation in the strategy row.
-- [ ] **T21.8.9 - Write single unit tests** - What: Every squeeze fn covered by exactly one test. How: Vitest tests for microRange, squeezeDetect, expansionTrigger, squeezeSignal and contractionExit; targeted runs.
-- [ ] **T21.8.10 - Verify on squeeze replay and merge** - What: A recorded squeeze-then-break resolves into one clean fire. How: Replay the recording, verify lamp and fire timing, ESLint, merge to main.
+- [x] **T21.8.1 - Branch and scaffold squeeze module** - What: A separate branch for the volatility play. How: git checkout -b feature/f21-8-vol-squeeze; create src/strategies/volSqueeze.js.
+- [x] **T21.8.2 - Build microRange fn** - What: Volatility measured as 1-second bucket high-low ranges. How: Implement microRange(state, tick) bucketing ticks per second and emitting closed-bucket ranges.
+- [x] **T21.8.3 - Build squeezeDetect fn** - What: Quiet markets flagged when the range percentile drops. How: Implement squeezeDetect(ranges, lookback, pctThreshold) comparing current range to its rolling percentile.
+- [x] **T21.8.4 - Build expansionTrigger fn** - What: The entry moment: a bucket range explodes past the squeeze average. How: Implement expansionTrigger(bucket, squeezeAvg, k, closeDelta) returning direction from the delta sign.
+- [x] **T21.8.5 - Build squeezeSignal fn** - What: One combined call: only expansions out of a confirmed squeeze fire. How: Implement squeezeSignal(squeezeActive, expansion) gating the trigger by squeeze state.
+- [x] **T21.8.6 - Wire into engine** - What: Bucket ranges and signals update live every second. How: addSystem() on the tick channel driving the bucket pipeline and emitting trigger('strategy:signal').
+- [x] **T21.8.7 - Build contractionExit fn** - What: Exits when the move stalls back into contraction or hits target. How: Implement contractionExit(position, bucket, squeezeAvg, targetTicks) wired into the exit hook.
+- [x] **T21.8.8 - Params and squeeze lamp** - What: lookback, pctThreshold and k tunable; a pulsing lamp shows squeeze-on. How: setValue params plus a data-if lamp element pulsing via CSS animation in the strategy row.
+- [x] **T21.8.9 - Write single unit tests** - What: Every squeeze fn covered by exactly one test. How: Vitest tests for microRange, squeezeDetect, expansionTrigger, squeezeSignal and contractionExit; targeted runs.
+- [x] **T21.8.10 - Verify on squeeze replay and merge** - What: A recorded squeeze-then-break resolves into one clean fire. How: Replay the recording, verify lamp and fire timing, ESLint, merge to main.
 
 ### F21.9 - Scalper Preset Packs
 

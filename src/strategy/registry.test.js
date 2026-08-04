@@ -187,6 +187,7 @@ describe('registerStrategyActions', () => {
       'tape-pressure',
       'range-fade',
       'open-drive',
+      'vol-squeeze',
       'composite',
     ])
 
@@ -194,7 +195,7 @@ describe('registerStrategyActions', () => {
     // job — but the built-ins must not be registered a second time behind it.
     clearActions()
     registerStrategyActions()
-    expect(knownStrategies()).toHaveLength(9)
+    expect(knownStrategies()).toHaveLength(10)
 
     const bus = fakeBus()
     const run = startStrategy('noop', 'okx:BTC-USDT', { subscribe: bus.subscribe })
