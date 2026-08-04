@@ -22,6 +22,9 @@ export const ACTIONS = Object.freeze({
     paletteRun: 'ui.paletteRun',
     toggleCompactHud: 'ui.toggleCompactHud',
   }),
+  strategy: Object.freeze({
+    stop: 'strategy.stop',
+  }),
   book: Object.freeze({
     prefill: 'book.prefill',
     setGroup: 'book.setGroup',

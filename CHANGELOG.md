@@ -12,6 +12,17 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ### Added
 
+- **Strategy registry and run lifecycle** — a strategy is *registered* once and **run**
+  many times, one run per instrument, each with its own params, its own init state and its
+  own tick subscription. Keeping those two ideas apart is what lets the same idea sit on
+  four symbols with four different lookbacks and nothing shared and mutable between them.
+  **Stopping leaves nothing behind**: the subscription is torn down before the run is
+  forgotten, because a run removed from the map while still subscribed is a strategy
+  emitting signals from a UI that says it is off — the worst failure available here.
+  Starting is idempotent, so a double-click or a re-subscribe after a reconnect never
+  leaves two subscriptions racing the same state, and a duplicate id is a named error
+  rather than a silent last-one-wins. A new **Strategies** block lists every live run with
+  its latest signal and a one-click stop.
 - **Strategy contract** — the plug-in surface the rest of phase 20 builds on. A strategy is
   a plain object with `onTick`/`onCandle` (and an optional `init`), and the context it is
   handed is **the only surface it gets**: instrument, resolved params, an indicator

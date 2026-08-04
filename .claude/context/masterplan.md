@@ -3251,16 +3251,16 @@
 **What:** Start and stop any strategy per instrument with one call and zero leftovers.
 **How:** A Map-backed registry keyed strategyId:instrument managing addSystem tick subscriptions, init calls and full teardown.
 
-- [ ] **T20.2.1 - Open lifecycle branch** - What: Contained work on run management. How: Branch feature/f20.2-registry off main and commit the registry skeleton.
-- [ ] **T20.2.2 - makeRunKey fn** - What: Unambiguous identity for every running pair. How: Pure fn composing strategyId plus instrument into a canonical key with input validation.
-- [ ] **T20.2.3 - registerStrategy fn** - What: Strategies become known to the desk. How: Add validated descriptors into the registry Map, rejecting duplicate ids with a named error.
-- [ ] **T20.2.4 - startStrategy fn** - What: One call boots a strategy on an instrument. How: Call init with a fresh context, then addSystem subscribing onTick to that instrument's pipeline tick events.
-- [ ] **T20.2.5 - stopStrategy fn** - What: Stopping leaves no timers, systems or state behind. How: Remove the tick system, clear run-scoped state keys and delete the run entry from the Map.
-- [ ] **T20.2.6 - Double-start guard** - What: Repeated starts never duplicate systems. How: Make startStrategy idempotent by returning the existing run when the runKey is already live.
-- [ ] **T20.2.7 - Running-state publication** - What: The UI always knows what is running where. How: setValue strategies.running as an array of run summaries refreshed on every start and stop.
-- [ ] **T20.2.8 - Runs list block** - What: See and stop live runs from the dashboard. How: Grid block with data-each over strategies.running and a stop button wired via data-action to stopStrategy.
-- [ ] **T20.2.9 - Single tests for lifecycle fns** - What: Keying, registration, start and stop each proven alone. How: One Vitest test per fn using a fake tick source, each executed with its own -t filter.
-- [ ] **T20.2.10 - Merge registry** - What: Lifecycle control shipping on main. How: Lint and the targeted test runs green, then merge the branch.
+- [x] **T20.2.1 - Open lifecycle branch** - What: Contained work on run management. How: Branch feature/f20.2-registry off main and commit the registry skeleton.
+- [x] **T20.2.2 - makeRunKey fn** - What: Unambiguous identity for every running pair. How: Pure fn composing strategyId plus instrument into a canonical key with input validation.
+- [x] **T20.2.3 - registerStrategy fn** - What: Strategies become known to the desk. How: Add validated descriptors into the registry Map, rejecting duplicate ids with a named error.
+- [x] **T20.2.4 - startStrategy fn** - What: One call boots a strategy on an instrument. How: Call init with a fresh context, then addSystem subscribing onTick to that instrument's pipeline tick events.
+- [x] **T20.2.5 - stopStrategy fn** - What: Stopping leaves no timers, systems or state behind. How: Remove the tick system, clear run-scoped state keys and delete the run entry from the Map.
+- [x] **T20.2.6 - Double-start guard** - What: Repeated starts never duplicate systems. How: Make startStrategy idempotent by returning the existing run when the runKey is already live.
+- [x] **T20.2.7 - Running-state publication** - What: The UI always knows what is running where. How: setValue strategies.running as an array of run summaries refreshed on every start and stop.
+- [x] **T20.2.8 - Runs list block** - What: See and stop live runs from the dashboard. How: Grid block with data-each over strategies.running and a stop button wired via data-action to stopStrategy.
+- [x] **T20.2.9 - Single tests for lifecycle fns** - What: Keying, registration, start and stop each proven alone. How: One Vitest test per fn using a fake tick source, each executed with its own -t filter.
+- [x] **T20.2.10 - Merge registry** - What: Lifecycle control shipping on main. How: Lint and the targeted test runs green, then merge the branch.
 
 ### F20.3 - Param schema and auto settings UI
 
