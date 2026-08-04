@@ -2979,50 +2979,50 @@
 ### F18.6 - Flatten-all
 
 **What:** One action closes everything everywhere - the desk's eject handle, also on hotkey F.
-**How:** flattenAll() fanning open positions into parallel reduce-only market orders, registered with the phase-16 keymap under intent 'flatten-all'.
+**How:** flattenAll() closing open positions **serially** (not in parallel — a venue that rate-limits mid-flatten strands the tail, which is exactly the exposure being shed) as reduce-only market orders, registered with the phase-16 keymap under intent 'flatten-all'.
 
-- [ ] **T18.6.1 - Branch and header control** - What: Flatten-all reachable from the positions block itself. How: Create feature/pos-flatten-all; add a flatten-all button to the block header bound via data-action.
-- [ ] **T18.6.2 - Flatten-all function** - What: Every open position closed in one sweep. How: Write defineFn flattenAll() mapping openPositions to flatten intents and submitting them with Promise.all through the engine.
-- [ ] **T18.6.3 - Order sweep first** - What: No working order re-opens risk mid-flatten. How: Call the engine's cancelAll for open orders before submitting closes, sequenced inside flattenAll.
-- [ ] **T18.6.4 - Hotkey F registration** - What: The eject handle under one finger. How: Register key F with the phase-16 keymap API mapped to the 'flatten-all' data-intent, active outside text inputs.
-- [ ] **T18.6.5 - Venue fan-out ordering** - What: The fastest venue clears first. How: Submit OKX closes via the private WS batch-orders op before iterating EToro REST closes.
-- [ ] **T18.6.6 - Partial failure summary** - What: One glance shows what closed and what did not. How: Write summarizeFlattenResults() collecting per-position outcomes into a compact toast line, never halting the sweep.
-- [ ] **T18.6.7 - Retry-only-failures idempotence** - What: Mashing F never duplicates closes. How: Inflight key set makes a second invocation retry only failed positions while submissions are pending.
-- [ ] **T18.6.8 - Armed styling** - What: The button reads as consequential without slowing anyone down. How: Orange accent with a subtle border pulse from the design tokens - still a single click, no confirm dialog.
-- [ ] **T18.6.9 - Single unit tests for flatten-all fns** - What: Sweep and summary logic pinned. How: One Vitest test each for flattenAll and summarizeFlattenResults, run per file only.
-- [ ] **T18.6.10 - Verify and merge** - What: Flatten-all lands proven. How: ESLint plus the feature's tests green, merge feature/pos-flatten-all into main.
+- [x] **T18.6.1 - Branch and header control** - What: Flatten-all reachable from the positions block itself. How: Create feature/pos-flatten-all; add a flatten-all button to the block header bound via data-action.
+- [x] **T18.6.2 - Flatten-all function** - What: Every open position closed in one sweep. How: Write defineFn flattenAll() mapping openPositions to flatten intents and submitting them with Promise.all through the engine.
+- [x] **T18.6.3 - Order sweep first** - What: No working order re-opens risk mid-flatten. How: Call the engine's cancelAll for open orders before submitting closes, sequenced inside flattenAll.
+- [x] **T18.6.4 - Hotkey F registration** - What: The eject handle under one finger. How: Register key F with the phase-16 keymap API mapped to the 'flatten-all' data-intent, active outside text inputs.
+- [x] **T18.6.5 - Venue fan-out ordering** - What: The fastest venue clears first. How: Submit OKX closes via the private WS batch-orders op before iterating EToro REST closes.
+- [x] **T18.6.6 - Partial failure summary** - What: One glance shows what closed and what did not. How: Write summarizeFlattenResults() collecting per-position outcomes into a compact toast line, never halting the sweep.
+- [x] **T18.6.7 - Retry-only-failures idempotence** - What: Mashing F never duplicates closes. How: Inflight key set makes a second invocation retry only failed positions while submissions are pending.
+- [x] **T18.6.8 - Armed styling** - What: The button reads as consequential without slowing anyone down. How: Orange accent with a subtle border pulse from the design tokens - still a single click, no confirm dialog.
+- [x] **T18.6.9 - Single unit tests for flatten-all fns** - What: Sweep and summary logic pinned. How: One Vitest test each for flattenAll and summarizeFlattenResults, run per file only.
+- [x] **T18.6.10 - Verify and merge** - What: Flatten-all lands proven. How: ESLint plus the feature's tests green, merge feature/pos-flatten-all into main.
 
 ### F18.7 - Day PnL header widget
 
 **What:** Today's net PnL always in view in the header, ticking live next to the nav.
 **How:** Header widget bound to a dayPnl computed combining the realized ledger total with live unrealized sum, compact-formatted.
 
-- [ ] **T18.7.1 - Branch and header slot** - What: A reserved home for the day number in the header. How: Create feature/pos-day-widget; add a widget slot between nav and settings in the phase-5 header template.
-- [ ] **T18.7.2 - Day PnL computed** - What: One number that is always the whole truth of today. How: Write dayPnlOf(ledgerTotal, upnlSum) and wire computed('pnl.day') from netRealized plus the live unrealized sum.
-- [ ] **T18.7.3 - Compact formatter** - What: Readable at a glance at any magnitude. How: Write fmtCompactPnl() rendering +1.2K / -340 style output with explicit sign and the account currency code.
-- [ ] **T18.7.4 - Widget binding** - What: The header number moves with every tick batch. How: Bind {{fmtCompactPnl(pnl.day)}} with pos/neg class switching between the green and orange tokens.
-- [ ] **T18.7.5 - Percent mode toggle** - What: PnL as percent of starting equity on demand. How: data-action click toggle switching absolute vs percent display, choice persisted via spektrum/persist.
-- [ ] **T18.7.6 - Session baseline capture** - What: A stable denominator for the percent view. How: Write captureBaselineEquity() storing start-of-day equity once per session date at rollover time.
-- [ ] **T18.7.7 - Breakdown popover** - What: Realized vs unrealized vs fees inspectable without clicks elsewhere. How: Pure CSS hover popover under the widget listing the three components from the same computeds.
-- [ ] **T18.7.8 - Stale-data guard** - What: A frozen feed never masquerades as flat PnL. How: Dim the widget via a class bound to the market data heartbeat when the last tick is older than 5 seconds.
-- [ ] **T18.7.9 - Single unit tests for widget fns** - What: Assembly, formatting and baseline each pinned. How: One Vitest test each for dayPnlOf, fmtCompactPnl and captureBaselineEquity, run per file.
-- [ ] **T18.7.10 - Verify and merge** - What: The day widget lands green. How: ESLint plus feature tests pass, merge feature/pos-day-widget into main.
+- [x] **T18.7.1 - Branch and header slot** - What: A reserved home for the day number in the header. How: Create feature/pos-day-widget; add a widget slot between nav and settings in the phase-5 header template.
+- [x] **T18.7.2 - Day PnL computed** - What: One number that is always the whole truth of today. How: Write dayPnlOf(ledgerTotal, upnlSum) and wire computed('pnl.day') from netRealized plus the live unrealized sum.
+- [x] **T18.7.3 - Compact formatter** - What: Readable at a glance at any magnitude. How: Write fmtCompactPnl() rendering +1.2K / -340 style output with explicit sign and the account currency code.
+- [x] **T18.7.4 - Widget binding** - What: The header number moves with every tick batch. How: Bind {{fmtCompactPnl(pnl.day)}} with pos/neg class switching between the green and orange tokens.
+- [x] **T18.7.5 - Percent mode toggle** - What: PnL as percent of starting equity on demand. How: data-action click toggle switching absolute vs percent display, choice persisted via spektrum/persist.
+- [x] **T18.7.6 - Session baseline capture** - What: A stable denominator for the percent view. How: Write captureBaselineEquity() storing start-of-day equity once per session date at rollover time.
+- [x] **T18.7.7 - Breakdown popover** - What: Realized vs unrealized vs fees inspectable without clicks elsewhere. How: Pure CSS hover popover under the widget listing the three components from the same computeds.
+- [x] **T18.7.8 - Stale-data guard** - What: A frozen feed never masquerades as flat PnL. How: Dim the widget via a class bound to the market data heartbeat when the last tick is older than 5 seconds.
+- [x] **T18.7.9 - Single unit tests for widget fns** - What: Assembly, formatting and baseline each pinned. How: One Vitest test each for dayPnlOf, fmtCompactPnl and captureBaselineEquity, run per file.
+- [x] **T18.7.10 - Verify and merge** - What: The day widget lands green. How: ESLint plus feature tests pass, merge feature/pos-day-widget into main.
 
 ### F18.8 - PnL pulse animation
 
 **What:** PnL changes felt peripherally - green pulse up, orange pulse down - without reading a single digit.
 **How:** Direction-classifying watcher toggling short-lived CSS classes driving GPU-friendly keyframe pulses in both day and night themes.
 
-- [ ] **T18.8.1 - Branch and pulse keyframes** - What: The visual language of a PnL move defined once. How: Create feature/pos-pulse; add pulse-up/pulse-down keyframes to the phase-3 stylesheet animating only opacity and background-color.
-- [ ] **T18.8.2 - Direction classifier** - What: Every change maps to up, down or ignore. How: Write pure defineFn pulseClassFor(prev, next, epsilon) returning 'pulse-up', 'pulse-down' or null below the epsilon threshold.
-- [ ] **T18.8.3 - Watcher wiring** - What: Pulses fire automatically on real PnL movement. How: watch() the uPnL and dayPnl values, toggling the class and removing it on the animationend event.
-- [ ] **T18.8.4 - Frame batching** - What: A tick storm never causes layout thrash. How: Queue class flips and apply at most one per element per requestAnimationFrame flush.
-- [ ] **T18.8.5 - Theme-tuned tones** - What: Pulses legible on both day and night backgrounds. How: Map pulse colors to green/orange CSS custom properties overridden by the phase-6 theme engine.
-- [ ] **T18.8.6 - Coverage across surfaces** - What: The same pulse language everywhere PnL lives. How: Apply the watcher to position rows, the day header widget and the F18.9 equity curve endpoint dot.
-- [ ] **T18.8.7 - Reduced-motion mode** - What: Pulse-free operation for users who want stillness. How: Settings toggle swapping animations for instant color steps, honoring prefers-reduced-motion as the default and persisted via spektrum/persist.
-- [ ] **T18.8.8 - Intensity scaling** - What: Big moves feel bigger than small ones. How: Write pulseIntensity() mapping move size in ticks to one of three opacity steps set as an inline CSS variable.
-- [ ] **T18.8.9 - Single unit tests for pulse fns** - What: Classifier and intensity math pinned. How: One Vitest test each for pulseClassFor and pulseIntensity, run against only those files.
-- [ ] **T18.8.10 - Verify and merge** - What: Pulse feedback lands green. How: ESLint plus the feature's tests pass, merge feature/pos-pulse into main.
+- [x] **T18.8.1 - Branch and pulse keyframes** - What: The visual language of a PnL move defined once. How: Create feature/pos-pulse; add pulse-up/pulse-down keyframes to the phase-3 stylesheet animating only opacity and background-color.
+- [x] **T18.8.2 - Direction classifier** - What: Every change maps to up, down or ignore. How: Write pure defineFn pulseClassFor(prev, next, epsilon) returning 'pulse-up', 'pulse-down' or null below the epsilon threshold.
+- [x] **T18.8.3 - Watcher wiring** - What: Pulses fire automatically on real PnL movement. How: watch() the uPnL and dayPnl values, toggling the class and removing it on the animationend event.
+- [x] **T18.8.4 - Frame batching** - What: A tick storm never causes layout thrash. How: Queue class flips and apply at most one per element per requestAnimationFrame flush.
+- [x] **T18.8.5 - Theme-tuned tones** - What: Pulses legible on both day and night backgrounds. How: Map pulse colors to green/orange CSS custom properties overridden by the phase-6 theme engine.
+- [x] **T18.8.6 - Coverage across surfaces** - What: The same pulse language everywhere PnL lives. How: Apply the watcher to position rows, the day header widget and the F18.9 equity curve endpoint dot.
+- [x] **T18.8.7 - Reduced-motion mode** - What: Pulse-free operation for users who want stillness. How: Settings toggle swapping animations for instant color steps, honoring prefers-reduced-motion as the default and persisted via spektrum/persist.
+- [x] **T18.8.8 - Intensity scaling** - What: Big moves feel bigger than small ones. How: Write pulseIntensity() mapping move size in ticks to one of three opacity steps set as an inline CSS variable.
+- [x] **T18.8.9 - Single unit tests for pulse fns** - What: Classifier and intensity math pinned. How: One Vitest test each for pulseClassFor and pulseIntensity, run against only those files.
+- [x] **T18.8.10 - Verify and merge** - What: Pulse feedback lands green. How: ESLint plus the feature's tests pass, merge feature/pos-pulse into main.
 
 ### F18.9 - Intraday equity mini-curve
 

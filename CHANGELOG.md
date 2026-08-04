@@ -12,6 +12,13 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ### Added
 
+- **Day P&L in the header** — realised plus floating, always in view, because a trader
+  deciding whether to take the next trade without knowing whether the day is green is
+  answering a different question than they think. Either half alone lies: realised-only
+  looks flat while a losing position runs, floating-only forgets what is booked. The
+  number pulses on a real move and ignores the cent-level wobble that would otherwise
+  make the header strobe until nobody sees it, and it is width-stable so the nav does not
+  drag around as the figure grows. (F18.6, F18.7, F18.8)
 - **Marks, multipliers and the day's score** — a position marks at what it could be
   *closed* at (the mid, then the resting side, then the tape), not at whatever last
   printed; contract multipliers are applied, because a swap is not one unit of the
