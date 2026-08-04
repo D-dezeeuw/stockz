@@ -3617,16 +3617,16 @@
 **What:** The user is warned before conditions hurt: spread spikes, latency spikes and disconnects flagged instantly.
 **How:** EMA baselines over spread and WebSocket heartbeat RTT from phases 11/14 with threshold-cross alert emits.
 
-- [ ] **T22.4.1 - Branch and scaffold health alerts** - What: A branch for market and feed health warnings. How: git checkout -b feature/f22-4-health-alerts; create src/alerts/healthAlerts.js.
-- [ ] **T22.4.2 - Build spreadBaseline fn** - What: A per-instrument notion of normal spread. How: Implement EMA spreadBaseline(prev, spreadTicks, alpha) updated on each book-top change.
-- [ ] **T22.4.3 - Build spreadSpike fn** - What: Warnings when the spread blows out versus normal. How: Implement spreadSpike(spread, baseline, k, streakM) requiring k x baseline for M consecutive updates.
-- [ ] **T22.4.4 - Build latencySpike fn** - What: A slow feed flagged before stale prices cost money. How: Implement latencySpike(rttSamples, thresholdMs) over WebSocket ping/pong RTTs from the phase-11 pipeline.
-- [ ] **T22.4.5 - Wire disconnect alerts** - What: A dropped venue connection announced with the venue name in red. How: watch() on phase-11 connection-state keys emitting error alerts on open-to-closed transitions per venue.
-- [ ] **T22.4.6 - Build formatDowntime fn and reconnect alert** - What: Reconnects confirmed with the exact downtime duration. How: Implement formatDowntime(downMs) and emit an info alert on reconnect including the formatted gap.
-- [ ] **T22.4.7 - Wire warning emits** - What: Spread and latency warnings flow into the shared alert bus. How: Chain the spike fns inside watch() handlers emitting trigger('alert:fired') with warn severity.
-- [ ] **T22.4.8 - Threshold settings UI** - What: k, thresholdMs and streak values tunable per desk taste. How: Numeric inputs bound via data-model writing alerts.health thresholds in state.
-- [ ] **T22.4.9 - Write single unit tests** - What: Health math proven once per fn. How: One Vitest test each for spreadBaseline, spreadSpike, latencySpike and formatDowntime; targeted runs.
-- [ ] **T22.4.10 - Verify with throttled network and merge** - What: Real degradation produces the right warnings. How: Throttle the connection in Chrome DevTools, observe latency and disconnect alerts, ESLint, merge.
+- [x] **T22.4.1 - Branch and scaffold health alerts** - What: A branch for market and feed health warnings. How: git checkout -b feature/f22-4-health-alerts; create src/alerts/healthAlerts.js.
+- [x] **T22.4.2 - Build spreadBaseline fn** - What: A per-instrument notion of normal spread. How: Implement EMA spreadBaseline(prev, spreadTicks, alpha) updated on each book-top change.
+- [x] **T22.4.3 - Build spreadSpike fn** - What: Warnings when the spread blows out versus normal. How: Implement spreadSpike(spread, baseline, k, streakM) requiring k x baseline for M consecutive updates.
+- [x] **T22.4.4 - Build latencySpike fn** - What: A slow feed flagged before stale prices cost money. How: Implement latencySpike(rttSamples, thresholdMs) over WebSocket ping/pong RTTs from the phase-11 pipeline.
+- [x] **T22.4.5 - Wire disconnect alerts** - What: A dropped venue connection announced with the venue name in red. How: watch() on phase-11 connection-state keys emitting error alerts on open-to-closed transitions per venue.
+- [x] **T22.4.6 - Build formatDowntime fn and reconnect alert** - What: Reconnects confirmed with the exact downtime duration. How: Implement formatDowntime(downMs) and emit an info alert on reconnect including the formatted gap.
+- [x] **T22.4.7 - Wire warning emits** - What: Spread and latency warnings flow into the shared alert bus. How: Chain the spike fns inside watch() handlers emitting trigger('alert:fired') with warn severity.
+- [x] **T22.4.8 - Threshold settings UI** - What: k, thresholdMs and streak values tunable per desk taste. How: Numeric inputs bound via data-model writing alerts.health thresholds in state.
+- [x] **T22.4.9 - Write single unit tests** - What: Health math proven once per fn. How: One Vitest test each for spreadBaseline, spreadSpike, latencySpike and formatDowntime; targeted runs.
+- [x] **T22.4.10 - Verify with throttled network and merge** - What: Real degradation produces the right warnings. How: Throttle the connection in Chrome DevTools, observe latency and disconnect alerts, ESLint, merge.
 
 ### F22.5 - Severity Toast System
 

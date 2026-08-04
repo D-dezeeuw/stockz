@@ -108,6 +108,8 @@ export const PATHS = Object.freeze({
     sessionStartUtc: 'settings.sessionStartUtc',
     spreadLimitBps: 'settings.spreadLimitBps',
     tradesPerHourTarget: 'settings.tradesPerHourTarget',
+    spreadSpikeK: 'settings.spreadSpikeK',
+    latencyWarnMs: 'settings.latencyWarnMs',
     compactHud: 'settings.compactHud',
     strategyParams: 'settings.strategyParams',
     activePresets: 'settings.activePresets',

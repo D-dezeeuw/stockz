@@ -12,6 +12,19 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ### Added
 
+- **Feed and spread health warnings** — the alerts a trader most needs are the ones about
+  *conditions* rather than events, because conditions are what make an otherwise good trade
+  expensive: a spread that has quietly tripled, a feed lagging by half a second, a venue that
+  dropped and came back. None of them announce themselves, and all of them cost money before
+  anyone notices. Everything is measured against a **baseline the desk learned**, not a
+  constant — a two-tick spread is normal on one instrument and a blowout on another, and a
+  threshold that has to be set per instrument is a threshold nobody sets. These are the most
+  likely warnings on the desk to be muted for crying wolf, so every detector requires
+  persistence: one wide print between two normal ones is a print, not a condition, and
+  latency is judged on the **median** rather than the worst sample, because one 900ms round
+  trip is a hiccup and warning on it would fire several times an hour on a healthy
+  connection. A reconnect always reports the gap, since "back after 400ms" and "back after
+  four minutes" call for completely different next actions.
 - **Execution event notifications** — a scalper clicks and looks away, and the worst state on
   a fast desk is not knowing whether the order went: the trader who is unsure clicks again,
   and now there are two. Fills, partials, cancels and rejects are announced from the single

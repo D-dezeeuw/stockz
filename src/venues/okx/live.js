@@ -17,6 +17,7 @@ import { refreshCompact } from '../../hud/compact.js'
 import { tickStrategies } from '../../strategy/registry.js'
 import { evaluateAlerts, publishAlertChips } from '../../alerts/price.js'
 import { flushAlerts } from '../../alerts/bus.js'
+import { checkHealth, venueTransition } from '../../alerts/health.js'
 import { evictStale } from '../../exec/latency.js'
 import { setValue, appState } from '../../app/engine.js'
 import { PATHS } from '../../state/paths.js'
@@ -104,6 +105,10 @@ export function routeFrame(frame, context = {}) {
 /** The previous mid, so an alert always compares two prices rather than one. */
 let lastMid = NaN
 
+/** The learned spread baseline and spike streak. Outside the reactive tree like every
+ *  other hot store on this path. */
+const health = { spreadBase: 0, spreadStreak: 0 }
+
 /**
  * Publish everything the frame produced. Called once per animation frame.
  *
@@ -150,6 +155,12 @@ export function flushFeed(focus, options = {}) {
     lastMid = mid
   }
   publishAlertChips(focus)
+  // Health is a *condition*, not an event, which is exactly why nothing else reports it:
+  // a spread that quietly tripled costs money long before anyone notices it.
+  if (bid > 0 && ask > 0) {
+    const tick = Number(appState.market?.tickSize) || 0.01
+    checkHealth(health, { spread: (ask - bid) / tick, now: at })
+  }
   // Published once per frame like everything else: an alert stack that re-rendered on every
   // emission would be the one part of the desk that ignores the rAF budget.
   flushAlerts()
@@ -182,6 +193,9 @@ export function onFeedFrame(raw, focus) {
  * @returns {object} the venue map now in state.
  */
 export function onFeedState(state) {
+  // Announced before it is recorded, so the alert has the previous state to compare
+  // against — a transition is the only thing here worth saying out loud.
+  venueTransition('okx', state, Date.now())
   return setVenueState('okx', state)
 }
 
