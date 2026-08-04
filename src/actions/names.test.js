@@ -17,6 +17,7 @@ import { registerSubmitAction } from '../ticket/submit.js'
 import { registerShortcutActions } from '../ticket/shortcuts.js'
 import { registerIntentAction } from '../ticket/intent.js'
 import { registerBindingActions } from '../keys/overrides.js'
+import { registerFlattenActions } from '../positions/flatten.js'
 import { registerPaletteActions } from '../keys/palette.js'
 import { registerPanicAction } from '../keys/panic.js'
 import { registerCaptureActions } from '../keys/capture.js'
@@ -53,6 +54,8 @@ describe('allActionNames', () => {
       'ticket.repeatLast',
       'ticket.intent',
       'orders.cancelAll',
+      'positions.flatten',
+      'positions.flattenAll',
       'app.reset',
       'lists.focus',
       'lists.add',
@@ -91,6 +94,7 @@ describe('allActionNames', () => {
     registerShortcutActions()
     registerIntentAction()
     registerBindingActions()
+    registerFlattenActions()
     registerPaletteActions()
     registerPanicAction()
     registerCaptureActions()

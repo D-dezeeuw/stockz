@@ -34,6 +34,7 @@ import { trackBlockFocus } from '../keys/scopes.js'
 import { registerPanicAction } from '../keys/panic.js'
 import { registerCaptureActions } from '../keys/capture.js'
 import { startEngine, submit as execSubmit } from '../exec/engine.js'
+import { registerFlattenActions } from '../positions/flatten.js'
 import { createRepeater, guardRepeat } from '../keys/repeat.js'
 import { appVersion } from './version.js'
 
@@ -94,6 +95,7 @@ export function bootstrap(options = {}) {
   registerSubmitAction({ send: sendViaEngine })
   registerShortcutActions({ send: sendViaEngine })
   registerIntentAction({ submit: submitFromIntent })
+  registerFlattenActions()
   registerBindingActions()
   registerPaletteActions()
   registerPanicAction()

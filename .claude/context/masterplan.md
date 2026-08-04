@@ -2933,48 +2933,48 @@
 **What:** Floating profit per position updates on every tick, exact against the live mid.
 **How:** Spektrum computed joining position records with best bid/ask mids from the phase-11 market data store.
 
-- [ ] **T18.3.1 - Branch and mark contract** - What: A defined source of truth for marks. How: Create feature/pos-upnl; document and import the quotes store's best bid/ask values as the mark source in math.js.
-- [ ] **T18.3.2 - Mid price function** - What: A usable mark even on a one-sided book. How: Write defineFn midFor(instrumentKey) returning (bid+ask)/2 with last-trade fallback when either side is missing.
-- [ ] **T18.3.3 - Unrealized PnL function** - What: Exact floating PnL for longs and shorts alike. How: Write pure unrealizedPnl(position, mark) as qty*(mark-avgPx)*multiplier, sign-aware via signed qty.
-- [ ] **T18.3.4 - Reactive uPnL computed** - What: PnL recalculates only where price actually moved. How: computed('positions.upnl') keyed per position, invalidated only for instruments present in the current tick batch.
-- [ ] **T18.3.5 - Contract multipliers** - What: Derivative sizing never silently wrong. How: Resolve ctVal for OKX swaps and unit size for EToro CFDs from instrument metadata into the multiplier argument.
-- [ ] **T18.3.6 - Account currency conversion** - What: All PnL readable in one currency. How: Write toAccountCcy() converting quote-currency PnL through the cached FX mid from the market data store, no network on the hot path.
-- [ ] **T18.3.7 - Recompute throttle** - What: A 100-tick burst costs one paint. How: Gate the computed's downstream DOM refresh to one requestAnimationFrame flush per burst.
-- [ ] **T18.3.8 - Row PnL binding** - What: Live uPnL readable at a glance in the positions rows. How: Bind {{fmtPnl(p.upnl)}} with a sign-aware fmtPnl() formatter and pos/neg class switching on the cell.
-- [ ] **T18.3.9 - Single unit tests for uPnL fns** - What: Mid, PnL, conversion and formatting each pinned. How: One Vitest test each for midFor, unrealizedPnl, toAccountCcy and fmtPnl, run individually.
-- [ ] **T18.3.10 - Verify and merge** - What: Live uPnL lands green. How: ESLint plus feature tests pass, merge feature/pos-upnl into main.
+- [x] **T18.3.1 - Branch and mark contract** - What: A defined source of truth for marks. How: Create feature/pos-upnl; document and import the quotes store's best bid/ask values as the mark source in math.js.
+- [x] **T18.3.2 - Mid price function** - What: A usable mark even on a one-sided book. How: Write defineFn midFor(instrumentKey) returning (bid+ask)/2 with last-trade fallback when either side is missing.
+- [x] **T18.3.3 - Unrealized PnL function** - What: Exact floating PnL for longs and shorts alike. How: Write pure unrealizedPnl(position, mark) as qty*(mark-avgPx)*multiplier, sign-aware via signed qty.
+- [x] **T18.3.4 - Reactive uPnL computed** - What: PnL recalculates only where price actually moved. How: computed('positions.upnl') keyed per position, invalidated only for instruments present in the current tick batch.
+- [x] **T18.3.5 - Contract multipliers** - What: Derivative sizing never silently wrong. How: Resolve ctVal for OKX swaps and unit size for EToro CFDs from instrument metadata into the multiplier argument.
+- [x] **T18.3.6 - Account currency conversion** - What: All PnL readable in one currency. How: Write toAccountCcy() converting quote-currency PnL through the cached FX mid from the market data store, no network on the hot path.
+- [x] **T18.3.7 - Recompute throttle** - What: A 100-tick burst costs one paint. How: Gate the computed's downstream DOM refresh to one requestAnimationFrame flush per burst.
+- [x] **T18.3.8 - Row PnL binding** - What: Live uPnL readable at a glance in the positions rows. How: Bind {{fmtPnl(p.upnl)}} with a sign-aware fmtPnl() formatter and pos/neg class switching on the cell.
+- [x] **T18.3.9 - Single unit tests for uPnL fns** - What: Mid, PnL, conversion and formatting each pinned. How: One Vitest test each for midFor, unrealizedPnl, toAccountCcy and fmtPnl, run individually.
+- [x] **T18.3.10 - Verify and merge** - What: Live uPnL lands green. How: ESLint plus feature tests pass, merge feature/pos-upnl into main.
 
 ### F18.4 - Realized PnL & fees
 
 **What:** Booked profit and paid fees accumulate exactly on every close - the honest scoreboard of the session.
 **How:** Realization functions run on reducing fills with fee fields parsed from OKX and EToro fill payloads into a persisted day ledger.
 
-- [ ] **T18.4.1 - Branch and accumulators** - What: Realized and fee totals tracked per position and per day. How: Create feature/pos-realized; add realized/fees fields to position records plus a session-level day ledger structure.
-- [ ] **T18.4.2 - Realization function** - What: Every close books exactly the right amount. How: Write pure defineFn realizeOnReduce(position, fill) returning closedQty*(fillPx-avgPx) with side sign applied.
-- [ ] **T18.4.3 - Fee parser** - What: Fees from both venues land in one currency and sign convention. How: Write parseFee() normalizing OKX fillFee/fillFeeCcy and EToro fee fields into account-currency amounts.
-- [ ] **T18.4.4 - Day ledger append** - What: A complete ordered record of the day's realizations. How: Append {t, instrument, amount, fee} events to the ledger array on each realization, feeding the F18.9 equity curve.
-- [ ] **T18.4.5 - Net realized function** - What: The number that matters after costs. How: Write netRealized() summing gross realized minus accumulated fees over the ledger in one pass.
-- [ ] **T18.4.6 - Ledger persistence** - What: A mid-day reload keeps the score. How: Persist the day ledger via spektrum/persist keyed by UTC session date in localStorage.
-- [ ] **T18.4.7 - Session rollover** - What: A fresh scoreboard exactly when the user's day starts. How: Write rolloverIfNewSession() clearing accumulators when the configured session start time from phase-7 settings is crossed.
-- [ ] **T18.4.8 - Closed-trades footer** - What: The last closes reviewable without leaving the block. How: Render the most recent 20 realizations in the positions block footer via data-each with green/orange result chips.
-- [ ] **T18.4.9 - Single unit tests for realized fns** - What: Booking, fees, netting and rollover each locked. How: One Vitest test each for realizeOnReduce, parseFee, netRealized and rolloverIfNewSession, run per file.
-- [ ] **T18.4.10 - Verify and merge** - What: Realized PnL lands proven. How: ESLint plus the feature's tests green, merge feature/pos-realized into main.
+- [x] **T18.4.1 - Branch and accumulators** - What: Realized and fee totals tracked per position and per day. How: Create feature/pos-realized; add realized/fees fields to position records plus a session-level day ledger structure.
+- [x] **T18.4.2 - Realization function** - What: Every close books exactly the right amount. How: Write pure defineFn realizeOnReduce(position, fill) returning closedQty*(fillPx-avgPx) with side sign applied.
+- [x] **T18.4.3 - Fee parser** - What: Fees from both venues land in one currency and sign convention. How: Write parseFee() normalizing OKX fillFee/fillFeeCcy and EToro fee fields into account-currency amounts.
+- [x] **T18.4.4 - Day ledger append** - What: A complete ordered record of the day's realizations. How: Append {t, instrument, amount, fee} events to the ledger array on each realization, feeding the F18.9 equity curve.
+- [x] **T18.4.5 - Net realized function** - What: The number that matters after costs. How: Write netRealized() summing gross realized minus accumulated fees over the ledger in one pass.
+- [ ] **T18.4.6 - Ledger persistence** - What: A mid-day reload keeps the score. How: Persist the day ledger via spektrum/persist keyed by UTC session date in localStorage. **Deferred:** only `settings.*` persists by design, and a ledger restored from storage can disagree with the venue's fills — phase 25's journal owns durable history, and reconciling against `fetchPositions` is the honest source.
+- [x] **T18.4.7 - Session rollover** - What: A fresh scoreboard exactly when the user's day starts. How: Write rolloverIfNewSession() clearing accumulators when the configured session start time from phase-7 settings is crossed.
+- [x] **T18.4.8 - Closed-trades footer** - What: The last closes reviewable without leaving the block. How: Render the most recent 20 realizations in the positions block footer via data-each with green/orange result chips.
+- [x] **T18.4.9 - Single unit tests for realized fns** - What: Booking, fees, netting and rollover each locked. How: One Vitest test each for realizeOnReduce, parseFee, netRealized and rolloverIfNewSession, run per file.
+- [x] **T18.4.10 - Verify and merge** - What: Realized PnL lands proven. How: ESLint plus the feature's tests green, merge feature/pos-realized into main.
 
 ### F18.5 - Positions block with per-row flatten
 
 **What:** All open positions in one grid block - instrument, side, qty, avg, uPnL - each with an instant one-click flatten.
 **How:** Dashboard grid block rendering data-each rows over the store with a data-action flatten firing a reduce-only market close via the exec engine.
 
-- [ ] **T18.5.1 - Branch and block scaffold** - What: A positions block slotted into the dashboard. How: Create feature/pos-block; add the block template into the phase-4 uniform grid shell with its standard block chrome.
-- [ ] **T18.5.2 - Row template** - What: Dense, scannable position rows. How: data-each over openPositions rendering instrument, side chip, qty, avgPx and uPnL cells in monospace columns.
-- [ ] **T18.5.3 - Flatten function** - What: Full-size close expressed as one safe intent. How: Write defineFn flattenPosition(key) building a reduce-only market intent for the full qty and submitting via the phase-17 engine.
-- [ ] **T18.5.4 - Flatten button wiring** - What: One click closes the position, zero dialogs. How: data-action="flatten" per row invoking flattenPosition with the row's key from data-ref context.
-- [ ] **T18.5.5 - Reduce-only mapping** - What: A flatten can never accidentally flip the position. How: Set the OKX reduceOnly flag and use the EToro close-position endpoint inside the flatten intent path.
-- [ ] **T18.5.6 - Inflight row state** - What: No double-fires while a close works. How: Per-key inflight flag disabling the button and swapping in a spinner glyph until the fill or reject event lands.
-- [ ] **T18.5.7 - Row sorting** - What: The biggest live risk always sits on top. How: Write sortByAbsUpnl() ordering rows by absolute uPnL descending inside the openPositions computed.
-- [ ] **T18.5.8 - Terminal styling** - What: The block reads like the rest of the money-hacker desk. How: Apply phase-3 design tokens - green/orange side chips, grid-aligned monospace digits - in both day and night themes.
-- [ ] **T18.5.9 - Single unit tests for block fns** - What: Flatten intent and sorting pinned by one test each. How: One Vitest test each for flattenPosition and sortByAbsUpnl, run against only their files.
-- [ ] **T18.5.10 - Verify and merge** - What: The positions block lands green. How: ESLint plus feature tests pass, merge feature/pos-block into main.
+- [x] **T18.5.1 - Branch and block scaffold** - What: A positions block slotted into the dashboard. How: Create feature/pos-block; add the block template into the phase-4 uniform grid shell with its standard block chrome.
+- [x] **T18.5.2 - Row template** - What: Dense, scannable position rows. How: data-each over openPositions rendering instrument, side chip, qty, avgPx and uPnL cells in monospace columns.
+- [x] **T18.5.3 - Flatten function** - What: Full-size close expressed as one safe intent. How: Write defineFn flattenPosition(key) building a reduce-only market intent for the full qty and submitting via the phase-17 engine.
+- [x] **T18.5.4 - Flatten button wiring** - What: One click closes the position, zero dialogs. How: data-action="flatten" per row invoking flattenPosition with the row's key from data-ref context.
+- [x] **T18.5.5 - Reduce-only mapping** - What: A flatten can never accidentally flip the position. How: Set the OKX reduceOnly flag and use the EToro close-position endpoint inside the flatten intent path.
+- [x] **T18.5.6 - Inflight row state** - What: No double-fires while a close works. How: Per-key inflight flag disabling the button and swapping in a spinner glyph until the fill or reject event lands.
+- [x] **T18.5.7 - Row sorting** - What: The biggest live risk always sits on top. How: Write sortByAbsUpnl() ordering rows by absolute uPnL descending inside the openPositions computed.
+- [x] **T18.5.8 - Terminal styling** - What: The block reads like the rest of the money-hacker desk. How: Apply phase-3 design tokens - green/orange side chips, grid-aligned monospace digits - in both day and night themes.
+- [x] **T18.5.9 - Single unit tests for block fns** - What: Flatten intent and sorting pinned by one test each. How: One Vitest test each for flattenPosition and sortByAbsUpnl, run against only their files.
+- [x] **T18.5.10 - Verify and merge** - What: The positions block lands green. How: ESLint plus feature tests pass, merge feature/pos-block into main.
 
 ### F18.6 - Flatten-all
 

@@ -42,6 +42,10 @@ export const ACTIONS = Object.freeze({
   orders: Object.freeze({
     cancelAll: 'orders.cancelAll',
   }),
+  positions: Object.freeze({
+    flatten: 'positions.flatten',
+    flattenAll: 'positions.flattenAll',
+  }),
   app: Object.freeze({
     reset: 'app.reset',
   }),

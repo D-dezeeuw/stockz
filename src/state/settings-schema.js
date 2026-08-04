@@ -119,6 +119,15 @@ export const SETTINGS_SCHEMA = Object.freeze([
     default: 4,
   },
   {
+    key: 'sessionStartUtc',
+    group: 'trading',
+    label: 'Session starts (UTC hour)',
+    kind: 'number',
+    min: 0,
+    step: 1,
+    default: 0,
+  },
+  {
     key: 'maxDeviationBps',
     group: 'risk',
     label: 'Max distance from mid (bps)',

@@ -12,6 +12,21 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ### Added
 
+- **Marks, multipliers and the day's score** — a position marks at what it could be
+  *closed* at (the mid, then the resting side, then the tape), not at whatever last
+  printed; contract multipliers are applied, because a swap is not one unit of the
+  underlying and a P&L that assumes it is is out by exactly `ctVal`. Realised closes book
+  to a day ledger with fees normalised to one sign convention — OKX reports fees negative
+  and EToro positive, and mixing them adds costs to profit on one venue while subtracting
+  them on the other. The headline is *net*: a hundred scalps at a two-tick edge and a
+  one-tick fee is a losing day that looks like a winning one on gross. The session rolls
+  over at the trader's hour rather than UTC midnight, which would cut an Asian session in
+  half. (F18.3, F18.4)
+- **Positions block with flatten** — every open position with its live P&L and a one-click
+  exit, plus FLAT ALL. Closes are reduce-only market orders so they can never overshoot
+  into a fresh position, they are never gated on the arm toggle (arming controls
+  *entering* risk), and they go out serially — a venue that rate-limits mid-flatten would
+  strand the tail, which is precisely the exposure being shed. (F18.5)
 - **Positions and live P&L** — a book keyed by venue and instrument, fed by execution
   fills and marked from the book's own mid, because a position's P&L should move with
   what it could be *closed* at rather than with whatever last printed. Two pieces of

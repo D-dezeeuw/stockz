@@ -1,0 +1,71 @@
+/*
+ * Positions.
+ *
+ * The one block a trader looks at when something has gone wrong, so it is built for
+ * being read fast under stress: side in the row's colour, P&L signed and coloured, and
+ * an exit on every row that needs no aiming.
+ */
+
+.positions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2, 0.5rem);
+  height: 100%;
+  font-variant-numeric: tabular-nums;
+}
+
+.positions__totals {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2, 0.5rem);
+  flex: 0 0 auto;
+}
+
+.positions__totals .ticket__cancel {
+  margin-left: auto;
+}
+
+.positions__rows {
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  min-height: 0;
+}
+
+.positions__row {
+  display: grid;
+  grid-template-columns: 1.5fr 0.8fr 1fr 1fr auto;
+  gap: var(--space-2, 0.5rem);
+  align-items: baseline;
+  padding: var(--space-1, 0.25rem) 0;
+  border-bottom: 1px solid var(--line);
+}
+
+/* Side lives in the instrument's colour rather than a separate column: one glance,
+   one less thing to read. */
+.positions__row--long .positions__inst {
+  color: var(--green);
+}
+
+.positions__row--short .positions__inst {
+  color: var(--orange);
+}
+
+.positions__qty,
+.positions__avg {
+  color: var(--ink-muted);
+  text-align: right;
+}
+
+.pnl {
+  text-align: right;
+  font-weight: 600;
+}
+
+.pnl--up {
+  color: var(--green);
+}
+
+.pnl--down {
+  color: var(--orange);
+}

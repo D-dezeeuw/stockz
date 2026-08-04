@@ -12,9 +12,11 @@ import {
   resetPositions,
 } from './store.js'
 import { appState, tick, resetState } from '../app/engine.js'
+import { ledger, resetLedger } from './ledger.js'
 
 beforeEach(() => {
   resetPositions()
+  resetLedger()
   resetState()
 })
 
@@ -75,6 +77,11 @@ describe('ingestFill', () => {
     const sold = ingestFill({ venue: 'okx', instrument: 'BTC-USDT', side: 'sell', qty: 1, px: 110 })
     expect(sold.position.qty).toBe(1)
     expect(sold.realized).toBe(10)
+
+    // The close is booked to the day's ledger the moment it happens: reconstructing the
+    // scoreboard later from order history is a different, worse job.
+    expect(ledger()).toHaveLength(1)
+    expect(ledger()[0]).toMatchObject({ instrument: 'okx:BTC-USDT', amount: 10 })
 
     // A qualified symbol works without a venue field.
     ingestFill({ symbol: 'etoro:AAPL', side: 'buy', qty: 3, px: 190 })
