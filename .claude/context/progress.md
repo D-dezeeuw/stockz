@@ -5,7 +5,21 @@ in `masterplan.md`, and knows where the project stands. Rewritten at every phase
 
 ---
 
-## Status: Phase 25 closed (v0.25.0) · Phase 26 next
+## Status: PAUSED by the owner after phase 25 · do not auto-resume
+
+**The owner gave an explicit instruction on 2026-08-04: "Pause after Phase 25, that's a
+direct order."** CLAUDE.md's never-stop rule carves out exactly this case — *"Only an
+explicit instruction from the owner stops the work."* Delivery does **not** resume until
+the owner says so, whatever any watchdog or trigger asks for. The hourly masterplan
+watchdog (`trig_014GA2EKv5ub8HCd7vrqgyA5`) has been **disabled**, not deleted, so it can
+be switched back on the moment work restarts.
+
+Phase 26 was already eight features deep when the order arrived; F26.1–F26.8 are merged
+to `main` and green, still under `[Unreleased]` with no version cut. `feature/f26-9-period-filter`
+is parked with `src/analytics/period.js` written but nothing wired to it — no computed
+rebasing, no segmented control, no hotkey, no tests. Resume there.
+
+## Status: Phase 25 closed (v0.25.0)
 
 **Live:** https://d-dezeeuw.github.io/stockz/ (Pages serves `main` root — pushing is deploying)
 **Tests:** 1120, one per function, all passing individually. Every gated file >80% branches.
