@@ -10,6 +10,14 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ## [Unreleased]
 
+## [0.20.0] — 2026-08-04 — Phase 20: Strategy Engine Core
+
+The desk can now hold an opinion. A plug-in contract with a context that reaches nothing
+dangerous, a registry that starts and stops runs per instrument, auto-built tuning, an
+expiring signal dialect, incremental EMA/RSI/VWAP/ATR/stddev, a per-strategy tick budget,
+an error sandbox that benches repeat offenders, bounded signal history and a weighted
+vote that blends several strategies into one decision.
+
 ### Added
 
 - **Weighted vote composition** — running four strategies on one instrument does not give a
@@ -973,7 +981,8 @@ with a test policy and a live URL.
   literal `APP_VERSION` (a JSON import is bundler-only), guarded by a test that fails if
   it drifts from `package.json`; static assets moved from `public/` to the repo root.
 
-[Unreleased]: https://github.com/D-dezeeuw/stockz/compare/v0.19.0...HEAD
+[Unreleased]: https://github.com/D-dezeeuw/stockz/compare/v0.20.0...HEAD
+[0.20.0]: https://github.com/D-dezeeuw/stockz/compare/v0.19.0...v0.20.0
 [0.19.0]: https://github.com/D-dezeeuw/stockz/compare/v0.18.0...v0.19.0
 [0.18.0]: https://github.com/D-dezeeuw/stockz/compare/v0.17.0...v0.18.0
 [0.17.0]: https://github.com/D-dezeeuw/stockz/compare/v0.16.0...v0.17.0

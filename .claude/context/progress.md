@@ -5,11 +5,66 @@ in `masterplan.md`, and knows where the project stands. Rewritten at every phase
 
 ---
 
-## Status: Phase 19 closed (v0.19.0) · Phase 20 next
+## Status: Phase 20 closed (v0.20.0) · Phase 21 next
 
 **Live:** https://d-dezeeuw.github.io/stockz/ (Pages serves `main` root — pushing is deploying)
-**Tests:** 658, one per function, all passing individually. Every gated file >80% branches.
+**Tests:** 741, one per function, all passing individually. Every gated file >80% branches.
 **Branch model:** everything merges to `main`; no feature branches outstanding.
+
+## Phase 20 — Strategy Engine Core (closed)
+
+| Feature | What now exists | Where |
+| --- | --- | --- |
+| F20.1 | `validateStrategyShape`, `defineStrategy`, `resolveParams`, `createStrategyContext`, `toSignal`, `HOOKS`, `BUDGET_PARAM` | `src/strategy/contract.js` |
+| F20.1 | `describeStrategies`, `runHook`, `BUILTIN_STRATEGIES` | `src/strategy/engine.js` |
+| F20.2 | `makeRunKey`, `registerStrategy`, `strategyFor`, `knownStrategies`, `startStrategy`, `stopStrategy`, `liveRuns`, `publishRunning`, `resetStrategies`, `registerStrategyActions`, `tuneStrategy`, `showParamForm`, `rollStrategySessions`, `tickStrategies`, `resumeStrategy`, `tuneWeight` | `src/strategy/registry.js` |
+| F20.3 | `validateParamSchema`, `defaultsFromSchema`, `coerceParam`, `coerceParams`, `fieldDescriptor`, `fieldDescriptors`, `paramsFor`, `publishParamForm`, `applyParams`, `setStrategyParam` | `src/strategy/params.js` |
+| F20.4 | `clampStrength`, `normalizeSignal`, `isExpired`, `flatten`, `publishSignal`, `sweepSignals`, `signalChip`, `DIR` | `src/strategy/signal.js` |
+| F20.5 | `createEma`, `createRsi`, `isWarm`, `crossed` | `src/strategy/indicators/trend.js` |
+| F20.6 | `createVwap`, `trueRange`, `createAtr`, `createStddev`, `zscore` | `src/strategy/indicators/volatility.js` |
+| F20.5, F20.6 | `indicatorKit` — injected as `ctx.ind` | `src/strategy/indicators/index.js` |
+| F20.7 | `measureTick`, `costEwma`, `overBudget`, `throttleStride`, `shouldRunTick`, `recordCost` | `src/strategy/budget.js` |
+| F20.8 | `safeInvoke`, `errorTally`, `logStrategyError`, `strategyErrors`, `quarantine`, `isQuarantined`, `release`, `publishQuarantined`, `resetSandbox`, `recordResult` | `src/strategy/sandbox.js` |
+| F20.9 | `createSignalRing`, `appendSignal`, `snapshotRing`, `ringStats`, `exportSignals`, `resetHistory` | `src/strategy/history.js` |
+| F20.10 | `normalizeWeights`, `composeSignals`, `voteThreshold`, `compositeTtl`, `compositeWeights`, `setWeight`, `publishWeights`, `refreshComposite`, `compositeStrategy` | `src/strategy/composite.js` |
+| F20.1, F20.8, F20.10 | `noopStrategy`, `crashyStrategy` (diagnostic), composite | `src/strategy/builtin/` |
+
+**The context is the only surface a strategy gets** — instrument, resolved params, an
+indicator snapshot, a logger and an **injected clock**. No `setValue`, no order function,
+no live store. A bug in somebody's idea should be a wrong signal, not a wrong position, and
+the way to guarantee that is to make the unsafe thing unreachable rather than discouraged.
+
+**Registered once, run many times.** A run is strategy × instrument, with its own params,
+init state and subscription. Stopping tears down the subscription *before* forgetting the
+run — a run removed from the map while still subscribed is a strategy emitting behind a UI
+that says it is off.
+
+**Exactly one place catches a strategy exception**: `runHook` → `safeInvoke`. A second
+try/catch would mean two definitions of "it failed" and a quarantine tally counting
+whichever fired. Three consecutive failures bench the run; any success clears the tally.
+
+**Slow means throttled, never dropped** (every 2nd/4th/8th tick, 20% hysteresis). A
+degraded signal is still a signal; silently disabling one leaves the trader watching a
+strategy they believe is running.
+
+**Signals expire.** A strategy that said "long" once and went quiet has said nothing since.
+The sweep runs on the frame pump, not on the instrument's own next tick — the instrument
+that went quiet is exactly the one whose signal is stale and will never produce that tick.
+
+The pump order in `flushFeed` (`src/venues/okx/live.js`) is now: book/tape → positions →
+HUD → session → fees → compact strip → `tickStrategies` (session roll + signal sweep).
+
+New state: `strategy.running`, `strategy.quarantined`, `strategy.signals` (a **map** keyed
+by run key), `ui.strategyForm`, `ui.compositeWeights`. New settings: `settings.strategyParams`
+(per-strategy tuning; `composite.weights` stored **raw**, normalised on read). New actions:
+`strategy.stop`, `strategy.setParam`, `strategy.resume`, `strategy.setWeight`. New block:
+`strategies`.
+
+**Deviations in phase 20:** params persist under `settings.strategyParams` rather than a
+`strategy.params.*` slice — `settings.*` is the only persisted namespace by design. The
+tuning form routes through the `strategy.setParam` action rather than a dynamic
+`:data-model`, so every write is coerced against the schema. `budgetMs` is merged into every
+strategy's schema by `defineStrategy` rather than declared by authors.
 
 ## Phase 19 — Latency & Metrics HUD (closed)
 
@@ -412,14 +467,15 @@ go stale, and faults that reach the trader instead of the console.
 | F2.9 | `pushToast`, `dismissToast`, `expireToasts`, `describeEngineError`, `wireEngineErrors` | `src/ui/toast.js` |
 | F2.10 | `collectExpressions`, `renderPrecompileModule`, `cspMeta`, `npm run build:csp` | `src/app/csp.js`, `docs/csp.md` |
 
-## Next up: Phase 20
+## Next up: Phase 21 — Built-in Scalping Strategies
 
 Read the phase's own section in `masterplan.md` — the plan is authoritative, and the
 "next up" guesses written at earlier closes have been wrong twice.
 
-- The desk trades and now measures itself: `exec/engine.js` is the one door orders pass,
-  `positions/` knows exposure and P&L, `hud/` knows what it costs and how fast it is,
-  `keys/` reaches every action, and the feed is live.
+- Everything a strategy needs exists: `defineStrategy` for the shape, `ctx.ind` for the
+  maths, the registry for lifecycle, the sandbox for its mistakes and the composite for
+  blending several. Phase 21's strategies should be *descriptions* — `defineStrategy({...})`
+  in `src/strategy/builtin/`, added to `BUILTIN_STRATEGIES`, nothing else.
 - The recurring trap remains **`setValue` lands next tick** (fold locally, write once)
   and **object writes merge** (`clearedMap` is the pattern for clearing one).
 
