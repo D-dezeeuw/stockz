@@ -381,7 +381,37 @@
                  nobody anything. Hold, slippage, fees and MAE/MFE sit on the row because
                  the net alone says a trade worked without saying why, and the why is the
                  part that compounds. -->
-            <div class="journal" data-if="block.id === 'journal'" data-each="t in journal.rows">
+            <!-- A day's journal is a list nobody reads end to end. The value is in slices —
+                 every fomo tag, every loser on this instrument — so the block is a filter
+                 first and a list second. Every chip is its own off switch. -->
+            <div class="journal__filters" data-if="block.id === 'journal'">
+              <select data-action="change" data-fn="journal.filter" data-key="instrument">
+                <option value="">all instruments</option>
+                <option data-each="inst in journal.instruments" :value="inst">{{inst}}</option>
+              </select>
+              <button type="button" class="chip" data-action="click" data-fn="journal.filter"
+                      data-key="outcome" data-value="wins"
+                      :class="journal.filters.outcome === 'wins' ? 'chip chip--on' : 'chip'">wins</button>
+              <button type="button" class="chip" data-action="click" data-fn="journal.filter"
+                      data-key="outcome" data-value="losses"
+                      :class="journal.filters.outcome === 'losses' ? 'chip chip--on' : 'chip'">losses</button>
+              <button type="button" class="chip" data-action="click" data-fn="journal.sort"
+                      data-key="net">net {{journal.filters.sort === 'net' ? (journal.filters.dir === 'asc' ? '↑' : '↓') : ''}}</button>
+              <button type="button" class="chip" data-action="click" data-fn="journal.sort"
+                      data-key="hold">hold {{journal.filters.sort === 'hold' ? (journal.filters.dir === 'asc' ? '↑' : '↓') : ''}}</button>
+              <button type="button" class="chip" data-action="click"
+                      data-fn="journal.clearFilters">clear</button>
+              <!-- What the slice is hiding: a filter that matched nothing looks exactly like
+                   a day with no trades. -->
+              <span class="label" data-if="journal.hidden > 0">{{journal.hidden}} hidden</span>
+            </div>
+            <div class="journal__tagbar" data-if="block.id === 'journal'"
+                 data-each="tag in journal.tagCatalog">
+              <button type="button" class="chip journal__tagfilter" data-action="click"
+                      data-fn="journal.filter" data-key="tag" :data-value="tag"
+                      :class="journal.filters.tag === tag ? 'chip chip--on' : 'chip'">{{tag}}</button>
+            </div>
+            <div class="journal" data-if="block.id === 'journal'" data-each="t in journal.filtered">
               <div class="journal__row" :class="t.net >= 0 ? 'journal__row journal__row--up' : 'journal__row journal__row--down'">
                 <span class="journal__inst">{{t.instrument}}</span>
                 <span class="journal__side">{{t.side}}</span>

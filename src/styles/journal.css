@@ -108,6 +108,28 @@
   font-size: var(--fs-0);
 }
 
+.journal__filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-1);
+  align-items: center;
+  padding-block-end: var(--sp-1);
+}
+
+/* The tag vocabulary as a filter bar. Scrollable rather than wrapping past two lines: the
+   list of rows is what the block is for, and a tag bar that grows pushes it off screen. */
+.journal__tagbar {
+  display: flex;
+  gap: var(--sp-1);
+  overflow-x: auto;
+  padding-block-end: var(--sp-1);
+}
+
+.journal__tagfilter {
+  flex: none;
+  font-size: var(--fs-0);
+}
+
 .journal__export {
   justify-self: start;
   font-size: var(--fs-0);

@@ -4166,16 +4166,16 @@
 **What:** A dashboard journal block the user can slice by instrument, tag and win/loss to find exactly the trades worth studying.
 **How:** Uniform grid block rendering enriched trades with data-each, filtered through a computed pipeline driven by chip and select controls.
 
-- [ ] **T25.7.1 - Cut journal-block branch** - What: UI work stays off main. How: git checkout -b feature/f25.7-journal-block from main.
-- [ ] **T25.7.2 - Scaffold the journal grid block** - What: The journal occupies a standard dashboard tile. How: Create src/blocks/journal/ with block markup registered into the uniform dashboard grid between header and footer.
-- [ ] **T25.7.3 - Render trade rows** - What: Every enriched trade listed with its key numbers. How: data-each over the filtered trades computed, one row template showing instrument, side, PnL, hold time and tags.
-- [ ] **T25.7.4 - Build the filter state and computed** - What: One reactive source of truth for the active slice. How: state.journal.filters {instrument, tag, outcome} feeding a Spektrum computed('journal.filtered') applying filterTrades().
-- [ ] **T25.7.5 - Wire filter controls** - What: Instrument select, tag chips and a win/loss toggle change the list instantly. How: Selects and chip buttons bound with data-action to setValue on journal.filters, with a clear-all reset action.
-- [ ] **T25.7.6 - Add column sorting** - What: Trades orderable by time, PnL or hold with one click. How: sortTrades(trades, key, dir) pure fn applied in the computed, header cells cycling direction via data-action.
-- [ ] **T25.7.7 - Window long trade lists** - What: A thousand-trade day scrolls at 60fps. How: Render only rows inside the scroll viewport by slicing the filtered list against scrollTop in a rAF-driven window computed.
-- [ ] **T25.7.8 - Style wins and losses** - What: Green wins and orange losses readable in both themes. How: data-if classes mapping outcome to the money-hacker palette CSS custom properties for day and night themes.
-- [ ] **T25.7.9 - Write single unit tests for filter fns** - What: filterTrades and sortTrades each proven by one test. How: One Vitest test per function in journalBlock.test.js with mixed fixture trades, run via vitest run -t.
-- [ ] **T25.7.10 - Verify and merge journal block** - What: The block ships green and readable. How: Run targeted tests, exercise every filter combination against seeded trades in the browser, merge to main.
+- [x] **T25.7.1 - Cut journal-block branch** - What: UI work stays off main. How: git checkout -b feature/f25.7-journal-block from main.
+- [x] **T25.7.2 - Scaffold the journal grid block** - What: The journal occupies a standard dashboard tile. How: Create src/blocks/journal/ with block markup registered into the uniform dashboard grid between header and footer.
+- [x] **T25.7.3 - Render trade rows** - What: Every enriched trade listed with its key numbers. How: data-each over the filtered trades computed, one row template showing instrument, side, PnL, hold time and tags.
+- [x] **T25.7.4 - Build the filter state and computed** - What: One reactive source of truth for the active slice. How: state.journal.filters {instrument, tag, outcome} feeding a Spektrum computed('journal.filtered') applying filterTrades().
+- [x] **T25.7.5 - Wire filter controls** - What: Instrument select, tag chips and a win/loss toggle change the list instantly. How: Selects and chip buttons bound with data-action to setValue on journal.filters, with a clear-all reset action.
+- [x] **T25.7.6 - Add column sorting** - What: Trades orderable by time, PnL or hold with one click. How: sortTrades(trades, key, dir) pure fn applied in the computed, header cells cycling direction via data-action.
+- [x] **T25.7.7 - Window long trade lists** - What: A thousand-trade day scrolls at 60fps. How: Render only rows inside the scroll viewport by slicing the filtered list against scrollTop in a rAF-driven window computed.
+- [x] **T25.7.8 - Style wins and losses** - What: Green wins and orange losses readable in both themes. How: data-if classes mapping outcome to the money-hacker palette CSS custom properties for day and night themes.
+- [x] **T25.7.9 - Write single unit tests for filter fns** - What: filterTrades and sortTrades each proven by one test. How: One Vitest test per function in journalBlock.test.js with mixed fixture trades, run via vitest run -t.
+- [x] **T25.7.10 - Verify and merge journal block** - What: The block ships green and readable. How: Run targeted tests, exercise every filter combination against seeded trades in the browser, merge to main.
 
 ### F25.8 - CSV Export for Spreadsheets
 
