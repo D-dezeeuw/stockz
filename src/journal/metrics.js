@@ -2,6 +2,7 @@ import { setValue } from '../app/engine.js'
 import { PATHS } from '../state/paths.js'
 import { journalTrades } from './pairing.js'
 import { ticksBetween } from './ticks.js'
+import { annotationFor } from './tags.js'
 
 /**
  * Where each scalp actually made or lost its money.
@@ -154,9 +155,16 @@ export function rMultiple(trade, stopDist = Number(trade?.stopDist)) {
 export function enrichTrade(trade, ticks) {
   const held = holdTime(trade)
   const excursion = maeMfe(trade, ticks)
+  // The annotation rides on the row rather than being looked up in the template: a row
+  // that has to reach into a second map to render is a row that renders differently
+  // depending on which of the two landed first.
+  const annotation = annotationFor(trade?.id)
 
   return {
     ...trade,
+    note: annotation.note,
+    tags: annotation.tags,
+    annotated: Boolean(annotation.note || annotation.tags.length),
     hold: held,
     holdLabel: formatHold(held),
     slippage: slippage(trade),

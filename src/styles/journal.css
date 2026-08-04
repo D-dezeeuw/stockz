@@ -19,7 +19,7 @@
 
 .journal__row {
   display: grid;
-  grid-template-columns: minmax(4.5rem, 1fr) 2.5rem 3rem minmax(7rem, 1.4fr) 3.5rem minmax(5rem, 1fr) minmax(5rem, 1fr) 4.5rem;
+  grid-template-columns: minmax(4.5rem, 1fr) 2.5rem 3rem minmax(7rem, 1.4fr) 3.5rem minmax(5rem, 1fr) minmax(5rem, 1fr) 4.5rem 1.2rem;
   gap: var(--sp-1);
   align-items: baseline;
   padding: 2px var(--sp-1);
@@ -70,6 +70,44 @@
   color: var(--orange);
 }
 
+/* The annotation controls. The pencil is dim until there is something to read, so a
+   journal of unannotated rows does not look like a wall of unread messages. */
+.journal__annotate {
+  padding: 0 2px;
+  border: 0;
+  background: none;
+  color: var(--ink-faint);
+  cursor: pointer;
+}
+
+.journal__annotate.is-on {
+  color: var(--orange);
+}
+
+.journal__tags {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-1);
+}
+
+.journal__tag {
+  font-size: var(--fs-0);
+  letter-spacing: 0.04em;
+}
+
+.journal__editor {
+  display: grid;
+  gap: var(--sp-1);
+  padding: var(--sp-1);
+  border-block-start: 1px solid var(--line);
+}
+
+.journal__note {
+  resize: vertical;
+  font-size: var(--fs-0);
+}
+
 /* Narrow screens drop the columns a trader can reconstruct — the entry/exit prices and the
    excursion — before the ones they cannot: what it was, and what it paid. A media query
    rather than a container query, matching the breakpoint the grid already uses; nothing in
@@ -77,7 +115,7 @@
    never matches. */
 @media (max-width: 40rem) {
   .journal__row {
-    grid-template-columns: minmax(4rem, 1fr) 2.5rem 3.5rem 4.5rem;
+    grid-template-columns: minmax(4rem, 1fr) 2.5rem 3.5rem 4.5rem 1.2rem;
   }
 
   .journal__qty,

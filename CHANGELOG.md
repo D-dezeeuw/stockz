@@ -45,6 +45,18 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
   comparable across trades that never shared the assumption. Rows are enriched on publish, not
   frozen at close, because the excursion of a trade that closed a second ago is still filling
   in behind it.
+- **Notes and tags on every trade** — the metrics say what happened; only the trader knows why
+  they took it, and that is the half no arithmetic recovers. The vocabulary matters more than
+  the feature: free text alone produces "fomo", "FOMO", "fomo?" and "chased it" as four
+  categories, and a trader who cannot count how often they did the thing cannot tell whether
+  they are doing it less. So tags normalise hard — lowercased, spaces hyphenated, punctuation
+  dropped — and the catalogue is offered back while typing, seeded with a preset palette
+  because an empty vocabulary is one everybody invents differently on their first bad day. A
+  removed tag stays in the catalogue: a vocabulary that shrank on every removal would stop
+  suggesting the term a trader uses rarely and most needs to be consistent about. Notes save
+  on blur rather than on a button, because a save button in a journal is a note that does not
+  get written. An emptied annotation is dropped entirely so "annotated" keeps meaning
+  something, and a stored catalogue is merged with the presets rather than replacing them.
 
 ## [0.24.0] — 2026-08-04 — Phase 24: Circuit Breakers & Risk Kill Switch
 

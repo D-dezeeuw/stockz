@@ -54,6 +54,12 @@ export const ACTIONS = Object.freeze({
     release: 'breaker.release',
     copyLog: 'breaker.copyLog',
   }),
+  journal: Object.freeze({
+    addTag: 'journal.addTag',
+    removeTag: 'journal.removeTag',
+    setNote: 'journal.setNote',
+    editNote: 'journal.editNote',
+  }),
   bot: Object.freeze({
     toggleArm: 'bot.toggleArm',
     setAuto: 'bot.setAuto',
