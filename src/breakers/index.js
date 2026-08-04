@@ -38,10 +38,20 @@ export {
   pauseCheck,
   recordBlock,
   pauseState,
+  resumeDue,
   resetPause,
 } from './position.js'
 
 export { killSwitch, tripAction, killLatency, rearm, registerKillActions } from './kill.js'
+
+export {
+  BREAKER_LIMITS,
+  validateBreakerSettings,
+  breakerSettings,
+  breakerContext,
+  refreshBreakerCard,
+  watchBreakerSettings,
+} from './settings.js'
 
 export {
   LOG_SIZE,

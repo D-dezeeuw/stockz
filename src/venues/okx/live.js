@@ -24,7 +24,7 @@ import { flushDecisions, refreshBotStatus } from '../../bot/runner.js'
 import { refreshLimits } from '../../bot/throttle.js'
 import { refreshCaps } from '../../bot/caps.js'
 import { refreshSession as refreshBotSession } from '../../bot/session.js'
-import { refreshDaily, refreshLeds } from '../../breakers/index.js'
+import { refreshDaily, refreshLeds, resumeDue } from '../../breakers/index.js'
 import { evictStale } from '../../exec/latency.js'
 import { setValue, appState } from '../../app/engine.js'
 import { PATHS } from '../../state/paths.js'
@@ -188,6 +188,9 @@ export function flushFeed(focus, options = {}) {
   // On the same frame as the number they describe: lights derived on a different cadence
   // than the value would show green against a limit already consumed.
   refreshLeds()
+  // The breather expires on the frame pump rather than on a timer: a tab backgrounded
+  // through its own expiry must come back trading, not still counting down.
+  resumeDue(wall)
   flushQuality(spreadBps())
   // Swept on the same frame: an order whose ack never came would otherwise sit in the
   // latency map for the life of the session.

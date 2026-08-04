@@ -104,6 +104,7 @@ export const PATHS = Object.freeze({
     defaultMode: 'settings.defaultMode',
     maxDailyLoss: 'settings.maxDailyLoss',
     maxConsecLosses: 'settings.maxConsecLosses',
+    pauseMinutes: 'settings.pauseMinutes',
     maxPosition: 'settings.maxPosition',
     favourites: 'settings.favourites',
     debugCharts: 'settings.debugCharts',
@@ -231,6 +232,7 @@ export const PATHS = Object.freeze({
     holdPct: 'breaker.holdPct',
     lastRearm: 'breaker.lastRearm',
     log: 'breaker.log',
+    limits: 'breaker.limits',
   }),
   strategy: Object.freeze({
     registered: 'strategy.registered',

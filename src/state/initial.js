@@ -221,6 +221,7 @@ export function initialState(overrides = {}) {
     [PATHS.breaker.holdPct]: 0,
     [PATHS.breaker.lastRearm]: null,
     [PATHS.breaker.log]: [],
+    [PATHS.breaker.limits]: [],
 
     // alerts
     [PATHS.alerts.fired]: null,

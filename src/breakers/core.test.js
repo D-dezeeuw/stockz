@@ -23,7 +23,7 @@ beforeEach(() => {
 
 describe('refreshThresholds', () => {
   it('pre-negates the loss limit, so the hot path is one comparison', () => {
-    const cache = refreshThresholds({ maxDailyLoss: 100, maxPosition: 2, botCooldownAfter: 3 })
+    const cache = refreshThresholds({ maxDailyLoss: 100, maxPosition: 2, maxConsecLosses: 3 })
 
     // `dayPnl <= dayLossFloor` with no arithmetic in it.
     expect(cache).toEqual({ dayLossFloor: -100, maxPosition: 2, maxLossStreak: 3 })
@@ -41,7 +41,7 @@ describe('refreshThresholds', () => {
 
 describe('checkBreakers', () => {
   it('is primitive comparisons only, and short-circuits once tripped', () => {
-    refreshThresholds({ maxDailyLoss: 100, maxPosition: 2, botCooldownAfter: 3 })
+    refreshThresholds({ maxDailyLoss: 100, maxPosition: 2, maxConsecLosses: 3 })
 
     expect(checkBreakers({ dayPnl: -50, position: 1, lossStreak: 1 })).toBe(TRIP.NONE)
     expect(checkBreakers({ dayPnl: -100 })).toBe(TRIP.DAILY_LOSS)
@@ -121,7 +121,7 @@ describe('breakerRejection', () => {
 
 describe('breaker hot path', () => {
   it('stays far under the per-order budget, or it is a net people turn off', () => {
-    refreshThresholds({ maxDailyLoss: 100, maxPosition: 2, botCooldownAfter: 3 })
+    refreshThresholds({ maxDailyLoss: 100, maxPosition: 2, maxConsecLosses: 3 })
     const ctx = { dayPnl: -50, position: 1, lossStreak: 1 }
 
     const started = performance.now()

@@ -50,7 +50,10 @@ let tripped = TRIP.NONE
 export function refreshThresholds(state = appState?.settings) {
   const dailyLoss = Number(state?.maxDailyLoss)
   const maxPosition = Number(state?.maxPosition)
-  const streak = Number(state?.botCooldownAfter)
+  // `maxConsecLosses`, the same key the streak check reads. These used to disagree —
+  // `botCooldownAfter` here and `maxConsecLosses` there — so a trader setting one number
+  // was configuring half a breaker.
+  const streak = Number(state?.maxConsecLosses)
 
   thresholds = {
     // Pre-negated: `dayPnl <= dayLossFloor` is the whole check, with no arithmetic in it.
