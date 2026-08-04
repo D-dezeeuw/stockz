@@ -12,6 +12,16 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ### Added
 
+- **Sizing** — percentage chips off buying power, clip multiples, absolute steps and
+  typing all land on one clamp-and-round path, because a size the venue rejects costs a
+  full round trip and the fill that mattered is gone by the time the rejection returns.
+  Lot rounding goes *down*, never up: rounding up can exceed a risk limit that was just
+  checked. Below the venue minimum resolves to zero rather than silently trading more
+  than asked. (F15.3)
+- **Arm toggle** — `trade.armed` now gates `canSubmit`, and it is checked *last*, so a
+  ticket that is also missing a size says "no size" — the more useful of the two
+  messages. It lives in the `trade` namespace, which is not persisted, so every reload
+  starts cold without anyone having to remember to disarm. (F15.4)
 - **Order ticket** — oversized BUY/SELL, size presets as multiples of the desk clip, and
   a MKT/BID/ASK/LMT selector that resolves the exact price the order would go out at,
   shown before it is sent. A stale quote falls back to market rather than naming a bid

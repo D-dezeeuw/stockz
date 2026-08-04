@@ -29,6 +29,8 @@ export const ACTIONS = Object.freeze({
     nudge: 'ticket.nudge',
     reset: 'ticket.reset',
     arm: 'ticket.arm',
+    applyPreset: 'ticket.applyPreset',
+    stepQty: 'ticket.stepQty',
   }),
   app: Object.freeze({
     reset: 'app.reset',

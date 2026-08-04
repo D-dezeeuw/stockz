@@ -106,3 +106,33 @@
     transition: none;
   }
 }
+
+/*
+ * A cold desk must be unmistakable. Dimming the buttons is not decoration: the disabled
+ * attribute already blocks the click, and this is what stops the trader reaching for it
+ * in the first place.
+ */
+.ticket--safe .ticket__go {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.ticket--armed .ticket__arm {
+  animation: arm-pulse 1.6s ease-in-out infinite;
+}
+
+@keyframes arm-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 6px color-mix(in srgb, var(--orange) 30%, transparent);
+  }
+  50% {
+    box-shadow: 0 0 14px color-mix(in srgb, var(--orange) 60%, transparent);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ticket--armed .ticket__arm {
+    animation: none;
+  }
+}
