@@ -77,10 +77,19 @@ describe('sortTrades', () => {
 })
 
 describe('journalInstruments', () => {
-  it('lists what the filter can offer, with no blanks', () => {
-    expect(journalInstruments(ROWS)).toEqual(['BTC-USDT', 'ETH-USDT'])
-    expect(journalInstruments([{ instrument: '' }, {}])).toEqual([])
-    expect(journalInstruments(null)).toEqual([])
+  it('lists what the filter can offer, with the all-instruments row as data', () => {
+    // The "all" row is data rather than a literal option beside the bound ones: Spektrum's
+    // `data-each` binds the container and clones its first *element* child, so a select
+    // cannot hold both — and `data-each` on the option itself renders nothing at all.
+    expect(journalInstruments(ROWS)).toEqual([
+      { id: '', name: 'all instruments' },
+      { id: 'BTC-USDT', name: 'BTC-USDT' },
+      { id: 'ETH-USDT', name: 'ETH-USDT' },
+    ])
+
+    // No blanks: a nameless option is one nobody can pick deliberately.
+    expect(journalInstruments([{ instrument: '' }, {}])).toEqual([{ id: '', name: 'all instruments' }])
+    expect(journalInstruments(null)).toEqual([{ id: '', name: 'all instruments' }])
   })
 })
 
@@ -92,7 +101,11 @@ describe('refreshFiltered', () => {
     expect(visible.map((row) => row.id)).toEqual(['a'])
     // A filter that quietly matched nothing looks exactly like a day with no trades.
     expect(appState.journal.hidden).toBe(2)
-    expect(appState.journal.instruments).toEqual(['BTC-USDT', 'ETH-USDT'])
+    expect(appState.journal.instruments).toEqual([
+      { id: '', name: 'all instruments' },
+      { id: 'BTC-USDT', name: 'BTC-USDT' },
+      { id: 'ETH-USDT', name: 'ETH-USDT' },
+    ])
   })
 })
 

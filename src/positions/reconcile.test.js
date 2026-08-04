@@ -3,6 +3,7 @@ import {
   diffPositions,
   adoptVenueTruth,
   reconcile,
+  resetReconciler,
   startReconciler,
   DRIFT_EPSILON,
 } from './reconcile.js'
@@ -10,6 +11,7 @@ import { ingestFill, openPositions, resetPositions } from './store.js'
 import { appState, tick, resetState } from '../app/engine.js'
 
 beforeEach(() => {
+  resetReconciler()
   resetPositions()
   resetState()
 })
@@ -106,19 +108,35 @@ describe('reconcile', () => {
     expect(appState.ui.toasts.at(-1).message).toContain('position drift')
 
     // Treating "I could not ask" as "there is nothing there" would flatten the book on
-    // every network hiccup.
-    const failed = await reconcile({ fetch: async () => ({ ok: false }) })
-    expect(failed).toMatchObject({ ok: false, corrected: 0 })
+    // every network hiccup. The venue's own reason is carried out and said once — staying
+    // silent is how a valid key with a skewed clock produced nothing but raw 401s in the
+    // console and no explanation anywhere on screen.
+    const failed = await reconcile({
+      fetch: async () => ({ ok: false, error: 'OKX rejected the timestamp' }),
+      now: () => 2000,
+    })
+    tick()
+    expect(failed).toMatchObject({ ok: false, corrected: 0, reason: 'OKX rejected the timestamp' })
     expect(openPositions()[0].qty).toBe(5)
+    expect(appState.ui.toasts.some((t) => t.message.includes('OKX rejected the timestamp'))).toBe(true)
+
+    // And said *once*: this polls every thirty seconds, so a repeat would bury the desk.
+    const before = appState.ui.toasts.length
+    await reconcile({ fetch: async () => ({ ok: false, error: 'OKX rejected the timestamp' }), now: () => 2001 })
+    tick()
+    expect(appState.ui.toasts).toHaveLength(before)
 
     const threw = await reconcile({
       fetch: async () => {
         throw new Error('offline')
       },
+      now: () => 3000,
     })
-    expect(threw.reason).toBe('snapshot failed')
+    expect(threw.reason).toBe('Error: offline')
 
-    // Agreement is silent: no toast for a book that was already right.
+    // Agreement is silent: no toast for a book that was already right. Counted after a
+    // flush, because `setValue` lands next tick and the offline toast is still pending.
+    tick()
     const toasts = appState.ui.toasts.length
     await reconcile({
       fetch: async () => ({ ok: true, positions: [{ instrument: 'BTC-USDT', qty: 5, avgPx: 100 }] }),

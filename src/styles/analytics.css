@@ -275,6 +275,12 @@
   block-size: 2.25rem;
 }
 
+.fees__venues {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-1) var(--sp-2);
+}
+
 .fees__venue {
   grid-column: 1 / -1;
   color: var(--ink-muted);

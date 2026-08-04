@@ -180,6 +180,18 @@ export function mapError(raw) {
   const known = {
     '50011': 'Rate limited by OKX — slow down',
     '50013': 'OKX is busy, retrying',
+    // The 401 family. Every one of these arrives as the same bare HTTP 401, and without
+    // naming them the trader sees an unauthorised request and reasonably concludes the key
+    // is wrong — when four of the five are something else entirely.
+    '50102': 'OKX rejected the timestamp — this machine’s clock is off',
+    '50103': 'OKX request header OK-ACCESS-KEY is missing',
+    '50104': 'OKX request header OK-ACCESS-PASSPHRASE is missing',
+    '50105': 'OKX request header OK-ACCESS-TIMESTAMP is missing',
+    '50111': 'OKX rejected the API key — check it was copied whole',
+    '50112': 'OKX rejected the timestamp — this machine’s clock is off',
+    '50113': 'OKX rejected the signature — the secret key does not match the API key',
+    '50114': 'OKX rejected the request — the key may be IP-restricted, or a demo key used live',
+    '50115': 'OKX rejected the request method',
     '51008': 'Insufficient balance for this order',
     '51400': 'Order already cancelled',
     '60009': 'OKX login failed — check your keys',

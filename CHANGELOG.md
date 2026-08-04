@@ -21,7 +21,34 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
   graph may reach the bare specifier `spektrum` — a guard test enforces that, written
   against a control proving it can actually see one.
 
+- **F27.6 — sim fill model.** Backtest fills now behave like a venue: a market order pays
+  the opposing touch rather than the mid, a limit fills only when the tape actually traded
+  *through* it and only at the limit, orders arrive 40ms late and fill against whatever the
+  tape is doing then, size costs extra bps off a piecewise depth curve, and the venue's own
+  maker/taker card is charged. Every assumption is configurable, persisted, snapshotted at
+  launch, and shown on the same readout as the numbers it produced.
+
 ### Fixed
+
+- **Two `data-each` bindings rendered nothing and warned on every frame.** Spektrum binds
+  the *container* and clones its first **element** child, so `data-each` on an `<option>`
+  (the journal's instrument filter) and on a text-only `<span>` (the analytics venue-fee
+  strip) both no-opped with `needs an element child to clone`. Both now bind a container
+  with a real child; the filter's "all instruments" row moved into the data, since a select
+  cannot hold a literal option beside a bound list.
+- **OKX 401s that were not bad keys.** Requests were signed with the *browser's* clock, and
+  OKX refuses any timestamp more than 30 seconds off its own — as a flat 401 that reads
+  exactly like a rejected key. The desk now measures its drift against
+  `/api/v5/public/time` before the first signed call and signs against the venue's clock.
+  The whole 401 family (`50102`, `50111`, `50113`, `50114`, …) is named rather than
+  swallowed, and the reconciler surfaces the venue's own reason once instead of failing
+  silently every thirty seconds.
+
+### Added (this cycle)
+
+- **A build stamp in the footer.** The release number only moves when a phase closes, so
+  between closes it cannot answer "am I looking at the fix I just pushed". `npm run deploy`
+  now stamps the pushed commit and shows it beside the version.
 
 - **The live-trading checkbox did the opposite of what it says.** Ticking "trade live with
   real funds" grounded the entire autopilot — strategies stopped, the bot disarmed, dry run
