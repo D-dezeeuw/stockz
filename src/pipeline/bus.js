@@ -28,6 +28,20 @@ let flushes = 0
 let received = 0
 
 /**
+ * A stable identity for every print that enters the tape.
+ *
+ * The tape is the one list on the desk that grows at the **front**, and Spektrum's unkeyed
+ * reconciler matches on identity over the shared *prefix* — so a prepend fails at index 0
+ * and rebuilds the whole list. Every print, all hundred rows torn down and cloned again.
+ * A key turns that into one insertion, and the rows already on screen keep their DOM.
+ *
+ * A counter rather than the venue's `tradeId`: paper fills, the backtest harness and the
+ * replay recorder all produce prints too, and a key that is only unique for one of the four
+ * sources is a key that silently merges rows for the other three.
+ */
+let sequence = 0
+
+/**
  * Buffer capacity per symbol. 2048 prints is a few minutes of a hot instrument, which is
  * all a scalper's chart and tape ever look back over.
  */
@@ -51,6 +65,11 @@ export function publishTick(tick) {
 
   if (Number.isFinite(tick.px)) {
     if (!trades.has(symbol)) trades.set(symbol, createRing(TRADE_BUFFER))
+    // Stamped rather than wrapped: the tick was minted by the venue mapper a moment ago and
+    // is the pipeline's own from here on, so this costs one property write on a path that
+    // runs for every message from every feed.
+    sequence += 1
+    tick.seq = sequence
     trades.get(symbol).push(tick)
   }
 
@@ -150,4 +169,5 @@ export function resetBus() {
   pending = false
   flushes = 0
   received = 0
+  sequence = 0
 }

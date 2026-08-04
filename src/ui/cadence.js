@@ -24,6 +24,25 @@ import { setValue } from '../app/engine.js'
 /** Five frames a second. Fast enough to read, slow enough to cost nothing. */
 export const AMBIENT_MS = 200
 
+/**
+ * The tape's own clock — faster than ambient, slower than the frame.
+ *
+ * The tape sat on the frame clock because it is a decision surface, and that was the right
+ * instinct with the wrong conclusion. Profiling under a live-rate feed put **58% of the
+ * desk's CPU** in one binding: the tape is the only list that grows at the *front*, so every
+ * publish shifts every row's index by one, and Spektrum's keyed reconciler re-binds a row
+ * whose index moved — a hundred re-binds a frame, each one deep-copying the state tree.
+ *
+ * 80ms rather than the ambient 200ms because the tape *is* read: it stays inside the desk's
+ * <100ms latency budget, so a print is on screen within a frame or two of arriving. What it
+ * gives up is the fifty-ninth redraw of a list that is already a blur — and nobody has ever
+ * scalped off that.
+ *
+ * The ladder, the bid and the ask are untouched and stay on the frame clock. Those are read
+ * per-tick, and a slow clock on them would be the change that makes this desk feel wrong.
+ */
+export const TAPE_MS = 80
+
 /** path → { at, timer, value, pending } */
 const lanes = new Map()
 

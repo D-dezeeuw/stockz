@@ -16,10 +16,14 @@ import {
 import { publishTick, resetBus } from '../pipeline/bus.js'
 import { appState, setValue, tick, resetState } from '../app/engine.js'
 import { clearActions, dispatchAction } from '../actions/registry.js'
+import { flushAmbient, resetAmbient } from '../ui/cadence.js'
 
 beforeEach(() => {
   resetBus()
   resetState()
+  // The tape publishes on its own 80ms clock, so a lane left armed by one test would
+  // land its value in the middle of the next one.
+  resetAmbient()
 })
 
 describe('pushPrint', () => {
@@ -44,14 +48,17 @@ describe('pushPrint', () => {
 
 describe('toPrint', () => {
   it('normalises a trade and defaults to the buy side when nothing says otherwise', () => {
-    expect(toPrint({ px: '100.5', sz: '2', side: 'SELL', ts: 1000 })).toEqual({
+    expect(toPrint({ px: '100.5', sz: '2', side: 'SELL', ts: 1000, seq: 7 })).toEqual({
       px: 100.5,
       sz: 2,
       side: 'sell',
       ts: 1000,
+      seq: 7,
     })
 
-    expect(toPrint({ px: 1, side: 'buy' })).toEqual({ px: 1, sz: 0, side: 'buy', ts: 0 })
+    // The bus's sequence is carried through because it is the rendered row's identity. A
+    // print that never went through the bus still renders — it just cannot be keyed.
+    expect(toPrint({ px: 1, side: 'buy' })).toEqual({ px: 1, sz: 0, side: 'buy', ts: 0, seq: 0 })
     expect(toPrint({ px: 1 }).side).toBe('buy')
 
     expect(toPrint({ sz: 1 })).toBeNull()
@@ -119,13 +126,21 @@ describe('flushTape', () => {
     publishTick({ symbol: 'BTC-USDT', px: 100, sz: 1, side: 'buy', ts: 1000, venue: 'okx' })
     publishTick({ symbol: 'BTC-USDT', px: 101, sz: 1, side: 'sell', ts: 2000, venue: 'okx' })
 
+    // The first flush in a quiet period lands at once — the tape's clock is a throttle, not
+    // a delay, so a print is never held back when there was nothing to coalesce with.
     expect(flushTape('BTC-USDT', { tickSize: 0.1 })).toBe(2)
     tick()
     expect(appState.market.tape.map((r) => r.priceLabel)).toEqual(['101.0', '100.0'])
 
-    // A floor thins the tape and publishes what it is hiding.
+    // A floor thins the tape and publishes what it is hiding. This flush lands inside the
+    // 80ms window, so it coalesces — and `flushAmbient` is what a frame's trailing edge
+    // does, which is why a burst always ends on the truth rather than one publish short.
     publishTick({ symbol: 'BTC-USDT', px: 102, sz: 50, side: 'buy', ts: 3000, venue: 'okx' })
     expect(flushTape('BTC-USDT', { minSize: 10, multiplier: 4 })).toBe(1)
+    tick()
+    expect(appState.market.tape.map((r) => r.px)).toEqual([101, 100])
+
+    flushAmbient()
     tick()
     expect(appState.market.tape.map((r) => r.px)).toEqual([102])
     expect(appState.market.tapeHidden).toBe(2)

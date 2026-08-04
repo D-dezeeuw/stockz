@@ -278,7 +278,8 @@
                 <span class="gauge__seg gauge__seg--ask" :style="'width:' + market.imbalance.askPct + '%'"></span>
                 <span class="gauge__label">{{market.imbalance.label}}</span>
               </div>
-              <div class="ladder__side ladder__side--ask" data-each="market.ladder.asks" data-as="row">
+              <div class="ladder__side ladder__side--ask" data-each="market.ladder.asks" data-as="row"
+                   data-key="row.px">
                 <div class="ladder__row ladder__row--ask" :style="'--bar:' + row.pct + '%'"
                      data-action="click" data-fn="ticket.intent" data-column="ask"
                      :data-price="row.px">
@@ -294,7 +295,8 @@
                       data-side="bid" :data-price="market.ladder.spread ? market.ladder.spread.mid : 0">{{market.ladder.spread ? market.ladder.spread.midLabel : '—'}}</span>
                 <span class="ladder__ticks">{{market.ladder.spread ? market.ladder.spread.spreadLabel : '—'}}</span>
               </div>
-              <div class="ladder__side ladder__side--bid" data-each="market.ladder.bids" data-as="row">
+              <div class="ladder__side ladder__side--bid" data-each="market.ladder.bids" data-as="row"
+                   data-key="row.px">
                 <div class="ladder__row ladder__row--bid" :style="'--bar:' + row.pct + '%'"
                      data-action="click" data-fn="ticket.intent" data-column="bid"
                      :data-price="row.px">
@@ -318,7 +320,8 @@
             <div class="tape" data-if="block.id === 'tape'" data-ref="tapeScroller">
               <div class="tape__spacer" :style="'height:' + market.tapeWindow.topPad + 'px'"></div>
             </div>
-            <div class="tape__rows" data-if="block.id === 'tape'" data-each="market.tape" data-as="print">
+            <div class="tape__rows" data-if="block.id === 'tape'" data-each="market.tape" data-as="print"
+                 data-key="print.seq">
               <div class="tape__row" :class="print.whale ? print.cls + ' tape__row--whale' : print.cls">
                 <span class="tape__time">{{print.timeLabel}}</span>
                 <span class="tape__price">{{print.priceLabel}}</span>
@@ -419,7 +422,7 @@
                 <polyline class="equity__line" fill="none" data-action="cycle"
                           data-id="trade.equityPath" data-fn="ui.svgAttr" data-attr="points" />
               </svg>
-              <div class="positions__rows" data-each="trade.positions" data-as="p">
+              <div class="positions__rows" data-each="trade.positions" data-as="p" data-key="p.symbol">
                 <div class="positions__row" :class="'positions__row positions__row--' + p.side">
                   <!-- The badge is on the *position*, not on the desk's current mode: a
                        practice position left open across a switch to live must not start
@@ -962,7 +965,7 @@
                  I turn off" is the question this block exists to answer. -->
             <div class="score" data-if="block.id === 'scoreboard'">
               <p class="label" data-if="strategy.scoreboard.length === 0">no closes yet</p>
-              <div class="score__rows" data-each="strategy.scoreboard" data-as="s">
+              <div class="score__rows" data-each="strategy.scoreboard" data-as="s" data-key="s.strategyId">
                 <div class="score__row" :class="'score__row score__row--' + s.tone">
                   <span class="score__name truncate">{{s.strategyId}}</span>
                   <span class="score__net num">{{s.netLabel}}</span>
@@ -976,14 +979,16 @@
             <!-- The tail: newest first, filterable, read after the fact. A trader watching
                  the alert log instead of the tape is doing the wrong thing. -->
             <div class="alog" data-if="block.id === 'alerts'">
-              <div class="alog__chips" data-each="ui.alertPanel.chips" data-as="chip">
+              <div class="alog__chips" data-each="ui.alertPanel.chips" data-as="chip"
+                   data-key="chip.kind + ':' + chip.value">
                 <button type="button" class="chip"
                         :class="chip.active ? 'chip is-active' : 'chip'"
                         data-action="click" data-fn="alerts.filterLog"
                         :data-kind="chip.kind" :data-value="chip.value">{{chip.label}} {{chip.count}}</button>
               </div>
               <p class="label" data-if="ui.alertPanel.rows.length === 0">nothing yet</p>
-              <div class="alog__rows" data-each="ui.alertPanel.rows" data-as="row">
+              <div class="alog__rows" data-each="ui.alertPanel.rows" data-as="row"
+                   data-key="row.key + '@' + row.ts">
                 <div class="alog__row" :class="'alog__row alog__row--' + row.severity"
                      data-action="click" data-fn="alerts.jumpTo" :data-instrument="row.instrument">
                   <span class="alog__time num">{{row.time}}</span>
@@ -1028,7 +1033,8 @@
               </p>
               <!-- Every decision with its reason: "why did it not take that" must be
                    answerable without a debugger. -->
-              <div class="bot__rows" data-each="bot.decisions" data-as="d">
+              <div class="bot__rows" data-each="bot.decisions" data-as="d"
+                   data-key="d.ts + '|' + d.strategy + '|' + d.action">
                 <div class="bot__row" :class="d.taken ? 'bot__row is-taken' : 'bot__row'">
                   <span class="bot__strategy truncate">{{d.strategy}}</span>
                   <span class="bot__action">{{d.action}}</span>
@@ -1189,7 +1195,7 @@
               </div>
               <!-- Working paper orders, with the queue that explains why one at the touch
                    has not filled — otherwise the most confusing thing this block shows. -->
-              <div class="paper-rest" data-each="trade.paperResting" data-as="o">
+              <div class="paper-rest" data-each="trade.paperResting" data-as="o" data-key="o.id">
                 <div class="paper-rest__row">
                   <span class="paper-rest__side" :class="'paper-rest__side paper-rest__side--' + o.side">{{o.side}}</span>
                   <span class="num">{{o.price}}</span>

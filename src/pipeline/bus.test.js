@@ -30,6 +30,18 @@ describe('publishTick', () => {
     publishTick({ symbol: 'BTC-USDT', px: 100, sz: 1 })
     expect(recentTrades('BTC-USDT')).toHaveLength(1)
 
+    // Each buffered print is stamped with a unique, increasing sequence — the tape renders
+    // newest-first, so it grows at the front, and without a stable identity per row the
+    // reconciler rebuilds every row on every print.
+    publishTick({ symbol: 'ETH-USDT', px: 50, sz: 2 })
+    publishTick({ symbol: 'BTC-USDT', px: 101, sz: 1 })
+    const seqs = [...recentTrades('BTC-USDT'), ...recentTrades('ETH-USDT')].map((t) => t.seq)
+    expect(seqs).toEqual([1, 3, 2])
+    expect(new Set(seqs).size).toBe(seqs.length)
+
+    // Quotes are not prints and take no sequence — nothing renders them as a row.
+    expect(latestTick('BTC-USDT').seq).toBe(3)
+
     expect(publishTick({})).toBe(false)
     expect(publishTick(null)).toBe(false)
     expect(TRADE_BUFFER).toBeGreaterThan(1000)

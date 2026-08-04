@@ -6,6 +6,21 @@ import { registerAction } from '../actions/registry.js'
 import { ACTIONS } from '../actions/names.js'
 import { PATHS } from '../state/paths.js'
 import { isWhale, rollingMedian } from './whale.js'
+import { publishAmbient, TAPE_MS } from '../ui/cadence.js'
+
+/**
+ * How many prints the tape renders.
+ *
+ * Was 100, into a block 240px tall that fits about seventeen rows — so five rows in six
+ * existed only to be re-bound. That is not free: the tape grows at the front, so every
+ * publish shifts every row's index, and Spektrum re-binds a row whose index moved.
+ *
+ * 40 is the number `market.tapeWindow` has declared as its end since it was written, and it
+ * is still more than twice what fits, so scrollback is unchanged in practice. The ring
+ * behind it still holds 2048 — the depth a chart or a replay looks back over is untouched;
+ * this is only how much of it is turned into DOM.
+ */
+export const TAPE_ROWS = 40
 
 /**
  * Time & sales — the flow, coloured by who crossed the spread.
@@ -57,6 +72,10 @@ export function toPrint(trade) {
     // Aggressor side, not the maker's: the tape is a record of who crossed.
     side: String(trade?.side ?? '').toLowerCase() === 'sell' ? 'sell' : 'buy',
     ts: Number(trade?.ts) || 0,
+    // The bus's sequence, carried through so the rendered row has a stable identity. Not
+    // `ts`: two prints in the same millisecond are ordinary on a hot instrument, and two
+    // rows sharing a key silently merge into one.
+    seq: Number(trade?.seq) || 0,
   }
 }
 
@@ -108,7 +127,7 @@ export function formatSizeShort(size) {
  * @returns {Array<object>} rows, newest first.
  */
 export function tapeRows(symbol, options = {}) {
-  const { limit = 100, tickSize = 0.01 } = options
+  const { limit = TAPE_ROWS, tickSize = 0.01 } = options
 
   return recentTrades(symbol, limit)
     .map(toPrint)
@@ -135,10 +154,12 @@ export function flushTape(focus, options = {}) {
   if (!key) return 0
 
   const { rows, hidden } = filterTape(tapeRows(key, options), options)
-  setValue(PATHS.market.tape, rows)
+  // On the tape's own clock, not the frame's — see TAPE_MS. Both writes ride the same lane
+  // so the badge and the rows can never disagree about which publish they belong to.
+  publishAmbient(PATHS.market.tape, rows, { everyMs: TAPE_MS })
   // The badge is published, not derived in the template: "how much am I not seeing" is
   // the question a noise floor creates, and it must always have an answer on screen.
-  setValue(PATHS.market.tapeHidden, hidden)
+  publishAmbient(PATHS.market.tapeHidden, hidden, { everyMs: TAPE_MS })
 
   return rows.length
 }

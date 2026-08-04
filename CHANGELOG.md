@@ -10,6 +10,21 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ## [Unreleased]
 
+### Changed
+
+- **The desk gets 2× more market data through the same frame budget.** Profiled under a
+  live-rate feed rather than an idle desk, and the picture was completely different: 76% of
+  all CPU was Spektrum rebuilding `data-each` lists, because an unkeyed list matches on
+  identity over the shared *prefix* and every one of these lists changes at the front. The
+  tape, the ladder, the alert panel, the positions and the scoreboard now carry `data-key`,
+  so a row that already exists keeps its DOM instead of being torn down and cloned again.
+  The tape also moved onto an 80ms publish clock of its own and renders 40 rows instead of
+  100 — it is the one list that grows at the *front*, so every publish shifted every row's
+  index. Median frame time went from **44.3ms to 5.7ms**, p99 from 368ms to 197ms, and the
+  same 15-second harness now ingests 122 prints where it managed 67. The ladder, the bid
+  and the ask are untouched and stay on the frame clock: those are read per-tick, and
+  slowing them is the change that would make this desk feel wrong.
+
 ### Fixed
 
 - **The OKX `401` now names its own cause.** Every private OKX call authenticates by
