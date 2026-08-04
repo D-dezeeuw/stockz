@@ -100,7 +100,18 @@ export function readEnvelope(body) {
  * @returns {Promise<{ok: boolean, data?: unknown[], error?: string}>} the outcome.
  */
 export async function okxRequest(req) {
-  const { method = 'GET', path, body, ts = 0, fetch: fetchImpl = globalThis.fetch, subtle } = req
+  // `ts` defaults to *now*, not to zero. OKX rejects any request whose timestamp is more
+  // than 30 seconds from its own clock, so a default of 0 signs every unparameterised call
+  // as 1970 and gets a flat 401 that reads exactly like a bad API key. It also fed the rate
+  // limiter, which saw every call land at the same instant.
+  const {
+    method = 'GET',
+    path,
+    body,
+    ts = Date.now(),
+    fetch: fetchImpl = globalThis.fetch,
+    subtle,
+  } = req
 
   if (!withinRateLimit(path, ts)) {
     return { ok: false, error: 'Rate limit reached for this endpoint — slow down' }

@@ -1,5 +1,6 @@
 import { getKey } from '../vault.js'
 import { mapError, mapQuote, mapPosition, learnInstruments } from './map.js'
+import { reportRtt } from '../../hud/rtt.js'
 import { createLogger } from '../../utils/log.js'
 
 /**
@@ -67,12 +68,26 @@ export function pollIntervalFor(context, symbol) {
  * @returns {Promise<{ok: boolean, data?: unknown, error?: string}>} the outcome.
  */
 export async function etoroRequest(req) {
-  const { path, method = 'GET', body, fetch: fetchImpl = globalThis.fetch } = req
+  const {
+    path,
+    method = 'GET',
+    body,
+    fetch: fetchImpl = globalThis.fetch,
+    clock = () => globalThis.performance?.now?.() ?? 0,
+    report = reportRtt,
+  } = req
   const headers = etoroHeaders()
 
   if (Object.keys(headers).length === 0) {
     return { ok: false, error: 'No EToro credentials — add keys to trade' }
   }
+
+  // Latency is taken from the calls the desk already makes, rather than a synthetic health
+  // check on a timer. EToro publishes no health endpoint — the probe this replaces asked
+  // for `/status`, which does not exist, so it 404ed every few seconds forever and reported
+  // the venue as unreachable no matter how it was actually behaving. Timing the real
+  // requests costs nothing on the rate budget and measures the latency that matters.
+  const started = clock()
 
   try {
     const response = await fetchImpl(`${ETORO_BASE}${path}`, {
@@ -83,10 +98,16 @@ export async function etoroRequest(req) {
 
     const parsed = await response.json()
     if (response.ok === false) {
+      // A failed call reports -1, never a large number: recording a timeout as "3000ms"
+      // would drag the smoothed average around long after the venue came back.
+      report?.('etoro', -1)
       return { ok: false, error: mapError({ status: response.status, ...parsed }) }
     }
+
+    report?.('etoro', Number((clock() - started).toFixed(3)))
     return { ok: true, data: parsed }
   } catch (err) {
+    report?.('etoro', -1)
     const message = err?.message ?? String(err)
     log.warn(`request failed: ${message}`)
     return { ok: false, error: `EToro unreachable: ${message}` }

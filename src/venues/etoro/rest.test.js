@@ -105,6 +105,38 @@ describe('etoroRequest', () => {
     const got = []
     await etoroRequest({ path: '/x', fetch: fakeFetch({}, got) })
     expect(got[0].init.body).toBeUndefined()
+
+    // Latency comes from the calls the desk already makes. The synthetic probe this
+    // replaces asked EToro for `/status`, an endpoint it does not publish, so it 404ed
+    // every few seconds forever and reported the venue dead however it was behaving.
+    const reported = []
+    let clock = 0
+    await etoroRequest({
+      path: '/x',
+      fetch: fakeFetch({ a: 1 }),
+      clock: () => (clock += 120),
+      report: (venue, ms) => reported.push([venue, ms]),
+    })
+    expect(reported).toEqual([['etoro', 120]])
+
+    // A failure reports -1, never a large number: recording a timeout as "3000ms" would
+    // drag the smoothed average around long after the venue came back.
+    await etoroRequest({
+      path: '/x',
+      fetch: fakeFetch({ message: 'nope' }, [], false, 401),
+      report: (venue, ms) => reported.push([venue, ms]),
+    })
+    await etoroRequest({
+      path: '/x',
+      fetch: async () => {
+        throw new Error('offline')
+      },
+      report: (venue, ms) => reported.push([venue, ms]),
+    })
+    expect(reported.slice(1)).toEqual([
+      ['etoro', -1],
+      ['etoro', -1],
+    ])
   })
 })
 
