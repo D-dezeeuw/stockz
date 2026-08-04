@@ -2400,32 +2400,32 @@
 **What:** A permanent ticket block in the dashboard grid with oversized BUY and SELL buttons always one glance away.
 **How:** New src/blocks/ticket ES module with an HTML template registered in the grid shell and wired via Spektrum bindDOM and data-action.
 
-- [ ] **T15.1.1 - Ticket feature branch** - What: Isolated workspace for the ticket block. How: git checkout -b feature/f15-01-ticket-scaffold from a fresh pull of main.
-- [ ] **T15.1.2 - Scaffold ticket module** - What: A dedicated home for all ticket code. How: Create src/blocks/ticket/ticket.js plus ticket.html as vanilla ES modules served by Vite.
-- [ ] **T15.1.3 - buildTicketState() factory** - What: One predictable ticket state shape. How: Export buildTicketState() seeding Spektrum setValue keys ticket.side, ticket.qty, ticket.mode.
-- [ ] **T15.1.4 - BUY/SELL button markup** - What: Huge unmissable trade buttons. How: Add data-action="ticket.buy" and data-action="ticket.sell" buttons showing {{ticket.qty}} labels.
-- [ ] **T15.1.5 - Bind ticket DOM** - What: UI that mirrors ticket state instantly. How: Call bindDOM on the ticket root exposing ticket.* through {{expr}} and :attr bindings.
-- [ ] **T15.1.6 - Register in grid shell** - What: Ticket appears as a uniform dashboard block. How: Add the ticket to the phase-4 grid registry inside the standard block frame.
-- [ ] **T15.1.7 - Instrument context wiring** - What: Ticket always trades the focused instrument. How: watch() the phase-12 active-instrument key and setValue ticket.symbol on change.
-- [ ] **T15.1.8 - Money-hacker styling** - What: Green BUY and orange SELL in both themes. How: Style the buttons with phase-3 design tokens and day/night CSS variables.
-- [ ] **T15.1.9 - Single test buildTicketState** - What: Locked-in default ticket shape. How: Write the one Vitest test and run only it with vitest -t buildTicketState.
-- [ ] **T15.1.10 - Merge scaffold to main** - What: Ticket block available to all later features. How: Pass ESLint plus the targeted test, then merge feature/f15-01-ticket-scaffold to main.
+- [x] **T15.1.1 - Ticket feature branch** - What: Isolated workspace for the ticket block. How: git checkout -b feature/f15-01-ticket-scaffold from a fresh pull of main.
+- [x] **T15.1.2 - Scaffold ticket module** - What: A dedicated home for all ticket code. How: Create src/blocks/ticket/ticket.js plus ticket.html as vanilla ES modules served by Vite.
+- [x] **T15.1.3 - buildTicketState() factory** - What: One predictable ticket state shape. How: Export buildTicketState() seeding Spektrum setValue keys ticket.side, ticket.qty, ticket.mode.
+- [x] **T15.1.4 - BUY/SELL button markup** - What: Huge unmissable trade buttons. How: Add data-action="ticket.buy" and data-action="ticket.sell" buttons showing {{ticket.qty}} labels.
+- [x] **T15.1.5 - Bind ticket DOM** - What: UI that mirrors ticket state instantly. How: Call bindDOM on the ticket root exposing ticket.* through {{expr}} and :attr bindings.
+- [x] **T15.1.6 - Register in grid shell** - What: Ticket appears as a uniform dashboard block. How: Add the ticket to the phase-4 grid registry inside the standard block frame.
+- [x] **T15.1.7 - Instrument context wiring** - What: Ticket always trades the focused instrument. How: watch() the phase-12 active-instrument key and setValue ticket.symbol on change.
+- [x] **T15.1.8 - Money-hacker styling** - What: Green BUY and orange SELL in both themes. How: Style the buttons with phase-3 design tokens and day/night CSS variables.
+- [x] **T15.1.9 - Single test buildTicketState** - What: Locked-in default ticket shape. How: Write the one Vitest test and run only it with vitest -t buildTicketState.
+- [x] **T15.1.10 - Merge scaffold to main** - What: Ticket block available to all later features. How: Pass ESLint plus the targeted test, then merge feature/f15-01-ticket-scaffold to main.
 
 ### F15.2 - Price Mode Selector
 
 **What:** Switch between market, bid, ask and limit pricing in one tap so every entry matches the tape.
 **How:** Segmented mode control bound with data-model plus a resolvePrice() function reading phase-11 top-of-book state via Spektrum computed.
 
-- [ ] **T15.2.1 - Price mode branch** - What: Safe sandbox for pricing logic. How: Branch feature/f15-02-price-modes off main after the F15.1 merge lands.
-- [ ] **T15.2.2 - Segmented mode control** - What: MKT/BID/ASK/LMT switch in one tap. How: Four-segment control in ticket.html bound with data-model="ticket.mode".
-- [ ] **T15.2.3 - resolvePrice() function** - What: The right price for the chosen mode. How: Pure fn mapping mode plus live book.bid/book.ask keys to an order price, wrapped in a Spektrum computed.
-- [ ] **T15.2.4 - Limit price input** - What: Manual price entry when precision matters. How: Numeric input with data-model="ticket.limitPrice" revealed by data-if ticket.mode==='limit'.
-- [ ] **T15.2.5 - Stale-quote fallback** - What: Never price off a dead quote. How: computed staleness flag when bid/ask ticks age past 1500ms so resolvePrice falls back to market.
-- [ ] **T15.2.6 - Mode persistence** - What: Desk reopens in the last used mode. How: Sync ticket.mode to localStorage through the spektrum/persist companion.
-- [ ] **T15.2.7 - Live price preview** - What: See the exact submit price before clicking. How: Render {{ticket.previewPrice}} under the buttons, refreshed by watch() on book ticks.
-- [ ] **T15.2.8 - Segment styling** - What: Obvious active mode at a glance. How: Green glow on the active segment using :attr class bindings and design-system tokens.
-- [ ] **T15.2.9 - Single test resolvePrice** - What: Guaranteed correct mode-to-price mapping. How: One Vitest test covering all four modes, run solely via vitest -t resolvePrice.
-- [ ] **T15.2.10 - Merge price modes** - What: Pricing control live on main. How: Green ESLint and targeted test, then merge feature/f15-02-price-modes into main.
+- [x] **T15.2.1 - Price mode branch** - What: Safe sandbox for pricing logic. How: Branch feature/f15-02-price-modes off main after the F15.1 merge lands.
+- [x] **T15.2.2 - Segmented mode control** - What: MKT/BID/ASK/LMT switch in one tap. How: Four-segment control in ticket.html bound with data-model="ticket.mode".
+- [x] **T15.2.3 - resolvePrice() function** - What: The right price for the chosen mode. How: Pure fn mapping mode plus live book.bid/book.ask keys to an order price, wrapped in a Spektrum computed.
+- [x] **T15.2.4 - Limit price input** - What: Manual price entry when precision matters. How: Numeric input with data-model="ticket.limitPrice" revealed by data-if ticket.mode==='limit'.
+- [x] **T15.2.5 - Stale-quote fallback** - What: Never price off a dead quote. How: computed staleness flag when bid/ask ticks age past 1500ms so resolvePrice falls back to market.
+- [x] **T15.2.6 - Mode persistence** - What: Desk reopens in the last used mode. How: Sync ticket.mode to localStorage through the spektrum/persist companion.
+- [x] **T15.2.7 - Live price preview** - What: See the exact submit price before clicking. How: Render {{ticket.previewPrice}} under the buttons, refreshed by watch() on book ticks.
+- [x] **T15.2.8 - Segment styling** - What: Obvious active mode at a glance. How: Green glow on the active segment using :attr class bindings and design-system tokens.
+- [x] **T15.2.9 - Single test resolvePrice** - What: Guaranteed correct mode-to-price mapping. How: One Vitest test covering all four modes, run solely via vitest -t resolvePrice.
+- [x] **T15.2.10 - Merge price modes** - What: Pricing control live on main. How: Green ESLint and targeted test, then merge feature/f15-02-price-modes into main.
 
 ### F15.3 - Quantity Presets and Sizing
 

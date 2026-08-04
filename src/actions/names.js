@@ -22,6 +22,14 @@ export const ACTIONS = Object.freeze({
     setGroup: 'book.setGroup',
     setFloor: 'book.setFloor',
   }),
+  ticket: Object.freeze({
+    setSide: 'ticket.setSide',
+    setMode: 'ticket.setMode',
+    setSize: 'ticket.setSize',
+    nudge: 'ticket.nudge',
+    reset: 'ticket.reset',
+    arm: 'ticket.arm',
+  }),
   app: Object.freeze({
     reset: 'app.reset',
   }),

@@ -10,6 +10,16 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ## [Unreleased]
 
+### Added
+
+- **Order ticket** — oversized BUY/SELL, size presets as multiples of the desk clip, and
+  a MKT/BID/ASK/LMT selector that resolves the exact price the order would go out at,
+  shown before it is sent. A stale quote falls back to market rather than naming a bid
+  that may be long gone, and nudging a price switches the mode to limit, because
+  otherwise the number on screen is not the number the order would use. Arming is one
+  session toggle, not a dialog per order — on a desk measured in trades per hour, a
+  confirmation step is the bug. (F15.1, F15.2)
+
 ## [0.14.0] — 2026-08-04 — Phase 14: Order Book & Tape
 
 Depth and flow read like a pro desk — a checksum-validated ladder that is a click target,

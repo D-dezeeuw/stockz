@@ -80,6 +80,8 @@ export function routeFrame(frame, context = {}) {
       if (!ticker) continue
       setValue(PATHS.market.bid, ticker.bid)
       setValue(PATHS.market.ask, ticker.ask)
+      // Stamped so the ticket can refuse to price off a quote that stopped moving.
+      setValue(PATHS.market.quoteTs, ticker.ts)
     }
     return 'ticker'
   }

@@ -85,6 +85,7 @@ export const PATHS = Object.freeze({
     ticks: 'market.ticks',
     bid: 'market.bid',
     ask: 'market.ask',
+    quoteTs: 'market.quoteTs',
     book: 'market.book',
     ladder: 'market.ladder',
     tape: 'market.tape',
@@ -109,6 +110,10 @@ export const PATHS = Object.freeze({
     ticketSide: 'trade.ticketSide',
     ticketSize: 'trade.ticketSize',
     ticketFlash: 'trade.ticketFlash',
+    ticketSymbol: 'trade.ticketSymbol',
+    ticketMode: 'trade.ticketMode',
+    ticketLimit: 'trade.ticketLimit',
+    ticketSource: 'trade.ticketSource',
     // derived
     exposure: 'trade.exposure',
     openOrders: 'trade.openOrders',

@@ -11,6 +11,7 @@ import { registerCandleActions } from '../charts/candlestick.js'
 import { registerPrefillActions } from '../book/prefill.js'
 import { registerGroupingActions } from '../book/grouping.js'
 import { registerTapeActions } from '../book/tape.js'
+import { registerTicketActions } from '../ticket/actions.js'
 
 beforeEach(() => {
   clearActions()
@@ -28,6 +29,12 @@ describe('allActionNames', () => {
       'book.prefill',
       'book.setGroup',
       'book.setFloor',
+      'ticket.setSide',
+      'ticket.setMode',
+      'ticket.setSize',
+      'ticket.nudge',
+      'ticket.reset',
+      'ticket.arm',
       'app.reset',
       'lists.focus',
       'lists.add',
@@ -54,6 +61,7 @@ describe('allActionNames', () => {
     registerPrefillActions()
     registerGroupingActions()
     registerTapeActions()
+    registerTicketActions()
     expect(actionNames().sort()).toEqual(allActionNames().sort())
 
     // Every name follows <namespace>.<verb>, which is what registerAction enforces.
