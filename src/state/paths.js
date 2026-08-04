@@ -108,6 +108,7 @@ export const PATHS = Object.freeze({
     maxDailyLoss: 'settings.maxDailyLoss',
     maxConsecLosses: 'settings.maxConsecLosses',
     pauseMinutes: 'settings.pauseMinutes',
+    rememberCredentials: 'settings.rememberCredentials',
     maxDays: 'settings.maxDays',
     maxTrades: 'settings.maxTrades',
     maxCheckpoints: 'settings.maxCheckpoints',

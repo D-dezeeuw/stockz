@@ -140,6 +140,7 @@ describe('allActionNames', () => {
       'lists.manage',
       'keys.submit',
       'keys.lock',
+      'keys.remember',
       'keys.rebind',
       'keys.resetBindings',
       'keys.panic',

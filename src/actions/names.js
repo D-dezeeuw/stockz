@@ -127,6 +127,7 @@ export const ACTIONS = Object.freeze({
   keys: Object.freeze({
     submit: 'keys.submit',
     lock: 'keys.lock',
+    remember: 'keys.remember',
     rebind: 'keys.rebind',
     resetBindings: 'keys.resetBindings',
     panic: 'keys.panic',
