@@ -50,6 +50,7 @@ export function initialState(overrides = {}) {
     // presence booleans only - actual credentials live in the vault, never in state
     [PATHS.ui.keysPresent]: { okx: false, etoro: false },
     [PATHS.ui.candleInterval]: '1s',
+    [PATHS.ui.chordSheet]: [],
 
     // preferences (the only persisted branch) - defaults come from the schema so the
     // drawer, the migration and reset-to-defaults can never disagree about them
@@ -59,6 +60,7 @@ export function initialState(overrides = {}) {
     [PATHS.settings.presets]: {},
     [PATHS.settings.priceGroups]: {},
     [PATHS.settings.tapeFloors]: {},
+    [PATHS.settings.chords]: {},
     [PATHS.settings.watchlists]: [],
     [PATHS.settings.activeListId]: '',
 

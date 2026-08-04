@@ -2567,32 +2567,32 @@
 **What:** A single reliable dispatcher that turns any keystroke into a desk action instantly.
 **How:** src/keys/keymap.js ES module with normalizeChord() and resolveKey() functions feeding Spektrum trigger() from one capture-phase keydown listener.
 
-- [ ] **T16.1.1 - Keymap core branch** - What: Isolated base for all hotkey work. How: git checkout -b feature/f16-01-keymap-core from a fresh pull of main.
-- [ ] **T16.1.2 - Keymap module scaffold** - What: One home for key handling. How: Create src/keys/keymap.js exporting a registry Map of chord strings to action ids, served by Vite.
-- [ ] **T16.1.3 - normalizeChord() function** - What: Layout-proof chord identity. How: Canonicalize KeyboardEvent into strings like ctrl+shift+k using e.code with sorted modifiers.
-- [ ] **T16.1.4 - Register/unregister functions** - What: Bindings added and removed cleanly. How: registerBinding() and unregisterBinding() maintaining the Map with action metadata.
-- [ ] **T16.1.5 - resolveKey() function** - What: Deterministic chord-to-action lookup. How: Pure fn returning the action id for a chord, honoring per-binding enabled flags.
-- [ ] **T16.1.6 - Global keydown listener** - What: Keys work anywhere on the desk. How: Single capture-phase window listener piping resolveKey hits into Spektrum trigger().
-- [ ] **T16.1.7 - Input-field suppression** - What: Typing in fields never fires trades. How: Skip dispatch when the event target is a text input or data-model field, excepting Escape.
-- [ ] **T16.1.8 - Action catalog module** - What: One list every surface shares. How: src/keys/actions.js mapping action ids to trigger names and labels for palette and overlay reuse.
-- [ ] **T16.1.9 - Single tests for keymap fns** - What: Core lookup logic proven. How: One Vitest test each for normalizeChord and resolveKey, run only via vitest -t.
-- [ ] **T16.1.10 - Merge keymap core** - What: Dispatcher available to every feature. How: ESLint plus targeted tests green, merge feature/f16-01-keymap-core to main.
+- [x] **T16.1.1 - Keymap core branch** - What: Isolated base for all hotkey work. How: git checkout -b feature/f16-01-keymap-core from a fresh pull of main.
+- [x] **T16.1.2 - Keymap module scaffold** - What: One home for key handling. How: Create src/keys/keymap.js exporting a registry Map of chord strings to action ids, served by Vite.
+- [x] **T16.1.3 - normalizeChord() function** - What: Layout-proof chord identity. How: Canonicalize KeyboardEvent into strings like ctrl+shift+k using e.code with sorted modifiers.
+- [x] **T16.1.4 - Register/unregister functions** - What: Bindings added and removed cleanly. How: registerBinding() and unregisterBinding() maintaining the Map with action metadata.
+- [x] **T16.1.5 - resolveKey() function** - What: Deterministic chord-to-action lookup. How: Pure fn returning the action id for a chord, honoring per-binding enabled flags.
+- [x] **T16.1.6 - Global keydown listener** - What: Keys work anywhere on the desk. How: Single capture-phase window listener piping resolveKey hits into Spektrum trigger().
+- [x] **T16.1.7 - Input-field suppression** - What: Typing in fields never fires trades. How: Skip dispatch when the event target is a text input or data-model field, excepting Escape.
+- [x] **T16.1.8 - Action catalog module** - What: One list every surface shares. How: src/keys/actions.js mapping action ids to trigger names and labels for palette and overlay reuse.
+- [x] **T16.1.9 - Single tests for keymap fns** - What: Core lookup logic proven. How: One Vitest test each for normalizeChord and resolveKey, run only via vitest -t.
+- [x] **T16.1.10 - Merge keymap core** - What: Dispatcher available to every feature. How: ESLint plus targeted tests green, merge feature/f16-01-keymap-core to main.
 
 ### F16.2 - Default Desk Bindings
 
 **What:** The classic scalper layout out of the box: B buys, S sells, F flattens, 1-4 pick size, arrows nudge price.
 **How:** DEFAULT_BINDINGS table in src/keys/defaults.js registered at boot, mapping chords onto phase-15 ticket triggers.
 
-- [ ] **T16.2.1 - Defaults branch** - What: Clean branch for the shipped layout. How: Branch feature/f16-02-default-bindings from main.
-- [ ] **T16.2.2 - Defaults table** - What: A reviewable list of stock keys. How: DEFAULT_BINDINGS array of chord, action and label rows exported from src/keys/defaults.js.
-- [ ] **T16.2.3 - B and S trade keys** - What: Buy or sell without touching the mouse. How: Bind KeyB and KeyS to the ticket.buy and ticket.sell triggers from the F15.5 fast path.
-- [ ] **T16.2.4 - F flatten key** - What: One key to exit everything. How: Bind KeyF to the positions.flatten trigger targeting the phase-18 flatten action.
-- [ ] **T16.2.5 - Number size keys** - What: Size changes at a keystroke. How: Bind Digit1 through Digit4 to apply the first four phase-15 qty presets via applyPreset.
-- [ ] **T16.2.6 - Arrow nudge keys** - What: Walk the limit price tick by tick. How: Bind ArrowUp/ArrowDown to ticket.nudgePrice using tickSz from phase-12 metadata.
-- [ ] **T16.2.7 - Boot registration** - What: Keys live from the first frame. How: loadDefaultBindings() invoked via addSystem at startup before user overrides are merged.
-- [ ] **T16.2.8 - Armed-state respect** - What: Cold desk keys stage, never send. How: Route B, S and F dispatches through the phase-15 canSubmit() gate.
-- [ ] **T16.2.9 - Single test loadDefaultBindings** - What: The stock layout can never regress. How: One Vitest test asserting the registered map, run via vitest -t loadDefaultBindings.
-- [ ] **T16.2.10 - Merge defaults** - What: Instant productivity on main. How: Lint and targeted test green, merge feature/f16-02-default-bindings.
+- [x] **T16.2.1 - Defaults branch** - What: Clean branch for the shipped layout. How: Branch feature/f16-02-default-bindings from main.
+- [x] **T16.2.2 - Defaults table** - What: A reviewable list of stock keys. How: DEFAULT_BINDINGS array of chord, action and label rows exported from src/keys/defaults.js.
+- [x] **T16.2.3 - B and S trade keys** - What: Buy or sell without touching the mouse. How: Bind KeyB and KeyS to the ticket.buy and ticket.sell triggers from the F15.5 fast path.
+- [x] **T16.2.4 - F flatten key** - What: One key to exit everything. How: Bind KeyF to the positions.flatten trigger targeting the phase-18 flatten action.
+- [x] **T16.2.5 - Number size keys** - What: Size changes at a keystroke. How: Bind Digit1 through Digit4 to apply the first four phase-15 qty presets via applyPreset.
+- [x] **T16.2.6 - Arrow nudge keys** - What: Walk the limit price tick by tick. How: Bind ArrowUp/ArrowDown to ticket.nudgePrice using tickSz from phase-12 metadata.
+- [x] **T16.2.7 - Boot registration** - What: Keys live from the first frame. How: loadDefaultBindings() invoked via addSystem at startup before user overrides are merged.
+- [x] **T16.2.8 - Armed-state respect** - What: Cold desk keys stage, never send. How: Route B, S and F dispatches through the phase-15 canSubmit() gate.
+- [x] **T16.2.9 - Single test loadDefaultBindings** - What: The stock layout can never regress. How: One Vitest test asserting the registered map, run via vitest -t loadDefaultBindings.
+- [x] **T16.2.10 - Merge defaults** - What: Instant productivity on main. How: Lint and targeted test green, merge feature/f16-02-default-bindings.
 
 ### F16.3 - User Remapping and Persistence
 
