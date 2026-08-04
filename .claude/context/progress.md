@@ -5,11 +5,57 @@ in `masterplan.md`, and knows where the project stands. Rewritten at every phase
 
 ---
 
-## Status: Phase 22 closed (v0.22.0) · Phase 23 next
+## Status: Phase 23 closed (v0.23.0) · Phase 24 next
 
 **Live:** https://d-dezeeuw.github.io/stockz/ (Pages serves `main` root — pushing is deploying)
-**Tests:** 898, one per function, all passing individually. Every gated file >80% branches.
+**Tests:** 949, one per function, all passing individually. Every gated file >80% branches.
 **Branch model:** everything merges to `main`; no feature branches outstanding.
+
+## Phase 23 — Auto-Trade Bot Runner (closed)
+
+| Feature | What now exists | Where |
+| --- | --- | --- |
+| F23.1–F23.3 | `enqueueSignal`, `pushDecision`, `botDecisions`, `armGate`, `optInGate`, `runGates`, `decide`, `dispatchOrder`, `drainTick`, `flushDecisions`, `createBotRunner`, `toggleMasterArm`, `setAutoEnabled`, `disableAllAuto`, `refreshBotStatus`, `killBot` | `src/bot/runner.js` |
+| F23.4 | `snapToStep`, `ruleSize`, `routeInstrument`, `mapSignalToOrder`, `rulesFor` | `src/bot/mapper.js` |
+| F23.5, F23.6 | `createThrottle`, `currentThrottle`, `throttleGate`, `onFillClosed`, `startCooldown`, `cooldownGate`, `clearCooldown`, `refreshLimits` | `src/bot/throttle.js` |
+| F23.7 | `getOpenSize`, `exposureFor`, `capFor`, `capGate`, `cappedInstruments`, `refreshCaps` | `src/bot/caps.js` |
+| F23.9, F23.10 | `isDryRun`, `logDryOrder`, `dispatchOrDry`, `countSignal`, `refreshSession`, `resetSession`, `toggleDryRun`, `hardStop`, `sessionReport` | `src/bot/session.js` |
+
+**Nothing here is a second execution path.** Every bot order goes through `dispatchOrDry` →
+`submit()` → `prepare()`, the same door a hand-typed order uses. A bot with its own
+validation would be a second answer to "is this order sane", and the two would disagree the
+day it mattered.
+
+**The gate chain, in order**: `armGate` → `optInGate` → `throttleGate` → `cooldownGate` →
+`capGate`. Cheapest first, so a disarmed desk never touches the throttle's window. Every
+rejection is recorded with a *reason* — a bot that silently does nothing is
+indistinguishable from a broken one.
+
+**Three defaults carry the safety of the whole phase**, and all three are deliberate
+inversions of the desk's usual opt-out style:
+- `botArmed` is **transient** — stored, never restored, so every boot is disarmed.
+- Strategies are **opt-in**, unlike alerts: being told about a signal and having money
+  placed on it are different enough that the defaults must differ.
+- `botDryRun` defaults **true even when unset** (`!== false`), so an undefined flag can
+  never mean "go ahead".
+
+**`killBot(reason)` is the seam phase 24's breaker pulls.** It stops the loop *before*
+disarming, and disarms even with no runner attached — a kill switch with an exception is
+not one.
+
+New state: `bot.decisions`, `bot.status`, `bot.limits`, `bot.cooldownUntil`, `bot.capped`,
+`bot.session`. New settings: `botArmed` (transient), `botSize`, `botStrategies`, `botRules`,
+`botSizeRule`, `botEquityPct`, `botOrderType`, `botOffsetTicks`, `botMaxPerMin`,
+`botCooldownAfter`, `botCooldownMinutes`, `botMaxPerInstrument`, `botCapOverrides`,
+`botDryRun`. New block: `bot`. New hotkey: **Shift+A**. New concept:
+`transientSettings()` in the settings schema, honoured by `restoreSettings`.
+
+**Deviations in phase 23:** the dry-run store is in memory (200 entries) rather than
+IndexedDB — phase 24 owns the store, and `sessionReport()` is the seam. There is no
+`bot.masterArmed` state key as the plan names it; the flag lives at `settings.botArmed` so
+it inherits the settings drawer and the transient-restore rule. Bot session P&L is not
+separately summed: the scoreboard already attributes closes per strategy, and a second
+attribution path would be a second thing to disagree.
 
 ## Phase 22 — Alerts & Notifications (closed)
 
@@ -556,16 +602,17 @@ go stale, and faults that reach the trader instead of the console.
 | F2.9 | `pushToast`, `dismissToast`, `expireToasts`, `describeEngineError`, `wireEngineErrors` | `src/ui/toast.js` |
 | F2.10 | `collectExpressions`, `renderPrecompileModule`, `cspMeta`, `npm run build:csp` | `src/app/csp.js`, `docs/csp.md` |
 
-## Next up: Phase 23 — Auto-Trade Bot Runner
+## Next up: Phase 24 — Lean Circuit Breakers
 
 Read the phase's own section in `masterplan.md` — the plan is authoritative, and the
 "next up" guesses written at earlier closes have been wrong twice.
 
-- Everything a bot needs already exists and is already safe: `exec/engine.js`'s `prepare()`
-  is the one door every order passes (validation, capabilities, grid rounding, size and
-  slippage guards), `strategy/` emits signals with conviction and expiry, `alerts/` can
-  announce anything, and `positions/` knows exposure. A runner should be the thin thing that
-  turns a signal into a `submit()` — not a second execution path.
+- The seams a breaker needs already exist: `killBot(reason)` stops the auto-trader dead,
+  `positions/flatten.js` closes positions, `ticket/` owns the manual arm flag, and
+  `alerts/bus.js` can announce a trip at `error` severity. The daily-loss and max-position
+  settings have existed since phase 7 and nothing enforces them yet — that is the phase.
+- **CLAUDE.md's rule 6 applies hardest here**: one lean breaker set, no confirm dialogs.
+  A breaker that asks "are you sure" is a breaker that does not trip.
 - The recurring trap remains **`setValue` lands next tick** (fold locally, write once)
   and **object writes merge** (`clearedMap` is the pattern for clearing one).
 

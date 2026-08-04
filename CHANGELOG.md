@@ -10,6 +10,13 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ## [Unreleased]
 
+## [0.23.0] — 2026-08-04 — Phase 23: Auto-Trade Bot Runner
+
+Strategies pull their own trigger. A thin loop turns signals into orders through the same
+`prepare()` every hand-typed order passes, behind a gate chain of arming, per-strategy
+opt-in, a rate ceiling, a losing-streak bench and a per-instrument cap — every rejection
+recorded with its reason, dry-run by default, and one hard stop that disarms.
+
 ### Added
 
 - **Position caps, dry run, the session report and the hard stop** — the cap is what stops the
@@ -1321,7 +1328,8 @@ with a test policy and a live URL.
   literal `APP_VERSION` (a JSON import is bundler-only), guarded by a test that fails if
   it drifts from `package.json`; static assets moved from `public/` to the repo root.
 
-[Unreleased]: https://github.com/D-dezeeuw/stockz/compare/v0.22.0...HEAD
+[Unreleased]: https://github.com/D-dezeeuw/stockz/compare/v0.23.0...HEAD
+[0.23.0]: https://github.com/D-dezeeuw/stockz/compare/v0.22.0...v0.23.0
 [0.22.0]: https://github.com/D-dezeeuw/stockz/compare/v0.21.0...v0.22.0
 [0.21.0]: https://github.com/D-dezeeuw/stockz/compare/v0.20.0...v0.21.0
 [0.20.0]: https://github.com/D-dezeeuw/stockz/compare/v0.19.0...v0.20.0
