@@ -12,6 +12,12 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ### Added
 
+- **Shared render loop** — one frame heartbeat for every chart layer instead of a
+  `requestAnimationFrame` per surface. It stops outright when nothing is dirty (a quiet
+  market costs zero CPU, which is what keeps the fan off and the battery alive through a
+  session), draws high-priority layers first, and defers low-priority ones past an 8ms
+  budget so forty sparklines can never make the price line stutter. A hidden tab pauses
+  and redraws everything on return. (F13.9)
 - **Price level lines** — last price and every open entry, tagged on the right axis with
   size, because the number a scalper needs constantly is the *distance* to their entry and
   that distance only means money once the size is on it. Winning is green whichever way
