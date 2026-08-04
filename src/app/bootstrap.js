@@ -42,6 +42,7 @@ import { registerImportActions } from '../journal/import.js'
 import { registerFilterActions } from '../journal/filters.js'
 import { registerCsvActions } from '../journal/csv.js'
 import { registerSummaryActions } from '../journal/summary.js'
+import { registerRetentionActions, scheduleRetention, storageUsage } from '../journal/retention.js'
 import { registerKillActions } from '../breakers/kill.js'
 import { registerRearmActions, mountRelease } from '../breakers/rearm.js'
 import {
@@ -155,6 +156,11 @@ export function bootstrap(options = {}) {
   registerFilterActions()
   registerCsvActions()
   registerSummaryActions()
+  registerRetentionActions()
+  // Cleanup at idle, never on a timer mid-session: competing with a live order book for a
+  // frame costs the trader money to save disk nobody was short of.
+  scheduleRetention()
+  storageUsage()
   loadAnnotations()
   pruneBreakerEvents(Date.now())
   // The daily-loss trip has no other reaction path — it publishes a code and returns a

@@ -470,6 +470,13 @@
               <button type="button" class="chip journal__pin" data-action="click"
                       data-fn="journal.jump" :data-id="pin.tradeId">↺ {{pin.label}}</button>
             </div>
+            <!-- How much room the history is taking, and the manual prune. A journal that
+                 got slow is a journal nobody opens; the policy lives in settings. -->
+            <div class="journal__storage" data-if="block.id === 'journal' &amp;&amp; journal.storage.quota > 0">
+              <span class="label">history {{journal.storage.label}} of quota</span>
+              <span class="journal__bar"><i :style="'width:' + (journal.storage.pct * 100) + '%'"></i></span>
+              <button type="button" class="chip" data-action="click" data-fn="journal.prune">prune now</button>
+            </div>
             <!-- The editor, one row at a time. No dialog, no save button: a save button in
                  a journal is a note that does not get written. -->
             <div class="journal__editor" data-if="block.id === 'journal' &amp;&amp; journal.editing">
