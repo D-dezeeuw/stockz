@@ -7,6 +7,7 @@ import { validateStrategyShape, createStrategyContext } from './contract.js'
 import { runHook, BUILTIN_STRATEGIES } from './engine.js'
 import { setStrategyParam, publishParamForm, applyParams, paramsFor } from './params.js'
 import { normalizeSignal, publishSignal, sweepSignals, signalChip } from './signal.js'
+import { sessionKey } from '../positions/ledger.js'
 
 /**
  * Who is registered, and what is running where.
@@ -192,6 +193,7 @@ export function resetStrategies() {
   for (const run of liveRuns()) run.unsubscribe?.()
   runs.clear()
   known.clear()
+  sessionDay = ''
   return true
 }
 
@@ -241,6 +243,41 @@ export function tuneStrategy(payload) {
   return next
 }
 
+/** The session every run's indicators are anchored to. */
+let sessionDay = ''
+
+/**
+ * Re-init every run when the trading day rolls.
+ *
+ * A session-anchored VWAP that never resets is yesterday's anchor, and a strategy mean-
+ * reverting to it is trading against a price that stopped being fair hours ago. Re-init is
+ * how the reset reaches indicators the registry never sees: they are built inside the
+ * strategy's own `init`, so running it again rebuilds them.
+ *
+ * @param {number} now - the current time.
+ * @param {number} [startHourUtc] - the hour the trader's day begins.
+ * @returns {string[]} the runs re-initialised.
+ */
+export function rollStrategySessions(now, startHourUtc = 0) {
+  const day = sessionKey(now, startHourUtc)
+  if (!day || day === sessionDay) return []
+
+  // The first tick of a session is not a roll — there is nothing to carry over yet.
+  const first = sessionDay === ''
+  sessionDay = day
+  if (first) return []
+
+  const rolled = []
+  for (const run of liveRuns()) {
+    const strategy = known.get(run.strategyId)
+    if (!strategy) continue
+    run.memory = strategy.init(run.ctx)
+    rolled.push(run.key)
+  }
+
+  return rolled
+}
+
 /**
  * Sweep expired signals and republish what is running.
  *
@@ -250,7 +287,8 @@ export function tuneStrategy(payload) {
  * @param {number} now - the current time.
  * @returns {string[]} the runs whose signal expired.
  */
-export function tickStrategies(now) {
+export function tickStrategies(now, startHourUtc = 0) {
+  rollStrategySessions(now, startHourUtc)
   const expired = sweepSignals(now)
   if (expired.length > 0) {
     for (const run of liveRuns()) {

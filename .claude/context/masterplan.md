@@ -3315,16 +3315,16 @@
 **What:** VWAP, ATR and rolling stddev give strategies volume and volatility context on every tick.
 **How:** Session-anchored VWAP, Wilder ATR and Welford stddev as incremental pure fns matching the EMA closure API.
 
-- [ ] **T20.6.1 - Branch volatility pack** - What: Separate line for the second indicator set. How: Create feature/f20.6-vwap-atr-stddev from main.
-- [ ] **T20.6.2 - createVwap fn** - What: The day's fair price anchor for mean-reversion plays. How: Closure accumulating price*volume and volume with update(px, vol) and a reset() for session rolls.
-- [ ] **T20.6.3 - trueRange fn** - What: The honest per-candle range including gaps. How: Pure fn max of high-low, abs(high-prevClose), abs(low-prevClose).
-- [ ] **T20.6.4 - createAtr fn** - What: A live volatility yardstick for stops and sizing. How: Wilder-smoothed closure over trueRange values with update(candle) in constant time.
-- [ ] **T20.6.5 - createStddev fn** - What: Numerically stable dispersion for band logic. How: Welford online algorithm closure over a rolling window returning sample stddev.
-- [ ] **T20.6.6 - zscore fn** - What: One number saying how stretched price is. How: Pure fn (x - mean) / stddev with a zero-stddev guard returning 0.
-- [ ] **T20.6.7 - Session reset wiring** - What: VWAP restarts cleanly each trading day. How: Subscribe reset() to the engine's session-roll event fired from a dayKey comparison on candle close.
-- [ ] **T20.6.8 - Fixture verification and barrel** - What: Values match known series and ship in ctx.ind. How: Assert against a precomputed candle fixture, then add all three to the indicators barrel.
-- [ ] **T20.6.9 - Single tests per volatility fn** - What: VWAP, trueRange, ATR, stddev and zscore proven independently. How: One Vitest test per fn, each executed by its own -t filter.
-- [ ] **T20.6.10 - Merge volatility pack** - What: Full indicator library live for strategies. How: Green lint and targeted runs, merge to main.
+- [x] **T20.6.1 - Branch volatility pack** - What: Separate line for the second indicator set. How: Create feature/f20.6-vwap-atr-stddev from main.
+- [x] **T20.6.2 - createVwap fn** - What: The day's fair price anchor for mean-reversion plays. How: Closure accumulating price*volume and volume with update(px, vol) and a reset() for session rolls.
+- [x] **T20.6.3 - trueRange fn** - What: The honest per-candle range including gaps. How: Pure fn max of high-low, abs(high-prevClose), abs(low-prevClose).
+- [x] **T20.6.4 - createAtr fn** - What: A live volatility yardstick for stops and sizing. How: Wilder-smoothed closure over trueRange values with update(candle) in constant time.
+- [x] **T20.6.5 - createStddev fn** - What: Numerically stable dispersion for band logic. How: Welford online algorithm closure over a rolling window returning sample stddev.
+- [x] **T20.6.6 - zscore fn** - What: One number saying how stretched price is. How: Pure fn (x - mean) / stddev with a zero-stddev guard returning 0.
+- [x] **T20.6.7 - Session reset wiring** - What: VWAP restarts cleanly each trading day. How: Subscribe reset() to the engine's session-roll event fired from a dayKey comparison on candle close.
+- [x] **T20.6.8 - Fixture verification and barrel** - What: Values match known series and ship in ctx.ind. How: Assert against a precomputed candle fixture, then add all three to the indicators barrel.
+- [x] **T20.6.9 - Single tests per volatility fn** - What: VWAP, trueRange, ATR, stddev and zscore proven independently. How: One Vitest test per fn, each executed by its own -t filter.
+- [x] **T20.6.10 - Merge volatility pack** - What: Full indicator library live for strategies. How: Green lint and targeted runs, merge to main.
 
 ### F20.7 - Per-strategy perf budget and throttling
 

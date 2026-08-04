@@ -1,4 +1,5 @@
 import { createEma, createRsi, isWarm, crossed } from './trend.js'
+import { createVwap, trueRange, createAtr, createStddev, zscore } from './volatility.js'
 
 /**
  * The indicator barrel.
@@ -9,6 +10,7 @@ import { createEma, createRsi, isWarm, crossed } from './trend.js'
  */
 
 export { createEma, createRsi, isWarm, crossed }
+export { createVwap, trueRange, createAtr, createStddev, zscore }
 
 /**
  * Build the indicator toolkit handed to a strategy.
@@ -17,5 +19,16 @@ export { createEma, createRsi, isWarm, crossed }
  * @returns {object} the toolkit.
  */
 export function indicatorKit(extra = {}) {
-  return { createEma, createRsi, isWarm, crossed, ...extra }
+  return {
+    createEma,
+    createRsi,
+    createVwap,
+    createAtr,
+    createStddev,
+    isWarm,
+    crossed,
+    trueRange,
+    zscore,
+    ...extra,
+  }
 }
