@@ -2,7 +2,8 @@ import { setValue, appState } from '../app/engine.js'
 import { PATHS } from '../state/paths.js'
 import { createRing } from '../pipeline/ring.js'
 import { submit } from '../exec/engine.js'
-import { mapSignalToOrder, rulesFor } from './mapper.js'
+import { mapSignalToOrder, rulesFor, routeInstrument } from './mapper.js'
+import { flattenOne } from '../positions/flatten.js'
 import { throttleGate, cooldownGate, clearCooldown } from './throttle.js'
 import { capGate } from './caps.js'
 import { dispatchOrDry, countSignal, hardStop } from './session.js'
@@ -174,6 +175,20 @@ export function decide(signal, context = {}) {
 }
 
 /**
+ * Is this signal telling the desk to get out?
+ *
+ * Anything that is not an entry. Strategies say `flat` when a time stop, a target or a stop
+ * loss fires, and `enqueueSignal` has already dropped `none`, so what is left is an exit.
+ *
+ * @param {object} signal - the queued signal.
+ * @returns {boolean} true when it should close a position rather than open one.
+ */
+export function isExitSignal(signal) {
+  const action = String(signal?.action ?? '')
+  return action !== '' && action !== 'buy' && action !== 'sell'
+}
+
+/**
  * Turn a passing signal into an order.
  *
  * @param {object} signal - the signal.
@@ -183,6 +198,24 @@ export function decide(signal, context = {}) {
 export async function dispatchOrder(signal, options = {}) {
   const send = typeof options.send === 'function' ? options.send : submit
   const strategy = String(signal?.source ?? signal?.strategyId ?? '')
+
+  // An exit closes the position rather than placing an order of its own. The mapper
+  // refuses these by design — flattening is the position layer's job because only it knows
+  // the size — but nothing ever carried them there, so every `flat` a strategy emitted was
+  // decided, logged as taken, and silently dropped. The bot opened and never closed: on a
+  // fifteen-minute run that left 0.85 BTC on the book from entry signals alone.
+  if (isExitSignal(signal)) {
+    const close = typeof options.flatten === 'function' ? options.flatten : flattenOne
+    const { instId, venue } = routeInstrument(signal?.instrument)
+    if (!instId) return { ok: false, clientId: '', reason: 'no instrument' }
+
+    const result = await close(`${venue}:${instId}`)
+    // "Nothing to close" is the normal case, not a failure: a strategy times out of a
+    // position the desk never took, and saying so would fill the log with false alarms.
+    if (!result?.ok) return { ok: false, clientId: '', reason: result?.reason ?? 'no position' }
+    return { ok: true, clientId: `flat-${instId}`, reason: '' }
+  }
+
   const mapped = mapSignalToOrder(signal, { ...rulesFor(strategy), ...(options.rules ?? {}) })
   // Refused at the mapper is refused before the network: an order with a size that rounds
   // to zero is not worth a round trip to find out.
