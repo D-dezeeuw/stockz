@@ -67,7 +67,9 @@ export function submitKeys(_state, payload = {}) {
   setKeys(venue, payload.fields ?? {})
 
   const presence = syncKeyPresence()
-  if (rememberEnabled()) cacheKeys()
+  // Fire and forget: the vault already has the keys, and the trader should not wait on a
+  // crypto round trip to find out their credentials were accepted.
+  if (rememberEnabled()) cacheKeys().catch(() => {})
   pushToast(presence[venue] ? `${venue} keys accepted` : `${venue} keys incomplete`, presence[venue] ? 'success' : 'warn')
   return presence
 }
@@ -83,7 +85,7 @@ export function lockKeys() {
   // The cache goes with them. A lock that emptied the vault and left the copy on disk
   // would be a lock that undoes itself on the next reload — worse than no lock, because
   // the trader believes it worked.
-  forgetCachedKeys()
+  forgetCachedKeys().catch(() => {})
 
   syncKeyPresence()
   setValue(PATHS.ui.modal, cleared > 0 ? 'keys' : '')
@@ -97,15 +99,15 @@ export function lockKeys() {
  * @param {{win?: object, bag?: object}} [options] - injected environment.
  * @returns {{okx: boolean, etoro: boolean}} presence after loading.
  */
-export function adoptKeys(options = {}) {
+export async function adoptKeys(options = {}) {
   const { win = globalThis, bag, storage } = options
 
   // URL first: opening a bookmark with a key in it is an explicit instruction to use *that*
   // key, and a stale cached one silently winning would be the worst kind of surprise.
   const fromUrl = adoptKeysFromUrl(win)
   if (rememberEnabled()) {
-    if (fromUrl.loaded > 0) cacheKeys(storage)
-    else loadCachedKeys(storage)
+    if (fromUrl.loaded > 0) await cacheKeys(storage, options)
+    else await loadCachedKeys(storage, options)
   }
   if (!keyPresence().okx || !keyPresence().etoro) adoptKeysFromEnv(bag)
 
@@ -136,14 +138,33 @@ export function toggleRemember(_state, payload = {}) {
   const next = typeof payload?.value === 'boolean' ? payload.value : !rememberEnabled()
   setValue(PATHS.settings.rememberCredentials, next)
 
-  // Acted on immediately in both directions: switching it on with keys already loaded
-  // should remember *those* keys, and switching it off should take the copy with it rather
-  // than leaving one behind until the next lock.
-  if (next) cacheKeys()
-  else forgetCachedKeys()
+  applyRemember(next).catch(() => {})
 
-  pushToast(next ? 'keys will be remembered on this browser' : 'remembered keys cleared', 'warn')
+  pushToast(
+    next ? 'keys remembered on this browser (encrypted)' : 'remembered keys cleared',
+    'warn',
+  )
   return next
+}
+
+/**
+ * Make the stored copy match the setting.
+ *
+ * Split out from `toggleRemember` so the action stays synchronous for the UI — a trader
+ * flipping a checkbox should not wait on a crypto round trip — while the work itself stays
+ * directly awaitable instead of something a test has to race a timer against.
+ *
+ * @param {boolean} next - whether keys should be remembered.
+ * @param {object} [deps] - injectable plumbing.
+ * @returns {Promise<boolean>} true when the stored copy now matches.
+ */
+export async function applyRemember(next, deps = {}) {
+  // Acted on immediately in both directions: switching it on with keys already loaded should
+  // remember *those* keys, and switching it off should take the copy with it rather than
+  // leaving one behind until the next lock.
+  if (next) return (await cacheKeys(deps.storage, deps)) > 0
+
+  return forgetCachedKeys(deps.storage, deps)
 }
 
 /**

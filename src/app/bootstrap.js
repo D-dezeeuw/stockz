@@ -204,10 +204,13 @@ export function bootstrap(options = {}) {
   registerPaletteActions()
   registerPanicAction()
   registerCaptureActions()
+  // Awaited through a promise rather than blocking boot: decrypting the remembered keys is
+  // a couple of milliseconds, and the desk should paint its first frame regardless.
   adoptKeys()
-  // Asked for rather than waited for: a live-mode desk with no credentials cannot place an
-  // order, and finding that out on the first click is finding out too late.
-  promptForKeys()
+    .catch(() => ({}))
+    // Asked for rather than waited for: a live-mode desk with no credentials cannot place an
+    // order, and finding that out on the first click is finding out too late.
+    .then(() => promptForKeys())
   applyTheme(doc?.documentElement?.getAttribute?.('data-theme') || preferredTheme(), doc)
   const derived = registerDerived()
   wireEngineErrors()

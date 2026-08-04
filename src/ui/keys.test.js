@@ -1,4 +1,5 @@
 // @vitest-environment jsdom
+import 'fake-indexeddb/auto'
 import { describe, it, expect, beforeEach } from 'vitest'
 import {
   syncKeyPresence,
@@ -9,9 +10,11 @@ import {
   registerKeyActions,
   rememberEnabled,
   toggleRemember,
+  applyRemember,
   promptForKeys,
 } from './keys.js'
 import { clearKeys, hasKeys, setKeys, KEYS_CACHE_KEY } from '../venues/vault.js'
+import { defaultSettings } from '../state/settings-schema.js'
 import { appState, setValue, tick, resetState, serialize } from '../app/engine.js'
 import { PATHS } from '../state/paths.js'
 import { clearActions, actionNames, dispatchAction } from '../actions/registry.js'
@@ -89,17 +92,17 @@ describe('lockKeys', () => {
 })
 
 describe('adoptKeys', () => {
-  it('prefers the URL, falls back to dev env, and records presence', () => {
+  it('prefers the URL, falls back to dev env, and records presence', async () => {
     const win = {
       location: { search: '?okxKey=ak&okxSecret=sk&okxPass=pp', pathname: '/stockz/', hash: '' },
       history: { replaceState: () => {} },
     }
 
-    expect(adoptKeys({ win, bag: {} })).toEqual({ okx: true, etoro: false })
+    expect(await adoptKeys({ win, bag: {} })).toEqual({ okx: true, etoro: false })
 
     clearKeys()
     expect(
-      adoptKeys({
+      await adoptKeys({
         win: { location: { search: '' } },
         bag: { STOCKZ_ETORO_API_KEY: 'ek', STOCKZ_ETORO_USER_KEY: 'uk' },
       }),
@@ -127,9 +130,14 @@ describe('registerKeyActions', () => {
 })
 
 describe('rememberEnabled', () => {
-  it('is off unless the trader turned it on', () => {
-    // Off by default: remembering a trading credential is a decision, not a default.
-    expect(rememberEnabled()).toBe(false)
+  it('reads the setting, and ships on so a revisit does not re-ask', () => {
+    // On by default: the desk is opened repeatedly through the day and re-entering three
+    // OKX fields each time is how people end up pasting keys into the URL bar instead.
+    // Safe to default only because the stored copy is encrypted — see keystore.js.
+    expect(defaultSettings().rememberCredentials).toBe(true)
+
+    // Absent from state entirely is still false rather than a crash.
+    expect(rememberEnabled({})).toBe(false)
 
     setValue(PATHS.settings.rememberCredentials, true)
     tick()
@@ -138,16 +146,30 @@ describe('rememberEnabled', () => {
 })
 
 describe('toggleRemember', () => {
-  it('acts immediately in both directions rather than waiting for the next save', () => {
-    setKeys('okx', OKX)
-
+  it('flips the setting synchronously, because a checkbox must not await crypto', () => {
     expect(toggleRemember({}, { value: true })).toBe(true)
     tick()
-    // Switching it on with keys already loaded remembers *those* keys.
-    expect(localStorage.getItem(KEYS_CACHE_KEY)).toContain('ak')
+    expect(rememberEnabled()).toBe(true)
 
-    expect(toggleRemember({}, { value: false })).toBe(false)
-    // And switching it off takes the copy with it rather than leaving one behind.
+    // No argument toggles rather than forcing a value.
+    expect(toggleRemember({})).toBe(false)
+    tick()
+    expect(rememberEnabled()).toBe(false)
+  })
+})
+
+describe('applyRemember', () => {
+  it('writes ciphertext when switched on and removes it when switched off', async () => {
+    setKeys('okx', OKX)
+
+    expect(await applyRemember(true)).toBe(true)
+    // Remembering *those* keys, and as an envelope: the stored blob must not contain them.
+    const stored = localStorage.getItem(KEYS_CACHE_KEY)
+    expect(stored).toBeTruthy()
+    expect(stored).not.toContain('ak')
+
+    expect(await applyRemember(false)).toBe(true)
+    // Switching it off takes the copy with it rather than leaving one behind until a lock.
     expect(localStorage.getItem(KEYS_CACHE_KEY)).toBeNull()
   })
 })

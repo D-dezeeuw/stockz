@@ -12,6 +12,22 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ### Security
 
+- **Remembered credentials are encrypted at rest, and remembering is now the default.** The
+  honest answer to "can they be hashed?" is no — a hash is one-way and the desk has to hand
+  OKX the real key to sign a request — and obfuscating them would be pure security-by-
+  obscurity, since the decoder ships in the same page as the ciphertext. So they are
+  *encrypted*, with an AES-GCM key minted `extractable: false` and held in IndexedDB: the
+  browser will encrypt and decrypt with it forever, and no script can export the bytes to use
+  elsewhere. **What that defends against**: a copied browser profile, a sync backup, a shared
+  machine, a glance at devtools, a support bundle — every one of them yields an envelope and
+  no way back to a key. **What it does not**: script running on this origin, which can simply
+  ask the same key to decrypt. No static client-side app can prevent that; the mitigation is
+  a venue-side key scoped to trade-only with an IP allowlist, and the modal says so. A fresh
+  IV per write, because AES-GCM reuse does not weaken the encryption but breaks it outright.
+  No keystore means no cache rather than a plaintext fallback, which would hand back exactly
+  the exposure this removes on the machines least able to afford it. `lock` destroys the
+  wrapping key as well as the entry, so any ciphertext already on a backup is noise forever.
+
 - **A production build inlined live credentials into a published asset.** `vite.config.js`
   set `envPrefix: 'STOCKZ_'` — which is an *allowlist for publication*, not a guard: Vite
   hardcodes every matching variable into the browser bundle as a string literal. The

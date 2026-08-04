@@ -1,5 +1,6 @@
 import { createLogger } from '../utils/log.js'
 import { readEnv } from '../utils/env.js'
+import { encryptBlob, decryptBlob, resetKeystore } from './keystore.js'
 
 /**
  * The key vault.
@@ -14,11 +15,11 @@ import { readEnv } from '../utils/env.js'
  * and trade), the remembered cache, the key modal, and `import.meta.env` for local dev.
  *
  * **On the cache, plainly.** When "remember keys" is on, credentials are written to
- * `localStorage` so a reload does not cost the trader their session. That is a real
- * reduction in safety and it is worth being blunt about rather than dressing up: anything
- * that can run script on this origin can read them, and so can anyone with the machine. It
- * is off by default, the lock button wipes it, and it is stored in plain text — an
- * obfuscation pass would only buy the false confidence that it was encrypted.
+ * `localStorage` so a revisit does not cost the trader their session. They are **encrypted**
+ * with a non-extractable WebCrypto key (see `keystore.js`), which means a stolen profile,
+ * a sync backup or a glance at devtools yields ciphertext and nothing else. It does not and
+ * cannot stop script running on this origin, which can simply ask the same key to decrypt —
+ * the mitigation for that lives at the venue, in a trade-only key with an IP allowlist.
  *
  * What does *not* change is the harder guarantee: credentials still never enter Spektrum
  * state. State is recorded into history, returned by `serialize()`, exported with the trade
@@ -215,10 +216,18 @@ export const KEYS_CACHE_KEY = 'stockz.keys.v1'
  * @param {Storage} [storage] - storage to write to.
  * @returns {number} how many venues were written.
  */
-export function cacheKeys(storage = globalThis.localStorage) {
+export async function cacheKeys(storage = globalThis.localStorage, deps = {}) {
   const payload = Object.fromEntries(vault)
+  const sealed = await encryptBlob(JSON.stringify(payload), deps)
+  // No keystore, no cache. Writing plaintext as a fallback would quietly hand back exactly
+  // the exposure the encryption exists to remove, on the machines least able to afford it.
+  if (!sealed) {
+    log.warn('no keystore available — credentials will not be remembered')
+    return 0
+  }
+
   try {
-    storage?.setItem?.(KEYS_CACHE_KEY, JSON.stringify(payload))
+    storage?.setItem?.(KEYS_CACHE_KEY, JSON.stringify(sealed))
     return Object.keys(payload).length
   } catch (err) {
     // A full or blocked storage loses the convenience, never the session: the keys are
@@ -234,12 +243,23 @@ export function cacheKeys(storage = globalThis.localStorage) {
  * @param {Storage} [storage] - storage to read from.
  * @returns {number} how many venues were restored.
  */
-export function loadCachedKeys(storage = globalThis.localStorage) {
-  let parsed
+export async function loadCachedKeys(storage = globalThis.localStorage, deps = {}) {
+  let envelope
   try {
-    parsed = JSON.parse(storage?.getItem?.(KEYS_CACHE_KEY) ?? 'null')
+    envelope = JSON.parse(storage?.getItem?.(KEYS_CACHE_KEY) ?? 'null')
   } catch (err) {
     log.warn(`unreadable key cache: ${err?.message ?? err}`)
+    return 0
+  }
+  if (!envelope) return 0
+
+  const plain = await decryptBlob(envelope, deps)
+  if (!plain) return 0
+
+  let parsed
+  try {
+    parsed = JSON.parse(plain)
+  } catch {
     return 0
   }
   if (!parsed || typeof parsed !== 'object') return 0
@@ -260,7 +280,10 @@ export function loadCachedKeys(storage = globalThis.localStorage) {
  * @param {Storage} [storage] - storage to clear.
  * @returns {boolean} true when the cache is gone.
  */
-export function forgetCachedKeys(storage = globalThis.localStorage) {
+export async function forgetCachedKeys(storage = globalThis.localStorage, deps = {}) {
+  // The wrapping key goes too. The ciphertext may already be on a backup somewhere, and
+  // destroying the key is what turns those copies into permanent noise.
+  await resetKeystore(deps)
   try {
     // Removed rather than overwritten with an empty object: a lock that left a key-shaped
     // hole behind would be a lock the next reader has to interpret.
