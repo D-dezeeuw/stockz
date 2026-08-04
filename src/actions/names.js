@@ -85,6 +85,7 @@ export const ACTIONS = Object.freeze({
     speed: 'replay.speed',
     exit: 'replay.exit',
     import: 'replay.import',
+    record: 'replay.record',
   }),
   bot: Object.freeze({
     toggleArm: 'bot.toggleArm',

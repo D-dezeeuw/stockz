@@ -258,6 +258,10 @@ export const PATHS = Object.freeze({
     speed: 'replay.speed',
     label: 'replay.label',
     error: 'replay.error',
+    // The recording in progress, or null. Live state, never persisted: a "recording" flag
+    // restored from a closed tab would claim a capture that is not running.
+    recording: 'replay.recording',
+    sessions: 'replay.sessions',
   }),
   analytics: Object.freeze({
     // The one switch every analytics number obeys, and the trade list it scopes to. The
