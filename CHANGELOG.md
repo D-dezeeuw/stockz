@@ -12,6 +12,12 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ### Added
 
+- **Fill markers** — executions drawn on the wiggle they caught, which is the only way to
+  see whether an entry landed on the sweep or two ticks after it. Buys point up from
+  below the fill and sells down from above, so a glyph never covers the price it marks,
+  and a rapid-fire run merges into one badge rather than smearing over the outlier that
+  was mispriced — but never across sides, since a buy and a sell at the same instant is
+  exactly the case worth seeing. (F13.6)
 - **Crosshair and readout** — hover anywhere and read the exact print: time snaps by
   binary search to the nearest real tick (interpolation would show a price that never
   traded, and traders place orders off these numbers) while price follows the cursor,
