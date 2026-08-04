@@ -28,6 +28,7 @@ import { registerToastActions, wireAlertToasts } from '../ui/toast.js'
 import { wireAlertSounds, unlockAudio } from '../alerts/sounds.js'
 import { registerNotifyActions, wireNativeAlerts, permissionState } from '../alerts/notify.js'
 import { registerDndActions, refreshDnd } from '../alerts/dnd.js'
+import { registerLogActions } from '../alerts/log.js'
 import { onAlert } from '../alerts/bus.js'
 import { knownStrategies } from '../strategy/registry.js'
 import { connectFeeds } from './feeds.js'
@@ -107,6 +108,7 @@ export function bootstrap(options = {}) {
   unlockAudio()
   registerNotifyActions()
   registerDndActions()
+  registerLogActions()
   wireNativeAlerts(onAlert)
   permissionState()
   refreshDnd(Date.now())

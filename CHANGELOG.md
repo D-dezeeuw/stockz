@@ -12,6 +12,17 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ### Added
 
+- **Alert log block** — the record of everything the desk said, including everything it was
+  told not to say out loud: this is the half of do-not-disturb that makes muting safe, since
+  the switch stops the interruptions and the log keeps the information. It is deliberately a
+  **tail, not a feed to watch** — newest first, filterable, read after the fact — because a
+  trader watching the alert log instead of the tape is doing the wrong thing, so it is built
+  for the ten seconds after coming back rather than for continuous attention. Clicking a row
+  jumps to the instrument it came from: the log's job is to be the way *back* to what
+  happened. An empty filter means everything rather than nothing, clicking the active chip
+  clears it (a bar whose only route back to "everything" is a separate button is one people
+  leave filtered by accident), and the chips carry counts so nobody has to click each one to
+  find out what fired.
 - **Mute and do-not-disturb** — a trader takes a call, sits in an office, or steps away. One
   switch silences every output, and it has to be *one* switch rather than three: a desk where
   the toasts stopped but the sounds did not is a desk somebody swears at. The rule that makes

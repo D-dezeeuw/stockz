@@ -95,6 +95,9 @@ export function initialState(overrides = {}) {
     [PATHS.ui.audioReady]: false,
     [PATHS.ui.notifyPermission]: 'default',
     [PATHS.ui.dnd]: { silenced: false, muted: false, countdown: '' },
+    [PATHS.ui.alertPanel]: { rows: [], chips: [], unread: 0, total: 0, at: 0 },
+    [PATHS.ui.logFilter]: { severity: '', source: '' },
+    [PATHS.ui.logSeenAt]: 0,
     [PATHS.ui.hud]: {
       latencyMs: 0,
       latencyGrade: 'warn',

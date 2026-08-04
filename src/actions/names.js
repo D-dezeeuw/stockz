@@ -41,6 +41,9 @@ export const ACTIONS = Object.freeze({
     enableNative: 'alerts.enableNative',
     toggleDnd: 'alerts.toggleDnd',
     snooze: 'alerts.snooze',
+    filterLog: 'alerts.filterLog',
+    clearLog: 'alerts.clearLog',
+    jumpTo: 'alerts.jumpTo',
   }),
   book: Object.freeze({
     prefill: 'book.prefill',

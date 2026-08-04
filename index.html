@@ -527,7 +527,28 @@
               </div>
               <button type="button" class="chip" data-action="click" data-fn="strategy.resetScore">reset day</button>
             </div>
-            <p class="label" data-if="block.id !== 'book' &amp;&amp; block.id !== 'tape' &amp;&amp; block.id !== 'ticket' &amp;&amp; block.id !== 'positions' &amp;&amp; block.id !== 'hud' &amp;&amp; block.id !== 'strategies' &amp;&amp; block.id !== 'scoreboard'">ready</p>
+            <!-- The tail: newest first, filterable, read after the fact. A trader watching
+                 the alert log instead of the tape is doing the wrong thing. -->
+            <div class="alog" data-if="block.id === 'alerts'">
+              <div class="alog__chips" data-each="chip in ui.alertPanel.chips">
+                <button type="button" class="chip"
+                        :class="chip.active ? 'chip is-active' : 'chip'"
+                        data-action="click" data-fn="alerts.filterLog"
+                        :data-kind="chip.kind" :data-value="chip.value">{{chip.label}} {{chip.count}}</button>
+              </div>
+              <p class="label" data-if="ui.alertPanel.rows.length === 0">nothing yet</p>
+              <div class="alog__rows" data-each="row in ui.alertPanel.rows">
+                <div class="alog__row" :class="'alog__row alog__row--' + row.severity"
+                     data-action="click" data-fn="alerts.jumpTo" :data-instrument="row.instrument">
+                  <span class="alog__time num">{{row.time}}</span>
+                  <span class="alog__source">{{row.source}}</span>
+                  <span class="alog__text truncate">{{row.text}}</span>
+                </div>
+              </div>
+              <button type="button" class="chip" data-action="click"
+                      data-fn="alerts.clearLog">clear ({{ui.alertPanel.total}})</button>
+            </div>
+            <p class="label" data-if="block.id !== 'book' &amp;&amp; block.id !== 'tape' &amp;&amp; block.id !== 'ticket' &amp;&amp; block.id !== 'positions' &amp;&amp; block.id !== 'hud' &amp;&amp; block.id !== 'strategies' &amp;&amp; block.id !== 'scoreboard' &amp;&amp; block.id !== 'alerts'">ready</p>
           </div>
         </div>
       </section>
