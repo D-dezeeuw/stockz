@@ -8,6 +8,8 @@ import {
   lockKeys,
   adoptKeys,
   registerKeyActions,
+  readFields,
+  clearVenueForm,
   rememberEnabled,
   toggleRemember,
   applyRemember,
@@ -60,18 +62,50 @@ describe('needsKeys', () => {
 })
 
 describe('submitKeys', () => {
-  it('stores what the trader typed and says whether the set was complete', () => {
-    expect(submitKeys({}, { venue: 'okx', fields: OKX })).toEqual({ okx: true, etoro: false })
+  it('stores what a real form submit delivers, which is flat and not nested', () => {
+    // The shape the DOM actually sends. The previous test hand-built `{fields: OKX}` — the
+    // shape the code happened to expect — so it passed while the modal saved nothing.
+    expect(submitKeys({}, { venue: 'okx', ...OKX })).toEqual({ okx: true, etoro: false })
     tick()
     expect(hasKeys('okx')).toBe(true)
     expect(appState.ui.toasts[0].message).toMatch(/accepted/)
 
     // A partial set is reported rather than silently accepted.
     clearKeys()
-    submitKeys({}, { venue: 'okx', fields: { apiKey: 'ak' } })
+    submitKeys({}, { venue: 'okx', apiKey: 'ak' })
     tick()
     expect(appState.ui.toasts[0].message).toMatch(/incomplete/)
     expect(submitKeys({}, {})).toEqual({ okx: false, etoro: false })
+  })
+})
+
+describe('readFields', () => {
+  it('takes the flat form shape and the nested one, and nothing else', () => {
+    expect(readFields('okx', { venue: 'okx', ...OKX })).toEqual(OKX)
+    expect(readFields('okx', { fields: OKX })).toEqual(OKX)
+
+    // Only the fields that venue declares: a stray input, or a `venue` key riding along on
+    // the same payload, must not be mistaken for a credential.
+    expect(readFields('etoro', { apiKey: 'ak', userKey: 'uk', bogus: 'x' })).toEqual({
+      apiKey: 'ak',
+      userKey: 'uk',
+    })
+    expect(readFields('okx', { apiKey: '   ' })).toEqual({})
+    expect(readFields('nonsense', OKX)).toEqual({})
+  })
+})
+
+describe('clearVenueForm', () => {
+  it('empties the inputs, so the secret does not sit in the DOM all session', () => {
+    document.body.innerHTML =
+      '<form data-venue="okx"><input name="apiKey" value="ak"></form>'
+
+    expect(clearVenueForm('okx')).toBe(true)
+    expect(document.querySelector('input').value).toBe('')
+
+    expect(clearVenueForm('etoro')).toBe(false)
+    expect(clearVenueForm('okx', null)).toBe(false)
+    document.body.innerHTML = ''
   })
 })
 

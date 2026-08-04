@@ -199,3 +199,53 @@
   border: var(--border-strong);
   border-radius: var(--radius-2);
 }
+
+/*
+ * The key modal.
+ *
+ * Taller than the other modals by nature — two venues, five fields — so it scrolls rather
+ * than overflowing a short laptop viewport, which is what three stacked cards used to do.
+ */
+.keys {
+  max-block-size: min(90vh, 44rem);
+  overflow-y: auto;
+}
+
+.keys__venue {
+  display: grid;
+  gap: var(--sp-2);
+  padding: var(--sp-2);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-1);
+}
+
+.keys__head {
+  display: flex;
+  gap: var(--sp-2);
+  align-items: baseline;
+  justify-content: space-between;
+  margin: 0;
+}
+
+.keys__name {
+  color: var(--ink-strong);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* Presence, never the key. Dim until a venue is actually configured, so the eye lands on
+   the one that still needs filling in. */
+.keys__state {
+  color: var(--ink-faint);
+  font-size: var(--fs-0);
+}
+
+.keys__state--on {
+  color: var(--green);
+}
+
+.keys__note code {
+  color: var(--ink-muted);
+  overflow-wrap: anywhere;
+}

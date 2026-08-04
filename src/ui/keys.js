@@ -3,6 +3,7 @@ import { PATHS } from '../state/paths.js'
 import { registerAction } from '../actions/registry.js'
 import { ACTIONS } from '../actions/names.js'
 import {
+  VENUE_FIELDS,
   setKeys,
   clearKeys,
   keyPresence,
@@ -18,9 +19,12 @@ import { pushToast } from './toast.js'
  * The key modal and the lock.
  *
  * The modal writes straight into the vault and only ever puts *presence booleans* into
- * state — the fields themselves are bound to plain DOM inputs that are cleared the moment
- * they are submitted, so a key exists in exactly two places: the input the trader typed
- * into, and the vault.
+ * state — the fields are plain DOM inputs, never `data-model`, because a credential bound
+ * to state would land in history and every journal export.
+ *
+ * The inputs are cleared once the vault has them. Left alone they keep the secret sitting
+ * in the DOM for the rest of the session, readable by anything that can query it, which
+ * quietly undoes the reason for not binding them in the first place.
  *
  * "Remember keys" adds a third, `localStorage`, and it is off unless the trader turns it
  * on. The trade is stated where they turn it on rather than buried here: convenience across
@@ -62,9 +66,10 @@ export function needsKeys(state = appState) {
  * @param {{venue?: string, fields?: object}} [payload] - what the trader typed.
  * @returns {{okx: boolean, etoro: boolean}} presence after saving.
  */
-export function submitKeys(_state, payload = {}) {
+export function submitKeys(_state, payload = {}, deps = {}) {
   const venue = String(payload.venue ?? 'okx')
-  setKeys(venue, payload.fields ?? {})
+  setKeys(venue, readFields(venue, payload))
+  clearVenueForm(venue, deps.doc)
 
   const presence = syncKeyPresence()
   // Fire and forget: the vault already has the keys, and the trader should not wait on a
@@ -72,6 +77,50 @@ export function submitKeys(_state, payload = {}) {
   if (rememberEnabled()) cacheKeys().catch(() => {})
   pushToast(presence[venue] ? `${venue} keys accepted` : `${venue} keys incomplete`, presence[venue] ? 'success' : 'warn')
   return presence
+}
+
+/**
+ * Pull a venue's fields out of whatever shape the submit arrived in.
+ *
+ * A form submit delivers its named inputs **flat** on the payload. This used to read only
+ * `payload.fields`, so every key typed into the modal was dropped on the floor — and the
+ * test passed because it hand-built the nested shape the code expected rather than the one
+ * the DOM actually sends. Both shapes are accepted now, and the flat one is the real path.
+ *
+ * @param {string} venue - 'okx' or 'etoro'.
+ * @param {object} payload - the action payload.
+ * @returns {object} the field values found.
+ */
+export function readFields(venue, payload = {}) {
+  const nested = payload?.fields ?? {}
+  const fields = {}
+
+  for (const field of VENUE_FIELDS[venue] ?? []) {
+    const value = nested[field] ?? payload?.[field]
+    if (typeof value === 'string' && value.trim()) fields[field] = value
+  }
+
+  return fields
+}
+
+/**
+ * Empty a venue's inputs once the vault has them.
+ *
+ * @param {string} venue - 'okx' or 'etoro'.
+ * @param {Document} [doc] - injectable document.
+ * @returns {boolean} true when a form was cleared.
+ */
+export function clearVenueForm(venue, doc = globalThis.document) {
+  const form = doc?.querySelector?.(`form[data-venue="${String(venue ?? '')}"]`)
+  if (!form) return false
+
+  // Each input emptied explicitly rather than `form.reset()`. Reset restores inputs to their
+  // *default* value, so the day somebody adds a `value` attribute — a placeholder, a
+  // prefill — reset would put the secret back rather than clear it. For a security clear,
+  // ambiguity is not worth the shorter line.
+  for (const input of form.querySelectorAll?.('input') ?? []) input.value = ''
+
+  return true
 }
 
 /**
