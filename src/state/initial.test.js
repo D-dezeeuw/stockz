@@ -14,6 +14,7 @@ describe('initialState', () => {
     expect([...namespaces].sort()).toEqual([
       'alerts',
       'app',
+      'bot',
       'market',
       'settings',
       'strategy',

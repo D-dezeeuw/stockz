@@ -134,6 +134,22 @@ export const SETTINGS_SCHEMA = Object.freeze([
     default: 0,
   },
   {
+    key: 'botArmed',
+    group: 'risk',
+    label: 'Auto-trade armed',
+    kind: 'toggle',
+    default: false,
+  },
+  {
+    key: 'botSize',
+    group: 'risk',
+    label: 'Auto-trade size',
+    kind: 'number',
+    min: 0,
+    step: 0.001,
+    default: 0.01,
+  },
+  {
     key: 'compactHud',
     group: 'appearance',
     label: 'Compact HUD row',

@@ -3736,16 +3736,16 @@
 **What:** An always-on loop that turns armed strategy signals into orders with zero clicks per trade.
 **How:** ES module src/bot/runner.js consuming phase-20 signal events via Spektrum watch and dispatching passing signals to the phase-17 execution engine.
 
-- [ ] **T23.1.1 - Branch bot loop core** - What: An isolated line of work for the bot loop. How: git checkout -b feature/f23.1-bot-loop-core from an up-to-date main.
-- [ ] **T23.1.2 - Scaffold runner module** - What: One home for all bot loop logic. How: Create src/bot/runner.js exporting createBotRunner(state) with start/stop stubs, registered via Spektrum addSystem.
-- [ ] **T23.1.3 - Signal intake queue** - What: No signal lost during a burst. How: Implement enqueueSignal(sig) writing into a 256-slot ring buffer array with drop-oldest overflow policy.
-- [ ] **T23.1.4 - Subscribe to strategy signals** - What: The loop hears every strategy fire the instant it happens. How: Spektrum watch('strategies.signals') appends each emitted signal object into the intake queue.
-- [ ] **T23.1.5 - Drain tick** - What: Signals become decisions within 50ms. How: Implement drainTick() on a 50ms setInterval popping queued signals FIFO into the decision pipeline.
-- [ ] **T23.1.6 - Decision pipeline skeleton** - What: One ordered gate chain every signal must pass. How: Implement decide(sig) running armGate, optInGate, throttleGate, cooldownGate and capGate stubs, each returning {pass, reason}.
-- [ ] **T23.1.7 - Order dispatch call** - What: Passing signals become real venue orders. How: Wire decide() pass results into the phase-17 execution engine submitOrder() with an origin:'bot' tag on each order.
-- [ ] **T23.1.8 - Decision record store** - What: Every bot decision is captured for later display. How: Implement pushDecision(entry) appending {ts, strategy, instrument, action, reason} to a 200-entry ring at bot.decisions, called from decide().
-- [ ] **T23.1.9 - Single unit tests for loop fns** - What: Each new function proven exactly once. How: One Vitest test per fn (enqueueSignal, drainTick, decide, pushDecision) in runner.test.js, run via npx vitest run -t fnName.
-- [ ] **T23.1.10 - Merge loop core** - What: The bot loop foundation lands on main. How: Run the targeted Vitest tests plus ESLint, merge feature/f23.1-bot-loop-core into main, delete the branch.
+- [x] **T23.1.1 - Branch bot loop core** - What: An isolated line of work for the bot loop. How: git checkout -b feature/f23.1-bot-loop-core from an up-to-date main.
+- [x] **T23.1.2 - Scaffold runner module** - What: One home for all bot loop logic. How: Create src/bot/runner.js exporting createBotRunner(state) with start/stop stubs, registered via Spektrum addSystem.
+- [x] **T23.1.3 - Signal intake queue** - What: No signal lost during a burst. How: Implement enqueueSignal(sig) writing into a 256-slot ring buffer array with drop-oldest overflow policy.
+- [x] **T23.1.4 - Subscribe to strategy signals** - What: The loop hears every strategy fire the instant it happens. How: Spektrum watch('strategies.signals') appends each emitted signal object into the intake queue.
+- [x] **T23.1.5 - Drain tick** - What: Signals become decisions within 50ms. How: Implement drainTick() on a 50ms setInterval popping queued signals FIFO into the decision pipeline.
+- [x] **T23.1.6 - Decision pipeline skeleton** - What: One ordered gate chain every signal must pass. How: Implement decide(sig) running armGate, optInGate, throttleGate, cooldownGate and capGate stubs, each returning {pass, reason}.
+- [x] **T23.1.7 - Order dispatch call** - What: Passing signals become real venue orders. How: Wire decide() pass results into the phase-17 execution engine submitOrder() with an origin:'bot' tag on each order.
+- [x] **T23.1.8 - Decision record store** - What: Every bot decision is captured for later display. How: Implement pushDecision(entry) appending {ts, strategy, instrument, action, reason} to a 200-entry ring at bot.decisions, called from decide().
+- [x] **T23.1.9 - Single unit tests for loop fns** - What: Each new function proven exactly once. How: One Vitest test per fn (enqueueSignal, drainTick, decide, pushDecision) in runner.test.js, run via npx vitest run -t fnName.
+- [x] **T23.1.10 - Merge loop core** - What: The bot loop foundation lands on main. How: Run the targeted Vitest tests plus ESLint, merge feature/f23.1-bot-loop-core into main, delete the branch.
 
 ### F23.2 - Master arm switch
 

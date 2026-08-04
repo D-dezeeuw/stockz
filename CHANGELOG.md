@@ -10,6 +10,26 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ## [Unreleased]
 
+### Added
+
+- **Bot loop core** — the point of the whole desk arriving at once: strategies already have
+  opinions and the execution engine already validates and guards, and this is the thin thing
+  that lets the first drive the second with nobody clicking. Every bot order goes through
+  `submit()` and therefore `prepare()` — **the same** validation, capability check, grid
+  rounding, size guard and slippage guard a hand-typed order passes; a bot with its own
+  execution path would be a second answer to "is this order sane", and the two would disagree
+  the day it mattered. A signal is not an order: it has to survive arming and a per-strategy
+  opt-in before anything else, and **every rejection is recorded with its reason**, because a
+  bot that silently does nothing is indistinguishable from a broken one and "why did it not
+  take that" must be answerable without a debugger. The gate chain stops at the first failure
+  and reports *that* reason rather than whichever was last. Arming is off by default and off
+  after every reload — a bot that came back armed because it was armed yesterday is the most
+  dangerous default available here — and strategies are **opt-in**, unlike the alert toggles,
+  because being told about a signal and having money placed on it are different enough that
+  the defaults must differ too. Signals are queued and drained on a 50ms clock rather than
+  acted on where they fire, which bounds what a burst can do in one frame and is still four
+  times faster than a person.
+
 ## [0.22.0] — 2026-08-04 — Phase 22: Alerts & Notifications
 
 The desk taps the trader on the shoulder. One alert bus with one shape and one door, fed by
