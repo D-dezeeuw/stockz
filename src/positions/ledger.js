@@ -1,4 +1,5 @@
 import { setValue, appState } from '../app/engine.js'
+import { attributeClose } from '../strategy/scoreboard.js'
 import { PATHS } from '../state/paths.js'
 
 /**
@@ -60,6 +61,12 @@ export function appendRealization(event) {
       fee: parseFee(event).amount,
     },
   ].slice(-LEDGER_CAP)
+
+  // Attributed here rather than at the fill, because a realisation is the first moment the
+  // money is a fact. The scoreboard matches it to whichever strategy has an open fire on
+  // that instrument — the execution layer deliberately does not know who asked, and
+  // threading a strategy id through the order path would couple the two for one statistic.
+  attributeClose(entries[entries.length - 1])
 
   return entries
 }

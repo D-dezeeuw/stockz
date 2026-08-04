@@ -480,7 +480,22 @@
                 </div>
               </div>
             </div>
-            <p class="label" data-if="block.id !== 'book' &amp;&amp; block.id !== 'tape' &amp;&amp; block.id !== 'ticket' &amp;&amp; block.id !== 'positions' &amp;&amp; block.id !== 'hud' &amp;&amp; block.id !== 'strategies'">ready</p>
+            <!-- Which strategy actually earns. Ordered by net, because "which of these do
+                 I turn off" is the question this block exists to answer. -->
+            <div class="score" data-if="block.id === 'scoreboard'">
+              <p class="label" data-if="strategy.scoreboard.length === 0">no closes yet</p>
+              <div class="score__rows" data-each="s in strategy.scoreboard">
+                <div class="score__row" :class="'score__row score__row--' + s.tone">
+                  <span class="score__name truncate">{{s.strategyId}}</span>
+                  <span class="score__net num">{{s.netLabel}}</span>
+                  <span class="score__cell num">{{s.winRateLabel}}</span>
+                  <span class="score__cell num">{{s.closes}}/{{s.fires}}</span>
+                  <span class="score__cell num">{{s.holdLabel}}</span>
+                </div>
+              </div>
+              <button type="button" class="chip" data-action="click" data-fn="strategy.resetScore">reset day</button>
+            </div>
+            <p class="label" data-if="block.id !== 'book' &amp;&amp; block.id !== 'tape' &amp;&amp; block.id !== 'ticket' &amp;&amp; block.id !== 'positions' &amp;&amp; block.id !== 'hud' &amp;&amp; block.id !== 'strategies' &amp;&amp; block.id !== 'scoreboard'">ready</p>
           </div>
         </div>
       </section>

@@ -106,6 +106,7 @@ export const PATHS = Object.freeze({
     strategyParams: 'settings.strategyParams',
     activePresets: 'settings.activePresets',
     customPresets: 'settings.customPresets',
+    strategyStats: 'settings.strategyStats',
     chords: 'settings.chords',
   }),
   market: Object.freeze({
@@ -168,6 +169,7 @@ export const PATHS = Object.freeze({
     running: 'strategy.running',
     quarantined: 'strategy.quarantined',
     signals: 'strategy.signals',
+    scoreboard: 'strategy.scoreboard',
   }),
 })
 

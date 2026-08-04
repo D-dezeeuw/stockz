@@ -12,6 +12,18 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ### Added
 
+- **Live strategy scoreboard** — a desk running eight strategies has eight opinions and one
+  account; without a per-strategy score the trader knows only their total, which says the day
+  went badly and nothing about which idea to stop running. The column it orders by is **net
+  per trade**, not win rate, because a strategy can win 80% of its trades and lose money on
+  the other 20% — and "which of these do I turn off" is the question the block exists to
+  answer. Closes are attributed by **matching the open fire**, so the execution layer never
+  has to carry a strategy id: threading one through the order path would couple execution to
+  attribution for the sake of one statistic. A close with no matching fire still counts
+  toward P&L — the money moved either way — but contributes no hold time, since averaging in
+  a zero would report round trips that never happened. Everything is incremental: a rollup
+  that rescanned the ledger per close would grow with the session, which is exactly what the
+  tick budget exists to forbid.
 - **Scalper preset packs** — eight strategies at five or six params each is forty numbers,
   and a trader who has to pick all of them before their first trade will pick none of them
   and run the defaults forever. A pack is one decision instead of forty, and the three names
