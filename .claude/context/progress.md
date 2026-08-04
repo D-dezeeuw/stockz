@@ -5,11 +5,47 @@ in `masterplan.md`, and knows where the project stands. Rewritten at every phase
 
 ---
 
-## Status: Phase 14 closed (v0.14.0) · Phase 15 next
+## Status: Phase 15 closed (v0.15.0) · Phase 16 next — **halfway**
 
 **Live:** https://d-dezeeuw.github.io/stockz/ (Pages serves `main` root — pushing is deploying)
-**Tests:** 388, one per function, all passing individually. Every gated file >80% branches.
+**Tests:** 437, one per function, all passing individually. Every gated file >80% branches.
 **Branch model:** everything merges to `main`; no feature branches outstanding.
+
+## Phase 15 — Rapid Order Entry (closed)
+
+| Feature | What now exists | Where |
+| --- | --- | --- |
+| F15.1, F15.2, F15.4 | `buildTicketState`, `resolvePrice`, `canSubmit`, `refreshTicketPrice` | `src/ticket/state.js` |
+| F15.1, F15.4 | `sizeForPreset`, `nudgePrice`, `registerTicketActions`, `readTicket` | `src/ticket/actions.js` |
+| F15.3 | `applyPreset`, `clampQty`, `roundToLot`, `resolveQty`, `registerSizingActions` | `src/ticket/sizing.js` |
+| F15.5 | `makeClientOrderId`, `buildOrderPayload`, `primePayload`, `registerSubmitAction`, `flushQueue` | `src/ticket/submit.js` |
+| F15.5 | `rejectionEvent`, `acceptEvent`, `sendOrder` | `src/ticket/send.js` |
+| F15.6 | `orderReducer`, `isTerminal`, `applyOrderEvent`, `ingestOrderEvent`, `ingestOrderEvents`, `partitionOrders` | `src/ticket/lifecycle.js` |
+| F15.7 | `orderToast`, `coalesceToasts`, `playCue`, `makeAudioContext`, `announceOrder` | `src/ticket/feedback.js` |
+| F15.8 | `nextSeq`, `enqueueOrder`, `drainQueue`, `queueOrder`, `takeQueue` | `src/ticket/queue.js` |
+| F15.9 | `workingOrders`, `orderSummary`, `cancelAll`, `repeatPayload`, `registerShortcutActions`, `rememberOrder` | `src/ticket/shortcuts.js` |
+| F15.10 | `priceFromY`, `intentToOrder`, `registerIntentAction` | `src/ticket/intent.js` |
+
+**The one rule that bit twice: `setValue` lands on the *next* tick.** Anything that
+writes the same path more than once inside a frame must fold locally and write once, or
+each write reads state that is missing the previous one. It cost a double-drained order
+queue (fixed by holding the queue outside the reactive tree) and a cancel-all that
+cancelled one order out of three (fixed by `ingestOrderEvents`). Expect this again in any
+batch path.
+
+**Arming gates entering risk, never leaving it.** `canSubmit` checks `armed` *last*, so a
+ticket that is also missing a size says "no size" — the more useful message. `CXL ALL`
+is never disabled. `trade.armed` is in the unpersisted `trade` namespace, so every reload
+starts cold by construction.
+
+New state: `trade.ticket*` (symbol/side/size/mode/limit/price/source/flash),
+`trade.queue`, `trade.lastOrder`, `trade.lastOrderSummary`, `trade.lastReject`,
+`trade.buyingPower`, `market.quoteTs`. New settings: `qtyPresets`, `maxBurst`, `volume`.
+
+**Deferred in phase 15:** T15.4.7 breaker auto-disarm (phase 24 owns the breaker; the
+seam is `ticket.arm` with an explicit payload), T15.5.5 EToro submit route (CORS-blocked
+without a relay; `sendOrder` takes an injectable `place`), T15.5.7 latency probe (phase 16
+owns the HUD).
 
 ## Phase 14 — Order Book & Tape (closed)
 
@@ -236,18 +272,17 @@ go stale, and faults that reach the trader instead of the console.
 | F2.9 | `pushToast`, `dismissToast`, `expireToasts`, `describeEngineError`, `wireEngineErrors` | `src/ui/toast.js` |
 | F2.10 | `collectExpressions`, `renderPrecompileModule`, `cspMeta`, `npm run build:csp` | `src/app/csp.js`, `docs/csp.md` |
 
-## Next up: Phase 15 — Order Entry & Execution
+## Next up: Phase 16 — Keyboard-First Control
 
-First feature **F15.1**. The ticket itself: hotkeys, size presets, market/limit, and the
-one-click send that everything so far exists to serve.
+First feature **F16.1**. Every action on the desk reachable without the mouse, which on a
+scalping desk is the difference between a trade taken and a trade watched.
 
-- The ticket's state already exists — `trade.ticketPrice/Side/Size/Flash`, written by
-  `book.prefill` (F14.6). Order entry reads it rather than inventing its own.
-- `placeOrder` / `cancelOrder` are already in `src/venues/okx/rest.js` with rate limiting.
-- **Live trading needs keys**; the public feed does not. `connectFeeds` reports
-  `authenticated` for exactly this.
-- `canTradeBook(market.bookStatus)` is the guard to reuse — no order should price off a
-  ladder the desk has already declared stale.
+- Every control already routes through a named action (`ACTIONS` in
+  `src/actions/names.js`), so a hotkey map is a binding from key to action name — not a
+  second implementation of anything.
+- `dispatchAction(name, payload)` is the single entry point to reuse.
+- The click-to-trade payload contract (`{price, column, shiftKey}`) is what keyboard
+  entries should produce too, so both surfaces stay one code path.
 
 ### Still outstanding across phases
 *(none — the boot-time feed gap recorded here through phase 13 was closed in phase 14;
