@@ -10,6 +10,7 @@ import {
   clearKeys,
   parseKeyParams,
   scrubKeyParams,
+  buildKeyUrl,
   KEYS_CACHE_KEY,
   cacheKeys,
   loadCachedKeys,
@@ -115,6 +116,38 @@ describe('scrubKeyParams', () => {
     expect(scrubKeyParams('/stockz/?okxKey=ak')).toBe('/stockz/')
     expect(scrubKeyParams('/stockz/?theme=day#book')).toBe('/stockz/?theme=day#book')
     expect(scrubKeyParams('')).toBe('')
+  })
+})
+
+describe('buildKeyUrl', () => {
+  it('turns the vault back into a link, and refuses to build one from nothing', () => {
+    // Nothing to share is an empty string, never a bare URL that looks like it works.
+    expect(buildKeyUrl('https://d.example/stockz/')).toBe('')
+
+    setKeys('okx', OKX)
+    const url = new URL(buildKeyUrl('https://d.example/stockz/?theme=day'))
+
+    expect(url.searchParams.get('okxKey')).toBe('ak')
+    expect(url.searchParams.get('okxSecret')).toBe('sk')
+    expect(url.searchParams.get('okxPass')).toBe('pp')
+    // Unrelated params survive: the link should still be the desk's own URL.
+    expect(url.searchParams.get('theme')).toBe('day')
+    // A venue with no keys contributes nothing rather than an empty param.
+    expect(url.searchParams.has('etoroKey')).toBe(false)
+
+    // Round trip: what it writes is exactly what the boot path reads back.
+    expect(parseKeyParams(url.search)).toHaveLength(3)
+
+    // Building from a desk that was itself opened by a link must not leave two copies of
+    // a rotated key on the query string.
+    setKeys('okx', { apiKey: 'rotated' })
+    const again = new URL(buildKeyUrl('https://d.example/stockz/?okxKey=stale'))
+    expect(again.searchParams.getAll('okxKey')).toEqual(['rotated'])
+
+    // Absolute only: resolving a relative base against a placeholder origin would hand
+    // back a link that looks like it works and never will.
+    expect(buildKeyUrl('')).toBe('')
+    expect(buildKeyUrl('/stockz/')).toBe('')
   })
 })
 

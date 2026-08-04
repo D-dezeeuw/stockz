@@ -145,6 +145,7 @@ describe('allActionNames', () => {
       'keys.lock',
       'keys.remember',
       'keys.liveTrading',
+      'keys.copyUrl',
       'keys.rebind',
       'keys.resetBindings',
       'keys.panic',

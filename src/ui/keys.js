@@ -8,6 +8,7 @@ import {
   clearKeys,
   keyPresence,
   adoptKeysFromUrl,
+  buildKeyUrl,
   adoptKeysFromEnv,
   cacheKeys,
   loadCachedKeys,
@@ -73,6 +74,9 @@ export function submitKeys(_state, payload = {}, deps = {}) {
 
   const presence = syncKeyPresence()
   if (rememberEnabled()) cacheKeys()
+  // Rebuilt on every save, so the link in the modal is always the keys the desk is
+  // actually holding rather than the set it held when the modal opened.
+  showKeyUrl(deps.doc)
   pushToast(presence[venue] ? `${venue} keys accepted` : `${venue} keys incomplete`, presence[venue] ? 'success' : 'warn')
   return presence
 }
@@ -133,6 +137,9 @@ export function lockKeys() {
   // would be a lock that undoes itself on the next reload — worse than no lock, because
   // the trader believes it worked.
   forgetCachedKeys()
+  // The link goes with them. A lock that left a URL containing the keys on screen would
+  // be a lock that undoes itself for anyone still looking at the tab.
+  showKeyUrl()
 
   syncKeyPresence()
   setValue(PATHS.ui.modal, cleared > 0 ? 'keys' : '')
@@ -224,6 +231,58 @@ export function promptForKeys(state = appState) {
 }
 
 /**
+ * Put the bookmark URL into the modal.
+ *
+ * Written straight onto the input's `value` rather than bound through state, for the same
+ * reason the key fields themselves are unbound: state is recorded into history, returned by
+ * `serialize()`, dumped by devtools and exported with the journal, and this string contains
+ * every credential the desk holds. It exists in one DOM node and nowhere else.
+ *
+ * @param {Document} [doc] - the document to write into.
+ * @returns {string} the URL now shown, or '' when there is nothing to share.
+ */
+export function showKeyUrl(doc = globalThis.document) {
+  const field = doc?.querySelector?.('[data-key-url]')
+  if (!field) return ''
+
+  const url = buildKeyUrl()
+  field.value = url
+  // The row is hidden until there is something in it: an empty box captioned "your
+  // bookmark" invites a click that copies nothing.
+  const row = field.closest?.('.keys__url')
+  if (row) row.style.display = url ? '' : 'none'
+
+  return url
+}
+
+/**
+ * Copy the bookmark URL to the clipboard.
+ *
+ * @param {object} _state - engine state (unused).
+ * @param {{doc?: Document, clipboard?: object}} [payload] - injectable plumbing.
+ * @returns {string} the URL that was copied, or '' when there was none.
+ */
+export function copyKeyUrl(_state, payload = {}) {
+  const doc = payload.doc ?? globalThis.document
+  const url = showKeyUrl(doc)
+
+  if (!url) {
+    pushToast('add keys first — nothing to bookmark', 'warn')
+    return ''
+  }
+
+  const clipboard = payload.clipboard ?? globalThis.navigator?.clipboard
+  // Selected as well as copied: a browser that refuses clipboard access without a gesture
+  // it recognises leaves the trader with the text highlighted and one keystroke to go,
+  // rather than a button that silently did nothing.
+  doc?.querySelector?.('[data-key-url]')?.select?.()
+  clipboard?.writeText?.(url)?.catch?.(() => {})
+
+  pushToast('bookmark URL copied — it contains your keys', 'warn')
+  return url
+}
+
+/**
  * Switch the desk between paper and live.
  *
  * The only control on this desk that decides whether money is real, which is why it sits
@@ -275,6 +334,9 @@ export function registerKeyActions() {
     registerAction(ACTIONS.keys.remember, toggleRemember, { description: 'Remember credentials' }),
     registerAction(ACTIONS.keys.liveTrading, toggleLiveTrading, {
       description: 'Trade live with real funds instead of on paper',
+    }),
+    registerAction(ACTIONS.keys.copyUrl, copyKeyUrl, {
+      description: 'Copy a bookmark URL carrying the credentials',
     }),
   ]
 }

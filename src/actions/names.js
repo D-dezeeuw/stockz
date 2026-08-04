@@ -131,6 +131,7 @@ export const ACTIONS = Object.freeze({
     lock: 'keys.lock',
     remember: 'keys.remember',
     liveTrading: 'keys.liveTrading',
+    copyUrl: 'keys.copyUrl',
     rebind: 'keys.rebind',
     resetBindings: 'keys.resetBindings',
     panic: 'keys.panic',
