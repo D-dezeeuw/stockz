@@ -240,6 +240,15 @@ export const SETTINGS_SCHEMA = Object.freeze([
     default: 5,
   },
   {
+    key: 'pauseMinutes',
+    group: 'risk',
+    label: 'Pause length in minutes (0 = until cleared)',
+    kind: 'number',
+    min: 0,
+    step: 1,
+    default: 15,
+  },
+  {
     key: 'compactHud',
     group: 'appearance',
     label: 'Compact HUD row',

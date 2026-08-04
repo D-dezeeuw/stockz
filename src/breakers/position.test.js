@@ -12,6 +12,7 @@ import {
   pauseCheck,
   recordBlock,
   pauseState,
+  resumeDue,
   resetPause,
 } from './position.js'
 import { refreshThresholds, TRIP } from './core.js'
@@ -188,6 +189,22 @@ describe('pauseState', () => {
   it('reads the streak and the pause back together', () => {
     onRealizedFill(-1, { maxConsecLosses: 99 })
     expect(pauseState()).toEqual({ streak: 1, paused: false })
+  })
+})
+
+describe('resumeDue', () => {
+  it('reopens after the breather, and never when the trader wanted it open-ended', () => {
+    expect(resumeDue(9999, { pauseMinutes: 5 })).toBe(false)
+
+    onRealizedFill(-1, { maxConsecLosses: 1 }, 1000)
+    expect(resumeDue(1000 + 4 * 60000, { pauseMinutes: 5 })).toBe(false)
+    expect(resumeDue(1000 + 5 * 60000, { pauseMinutes: 5 })).toBe(true)
+
+    // Zero disables the timer, not the pause: a break that quietly expired on a trader who
+    // wanted it to last until they said so would be worse than none.
+    onRealizedFill(-1, { maxConsecLosses: 1 }, 2000)
+    expect(resumeDue(2000 + 60 * 60000, { pauseMinutes: 0 })).toBe(false)
+    expect(pauseState().paused).toBe(true)
   })
 })
 

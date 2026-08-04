@@ -32,7 +32,8 @@ import { registerLogActions } from '../alerts/log.js'
 import { registerPersistActions, rehydrateAlerts } from '../alerts/persist.js'
 import { registerBotActions, createBotRunner } from '../bot/runner.js'
 import { registerSessionActions } from '../bot/session.js'
-import { watchThresholds, watchTrip, watchPending } from '../breakers/index.js'
+import { watchTrip, watchPending } from '../breakers/index.js'
+import { watchBreakerSettings } from '../breakers/settings.js'
 import { registerKillActions } from '../breakers/kill.js'
 import { registerRearmActions, mountRelease } from '../breakers/rearm.js'
 import {
@@ -126,7 +127,9 @@ export function bootstrap(options = {}) {
   rehydrateAlerts(undefined, Date.now())
   registerBotActions()
   registerSessionActions()
-  watchThresholds()
+  // One watcher over every limit: the cache and the settings card move together, and a
+  // limit the trader raised that never took effect is the worst kind of stale.
+  watchBreakerSettings()
   registerKillActions()
   registerRearmActions()
   mountRelease()

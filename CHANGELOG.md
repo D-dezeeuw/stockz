@@ -108,6 +108,22 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
   here uses IDB and the plan's "shared upgrade helper" does not exist, so a hundred bounded
   entries did not justify a second storage engine and a fake-IDB test dependency — the
   guarantees asked for (survives reloads, bounded, pruned) are all met as it stands.
+- **Every limit in one place** — and the consolidation found a real seam: the streak *check*
+  read `maxConsecLosses` while the cached *threshold* read `botCooldownAfter`, so a trader
+  setting one number was configuring half a breaker. A safety feature configured in two places
+  is one that is misconfigured in production. All limits are now plain numbers in the account's
+  own units — no percentages, no basis points, no aggressive/moderate/conservative presets,
+  because a trader knows the number they cannot lose past and asking them to express it as a
+  fraction of a moving equity figure is asking for arithmetic at the worst possible moment.
+  **Zero means disabled on every field**, consistently, so a blank box is never a trap that
+  means "stop immediately" on one input and "no limit" on the next. Anything unparseable clamps
+  to the default rather than to Infinity, since NaN on the hot path silently disables a check.
+  Each limit is shown beside the number it is limiting. Raising a limit binds on the very next
+  order and **never** clears a trip: turning the number up must not become the fastest way past
+  a breaker. The loss-streak pause now also expires on its own after a configurable breather,
+  counted on the frame pump rather than a timer so a tab backgrounded through its own expiry
+  comes back trading instead of still counting down — with zero meaning the break lasts until
+  the trader says otherwise.
 
 ## [0.23.0] — 2026-08-04 — Phase 23: Auto-Trade Bot Runner
 

@@ -116,9 +116,10 @@ export function capFor(instrument, state = appState?.settings) {
   return currentThresholds().maxPosition
 }
 
-/** The realised-loss streak, and whether entries are paused. */
+/** The realised-loss streak, whether entries are paused, and since when. */
 let lossStreak = 0
 let paused = false
+let pausedAt = 0
 
 /**
  * Fold a closed trade into the streak.
@@ -127,7 +128,7 @@ let paused = false
  * @param {object} [state] - the settings slice.
  * @returns {{streak: number, paused: boolean}} the state after.
  */
-export function onRealizedFill(pnl, state = appState?.settings) {
+export function onRealizedFill(pnl, state = appState?.settings, now = 0) {
   const amount = Number(pnl)
   if (!Number.isFinite(amount) || amount === 0) return { streak: lossStreak, paused }
 
@@ -140,7 +141,7 @@ export function onRealizedFill(pnl, state = appState?.settings) {
   const limit = Number(state?.maxConsecLosses)
   // Zero disables it. A limit of zero meaning "pause immediately" would be an unusable
   // default for anyone who left the field blank.
-  if (Number.isFinite(limit) && limit > 0 && lossStreak >= limit) pauseTrading()
+  if (Number.isFinite(limit) && limit > 0 && lossStreak >= limit) pauseTrading(now)
 
   return { streak: lossStreak, paused }
 }
@@ -165,6 +166,7 @@ export function streakCheck(state = appState?.settings) {
  */
 export function pauseTrading(now = 0) {
   paused = true
+  pausedAt = Number(now) || 0
   logBreakerEvent({ kind: 'pause', code: TRIP.LOSS_STREAK, ts: now, values: { streak: lossStreak } })
   setValue(PATHS.breaker.paused, true)
   setValue(PATHS.breaker.lossStreak, lossStreak)
@@ -181,6 +183,7 @@ export function clearPause() {
   if (!paused) return false
 
   paused = false
+  pausedAt = 0
   lossStreak = 0
   setValue(PATHS.breaker.paused, false)
   setValue(PATHS.breaker.lossStreak, 0)
@@ -234,6 +237,25 @@ export function pauseState() {
 }
 
 /**
+ * Has the breather lasted long enough?
+ *
+ * @param {number} now - the current time.
+ * @param {object} [state] - the settings slice.
+ * @returns {boolean} true when the pause was lifted.
+ */
+export function resumeDue(now, state = appState?.settings) {
+  if (!paused) return false
+
+  const minutes = Number(state?.pauseMinutes)
+  // Zero disables the timer, not the pause: some traders want the break to last until they
+  // decide it is over, and a pause that quietly expired on them would be worse than none.
+  if (!Number.isFinite(minutes) || minutes <= 0) return false
+  if ((Number(now) || 0) - pausedAt < minutes * 60000) return false
+
+  return clearPause()
+}
+
+/**
  * Forget the streak and the pause.
  *
  * @returns {boolean} true.
@@ -241,5 +263,6 @@ export function pauseState() {
 export function resetPause() {
   lossStreak = 0
   paused = false
+  pausedAt = 0
   return true
 }

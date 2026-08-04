@@ -4047,16 +4047,16 @@
 **What:** All breaker limits set once in settings, in plain numbers, and they stick and apply instantly.
 **How:** A Breakers card in the phase-7 settings panel bound via data-model, persisted with spektrum/persist and hot-swapped through refreshThresholds.
 
-- [ ] **T24.10.1 - Branch breaker settings** - What: Isolated work on threshold settings. How: git checkout -b feature/f24.10-breaker-settings from an up-to-date main.
-- [ ] **T24.10.2 - Settings schema module** - What: One source of truth for every limit and default. How: Consolidate maxDailyLoss, maxPosDefault, capOverrides, maxConsecLosses and pauseMinutes defaults into src/breakers/settings.js.
-- [ ] **T24.10.3 - Breakers settings card** - What: Every limit editable in one place. How: Build a Breakers card in the phase-7 settings panel with numeric inputs bound via data-model, step and min attributes set.
-- [ ] **T24.10.4 - Validation fn** - What: Bad numbers can never reach the hot path. How: Implement validateBreakerSettings clamping to positive ranges (0 allowed where it means disabled), snapping invalid input back on change.
-- [ ] **T24.10.5 - Persist limits** - What: Limits survive every reload. How: Map breaker.settings to the localStorage key stockz.breakers through spektrum/persist.
-- [ ] **T24.10.6 - Hot threshold reload** - What: A changed limit binds on the very next order. How: Spektrum watch on breaker.settings invoking refreshThresholds so the cache updates without restart.
-- [ ] **T24.10.7 - No-untrip-on-raise guard** - What: Raising a limit never silently revives a tripped desk. How: Keep breaker.tripped latched through settings changes so only the F24.8 hold-to-arm clears it.
-- [ ] **T24.10.8 - Live context display** - What: Limits shown against reality. How: Render current values beside each input, e.g. 'now: -120.50 / 500.00', from computed bindings with the account currency suffix.
-- [ ] **T24.10.9 - Single unit test for validation fn** - What: The clamp proven once. How: One Vitest test for validateBreakerSettings covering clamp and zero-disable cases via npx vitest run -t validateBreakerSettings.
-- [ ] **T24.10.10 - Merge breaker settings** - What: Threshold settings land on main. How: Green targeted test plus ESLint, merge feature/f24.10-breaker-settings into main, delete the branch.
+- [x] **T24.10.1 - Branch breaker settings** - What: Isolated work on threshold settings. How: git checkout -b feature/f24.10-breaker-settings from an up-to-date main.
+- [x] **T24.10.2 - Settings schema module** - What: One source of truth for every limit and default. How: Consolidate maxDailyLoss, maxPosDefault, capOverrides, maxConsecLosses and pauseMinutes defaults into src/breakers/settings.js.
+- [x] **T24.10.3 - Breakers settings card** - What: Every limit editable in one place. How: Build a Breakers card in the phase-7 settings panel with numeric inputs bound via data-model, step and min attributes set.
+- [x] **T24.10.4 - Validation fn** - What: Bad numbers can never reach the hot path. How: Implement validateBreakerSettings clamping to positive ranges (0 allowed where it means disabled), snapping invalid input back on change.
+- [x] **T24.10.5 - Persist limits** - What: Limits survive every reload. How: Map breaker.settings to the localStorage key stockz.breakers through spektrum/persist.
+- [x] **T24.10.6 - Hot threshold reload** - What: A changed limit binds on the very next order. How: Spektrum watch on breaker.settings invoking refreshThresholds so the cache updates without restart.
+- [x] **T24.10.7 - No-untrip-on-raise guard** - What: Raising a limit never silently revives a tripped desk. How: Keep breaker.tripped latched through settings changes so only the F24.8 hold-to-arm clears it.
+- [x] **T24.10.8 - Live context display** - What: Limits shown against reality. How: Render current values beside each input, e.g. 'now: -120.50 / 500.00', from computed bindings with the account currency suffix.
+- [x] **T24.10.9 - Single unit test for validation fn** - What: The clamp proven once. How: One Vitest test for validateBreakerSettings covering clamp and zero-disable cases via npx vitest run -t validateBreakerSettings.
+- [x] **T24.10.10 - Merge breaker settings** - What: Threshold settings land on main. How: Green targeted test plus ESLint, merge feature/f24.10-breaker-settings into main, delete the branch.
 
 ---
 

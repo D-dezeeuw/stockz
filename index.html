@@ -742,21 +742,45 @@
           <input type="number" step="0.01" min="0" class="field__input num"
                  data-model="settings.priceStep">
         </label>
+        <!-- Every breaker limit in one card, in plain numbers in the account's own units.
+             No percentages and no aggressive/moderate presets: a trader knows the number
+             they cannot lose past, and making them express it as a fraction of a moving
+             equity figure is asking for arithmetic at the worst possible moment. Zero is
+             "off" on every field, consistently, so a blank box is never a trap. Each limit
+             sits beside the number it is limiting — a limit read in the abstract is one
+             nobody can tell is about to bind. -->
         <label class="field">
           <span class="label">Daily max loss</span>
           <input type="number" step="1" min="0" class="field__input num"
                  data-model="settings.maxDailyLoss">
+          <span class="label num">now {{fmt.signed(breaker.dayPnl)}}</span>
         </label>
         <label class="field">
           <span class="label">Max position size</span>
           <input type="number" step="0.01" min="0" class="field__input num"
                  data-model="settings.maxPosition">
+          <span class="label num">now {{trade.exposure}}</span>
         </label>
         <label class="field">
           <span class="label">Pause after N losses (0 = off)</span>
           <input type="number" step="1" min="0" class="field__input num"
                  data-model="settings.maxConsecLosses">
+          <span class="label num">now {{breaker.lossStreak}}</span>
         </label>
+        <label class="field">
+          <span class="label">Pause length in minutes (0 = until cleared)</span>
+          <input type="number" step="1" min="0" class="field__input num"
+                 data-model="settings.pauseMinutes">
+        </label>
+        <!-- The limits as the breaker itself sees them, after validation. A field the
+             trader typed a word into reads as its default here rather than silently
+             disabling the check, which is the difference between a limit and a suggestion. -->
+        <div class="breaker-limits" data-each="row in breaker.limits">
+          <span class="breaker-limits__row">
+            <b>{{row.label}}</b>
+            <span class="num">{{row.now}} / {{row.off ? 'off' : row.limit}}</span>
+          </span>
+        </div>
         <!-- The breaker's own record. Newest first, with the numbers attached: "it fired at
              14:12" is trivia, "at 14:12 with the day at -412 against a -400 limit" is the
              answer to the question actually being asked. -->

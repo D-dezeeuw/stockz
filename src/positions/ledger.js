@@ -75,7 +75,7 @@ export function appendRealization(event) {
   // And into the breaker's own streak. Separate from the bot's: the bot benches itself,
   // the desk pauses everything, and a trader clicking by hand is subject to the second
   // even when the first is not running.
-  onRealizedFill(entries[entries.length - 1].amount)
+  onRealizedFill(entries[entries.length - 1].amount, undefined, entries[entries.length - 1].ts)
 
   return entries
 }
