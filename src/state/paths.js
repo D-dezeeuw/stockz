@@ -74,6 +74,7 @@ export const PATHS = Object.freeze({
     debugCharts: 'settings.debugCharts',
     bookDepth: 'settings.bookDepth',
     imbalanceThreshold: 'settings.imbalanceThreshold',
+    whaleMultiplier: 'settings.whaleMultiplier',
   }),
   market: Object.freeze({
     venues: 'market.venues',
@@ -86,6 +87,8 @@ export const PATHS = Object.freeze({
     ladder: 'market.ladder',
     tape: 'market.tape',
     imbalance: 'market.imbalance',
+    whales: 'market.whales',
+    whaleCount: 'market.whaleCount',
     // derived (written by computed, never by hand)
     mid: 'market.mid',
     spread: 'market.spread',

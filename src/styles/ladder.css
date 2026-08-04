@@ -225,3 +225,48 @@
     transition: none;
   }
 }
+
+/*
+ * Whales.
+ *
+ * One pulse cycle, on compositor-only properties. A whale must grab the eye and then
+ * get out of the way — a permanently glowing row is one the eye learns to ignore, which
+ * defeats the point.
+ */
+
+.ladder__row--whale,
+.tape__row--whale {
+  animation: whale-pulse 700ms ease-out 1;
+  font-weight: 700;
+}
+
+.ladder__row--whale::after,
+.tape__row--whale::after {
+  content: '◆';
+  position: absolute;
+  right: 2px;
+  font-size: var(--font-size-xs, 0.6875rem);
+  opacity: 0.8;
+}
+
+.tape__row--whale {
+  position: relative;
+}
+
+@keyframes whale-pulse {
+  0% {
+    opacity: 0.4;
+    transform: scale(1.02);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ladder__row--whale,
+  .tape__row--whale {
+    animation: none;
+  }
+}

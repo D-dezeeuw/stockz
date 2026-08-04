@@ -2297,16 +2297,16 @@
 **What:** Large resting orders and outsized prints jump out of the noise - you see the whales first.
 **How:** Threshold rules based on a rolling median of print sizes highlighting ladder rows and tape prints with a pulse glow.
 
-- [ ] **T14.5.1 - Branch whale work** - What: Big-player detection developed independently. How: git checkout -b feature/14-5-whale-highlight from main.
-- [ ] **T14.5.2 - Implement rollingMedian** - What: A fair size baseline that adapts to the session. How: Pure fn computing the median over the last 200 print sizes with an insertion-sorted window.
-- [ ] **T14.5.3 - Implement isWhale** - What: One crisp rule for what counts as big. How: Pure fn returning size >= k times the rolling median with k configurable per instrument.
-- [ ] **T14.5.4 - Highlight whale ladder rows** - What: Heavy resting levels visible in the depth. How: Computed class on ladder rows whose size passes isWhale against the book size baseline.
-- [ ] **T14.5.5 - Highlight whale tape prints** - What: Outsized aggression flagged on the tape. How: Whale class plus icon glyph on tape rows via :class using the isWhale rule.
-- [ ] **T14.5.6 - Add per-instrument multiplier settings** - What: Whale sensitivity tuned per market. How: k-multiplier override in the phase 7 settings store persisted via spektrum/persist.
-- [ ] **T14.5.7 - Emit the whale trigger** - What: Downstream alerting and strategies can react to whales. How: Spektrum trigger('whale', payload) fired per detection for phase 20-22 consumers.
-- [ ] **T14.5.8 - Style the whale pulse** - What: Whales grab attention without hiding other data. How: Single-cycle glow keyframe from phase 3 accent tokens on compositor-only properties.
-- [ ] **T14.5.9 - Write single unit tests for whale fns** - What: Detection math locked. How: One Vitest test each for rollingMedian and isWhale, run individually via vitest run -t.
-- [ ] **T14.5.10 - Verify and merge whale highlight** - What: Big players visible in ladder and tape alike. How: Replay a recorded burst with known large prints, confirm flags, then merge feature/14-5-whale-highlight into main.
+- [x] **T14.5.1 - Branch whale work** - What: Big-player detection developed independently. How: git checkout -b feature/14-5-whale-highlight from main.
+- [x] **T14.5.2 - Implement rollingMedian** - What: A fair size baseline that adapts to the session. How: Pure fn computing the median over the last 200 print sizes with an insertion-sorted window.
+- [x] **T14.5.3 - Implement isWhale** - What: One crisp rule for what counts as big. How: Pure fn returning size >= k times the rolling median with k configurable per instrument.
+- [x] **T14.5.4 - Highlight whale ladder rows** - What: Heavy resting levels visible in the depth. How: Computed class on ladder rows whose size passes isWhale against the book size baseline.
+- [x] **T14.5.5 - Highlight whale tape prints** - What: Outsized aggression flagged on the tape. How: Whale class plus icon glyph on tape rows via :class using the isWhale rule.
+- [x] **T14.5.6 - Add per-instrument multiplier settings** - What: Whale sensitivity tuned per market. How: k-multiplier override in the phase 7 settings store persisted via spektrum/persist.
+- [x] **T14.5.7 - Emit the whale trigger** - What: Downstream alerting and strategies can react to whales. How: Spektrum trigger('whale', payload) fired per detection for phase 20-22 consumers.
+- [x] **T14.5.8 - Style the whale pulse** - What: Whales grab attention without hiding other data. How: Single-cycle glow keyframe from phase 3 accent tokens on compositor-only properties.
+- [x] **T14.5.9 - Write single unit tests for whale fns** - What: Detection math locked. How: One Vitest test each for rollingMedian and isWhale, run individually via vitest run -t.
+- [x] **T14.5.10 - Verify and merge whale highlight** - What: Big players visible in ladder and tape alike. How: Replay a recorded burst with known large prints, confirm flags, then merge feature/14-5-whale-highlight into main.
 
 ### F14.6 - Click-to-Trade Prefill
 
