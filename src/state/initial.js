@@ -223,6 +223,11 @@ export function initialState(overrides = {}) {
     [PATHS.breaker.log]: [],
     [PATHS.breaker.limits]: [],
 
+    // journal
+    [PATHS.journal.trades]: [],
+    [PATHS.journal.count]: 0,
+    [PATHS.journal.last]: null,
+
     // alerts
     [PATHS.alerts.fired]: null,
     [PATHS.alerts.log]: [],

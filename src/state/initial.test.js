@@ -16,6 +16,7 @@ describe('initialState', () => {
       'app',
       'bot',
       'breaker',
+      'journal',
       'market',
       'settings',
       'strategy',

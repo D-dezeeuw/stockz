@@ -10,6 +10,25 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ## [Unreleased]
 
+### Added
+
+- **Fills paired into round trips** — a venue reports executions; a trader thinks in scalps.
+  On a desk doing hundreds of round trips a day that gap is the whole difference between a
+  journal and a log file, because forty fills across six partial exits is *one decision* and
+  reviewing it as forty rows teaches nobody anything. Matching is **FIFO and not
+  configurable** — not because average-cost is wrong in general, but because a journal exists
+  to be trusted later and a policy that can be changed retroactively turns every past entry
+  into a number that depends on a setting nobody remembers the value of. Three cases each get
+  their own function: a lot consumed by a smaller exit **splits** and carries the remainder
+  forward, so a scaled-out scalp stays one trade; a fill that crosses through flat is divided
+  into a closing leg and an opening one, with the **fee pro-rated by quantity** so a crossed
+  round trip does not look worse than an identical uncrossed one; and every fill is deduped
+  by venue execution id, because every reconnect replays recent executions and without the id
+  set one dropped frame doubles the day's trade count with no way to tell which half is real.
+  Gross and net are both kept — gross says whether the idea worked, net says whether it paid,
+  and on a scalping desk those diverge constantly. The half-open lots and the seen-id set
+  persist together: restoring lots without the ids would replay the day straight back in.
+
 ## [0.24.0] — 2026-08-04 — Phase 24: Circuit Breakers & Risk Kill Switch
 
 One safety net on a desk built around never slowing the trader down — and the rule that
