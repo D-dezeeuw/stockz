@@ -4,6 +4,7 @@ import { registerAction } from '../actions/registry.js'
 import { ACTIONS } from '../actions/names.js'
 import { splitSymbol } from '../lists/ops.js'
 import { readTicket } from './actions.js'
+import { queueOrder, drainQueue, takeQueue } from './queue.js'
 
 /**
  * The submit fast path.
@@ -140,12 +141,39 @@ export function registerSubmitAction(deps = {}) {
     ])
     setValue(PATHS.trade.lastReject, '')
 
-    send?.(order)
+    // Through the queue, not straight to the wire: four clicks in 300ms must become four
+    // orders in click order, each at the price its own click saw.
+    if (!queueOrder(order, { now: at })) {
+      setValue(PATHS.trade.lastReject, 'burst limit')
+      return false
+    }
     cached = null
+
+    // Drained on the next microtask so the click returns immediately — the optimistic
+    // row is already painted, and the send has no business blocking the handler.
+    Promise.resolve().then(() => flushQueue(send))
     return true
   })
 
   return ACTIONS.ticket.submit
+}
+
+/**
+ * Drain whatever is queued through the venue send.
+ *
+ * @param {(payload: object) => unknown} send - the venue call.
+ * @returns {Promise<object>} the drain result.
+ */
+export async function flushQueue(send) {
+  // Taken, not read: the queue lives outside the reactive tree precisely so a second
+  // click in the same frame cannot drain the first one again.
+  const queued = takeQueue()
+  if (queued.length === 0) return { sent: 0, failed: 0, remaining: [] }
+
+  return drainQueue(queued, async (payload) => {
+    const result = await send?.(payload)
+    return result ?? true
+  })
 }
 
 /** Forget the cached payload — on a symbol change, where it would be wrong. */

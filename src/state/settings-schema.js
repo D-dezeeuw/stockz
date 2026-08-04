@@ -119,6 +119,15 @@ export const SETTINGS_SCHEMA = Object.freeze([
     default: 4,
   },
   {
+    key: 'maxBurst',
+    group: 'risk',
+    label: 'Max queued orders',
+    kind: 'number',
+    min: 1,
+    step: 1,
+    default: 8,
+  },
+  {
     key: 'volume',
     group: 'appearance',
     label: 'Cue volume',

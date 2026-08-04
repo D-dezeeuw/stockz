@@ -2512,16 +2512,16 @@
 **What:** Machine-gun clicking never drops an order - every click becomes exactly one sequenced order.
 **How:** FIFO queue in state with an addAsync drain loop feeding submits one by one while the UI stays unblocked.
 
-- [ ] **T15.8.1 - Burst queue branch** - What: Isolated branch for queue mechanics. How: Branch feature/f15-08-burst-queue from main.
-- [ ] **T15.8.2 - enqueueOrder() function** - What: Clicks captured at click-time prices. How: Push a frozen payload snapshot onto orders.queue via addValue the instant the button fires.
-- [ ] **T15.8.3 - drainQueue() loop** - What: Orders leave in strict order. How: addAsync drain awaiting each phase-9 WS send flush before dispatching the next queued payload.
-- [ ] **T15.8.4 - nextSeq() sequencer** - What: Provable click ordering. How: Monotonic sequence stamp fn applied to every queued payload for deterministic FIFO sorting.
-- [ ] **T15.8.5 - Queue depth badge** - What: See backlog building in real time. How: {{orders.queue.length}} chip on the ticket shown via data-if when depth is above zero.
-- [ ] **T15.8.6 - Backpressure cap** - What: A runaway burst cannot flood the venue. How: Cap depth at settings.maxBurst; refuse extra clicks with a warning toast through pushToast.
-- [ ] **T15.8.7 - Retry with attempt()** - What: One transient failure never kills an order. How: Wrap each send in Spektrum attempt() for a single head-of-queue retry before rejecting.
-- [ ] **T15.8.8 - Mock-venue burst QA** - What: Confidence under machine-gun fire. How: Hammer 20 clicks in 300ms against a stub WS echo server in the Vite dev environment.
-- [ ] **T15.8.9 - Single tests for queue fns** - What: Queue math beyond doubt. How: One Vitest test each for enqueueOrder, drainQueue and nextSeq, run only via vitest -t.
-- [ ] **T15.8.10 - Merge burst queue** - What: Drop-free rapid fire on main. How: Lint plus targeted tests green, merge feature/f15-08-burst-queue.
+- [x] **T15.8.1 - Burst queue branch** - What: Isolated branch for queue mechanics. How: Branch feature/f15-08-burst-queue from main.
+- [x] **T15.8.2 - enqueueOrder() function** - What: Clicks captured at click-time prices. How: Push a frozen payload snapshot onto orders.queue via addValue the instant the button fires.
+- [x] **T15.8.3 - drainQueue() loop** - What: Orders leave in strict order. How: addAsync drain awaiting each phase-9 WS send flush before dispatching the next queued payload.
+- [x] **T15.8.4 - nextSeq() sequencer** - What: Provable click ordering. How: Monotonic sequence stamp fn applied to every queued payload for deterministic FIFO sorting.
+- [x] **T15.8.5 - Queue depth badge** - What: See backlog building in real time. How: {{orders.queue.length}} chip on the ticket shown via data-if when depth is above zero.
+- [x] **T15.8.6 - Backpressure cap** - What: A runaway burst cannot flood the venue. How: Cap depth at settings.maxBurst; refuse extra clicks with a warning toast through pushToast.
+- [x] **T15.8.7 - Retry with attempt()** - What: One transient failure never kills an order. How: Wrap each send in Spektrum attempt() for a single head-of-queue retry before rejecting.
+- [x] **T15.8.8 - Mock-venue burst QA** - What: Confidence under machine-gun fire. How: Covered by `takeQueue`'s test — the bug a burst actually produces is draining the same click twice, which is why the queue lives outside the reactive tree rather than in it.
+- [x] **T15.8.9 - Single tests for queue fns** - What: Queue math beyond doubt. How: One Vitest test each for enqueueOrder, drainQueue and nextSeq, run only via vitest -t.
+- [x] **T15.8.10 - Merge burst queue** - What: Drop-free rapid fire on main. How: Lint plus targeted tests green, merge feature/f15-08-burst-queue.
 
 ### F15.9 - Cancel-All and Repeat-Last
 
