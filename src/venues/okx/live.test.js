@@ -1,5 +1,13 @@
 import { describe, it, expect, beforeEach } from 'vitest'
-import { channelsFor, routeFrame, flushFeed, startOkxFeed } from './live.js'
+import {
+  channelsFor,
+  routeFrame,
+  flushFeed,
+  startOkxFeed,
+  onFeedFrame,
+  onFeedState,
+  feedHandlers,
+} from './live.js'
 import { appState, tick, resetState } from '../../app/engine.js'
 import { resetBus, recentTrades } from '../../pipeline/bus.js'
 import { resetFeed } from '../../pipeline/feed.js'
@@ -155,5 +163,51 @@ describe('startOkxFeed', () => {
     // Stopped: the pump does not re-arm, so a closed feed costs nothing.
     frames.shift()()
     expect(frames).toHaveLength(0)
+  })
+})
+
+describe('onFeedFrame', () => {
+  it('parses and routes one wire message, which is the whole path in', () => {
+    const raw = JSON.stringify({
+      arg: { channel: 'trades', instId: 'BTC-USDT' },
+      data: [{ px: '100', sz: '1', side: 'buy', ts: '1000' }],
+    })
+
+    expect(onFeedFrame(raw, () => 'okx:BTC-USDT')).toBe('trades')
+    expect(recentTrades('BTC-USDT')).toHaveLength(1)
+
+    // A malformed frame drops that frame, never the session.
+    expect(onFeedFrame('not json', () => '')).toBe('unknown')
+    expect(onFeedFrame('pong', null)).toBe('pong')
+  })
+})
+
+describe('onFeedState', () => {
+  it('puts the socket state where the header LEDs can read it', () => {
+    onFeedState('live')
+    tick()
+    expect(appState.market.venues.okx.state).toBe('live')
+
+    onFeedState('dead')
+    tick()
+    expect(appState.market.venues.okx.state).toBe('dead')
+  })
+})
+
+describe('feedHandlers', () => {
+  it('binds the two callbacks the socket needs to the desk\'s focus', () => {
+    const handlers = feedHandlers(() => 'okx:BTC-USDT')
+
+    expect(typeof handlers.onFrame).toBe('function')
+    expect(handlers.onState).toBe(onFeedState)
+
+    handlers.onFrame(
+      JSON.stringify({
+        arg: { channel: 'tickers', instId: 'BTC-USDT' },
+        data: [{ bidPx: '99', askPx: '101', ts: '5' }],
+      }),
+    )
+    tick()
+    expect(appState.market.bid).toBe(99)
   })
 })

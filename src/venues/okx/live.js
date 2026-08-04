@@ -122,6 +122,40 @@ export function flushFeed(focus, options = {}) {
 }
 
 /**
+ * Route one raw socket message into the pipeline.
+ *
+ * @param {string} raw - the socket's message data.
+ * @param {() => string} focus - the desk's current focus.
+ * @returns {string} what the frame was routed as.
+ */
+export function onFeedFrame(raw, focus) {
+  return routeFrame(parseFrame(raw), { focus: focus?.() ?? '' })
+}
+
+/**
+ * Record the socket's connection state where the header LEDs can see it.
+ *
+ * @param {string} state - the socket state.
+ * @returns {object} the venue map now in state.
+ */
+export function onFeedState(state) {
+  return setVenueState('okx', state)
+}
+
+/**
+ * The socket callbacks, bound to a focus source.
+ *
+ * @param {() => string} focus - the desk's current focus.
+ * @returns {{onFrame: Function, onState: Function}} the handlers.
+ */
+export function feedHandlers(focus) {
+  return {
+    onFrame: (raw) => onFeedFrame(raw, focus),
+    onState: onFeedState,
+  }
+}
+
+/**
  * Start the OKX feed and keep it pointed at the focused instrument.
  *
  * @param {{socket?: object, raf?: Function, focus?: () => string,
@@ -135,12 +169,9 @@ export function startOkxFeed(config = {}) {
     options = {},
   } = config
 
-  const socket =
-    config.socket ??
-    createOkxSocket({
-      onFrame: (raw) => routeFrame(parseFrame(raw), { focus: focus() }),
-      onState: (state) => setVenueState('okx', state),
-    })
+  // The socket callbacks are named rather than inline: an inline arrow is invisible to
+  // the coverage gate, and these two are the entire path from the wire to the desk.
+  const socket = config.socket ?? createOkxSocket(feedHandlers(focus))
 
   let running = true
   let attempts = 0
