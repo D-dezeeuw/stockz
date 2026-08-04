@@ -6,6 +6,7 @@ import { onTick } from '../pipeline/bus.js'
 import { validateStrategyShape, createStrategyContext } from './contract.js'
 import { runHook, BUILTIN_STRATEGIES } from './engine.js'
 import { setStrategyParam, publishParamForm, applyParams, paramsFor } from './params.js'
+import { normalizeSignal, publishSignal, sweepSignals, signalChip } from './signal.js'
 
 /**
  * Who is registered, and what is running where.
@@ -121,7 +122,13 @@ export function startStrategy(strategyId, instrument, options = {}) {
   run.unsubscribe = subscribe((tick) => {
     // Ticks arrive for every instrument on the bus; a run only sees its own.
     if (String(tick?.symbol ?? '') !== run.instrument) return
-    run.signal = runHook(strategy, 'onTick', run.ctx, tick)
+
+    run.signal = normalizeSignal(runHook(strategy, 'onTick', run.ctx, tick), {
+      now: Number(tick?.ts) || 0,
+      source: strategy.id,
+      instrument: run.instrument,
+    })
+    publishSignal(run.key, run.signal)
   })
 
   runs.set(key, run)
@@ -169,6 +176,7 @@ export function publishRunning() {
     instrument: run.instrument,
     startedAt: run.startedAt,
     action: run.signal?.action ?? 'none',
+    ...signalChip(run.signal),
   }))
 
   setValue(PATHS.strategy.running, rows)
@@ -231,6 +239,27 @@ export function tuneStrategy(payload) {
   }
 
   return next
+}
+
+/**
+ * Sweep expired signals and republish what is running.
+ *
+ * Called from the frame pump: a signal whose ttl has passed must stop looking like one
+ * from this tick, and the running list carries each run's latest action.
+ *
+ * @param {number} now - the current time.
+ * @returns {string[]} the runs whose signal expired.
+ */
+export function tickStrategies(now) {
+  const expired = sweepSignals(now)
+  if (expired.length > 0) {
+    for (const run of liveRuns()) {
+      if (expired.includes(run.key)) run.signal = { ...run.signal, action: 'flat', dir: 0 }
+    }
+    publishRunning()
+  }
+
+  return expired
 }
 
 /**

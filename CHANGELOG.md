@@ -12,6 +12,17 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ### Added
 
+- **Signal spine** — one dialect every strategy speaks: direction as a **number**, not a
+  word, because a consumer that has to remember whether `'sell'` means -1 or 1 will
+  eventually get it backwards, and backwards here means trading the opposite of what was
+  signalled. Signals **expire**: a strategy that said "long" once and then went quiet has
+  not said "long forever", it has said nothing since — and without a ttl a signal from
+  twenty minutes ago sits on screen looking exactly like one from this tick. The sweep runs
+  on the frame pump rather than on the instrument's own next tick, because the instrument
+  that went quiet is precisely the one whose signal has gone stale and will never produce
+  the tick that would have cleared it. A ttl of `0` is a deliberate "until told otherwise",
+  and the chip carries the strategy's stated reason — a chip that says "short" and nothing
+  else is a number nobody can argue with after the fact.
 - **Auto-built strategy tuning** — an author declares `{kind, min, max, step, default}` per
   param and **the form builds itself**; no strategy ever ships its own settings UI, because
   the moment tuning needs hand-written markup half of them ship without it and get tuned by

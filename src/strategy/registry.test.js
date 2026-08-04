@@ -12,6 +12,7 @@ import {
   strategyFor,
   tuneStrategy,
   showParamForm,
+  tickStrategies,
 } from './registry.js'
 import { defineStrategy } from './contract.js'
 import { ACTIONS } from '../actions/names.js'
@@ -143,13 +144,17 @@ describe('publishRunning', () => {
     const rows = publishRunning()
     tick()
 
-    expect(rows[0]).toEqual({
+    expect(rows[0]).toMatchObject({
       key: 'mean-rev@okx:BTC-USDT',
       strategyId: 'mean-rev',
       name: 'Mean Reversion',
       instrument: 'okx:BTC-USDT',
       startedAt: 500,
       action: 'sell',
+      // The chip travels with the row, so the template needs no logic of its own.
+      tone: 'short',
+      glyph: '▼',
+      pct: 100,
     })
     expect(appState.strategy.running).toHaveLength(1)
   })
@@ -228,5 +233,24 @@ describe('showParamForm', () => {
 
     expect(showParamForm('mean-rev').map((f) => f.key)).toEqual(['lookback'])
     expect(showParamForm('nope')).toEqual([])
+  })
+})
+
+describe('tickStrategies', () => {
+  it('ages a signal out on the pump, not on the next tick of a quiet instrument', () => {
+    registerStrategy(stub())
+    const bus = fakeBus()
+    const run = startStrategy('mean-rev', 'okx:BTC-USDT', { subscribe: bus.subscribe })
+    bus.emit({ symbol: 'okx:BTC-USDT', px: 120, ts: 1000 })
+    tick()
+
+    expect(tickStrategies(2000)).toEqual([])
+
+    // The instrument that went quiet is exactly the one whose signal has gone stale, and
+    // it will never produce the tick that would have swept it.
+    expect(tickStrategies(1000 + 30001)).toEqual([run.key])
+    tick()
+    expect(appState.strategy.signals[run.key].action).toBe('flat')
+    expect(appState.strategy.running[0].action).toBe('flat')
   })
 })
