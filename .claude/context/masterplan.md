@@ -3713,16 +3713,16 @@
 **What:** The user's alerts and notification preferences survive reloads exactly as left, with export and import as JSON.
 **How:** spektrum/persist maps definition and prefs slices to localStorage with schema versioning and a migration fn.
 
-- [ ] **T22.10.1 - Branch and scaffold persistence** - What: A branch dedicated to alert durability. How: git checkout -b feature/f22-10-alert-persist; create src/alerts/alertPersist.js declaring persisted slices.
-- [ ] **T22.10.2 - Persist alert definitions** - What: Price and signal alert definitions survive any reload. How: Map the definitions slice through spektrum/persist to localStorage key stockz.alerts.defs.
-- [ ] **T22.10.3 - Persist notification prefs** - What: Toggles, volumes and thresholds come back exactly as set. How: Map signal, exec, health, native and sound settings via spektrum/persist under stockz.alerts.prefs.
-- [ ] **T22.10.4 - Build migrateAlerts fn** - What: Old stored shapes upgrade cleanly instead of breaking. How: Implement migrateAlerts(stored, fromVersion) with a schemaVersion field and a stepwise upgrade map.
-- [ ] **T22.10.5 - Build sanitizeOnLoad fn** - What: Corrupt or stale entries never poison a session. How: Implement sanitizeOnLoad(defs) dropping malformed entries, clamping prices and stripping transient fired flags.
-- [ ] **T22.10.6 - Order rehydration after feeds** - What: No false fires at boot from stale prices. How: Sequence run() startup so alert arming happens only after phase-11 feeds report connected.
-- [ ] **T22.10.7 - Build exportAlerts and importAlerts fns** - What: Whole alert sets shared between machines as a JSON file. How: Implement exportAlerts as a Blob download and importAlerts via file input, validated through sanitizeOnLoad.
-- [ ] **T22.10.8 - Build quotaGuard fn** - What: localStorage limits never silently eat alerts. How: Implement quotaGuard(serialized, maxBytes) raising an error toast when serialized size nears the cap.
-- [ ] **T22.10.9 - Write single unit tests** - What: Durability fns each locked by one test. How: One Vitest test each for migrateAlerts, sanitizeOnLoad, exportAlerts, importAlerts and quotaGuard; targeted runs.
-- [ ] **T22.10.10 - Verify reload cycle and merge** - What: A full reload restores alerts live against real feeds. How: Reload with feeds connected, confirm definitions and prefs restored with no boot fires, full ESLint, merge.
+- [x] **T22.10.1 - Branch and scaffold persistence** - What: A branch dedicated to alert durability. How: git checkout -b feature/f22-10-alert-persist; create src/alerts/alertPersist.js declaring persisted slices.
+- [x] **T22.10.2 - Persist alert definitions** - What: Price and signal alert definitions survive any reload. How: Map the definitions slice through spektrum/persist to localStorage key stockz.alerts.defs.
+- [x] **T22.10.3 - Persist notification prefs** - What: Toggles, volumes and thresholds come back exactly as set. How: Map signal, exec, health, native and sound settings via spektrum/persist under stockz.alerts.prefs.
+- [x] **T22.10.4 - Build migrateAlerts fn** - What: Old stored shapes upgrade cleanly instead of breaking. How: Implement migrateAlerts(stored, fromVersion) with a schemaVersion field and a stepwise upgrade map.
+- [x] **T22.10.5 - Build sanitizeOnLoad fn** - What: Corrupt or stale entries never poison a session. How: Implement sanitizeOnLoad(defs) dropping malformed entries, clamping prices and stripping transient fired flags.
+- [x] **T22.10.6 - Order rehydration after feeds** - What: No false fires at boot from stale prices. How: Sequence run() startup so alert arming happens only after phase-11 feeds report connected.
+- [x] **T22.10.7 - Build exportAlerts and importAlerts fns** - What: Whole alert sets shared between machines as a JSON file. How: Implement exportAlerts as a Blob download and importAlerts via file input, validated through sanitizeOnLoad.
+- [x] **T22.10.8 - Build quotaGuard fn** - What: localStorage limits never silently eat alerts. How: Implement quotaGuard(serialized, maxBytes) raising an error toast when serialized size nears the cap.
+- [x] **T22.10.9 - Write single unit tests** - What: Durability fns each locked by one test. How: One Vitest test each for migrateAlerts, sanitizeOnLoad, exportAlerts, importAlerts and quotaGuard; targeted runs.
+- [x] **T22.10.10 - Verify reload cycle and merge** - What: A full reload restores alerts live against real feeds. How: Reload with feeds connected, confirm definitions and prefs restored with no boot fires, full ESLint, merge.
 
 ---
 

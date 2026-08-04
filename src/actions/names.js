@@ -44,6 +44,8 @@ export const ACTIONS = Object.freeze({
     filterLog: 'alerts.filterLog',
     clearLog: 'alerts.clearLog',
     jumpTo: 'alerts.jumpTo',
+    export: 'alerts.export',
+    import: 'alerts.import',
   }),
   book: Object.freeze({
     prefill: 'book.prefill',

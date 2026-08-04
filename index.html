@@ -655,6 +655,14 @@
           <input type="checkbox" data-model="settings.soundEnabled">
           <span class="label">Sounds</span>
         </label>
+        <!-- An alert set moves between machines as JSON: the definitions describe what to
+             watch, never what happened to fire on one of them. -->
+        <div class="field field--row">
+          <span class="label">alerts</span>
+          <button type="button" class="chip" data-action="click" data-fn="alerts.export">export</button>
+          <input type="text" class="field__input" placeholder="paste alert JSON"
+                 data-action="change" data-fn="alerts.import" data-key="json">
+        </div>
         <!-- "Not now" rather than "not ever": a permanent mute switched on for a phone
              call is a permanent mute that stays on until something expensive happens. -->
         <div class="field field--row">
