@@ -53,6 +53,7 @@ import { registerPeriodActions, mountPeriod } from '../analytics/period.js'
 import { registerReportActions } from '../analytics/report.js'
 import { registerRecorderActions } from '../replay/recorder.js'
 import { registerLibraryActions, refreshLibrary } from '../replay/library.js'
+import { registerPlayerActions } from '../replay/player.js'
 import { startHistogram } from '../analytics/holdtime.js'
 import { startStreakStrip } from '../analytics/streaks.js'
 import { startFeeBars } from '../analytics/fees.js'
@@ -189,6 +190,7 @@ export function bootstrap(options = {}) {
   registerReportActions()
   registerRecorderActions()
   registerLibraryActions()
+  registerPlayerActions()
   startHistogram()
   startStreakStrip()
   startFeeBars()

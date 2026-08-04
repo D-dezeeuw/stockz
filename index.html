@@ -534,6 +534,29 @@
                 {{replay.recording ? 'recording…' : 'record'}}
               </button>
             </div>
+            <!-- The transport. A video editor for markets: the point is not to watch, it
+                 is to stop on the tick where the decision went wrong and look at the book
+                 as it was. -->
+            <div class="transport" data-if="block.id === 'journal' &amp;&amp; replay.player.active">
+              <button type="button" class="chip" data-action="click" data-fn="replay.play"
+                      data-if="!replay.player.playing">▶</button>
+              <button type="button" class="chip chip--on" data-action="click" data-fn="replay.pause"
+                      data-if="replay.player.playing">❚❚</button>
+              <button type="button" class="chip" data-action="click" data-fn="replay.stepTick">→</button>
+              <span class="transport__label label truncate">{{replay.player.label}}</span>
+              <span class="transport__clock num">{{replay.player.cursor}} / {{replay.player.total}}</span>
+              <div class="transport__speeds">
+                <button type="button" class="chip" data-action="click" data-fn="replay.tickSpeed"
+                        data-speed="1" :class="replay.player.speed === 1 ? 'chip chip--on' : 'chip'">1x</button>
+                <button type="button" class="chip" data-action="click" data-fn="replay.tickSpeed"
+                        data-speed="5" :class="replay.player.speed === 5 ? 'chip chip--on' : 'chip'">5x</button>
+                <button type="button" class="chip" data-action="click" data-fn="replay.tickSpeed"
+                        data-speed="25" :class="replay.player.speed === 25 ? 'chip chip--on' : 'chip'">25x</button>
+                <button type="button" class="chip" data-action="click" data-fn="replay.tickSpeed"
+                        data-speed="50" :class="replay.player.speed === 50 ? 'chip chip--on' : 'chip'">50x</button>
+              </div>
+              <button type="button" class="chip" data-action="click" data-fn="replay.unload">live</button>
+            </div>
             <!-- The library. A session called `rec-lz4k9x-3f0a` is one nobody will ever
                  pick deliberately, so every row carries what a trader recognises it by -
                  and the size, because recordings are the one thing here that grows without
@@ -547,6 +570,8 @@
                 <span class="library__meta num">{{rec.duration}}</span>
                 <span class="library__meta num">{{rec.tickLabel}}</span>
                 <span class="library__meta num">{{rec.sizeLabel}}</span>
+                <button type="button" class="library__play" data-action="click"
+                        data-fn="replay.load" :data-id="rec.id" aria-label="Replay">▶</button>
                 <button type="button" class="library__x" data-action="click"
                         data-fn="replay.deleteRecording" :data-id="rec.id"
                         aria-label="Delete recording">×</button>
