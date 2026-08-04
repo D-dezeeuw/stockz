@@ -36,6 +36,7 @@ import { registerRankingActions } from '../analytics/instruments.js'
 import { registerPeriodActions } from '../analytics/period.js'
 import { registerReportActions } from '../analytics/report.js'
 import { registerRecorderActions } from '../replay/recorder.js'
+import { registerLibraryActions } from '../replay/library.js'
 import { registerStrategyActions } from '../strategy/registry.js'
 import { registerTicketActions } from '../ticket/actions.js'
 import { registerSizingActions } from '../ticket/sizing.js'
@@ -119,6 +120,8 @@ describe('allActionNames', () => {
       'replay.exit',
       'replay.import',
       'replay.record',
+      'replay.deleteRecording',
+      'replay.renameRecording',
       'bot.toggleArm',
       'bot.setAuto',
       'bot.disableAll',
@@ -203,6 +206,7 @@ describe('allActionNames', () => {
     registerPeriodActions()
     registerReportActions()
     registerRecorderActions()
+    registerLibraryActions()
     registerStrategyActions()
     registerTicketActions()
     registerSizingActions()

@@ -234,6 +234,7 @@ export function initialState(overrides = {}) {
     [PATHS.replay.label]: '',
     [PATHS.replay.recording]: null,
     [PATHS.replay.sessions]: [],
+    [PATHS.replay.library]: [],
     [PATHS.replay.error]: '',
 
     // analytics

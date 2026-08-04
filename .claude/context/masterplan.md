@@ -4420,16 +4420,16 @@
 **What:** Browse, size, label, and prune saved sessions so storage stays lean and the right replay is easy to find.
 **How:** A Spektrum-bound library block listing IndexedDB sessions with size, duration, rename, and instant delete actions.
 
-- [ ] **T27.2.1 - Library feature branch** - What: Library work stays off main until complete. How: git switch -c feature/recording-library from main.
-- [ ] **T27.2.2 - listRecordings query** - What: The full catalog of saved sessions in one call. How: listRecordings() cursors the sessions store and returns a metadata array sorted by start time.
-- [ ] **T27.2.3 - recordingSize calculator** - What: Honest per-session storage cost in MB. How: recordingSize() sums chunk byteLengths for a sessionId via an index range query.
-- [ ] **T27.2.4 - Library state loader** - What: The library view is always current without manual refresh. How: addAsync loader populates setValue('replay.library', rows) and re-runs after record/delete events.
-- [ ] **T27.2.5 - Library block markup** - What: A scannable terminal-style table of recordings. How: data-each rows showing label, venue, instruments, duration, tick count, and MB in the money-hacker mono style.
-- [ ] **T27.2.6 - Delete recording action** - What: Reclaim space instantly with a single click, no confirm dialog. How: deleteRecording() removes session plus chunks in one IndexedDB transaction, wired via data-action with optimistic row removal.
-- [ ] **T27.2.7 - Inline rename** - What: Recordings get memorable names like "CPI spike 14:30". How: data-model bound label field persisting edits to the session record on blur.
-- [ ] **T27.2.8 - Sort and filter view** - What: Find the right session among dozens in seconds. How: computed('replay.libraryView') sorting by date or size and filtering by instrument substring.
-- [ ] **T27.2.9 - Library unit tests** - What: Query, size, and delete functions each verified once. How: One Vitest test per fn (listRecordings, recordingSize, deleteRecording) executed with vitest run -t targeting only that test.
-- [ ] **T27.2.10 - Library merge** - What: Session management lands on main. How: Lint plus targeted tests green, merge feature/recording-library into main.
+- [x] **T27.2.1 - Library feature branch** - What: Library work stays off main until complete. How: git switch -c feature/recording-library from main.
+- [x] **T27.2.2 - listRecordings query** - What: The full catalog of saved sessions in one call. How: listRecordings() cursors the sessions store and returns a metadata array sorted by start time.
+- [x] **T27.2.3 - recordingSize calculator** - What: Honest per-session storage cost in MB. How: recordingSize() sums chunk byteLengths for a sessionId via an index range query.
+- [x] **T27.2.4 - Library state loader** - What: The library view is always current without manual refresh. How: addAsync loader populates setValue('replay.library', rows) and re-runs after record/delete events.
+- [x] **T27.2.5 - Library block markup** - What: A scannable terminal-style table of recordings. How: data-each rows showing label, venue, instruments, duration, tick count, and MB in the money-hacker mono style.
+- [x] **T27.2.6 - Delete recording action** - What: Reclaim space instantly with a single click, no confirm dialog. How: deleteRecording() removes session plus chunks in one IndexedDB transaction, wired via data-action with optimistic row removal.
+- [x] **T27.2.7 - Inline rename** - What: Recordings get memorable names like "CPI spike 14:30". How: data-model bound label field persisting edits to the session record on blur.
+- [x] **T27.2.8 - Sort and filter view** - What: Find the right session among dozens in seconds. How: computed('replay.libraryView') sorting by date or size and filtering by instrument substring.
+- [x] **T27.2.9 - Library unit tests** - What: Query, size, and delete functions each verified once. How: One Vitest test per fn (listRecordings, recordingSize, deleteRecording) executed with vitest run -t targeting only that test.
+- [x] **T27.2.10 - Library merge** - What: Session management lands on main. How: Lint plus targeted tests green, merge feature/recording-library into main.
 
 ### F27.3 - Replay Player Transport
 

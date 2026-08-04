@@ -337,3 +337,59 @@
 @media (prefers-reduced-motion: reduce) {
   .rec__dot { animation: none; }
 }
+
+/*
+ * The recording library.
+ *
+ * One row per session, mono and dense like everything else that gets scanned rather than
+ * read. The delete is a bare glyph with no confirm behind it: speed is the product, and a
+ * recording is the one thing on this desk whose loss costs nothing but disk.
+ */
+.library {
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  min-block-size: 0;
+  font-variant-numeric: tabular-nums;
+}
+
+.library__row {
+  display: grid;
+  grid-template-columns: 1.6fr 1.2fr 0.7fr 0.6fr 0.7fr auto;
+  gap: var(--sp-1);
+  align-items: baseline;
+  padding-block: var(--sp-1);
+}
+
+.library__label {
+  min-inline-size: 0;
+  border: 0;
+  border-block-end: 1px solid transparent;
+  background: none;
+  color: var(--ink-strong);
+  font: inherit;
+}
+
+/* Editable, but only obviously so once reached for - a row of boxes reads as a form. */
+.library__label:hover,
+.library__label:focus {
+  border-block-end-color: var(--line);
+  outline: none;
+}
+
+.library__meta {
+  text-align: right;
+  color: var(--ink-muted);
+}
+
+.library__x {
+  border: 0;
+  background: none;
+  color: var(--ink-faint);
+  cursor: pointer;
+  font: inherit;
+}
+
+.library__x:hover {
+  color: var(--orange);
+}
