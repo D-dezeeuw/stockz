@@ -12,6 +12,13 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ### Added
 
+- **Command palette** — Ctrl+K, type, Enter. The bindings cover what is used every
+  minute; the palette covers the rest, which nobody should memorise a chord for or hunt
+  through menus for. Every row shows the chord that would have done the same thing, so a
+  trader who reaches for the palette twice learns the key on the third. The selection is
+  held outside the reactive tree: holding an arrow fires several keydowns in one frame,
+  and a selection read back from state would have every press move from the same index.
+  (F16.5, F16.6)
 - **Key remapping** — muscle memory is the whole value of a layout and every trader
   arrives with a different one, so the stock keys are a default rather than a decision.
   Rebinds take effect live (one that needed a reload would be discovered by pressing the

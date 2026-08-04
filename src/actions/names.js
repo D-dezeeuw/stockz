@@ -16,6 +16,10 @@ export const ACTIONS = Object.freeze({
     toggleOverlay: 'ui.toggleOverlay',
     setTheme: 'ui.setTheme',
     setCandleInterval: 'ui.setCandleInterval',
+    palette: 'ui.palette',
+    paletteSearch: 'ui.paletteSearch',
+    paletteMove: 'ui.paletteMove',
+    paletteRun: 'ui.paletteRun',
   }),
   book: Object.freeze({
     prefill: 'book.prefill',

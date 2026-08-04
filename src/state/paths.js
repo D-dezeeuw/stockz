@@ -57,6 +57,9 @@ export const PATHS = Object.freeze({
     keysPresent: 'ui.keysPresent',
     candleInterval: 'ui.candleInterval',
     chordSheet: 'ui.chordSheet',
+    paletteQuery: 'ui.paletteQuery',
+    paletteIndex: 'ui.paletteIndex',
+    paletteRows: 'ui.paletteRows',
   }),
   settings: Object.freeze({
     theme: 'settings.theme',

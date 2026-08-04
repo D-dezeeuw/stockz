@@ -17,6 +17,7 @@ import { registerSubmitAction } from '../ticket/submit.js'
 import { registerShortcutActions } from '../ticket/shortcuts.js'
 import { registerIntentAction } from '../ticket/intent.js'
 import { registerBindingActions } from '../keys/overrides.js'
+import { registerPaletteActions } from '../keys/palette.js'
 
 beforeEach(() => {
   clearActions()
@@ -31,6 +32,10 @@ describe('allActionNames', () => {
       'ui.toggleOverlay',
       'ui.setTheme',
       'ui.setCandleInterval',
+      'ui.palette',
+      'ui.paletteSearch',
+      'ui.paletteMove',
+      'ui.paletteRun',
       'book.prefill',
       'book.setGroup',
       'book.setFloor',
@@ -80,6 +85,7 @@ describe('allActionNames', () => {
     registerShortcutActions()
     registerIntentAction()
     registerBindingActions()
+    registerPaletteActions()
     expect(actionNames().sort()).toEqual(allActionNames().sort())
 
     // Every name follows <namespace>.<verb>, which is what registerAction enforces.

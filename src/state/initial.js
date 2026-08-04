@@ -51,6 +51,9 @@ export function initialState(overrides = {}) {
     [PATHS.ui.keysPresent]: { okx: false, etoro: false },
     [PATHS.ui.candleInterval]: '1s',
     [PATHS.ui.chordSheet]: [],
+    [PATHS.ui.paletteQuery]: '',
+    [PATHS.ui.paletteIndex]: 0,
+    [PATHS.ui.paletteRows]: [],
 
     // preferences (the only persisted branch) - defaults come from the schema so the
     // drawer, the migration and reset-to-defaults can never disagree about them
