@@ -8,6 +8,7 @@ import { bookImbalanceStrategy } from './builtin/book-imbalance.js'
 import { tapePressureStrategy } from './builtin/tape-pressure.js'
 import { rangeFadeStrategy } from './builtin/range-fade.js'
 import { openDriveStrategy } from './builtin/open-drive.js'
+import { volSqueezeStrategy } from './builtin/vol-squeeze.js'
 import { safeInvoke } from './sandbox.js'
 
 /**
@@ -31,6 +32,7 @@ export const BUILTIN_STRATEGIES = Object.freeze([
   tapePressureStrategy,
   rangeFadeStrategy,
   openDriveStrategy,
+  volSqueezeStrategy,
   compositeStrategy,
 ])
 

@@ -12,6 +12,18 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ### Added
 
+- **Volatility squeeze expansion** — volatility mean-reverts far more reliably than price
+  does: a market that has gone quiet will get loud again, and the only questions are when
+  and which way. This answers "when" with a percentile of the instrument's **own** recent
+  one-second ranges — two prints a second is dead on BTC and a riot on a stablecoin pair —
+  and **refuses to answer "which way" until the expansion itself says so**. That refusal is
+  the design: guessing direction during the squeeze turns a good volatility read into a coin
+  flip, and the edge is that the first expanding bucket carries direction before the move is
+  obvious. A wide bucket that closed where it opened takes no side at all. The exit is
+  contraction, because the trade was the volatility rather than the direction — when the
+  volatility goes, the reason to hold goes with it. All the percentile work happens per
+  closed bucket, never per print: recomputing on every tick would make it the slowest thing
+  in the frame by an order of magnitude.
 - **Session-open drive** — the minutes after a session opens are the only part of the day
   where a scalper is reliably paid for being fast: volume arrives, the overnight range gets
   tested, and the first genuine break of the opening box tends to run, because everyone who
