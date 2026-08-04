@@ -6,6 +6,7 @@ import { refreshJournalRows } from './metrics.js'
 import { refreshDays } from './summary.js'
 import { refreshKpis } from '../analytics/kpis.js'
 import { refreshEquity } from '../analytics/equity.js'
+import { refreshHeatmap } from '../analytics/heatmap.js'
 
 /**
  * Finding the trades worth studying.
@@ -123,6 +124,7 @@ export function refreshFiltered(rows = refreshJournalRows(), filters = appState.
   // under them would be four numbers nobody could place.
   refreshKpis(visible)
   refreshEquity(visible)
+  refreshHeatmap(visible)
 
   return visible
 }

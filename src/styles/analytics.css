@@ -82,3 +82,24 @@
   inset-inline-end: 2px;
   color: var(--orange);
 }
+
+/*
+ * The hour grid. Wide and short: twenty-four columns need the width, and seven rows read
+ * fine at a few pixels each — the shape of where the losses cluster is what carries, not any
+ * individual cell.
+ */
+.hours {
+  display: grid;
+  gap: var(--sp-1);
+  margin-block-start: var(--sp-2);
+}
+
+.hours__canvas {
+  inline-size: 100%;
+  block-size: 5.5rem;
+}
+
+.hours__extremes {
+  margin: 0;
+  color: var(--ink-muted);
+}
