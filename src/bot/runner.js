@@ -3,6 +3,8 @@ import { PATHS } from '../state/paths.js'
 import { createRing } from '../pipeline/ring.js'
 import { submit } from '../exec/engine.js'
 import { emitAlert } from '../alerts/bus.js'
+import { registerAction } from '../actions/registry.js'
+import { ACTIONS } from '../actions/names.js'
 
 /**
  * The bot runner.
@@ -268,4 +270,111 @@ export function resetRunner() {
   intake = createRing(INTAKE_SIZE)
   decisions = createRing(DECISION_SIZE)
   return true
+}
+
+/**
+ * Flip the master arm switch.
+ *
+ * The bot's arm is a **different flag** from the ticket's `trade.armed`, and nothing reads
+ * across. Manual trading must not stop because the bot was disarmed, and the bot must not
+ * start because somebody armed the ticket to click a button.
+ *
+ * @param {boolean} [next] - the state to move to; omit to toggle.
+ * @param {number} [now] - the current time, for the record.
+ * @returns {boolean} the switch's new state.
+ */
+export function toggleMasterArm(next, now = 0) {
+  const value = typeof next === 'boolean' ? next : appState.settings?.botArmed !== true
+  setValue(PATHS.settings.botArmed, value)
+
+  // Every flip is on the record with a timestamp: "when did I arm this" is the first
+  // question asked about any trade the bot took.
+  pushDecision({
+    ts: Number(now) || 0,
+    strategy: 'desk',
+    action: value ? 'ARMED' : 'DISARMED',
+    taken: value,
+    reason: value ? 'auto-trading armed' : 'auto-trading disarmed',
+  })
+
+  emitAlert(
+    {
+      key: 'bot|arm',
+      source: 'bot',
+      kind: 'arm',
+      severity: value ? 'warn' : 'info',
+      text: value ? 'AUTO-TRADING ARMED' : 'auto-trading disarmed',
+      ts: Number(now) || 0,
+    },
+    { debounceMs: 0 },
+  )
+
+  return value
+}
+
+/**
+ * Grant or revoke a strategy's permission to trade.
+ *
+ * @param {string} strategyId - the strategy.
+ * @param {boolean} enabled - whether it may trade.
+ * @returns {object} the permission map now in force.
+ */
+export function setAutoEnabled(strategyId, enabled) {
+  const id = String(strategyId ?? '')
+  const current = appState.settings?.botStrategies ?? {}
+  if (!id) return current
+
+  const next = { ...current, [id]: enabled === true }
+  setValue(PATHS.settings.botStrategies, next)
+
+  return next
+}
+
+/**
+ * Revoke every strategy's permission at once.
+ *
+ * @returns {object} the empty permission map.
+ */
+export function disableAllAuto() {
+  const current = appState.settings?.botStrategies ?? {}
+  // Every key written false rather than the map replaced: `setValue` merges objects, so a
+  // bare `{}` would leave every existing permission exactly where it was.
+  const cleared = Object.fromEntries(Object.keys(current).map((id) => [id, false]))
+
+  setValue(PATHS.settings.botStrategies, cleared)
+  return cleared
+}
+
+/**
+ * Publish the bot's headline state.
+ *
+ * @returns {object} what was published.
+ */
+export function refreshBotStatus() {
+  const permissions = appState.settings?.botStrategies ?? {}
+  const status = {
+    armed: appState.settings?.botArmed === true,
+    enabled: Object.values(permissions).filter(Boolean).length,
+    queued: intake.size(),
+  }
+
+  setValue(PATHS.bot.status, status)
+  return status
+}
+
+/**
+ * Register the bot's actions.
+ *
+ * @returns {string} the arm action's name.
+ */
+export function registerBotActions() {
+  registerAction(ACTIONS.bot.toggleArm, (_state, payload) =>
+    toggleMasterArm(typeof payload?.value === 'boolean' ? payload.value : undefined, Date.now()),
+  )
+  registerAction(ACTIONS.bot.setAuto, (_state, payload) =>
+    setAutoEnabled(payload?.strategy, payload?.checked ?? payload?.value !== 'false'),
+  )
+  registerAction(ACTIONS.bot.disableAll, () => disableAllAuto())
+
+  return ACTIONS.bot.toggleArm
 }

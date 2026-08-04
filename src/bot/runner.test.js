@@ -12,12 +12,20 @@ import {
   flushDecisions,
   createBotRunner,
   resetRunner,
+  toggleMasterArm,
+  setAutoEnabled,
+  disableAllAuto,
+  refreshBotStatus,
+  registerBotActions,
   INTAKE_SIZE,
   DECISION_SIZE,
   DRAIN_MS,
 } from './runner.js'
 import { resetAlerts, alertLog } from '../alerts/bus.js'
 import { appState, setValue, tick, resetState } from '../app/engine.js'
+import { ACTIONS } from '../actions/names.js'
+import { dispatchAction, clearActions } from '../actions/registry.js'
+import { transientSettings } from '../state/settings-schema.js'
 
 /** A signal as the strategy engine publishes them. */
 function signal(overrides = {}) {
@@ -44,6 +52,7 @@ beforeEach(() => {
   resetRunner()
   resetAlerts()
   resetState()
+  clearActions()
 })
 
 describe('enqueueSignal', () => {
@@ -231,5 +240,81 @@ describe('resetRunner', () => {
 
     expect(resetRunner()).toBe(true)
     expect(botDecisions()).toEqual([])
+  })
+})
+
+describe('toggleMasterArm', () => {
+  it('is never restored at boot, and every flip is on the record', () => {
+    expect(toggleMasterArm(undefined, 1000)).toBe(true)
+    tick()
+    expect(appState.settings.botArmed).toBe(true)
+
+    // "When did I arm this" is the first question asked about any trade the bot took.
+    expect(botDecisions().at(-1)).toMatchObject({ action: 'ARMED', ts: 1000 })
+    expect(alertLog().at(-1).text).toMatch(/AUTO-TRADING ARMED/)
+
+    expect(toggleMasterArm(false, 2000)).toBe(false)
+    tick()
+    expect(botDecisions().at(-1).action).toBe('DISARMED')
+
+    // A bot that came back armed because it was armed yesterday is the most dangerous
+    // default this desk could have.
+    expect(transientSettings()).toContain('botArmed')
+  })
+})
+
+describe('setAutoEnabled', () => {
+  it('grants one strategy without disturbing the others', () => {
+    setAutoEnabled('a', true)
+    tick()
+    setAutoEnabled('b', true)
+    tick()
+    setAutoEnabled('a', false)
+    tick()
+
+    expect(appState.settings.botStrategies).toEqual({ a: false, b: true })
+    expect(setAutoEnabled('', true)).toBeTruthy()
+  })
+})
+
+describe('disableAllAuto', () => {
+  it('writes every key false, because setValue merges and a bare {} changes nothing', () => {
+    setValue('settings.botStrategies', { a: true, b: true })
+    tick()
+
+    expect(disableAllAuto()).toEqual({ a: false, b: false })
+    tick()
+    expect(Object.values(appState.settings.botStrategies).some(Boolean)).toBe(false)
+  })
+})
+
+describe('refreshBotStatus', () => {
+  it('publishes what the block needs without the block computing anything', () => {
+    armed()
+    enqueueSignal(signal())
+
+    const status = refreshBotStatus()
+    tick()
+
+    expect(status).toEqual({ armed: true, enabled: 1, queued: 1 })
+    expect(appState.bot.status.armed).toBe(true)
+  })
+})
+
+describe('registerBotActions', () => {
+  it('wires the arm switch, the per-strategy grant and the revoke-all', () => {
+    expect(registerBotActions()).toBe(ACTIONS.bot.toggleArm)
+
+    dispatchAction(ACTIONS.bot.toggleArm, {})
+    tick()
+    expect(appState.settings.botArmed).toBe(true)
+
+    dispatchAction(ACTIONS.bot.setAuto, { strategy: 'a', checked: true })
+    tick()
+    expect(appState.settings.botStrategies.a).toBe(true)
+
+    dispatchAction(ACTIONS.bot.disableAll, {})
+    tick()
+    expect(appState.settings.botStrategies.a).toBe(false)
   })
 })

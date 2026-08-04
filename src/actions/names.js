@@ -47,6 +47,11 @@ export const ACTIONS = Object.freeze({
     export: 'alerts.export',
     import: 'alerts.import',
   }),
+  bot: Object.freeze({
+    toggleArm: 'bot.toggleArm',
+    setAuto: 'bot.setAuto',
+    disableAll: 'bot.disableAll',
+  }),
   book: Object.freeze({
     prefill: 'book.prefill',
     setGroup: 'book.setGroup',
