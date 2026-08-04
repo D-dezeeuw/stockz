@@ -5,6 +5,7 @@ import { ACTIONS } from '../actions/names.js'
 import { splitSymbol } from '../lists/ops.js'
 import { readTicket } from './actions.js'
 import { queueOrder, drainQueue, takeQueue } from './queue.js'
+import { rememberOrder } from './shortcuts.js'
 
 /**
  * The submit fast path.
@@ -140,6 +141,8 @@ export function registerSubmitAction(deps = {}) {
       },
     ])
     setValue(PATHS.trade.lastReject, '')
+
+    rememberOrder(order)
 
     // Through the queue, not straight to the wire: four clicks in 300ms must become four
     // orders in click order, each at the price its own click saw.

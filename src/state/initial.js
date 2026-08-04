@@ -92,6 +92,8 @@ export function initialState(overrides = {}) {
     [PATHS.trade.buyingPower]: 0,
     [PATHS.trade.lastReject]: '',
     [PATHS.trade.queue]: [],
+    [PATHS.trade.lastOrder]: null,
+    [PATHS.trade.lastOrderSummary]: '',
     [PATHS.trade.ticketPrice]: 0,
     [PATHS.trade.ticketSide]: 'buy',
     [PATHS.trade.ticketSize]: 0,

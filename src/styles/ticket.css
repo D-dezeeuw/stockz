@@ -143,3 +143,24 @@
   font-size: var(--font-size-xs, 0.6875rem);
   letter-spacing: 0.04em;
 }
+
+.ticket__shortcuts {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1, 0.25rem);
+}
+
+/*
+ * The exit. Bordered in orange and never dimmed — arming gates entering risk, and a
+ * trader who disarmed in a panic must not then find the way out greyed out.
+ */
+.ticket__cancel {
+  border: 1px solid var(--orange);
+  background: transparent;
+  color: var(--orange);
+  font: inherit;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  padding: var(--space-1, 0.25rem) var(--space-2, 0.5rem);
+  cursor: pointer;
+}

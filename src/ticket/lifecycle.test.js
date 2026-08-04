@@ -4,6 +4,7 @@ import {
   isTerminal,
   applyOrderEvent,
   ingestOrderEvent,
+  ingestOrderEvents,
   partitionOrders,
   TERMINAL,
   TRANSITIONS,
@@ -125,5 +126,46 @@ describe('partitionOrders', () => {
     expect(done.map((o) => o.clOrdId)).toEqual(['d', 'a'])
 
     expect(partitionOrders(null)).toEqual({ working: [], done: [] })
+  })
+})
+
+describe('ingestOrderEvents', () => {
+  it('lands every event in one write, which a loop of single ingests cannot', () => {
+    setValue('trade.orders', [
+      { clOrdId: 'a', state: 'live', filled: 0 },
+      { clOrdId: 'b', state: 'live', filled: 0 },
+      { clOrdId: 'c', state: 'live', filled: 0 },
+    ])
+    tick()
+
+    ingestOrderEvents(
+      [
+        { clOrdId: 'a', state: 'cancelled', ts: 1 },
+        { clOrdId: 'b', state: 'cancelled', ts: 2 },
+        { clOrdId: 'c', state: 'cancelled', ts: 3 },
+      ],
+      { silent: true },
+    )
+    tick()
+
+    // All three, not just the last: state lands on the next tick, so ingesting inside a
+    // loop would have each iteration overwrite the previous one's change.
+    expect(appState.trade.orders.map((o) => o.state)).toEqual([
+      'cancelled',
+      'cancelled',
+      'cancelled',
+    ])
+
+    // Silence is respected: nothing was announced for those three.
+    expect(appState.ui?.toasts ?? []).toHaveLength(0)
+
+    // Each terminal transition otherwise announces exactly once.
+    setValue('trade.orders', [{ clOrdId: 'd', state: 'live', filled: 0 }])
+    tick()
+    ingestOrderEvents([{ clOrdId: 'd', state: 'filled', filled: 1 }])
+    tick()
+    expect(appState.ui.toasts).toHaveLength(1)
+
+    expect(ingestOrderEvents(null)).toHaveLength(1)
   })
 })

@@ -12,6 +12,13 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ### Added
 
+- **Cancel-all and repeat-last** — the two things reached for when there is no time to
+  think. CXL ALL stays enabled while the desk is disarmed: arming gates *entering* risk,
+  and a trader who disarmed in a panic must not then find the exit greyed out. Repeat
+  refires under a fresh client id — reusing the old one would be rejected as a duplicate
+  and could match the wrong fill. Batch cancellations land in a single state write,
+  because `setValue` applies a frame later and a loop of single writes would cancel
+  exactly one order out of three. (F15.9)
 - **Burst-click queue** — four clicks in 300ms mean four orders, each at the price its
   own click saw, drained serially in click order. The payload is frozen on the click
   rather than re-priced on the way out: an order that quietly repriced itself while

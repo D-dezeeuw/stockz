@@ -23,6 +23,7 @@ import { registerTicketActions } from '../ticket/actions.js'
 import { registerSizingActions } from '../ticket/sizing.js'
 import { registerSubmitAction } from '../ticket/submit.js'
 import { sendOrder } from '../ticket/send.js'
+import { registerShortcutActions } from '../ticket/shortcuts.js'
 import { appVersion } from './version.js'
 
 /**
@@ -77,6 +78,7 @@ export function bootstrap(options = {}) {
   // The venue call is injected rather than imported inside the action, so the fast path
   // can be exercised end to end without a network.
   registerSubmitAction({ send: (payload) => sendOrder(payload) })
+  registerShortcutActions({ send: (payload) => sendOrder(payload) })
   adoptKeys()
   applyTheme(doc?.documentElement?.getAttribute?.('data-theme') || preferredTheme(), doc)
   const derived = registerDerived()
