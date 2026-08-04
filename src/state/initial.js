@@ -231,6 +231,8 @@ export function initialState(overrides = {}) {
     [PATHS.journal.notes]: {},
     [PATHS.journal.tagCatalog]: [],
     [PATHS.journal.editing]: '',
+    [PATHS.journal.checkpoints]: [],
+    [PATHS.journal.replaying]: '',
 
     // alerts
     [PATHS.alerts.fired]: null,

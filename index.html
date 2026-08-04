@@ -403,6 +403,13 @@
                 </span>
               </div>
             </div>
+            <!-- Every closed scalp drops a labelled pin. One click stands in the moment it
+                 finished; the way back is always on screen while you are away from live. -->
+            <div class="journal__pins" data-if="block.id === 'journal'"
+                 data-each="pin in journal.checkpoints">
+              <button type="button" class="chip journal__pin" data-action="click"
+                      data-fn="journal.jump" :data-id="pin.tradeId">↺ {{pin.label}}</button>
+            </div>
             <!-- The editor, one row at a time. No dialog, no save button: a save button in
                  a journal is a note that does not get written. -->
             <div class="journal__editor" data-if="block.id === 'journal' &amp;&amp; journal.editing">
@@ -762,6 +769,13 @@
                   data-modal="keys">close</button>
         </div>
       </form>
+    </div>
+
+    <!-- Away from live. Fixed and unmissable: a trader who forgot they were standing in
+         history would read every number on the desk as the present one. -->
+    <div class="replaying" data-if="journal.replaying">
+      <b>VIEWING HISTORY</b>
+      <button type="button" class="chip" data-action="click" data-fn="journal.live">return to live</button>
     </div>
 
     <!-- Settings drawer. Rendered from the schema, so a new setting appears here by

@@ -108,6 +108,42 @@
   font-size: var(--fs-0);
 }
 
+.journal__pins {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-1);
+  padding: var(--sp-1) 0;
+}
+
+.journal__pin {
+  font-size: var(--fs-0);
+}
+
+/*
+ * Standing in the past. Fixed, centred and loud, because a trader who forgot they were
+ * viewing history would read every number on the desk as the present one — and act on it.
+ */
+.replaying {
+  position: fixed;
+  inset-block-start: var(--sp-2);
+  inset-inline: 0;
+  z-index: 40;
+  display: flex;
+  gap: var(--sp-2);
+  align-items: center;
+  justify-content: center;
+  margin-inline: auto;
+  inline-size: fit-content;
+  padding: var(--sp-1) var(--sp-3);
+  border: 1px solid var(--orange);
+  border-radius: var(--radius-1);
+  background: var(--bg-raised);
+  color: var(--orange);
+  font-size: var(--fs-1);
+  letter-spacing: 0.12em;
+  box-shadow: var(--glow-orange);
+}
+
 /* Narrow screens drop the columns a trader can reconstruct — the entry/exit prices and the
    excursion — before the ones they cannot: what it was, and what it paid. A media query
    rather than a container query, matching the breakpoint the grid already uses; nothing in

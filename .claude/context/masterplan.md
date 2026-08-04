@@ -4118,16 +4118,16 @@
 **What:** Each closed trade freezes a labeled point-in-time snapshot, so the user can jump back to the exact app state around any scalp.
 **How:** Call Spektrum checkpoint() from the trade-close trigger with trade metadata labels, listing checkpoints in the journal for one-click time-travel.
 
-- [ ] **T25.4.1 - Cut checkpoint branch** - What: Time-travel work isolated from main. How: git checkout -b feature/f25.4-trade-checkpoints from main.
-- [ ] **T25.4.2 - Hook checkpoint into trade close** - What: A snapshot exists for every completed scalp automatically. How: In the trade-close trigger() handler call Spektrum checkpoint() right after the trade record is appended.
-- [ ] **T25.4.3 - Label checkpoints with trade metadata** - What: Snapshots findable by trade, not cryptic ids. How: Pass a label built by checkpointLabel(trade) combining trade id, instrument and net PnL into the checkpoint call.
-- [ ] **T25.4.4 - Maintain a checkpoint index** - What: A browsable catalog of all trade snapshots. How: Append {label, tradeId, ts} entries to state.journal.checkpoints via addValue alongside each checkpoint() call.
-- [ ] **T25.4.5 - Implement jump-to-checkpoint** - What: One click restores the app to the moment a trade closed. How: defineFn jumpToCheckpoint(id) using Spektrum replay() to the stored checkpoint, exposed via data-action.
-- [ ] **T25.4.6 - Guard checkpoint cost** - What: Snapshotting never adds latency to the hot trading path. How: Defer the checkpoint() call with queueMicrotask after fill processing and skip when a checkpoint for the same tradeId exists.
-- [ ] **T25.4.7 - Build the checkpoint list UI** - What: Snapshots visible inside the journal block per trade. How: data-each over state.journal.checkpoints rendering label rows with a jump data-action and relative timestamps.
-- [ ] **T25.4.8 - Add safe return-to-live** - What: Browsing history can never strand the user in the past. How: Snapshot a live-head checkpoint before any jump and render a fixed Return to Live button that replay()s back to it.
-- [ ] **T25.4.9 - Write single unit tests for checkpoint fns** - What: checkpointLabel and the index appender each proven once. How: One Vitest test per function in checkpoints.test.js run with vitest run -t per name.
-- [ ] **T25.4.10 - Verify and merge checkpoints** - What: Time-travel lands on main only when green. How: Run targeted tests, jump to a checkpoint and back in the browser, then merge the feature branch.
+- [x] **T25.4.1 - Cut checkpoint branch** - What: Time-travel work isolated from main. How: git checkout -b feature/f25.4-trade-checkpoints from main.
+- [x] **T25.4.2 - Hook checkpoint into trade close** - What: A snapshot exists for every completed scalp automatically. How: In the trade-close trigger() handler call Spektrum checkpoint() right after the trade record is appended.
+- [x] **T25.4.3 - Label checkpoints with trade metadata** - What: Snapshots findable by trade, not cryptic ids. How: Pass a label built by checkpointLabel(trade) combining trade id, instrument and net PnL into the checkpoint call.
+- [x] **T25.4.4 - Maintain a checkpoint index** - What: A browsable catalog of all trade snapshots. How: Append {label, tradeId, ts} entries to state.journal.checkpoints via addValue alongside each checkpoint() call.
+- [x] **T25.4.5 - Implement jump-to-checkpoint** - What: One click restores the app to the moment a trade closed. How: defineFn jumpToCheckpoint(id) using Spektrum replay() to the stored checkpoint, exposed via data-action.
+- [x] **T25.4.6 - Guard checkpoint cost** - What: Snapshotting never adds latency to the hot trading path. How: Defer the checkpoint() call with queueMicrotask after fill processing and skip when a checkpoint for the same tradeId exists.
+- [x] **T25.4.7 - Build the checkpoint list UI** - What: Snapshots visible inside the journal block per trade. How: data-each over state.journal.checkpoints rendering label rows with a jump data-action and relative timestamps.
+- [x] **T25.4.8 - Add safe return-to-live** - What: Browsing history can never strand the user in the past. How: Snapshot a live-head checkpoint before any jump and render a fixed Return to Live button that replay()s back to it.
+- [x] **T25.4.9 - Write single unit tests for checkpoint fns** - What: checkpointLabel and the index appender each proven once. How: One Vitest test per function in checkpoints.test.js run with vitest run -t per name.
+- [x] **T25.4.10 - Verify and merge checkpoints** - What: Time-travel lands on main only when green. How: Run targeted tests, jump to a checkpoint and back in the browser, then merge the feature branch.
 
 ### F25.5 - Full Session Export via serialize()
 

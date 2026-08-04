@@ -243,6 +243,8 @@ export const PATHS = Object.freeze({
     notes: 'journal.notes',
     tagCatalog: 'journal.tagCatalog',
     editing: 'journal.editing',
+    checkpoints: 'journal.checkpoints',
+    replaying: 'journal.replaying',
   }),
   strategy: Object.freeze({
     registered: 'strategy.registered',
