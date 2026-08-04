@@ -44,6 +44,15 @@ export {
 export { killSwitch, tripAction, killLatency, rearm, registerKillActions } from './kill.js'
 
 export {
+  WARN_AT,
+  ledStateFor,
+  exposurePct,
+  streakPct,
+  breakerLeds,
+  refreshLeds,
+} from './leds.js'
+
+export {
   TRIP_ACTIONS,
   actionFor,
   retryOnce,

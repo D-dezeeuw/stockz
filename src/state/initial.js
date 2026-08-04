@@ -217,6 +217,7 @@ export function initialState(overrides = {}) {
     [PATHS.breaker.blocked]: 0,
     [PATHS.breaker.killLatencyMs]: 0,
     [PATHS.breaker.flattenPending]: [],
+    [PATHS.breaker.leds]: [],
 
     // alerts
     [PATHS.alerts.fired]: null,

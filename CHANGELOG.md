@@ -68,6 +68,16 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
   believing they are flat. The trip codes moved to a leaf module — the enum had lived beside the
   code that reaches into the bot runner, and the first lookup table keyed by a code found it
   still in its temporal dead zone.
+- **Breaker lights in the header** — three dots answering the only question asked between
+  trades: how much room is left. A number would be more precise and worse, because precision
+  is what you read once you have decided to look and these have to work when nobody is looking
+  at them. Orange arrives at **80%** of the limit, fixed rather than configurable: a warning
+  threshold that is a setting is one that gets moved to 99% by whoever found it annoying, and
+  the whole point is to arrive with room left to react. An unset limit reads zero rather than
+  full, since a percentage of infinity is a dot the eye learns to skip. Each dot carries the
+  exact numbers in a native tooltip — no popover widget on the one bar that must never be busy
+  — and is a button onto the limit behind it. Red blinks, except under reduced motion where it
+  goes solid rather than silent.
 
 ## [0.23.0] — 2026-08-04 — Phase 23: Auto-Trade Bot Runner
 

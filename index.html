@@ -106,6 +106,17 @@
         etoro
       </span>
 
+      <!-- How much room is left, in three dots. A number would be more precise and worse:
+           precision is what you read once you have decided to look, and these have to work
+           when nobody is looking at them. One click lands on the limit behind the light. -->
+      <span class="breaker-leds" data-each="led in breaker.leds">
+        <button type="button" class="breaker-led" data-action="click" data-fn="ui.toggleOverlay"
+                data-modal="settings" :title="led.title" :aria-label="led.title">
+          <i :class="'led breaker-led__dot breaker-led__dot--' + led.state"></i>
+          <span class="label">{{led.label}}</span>
+        </button>
+      </span>
+
       <span class="price tnum" :class="fmt.cls(trade.dayPnl)">{{fmt.signed(trade.dayPnl)}}</span>
       <span class="label num nowrap">{{app.clock}} UTC</span>
 
