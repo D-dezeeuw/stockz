@@ -23,6 +23,7 @@ describe('describeStrategies', () => {
       'vwap-revert',
       'spread-capture',
       'book-imbalance',
+      'tape-pressure',
       'composite',
     ])
     expect(BUILTIN_STRATEGIES).toContain(noopStrategy)

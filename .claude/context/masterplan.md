@@ -3466,16 +3466,16 @@
 **What:** The user reads the tape automatically: signals when the aggressor buy/sell ratio flips fast.
 **How:** Aggressor classification and rolling-ratio fns over OKX trade prints from the phase-14 tape feed.
 
-- [ ] **T21.5.1 - Branch and scaffold tape module** - What: A separate branch for the tape-reading strategy. How: git checkout -b feature/f21-5-tape-pressure; create src/strategies/tapePressure.js.
-- [ ] **T21.5.2 - Build classifyAggressor fn** - What: Every print labeled buyer- or seller-initiated. How: Implement classifyAggressor(trade) using the OKX trades-channel side field with a tick-rule fallback.
-- [ ] **T21.5.3 - Build aggressorRatio fn** - What: A rolling share of buy volume over the window. How: Implement aggressorRatio(state, print, windowMs) with incremental add/expire on a deque.
-- [ ] **T21.5.4 - Build ratioShift fn** - What: Detection of a fast flip in pressure, not slow drift. How: Implement ratioShift(ratioNow, ratioPrev, shiftWindowMs) returning the signed shift rate.
-- [ ] **T21.5.5 - Build pressureSignal fn** - What: Entries only on hard shifts with enough prints behind them. How: Implement pressureSignal(shift, threshold, printCount, minPrints) returning long, short or null.
-- [ ] **T21.5.6 - Wire into engine** - What: The tape drives signals with no polling. How: addSystem() on the phase-14 trade-print channel with the chained fns emitting trigger('strategy:signal').
-- [ ] **T21.5.7 - Build normalizeExit fn** - What: Exits when pressure normalizes or the time stop lapses. How: Implement normalizeExit(position, ratio, neutralBand, timeStopMs) wired to the exit hook.
-- [ ] **T21.5.8 - Params and pressure meter** - What: windowMs, threshold and minPrints tunable with live pressure visible. How: setValue params plus a green/orange meter bar bound with :style width from a computed ratio.
-- [ ] **T21.5.9 - Write single unit tests** - What: One test per tape fn, no more. How: Vitest tests for classifyAggressor, aggressorRatio, ratioShift, pressureSignal and normalizeExit; vitest -t only.
-- [ ] **T21.5.10 - Verify on tape replay and merge** - What: Fires match visible pressure flips in a recording. How: Replay recorded prints, compare meter movement against fires, ESLint pass, merge branch to main.
+- [x] **T21.5.1 - Branch and scaffold tape module** - What: A separate branch for the tape-reading strategy. How: git checkout -b feature/f21-5-tape-pressure; create src/strategies/tapePressure.js.
+- [x] **T21.5.2 - Build classifyAggressor fn** - What: Every print labeled buyer- or seller-initiated. How: Implement classifyAggressor(trade) using the OKX trades-channel side field with a tick-rule fallback.
+- [x] **T21.5.3 - Build aggressorRatio fn** - What: A rolling share of buy volume over the window. How: Implement aggressorRatio(state, print, windowMs) with incremental add/expire on a deque.
+- [x] **T21.5.4 - Build ratioShift fn** - What: Detection of a fast flip in pressure, not slow drift. How: Implement ratioShift(ratioNow, ratioPrev, shiftWindowMs) returning the signed shift rate.
+- [x] **T21.5.5 - Build pressureSignal fn** - What: Entries only on hard shifts with enough prints behind them. How: Implement pressureSignal(shift, threshold, printCount, minPrints) returning long, short or null.
+- [x] **T21.5.6 - Wire into engine** - What: The tape drives signals with no polling. How: addSystem() on the phase-14 trade-print channel with the chained fns emitting trigger('strategy:signal').
+- [x] **T21.5.7 - Build normalizeExit fn** - What: Exits when pressure normalizes or the time stop lapses. How: Implement normalizeExit(position, ratio, neutralBand, timeStopMs) wired to the exit hook.
+- [x] **T21.5.8 - Params and pressure meter** - What: windowMs, threshold and minPrints tunable with live pressure visible. How: setValue params plus a green/orange meter bar bound with :style width from a computed ratio.
+- [x] **T21.5.9 - Write single unit tests** - What: One test per tape fn, no more. How: Vitest tests for classifyAggressor, aggressorRatio, ratioShift, pressureSignal and normalizeExit; vitest -t only.
+- [x] **T21.5.10 - Verify on tape replay and merge** - What: Fires match visible pressure flips in a recording. How: Replay recorded prints, compare meter movement against fires, ESLint pass, merge branch to main.
 
 ### F21.6 - Micro Range Fade
 

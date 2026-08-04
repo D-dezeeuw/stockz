@@ -12,6 +12,17 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ### Added
 
+- **Tape pressure shift** — where the imbalance strategy reads intention, this one reads
+  what happened: who crossed the spread. The signal is the **shift, not the level** — a tape
+  running at 70% buy volume all session is just an instrument with a bid to it, and by the
+  time that shows up it is priced in; a tape going from 45% to 70% in ten seconds is somebody
+  arriving. The ratio is **volume-weighted, never print-counted**, because fifty one-lot
+  prints against one block reads bullish by count and bearish by size, and the size is what
+  moved. The venue's own taker-side label always beats the tick rule, and an unchanged print
+  stays *unknown* rather than being guessed, which would bias the ratio toward whatever came
+  before. A minimum print count exists because three prints can swing a ratio from 0 to 1 and
+  mean nothing — without it the strategy would fire hardest exactly when the tape is
+  thinnest. An empty window reads as balanced, not as maximum selling pressure.
 - **Order-book imbalance** — the book says what people intend, the tape says what they did,
   and this one trades the intention: when resting depth is heavily loaded on one side and
   *stays* loaded, price moves away from the heavy side, because the thin side is where it is
