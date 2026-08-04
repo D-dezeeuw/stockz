@@ -71,8 +71,11 @@ describe('keyPresenceBanner', () => {
 
     const banner = keyPresenceBanner(bag)
 
-    expect(banner).toBe('keys okx:true etoro:false')
+    // Says "env" out loud: this reports build-time STOCKZ_* variables only, and prints
+    // before the vault has adopted anything from the URL — so an unqualified
+    // "keys okx:false" above "adopted 5 credential fields" reads as a contradiction.
+    expect(banner).toBe('env keys okx:true etoro:false')
     expect(banner).not.toContain('super-secret-value')
-    expect(keyPresenceBanner({})).toBe('keys okx:false etoro:false')
+    expect(keyPresenceBanner({})).toBe('env keys okx:false etoro:false')
   })
 })

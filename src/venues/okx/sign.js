@@ -1,3 +1,4 @@
+import { appState } from '../../app/engine.js'
 import { getKey } from '../vault.js'
 import { okxNow } from './clock.js'
 
@@ -106,7 +107,21 @@ export async function signRequest(req) {
     'OK-ACCESS-TIMESTAMP': ts,
     'OK-ACCESS-PASSPHRASE': passphrase,
     'Content-Type': 'application/json',
+    // OKX keeps demo and live keys in *separate universes*. A demo key sent without this
+    // header is not rejected as wrong — the venue reports that it "doesn't exist" (50119),
+    // which reads as a deleted key and sends people off to regenerate one that was fine.
+    ...(demoTrading(req.state) ? { 'x-simulated-trading': '1' } : {}),
   }
+}
+
+/**
+ * Is the desk pointed at OKX's demo environment?
+ *
+ * @param {object} [state] - engine state.
+ * @returns {boolean} true when demo keys should be announced as such.
+ */
+export function demoTrading(state = appState) {
+  return state?.settings?.okxDemo === true
 }
 
 /**

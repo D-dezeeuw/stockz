@@ -110,11 +110,11 @@
            wrong by this project's own rules — but a mode this expensive to get wrong must
            be impossible to hit by accident. -->
       <span class="mode" role="group" aria-label="Trading mode">
-        <button type="button" class="mode__seg" data-action="click" data-fn="trade.setMode"
-                data-mode="paper"
-                :class="trade.mode === 'paper' ? 'mode__seg mode__seg--paper is-on' : 'mode__seg mode__seg--paper'">PAPER</button>
+        <button type="button" class="mode__seg mode__seg--paper" data-action="click"
+                data-fn="trade.setMode" data-mode="paper"
+                :class="{'is-on': trade.mode === 'paper'}">PAPER</button>
         <button type="button" class="mode__seg mode__seg--live"
-                :class="trade.mode === 'live' ? 'mode__seg mode__seg--live is-on' : 'mode__seg mode__seg--live'"
+                :class="{'is-on': trade.mode === 'live'}"
                 :style="'--held:' + (trade.holdPct * 100) + '%'"
                 data-action="pointerdown" data-fn="trade.holdLive"
                 title="hold to go live">LIVE<i class="mode__ring"></i></button>
@@ -225,8 +225,13 @@
       <!-- Trading blocks carry the mode as a class, so peripheral vision knows before the
            eye reads anything. Only the blocks that can move money: accenting the whole
            grid would make the accent mean "the app is open". -->
-      <section class="block" :data-block-id="block.id"
-               :class="(block.status === 'error' ? 'block has-error' : 'block') + (trade.mode === 'paper' &amp;&amp; (block.id === 'ticket' || block.id === 'positions' || block.id === 'bot') ? ' is-paper' : '')" tabindex="0">
+      <!-- Object form, not string concat. `:class` with a string assigns `className`
+           wholesale, so every conditional has to restate every class that should survive —
+           which is how the mode control lost its own modifier the first time. The object
+           form routes through classList.toggle and touches only the keys named here. -->
+      <section class="block" :data-block-id="block.id" tabindex="0"
+               :class="{'has-error': block.status === 'error',
+                        'is-paper': trade.mode === 'paper' &amp;&amp; (block.id === 'ticket' || block.id === 'positions' || block.id === 'bot')}">
         <div class="block__bar">
           <span class="block__title">{{block.title}}</span>
           <span class="block__actions label">{{block.status}}</span>
@@ -437,8 +442,10 @@
                  every fomo tag, every loser on this instrument — so the block is a filter
                  first and a list second. Every chip is its own off switch. -->
             <div class="journal__filters" data-if="block.id === 'journal'">
-              <select data-action="change" data-fn="journal.filter" data-key="instrument"
-                      data-each="journal.instruments" data-as="inst">
+              <!-- `data-field`, not `data-key`: this element also carries `data-each`, and
+                   Spektrum reads `data-key` there as the clone key expression. -->
+              <select data-action="change" data-fn="journal.filter" data-field="instrument"
+                      data-each="journal.instruments" data-as="inst" data-key="inst.id">
                 <option :value="inst.id"
                         :selected="inst.id === journal.filters.instrument">{{inst.name}}</option>
               </select>
@@ -731,7 +738,7 @@
                         :data-id="wl.id"
                         :class="settings.activeListId === wl.id ? 'chip chip--on' : 'chip'">{{wl.name}}</button>
               </div>
-              <div class="watchlist__rows" data-each="market.watchRows" data-as="row">
+              <div class="watchlist__rows" data-each="market.watchRows" data-as="row" data-key="row.symbol">
                 <button type="button" class="watchlist__row" data-action="click"
                         data-fn="lists.focus" :data-symbol="row.symbol"
                         :class="row.active ? 'watchlist__row is-active' : 'watchlist__row'">
@@ -1303,6 +1310,16 @@
                  autocomplete="off" spellcheck="false">
           <button type="submit" class="btn">save etoro</button>
         </form>
+
+        <!-- OKX keeps demo and live keys in separate universes. A demo key sent to the
+             live endpoint is not rejected as wrong — the venue reports that it "doesn't
+             exist" (50119), which reads as a deleted key and sends people off to
+             regenerate one that was fine. -->
+        <label class="field field--row keys__demo">
+          <input type="checkbox" data-action="change" data-fn="settings.update"
+                 data-field="okxDemo" :checked="settings.okxDemo">
+          <span class="label">These are OKX <b>demo trading</b> keys</span>
+        </label>
 
         <!-- The one switch on this desk that decides whether money is real. Deliberately
              here, next to the keys, because it is the same decision: these credentials do

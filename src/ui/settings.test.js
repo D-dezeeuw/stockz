@@ -52,6 +52,19 @@ describe('updateSetting', () => {
   })
 })
 
+describe('updateSetting field alias', () => {
+  it('accepts `field` as well as `key`, so a control can dodge the data-key collision', () => {
+    // On an element that also carries `data-each`, Spektrum reads `data-key` as the clone
+    // key expression rather than as a payload — so a bound control needs a name of its own.
+    expect(updateSetting(null, { field: 'okxDemo', value: true })).toBe(true)
+    tick()
+    expect(appState.settings.okxDemo).toBe(true)
+
+    // `key` still wins where both are given, so nothing existing changes meaning.
+    expect(updateSetting(null, { key: 'okxDemo', field: 'theme', value: false })).toBe(false)
+  })
+})
+
 describe('resetSettings', () => {
   it('restores defaults and announces that an undo exists', () => {
     setValue(PATHS.settings.defaultSize, 5)

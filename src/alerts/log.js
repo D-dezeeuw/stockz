@@ -1,4 +1,5 @@
 import { setValue, appState } from '../app/engine.js'
+import { publishAmbient } from '../ui/cadence.js'
 import { PATHS } from '../state/paths.js'
 import { registerAction } from '../actions/registry.js'
 import { ACTIONS } from '../actions/names.js'
@@ -117,10 +118,12 @@ export function refreshLog(now) {
     chips: logChips(rows, filter),
     unread: unreadCount(rows, appState.ui?.logSeenAt),
     total: rows.length,
-    at: Number(now) || 0,
   }
 
-  setValue(PATHS.ui.alertPanel, published)
+  // Ambient, and no wall-clock stamp. The stamp used to ride along unread by any binding,
+  // which meant the panel object differed on every recompute and could never be skipped as
+  // unchanged — 862 writes in fifteen idle seconds, each one re-rendering every row.
+  publishAmbient(PATHS.ui.alertPanel, published, { now: () => Number(now) || Date.now() })
   return published
 }
 

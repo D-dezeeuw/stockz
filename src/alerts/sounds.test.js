@@ -14,14 +14,16 @@ import { resetAudio } from '../ticket/feedback.js'
 import { setValue, tick, resetState } from '../app/engine.js'
 
 /** An AudioContext double that records what was scheduled. */
-function fakeCtx() {
+function fakeCtx(state = 'running') {
   const scheduled = []
   let resumed = 0
 
   return {
     scheduled,
     currentTime: 10,
-    state: 'suspended',
+    // Running by default: a *suspended* context is one the browser will not play through,
+    // and a double that claimed otherwise was asserting behaviour the browser refuses.
+    state,
     destination: {},
     resume: () => {
       resumed += 1
@@ -84,6 +86,14 @@ describe('playSound', () => {
 
     // No context available at all — a headless environment.
     expect(playSound('buy', { volume: 0.3 })).toBe(0)
+
+    // A *suspended* context plays nothing. Scheduling into one is not merely wasted: the
+    // browser warns per attempt, and the tones stay queued against a clock that is not
+    // running — so every alert the desk emitted before the first click would fire at once
+    // the moment audio unlocked.
+    const suspended = fakeCtx('suspended')
+    expect(playSound('buy', { ctx: suspended, volume: 0.3 })).toBe(0)
+    expect(suspended.scheduled).toEqual([])
   })
 })
 
@@ -114,6 +124,14 @@ describe('resumeAudio', () => {
 
     expect(resumeAudio(rejecting)).toBe(true)
     tick()
+
+    // Running, not merely existing. A context is created suspended, so readiness taken
+    // from its existence claimed the desk could make a sound from the moment it booted
+    // while the browser silently dropped every alert until the first click.
+    const asleep = { AudioContext: function Ctor() { return fakeCtx('suspended') } }
+    resetAudio()
+    expect(resumeAudio(asleep)).toBe(false)
+    resetAudio()
 
     // No AudioContext at all — a headless environment, or a browser with audio disabled.
     expect(resumeAudio({})).toBe(false)

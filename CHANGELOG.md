@@ -10,6 +10,54 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ## [Unreleased]
 
+### Fixed
+
+- **OKX "API key doesn't exist" (50119).** OKX keeps demo and live keys in separate
+  universes, so a demo key sent to the live endpoint is not rejected as *wrong* — the venue
+  reports it does not exist, which reads as a deleted key and sends people off to
+  regenerate one that was fine. There is now an "these are OKX demo trading keys" checkbox
+  beside the keys; ticking it sends `x-simulated-trading` on REST and moves the sockets to
+  the `wspap` host, because authenticating REST against demo while the socket still points
+  at live is a worse failure than no demo support at all.
+- **The desk tried to play audio before any click.** The venue socket opens at boot and
+  emits a transition alert, and `playSound` scheduled tones into a *suspended* AudioContext
+  — one browser warning per attempt, and the tones stayed queued against a clock that was
+  not running, so every alert from before the first click would have fired at once the
+  moment audio unlocked. Readiness now reads `running` rather than merely "a context
+  exists".
+- **850 state writes a second.** One animation frame with a tick on it fanned out into ~44
+  writes — the flush wrote the bid, a system recomputed the HUD, another the fee tile, the
+  scoreboard, the bot status, the alert panel — and almost all of them produced an object
+  *identical* to the one already there. Each no-op write marked its path dirty, and
+  Spektrum's render path deep-copies the whole state tree **per binding**, so 40% of the
+  desk's CPU sat in `deepMerge` and frames ran to 600ms. `setValue` now skips a write that
+  would change nothing: **12,750 writes per 15s → 192**, `deepMerge` 40.6% → off the
+  profile, and history stopped growing without bound (16,738 entries → 575).
+- **Ambient state now updates at 5fps.** The alert panel and the session sparkline are read
+  to answer "how is it going", never to time an entry, so they coalesce — leading edge
+  immediate, trailing flush guaranteed, newest value wins. The alert panel also carried a
+  wall-clock stamp no binding read, which made it differ on every recompute and defeated
+  the skip above.
+- **The watchlist flapped the whole dashboard.** A failed quote poll blanked forty rows to
+  `—` and flipped the block to `error`; block status lives in `settings.blocks`, the grid is
+  one `data-each` over that array, and the watchlist is item zero — so Spektrum's unkeyed
+  reconciliation re-cloned all fifteen blocks on every flap, a 460ms frame each time. That
+  is what a burst of `requestAnimationFrame` violations in the console actually was. A
+  hiccup now keeps the last good quotes and the block stays readable; `error` is reserved
+  for having nothing at all.
+- **The journal's instrument filter showed one instrument.** That `<select>` carried both
+  `data-each` and `data-key="instrument"` — and on a `data-each` element Spektrum reads
+  `data-key` as the *clone key expression*, so every option keyed to `undefined` and the
+  clones merged. The payload attribute is now `data-field`, which cannot collide.
+- **`:class` string concatenation.** A string `:class` assigns `className` wholesale, so
+  every conditional has to restate every class that should survive — which is how the mode
+  control lost its own modifier when it went live. The fragile ones now use the documented
+  object form, which routes through `classList.toggle`.
+- **The boot banner said `keys okx:false` a line above "adopted 5 credential fields".** It
+  reports build-time `STOCKZ_*` variables and prints before the vault has adopted anything,
+  so it now says `env keys` and the two lines stop contradicting each other.
+
+
 ## [0.28.0] - 2026-08-04 — Paper Trading Mode
 
 ### Added

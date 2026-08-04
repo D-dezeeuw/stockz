@@ -232,7 +232,12 @@ export function clearFilters() {
  */
 export function registerFilterActions() {
   registerAction(ACTIONS.journal.filter, (_state, payload) =>
-    setFilter(payload?.key, payload?.value ?? payload?.filterValue),
+    // `field` before `key`: on an element that also carries `data-each`, Spektrum reads
+    // `data-key` as the *clone key expression*, so the instrument select was keying every
+    // option to `undefined` — duplicate keys, merged clones, and a dropdown that showed
+    // one instrument however many the journal held. The chips keep `data-key`; only the
+    // bound list needed a name of its own.
+    setFilter(payload?.field ?? payload?.key, payload?.value ?? payload?.filterValue),
   )
   registerAction(ACTIONS.journal.sort, (_state, payload) => toggleSort(payload?.key))
   registerAction(ACTIONS.journal.clearFilters, () => clearFilters())

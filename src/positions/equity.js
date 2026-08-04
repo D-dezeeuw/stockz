@@ -1,7 +1,7 @@
 import { createRing } from '../pipeline/ring.js'
 import { sparklinePath } from '../lists/rows.js'
-import { setValue } from '../app/engine.js'
 import { PATHS } from '../state/paths.js'
+import { publishAmbient } from '../ui/cadence.js'
 
 /**
  * The session's shape.
@@ -44,7 +44,9 @@ export function sample(value, now, everyMs = SAMPLE_MS) {
 
   lastAt = at
   samples.push({ t: at, v: Number(pnl.toFixed(8)) })
-  setValue(PATHS.trade.equityPath, curvePath())
+  // The session's shape is ambient: it is read to answer "was today a grind or one lucky
+  // trade", never to time an entry, so five frames a second is more than it needs.
+  publishAmbient(PATHS.trade.equityPath, curvePath(), { now: () => at })
   return true
 }
 

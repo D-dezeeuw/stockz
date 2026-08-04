@@ -8,6 +8,7 @@ import {
   quoteIndex,
   repaintRows,
   refreshQuotes,
+  resetQuotes,
   toggleAutoWatchlist,
   registerWatchActions,
   startWatchlist,
@@ -173,14 +174,26 @@ describe('refreshQuotes', () => {
     // however much it held.
     expect(currentBlocks().find((b) => b.id === 'watchlist').status).toBe('ready')
 
-    const dead = await refreshQuotes({
-      fetch: async () => {
-        throw new Error('offline')
-      },
-    })
+    const offline = async () => {
+      throw new Error('offline')
+    }
+    const dead = await refreshQuotes({ fetch: offline })
     tick()
-    // The symbols still render; only the quotes are missing, and the block says so.
-    expect(dead[0]).toMatchObject({ symbol: 'BTC-USDT', price: '—' })
+
+    // A failed poll does not un-happen the prices the desk already had. Blanking forty rows
+    // for one hiccup is a bigger lie than showing a price four seconds old — and the block
+    // stays `ready`, because it still has something worth reading.
+    expect(dead[0]).toMatchObject({ symbol: 'BTC-USDT', price: '60000.00' })
+    expect(currentBlocks().find((b) => b.id === 'watchlist').status).toBe('ready')
+
+    // Flapping that status is not just wrong, it is expensive: it lives in
+    // `settings.blocks`, the grid is one `data-each` over that array, and the watchlist is
+    // item zero — so every flip re-cloned all fifteen blocks.
+    resetQuotes()
+    const cold = await refreshQuotes({ fetch: offline })
+    tick()
+    // With nothing ever quoted there genuinely is nothing to show, and the block says so.
+    expect(cold[0]).toMatchObject({ symbol: 'BTC-USDT', price: '—' })
     expect(currentBlocks().find((b) => b.id === 'watchlist').status).toBe('error')
 
     commitLists([])

@@ -60,10 +60,15 @@ export function venueKeyPresence(bag = envBag()) {
  * One-line boot banner telling the dev which venue keys are configured.
  * Contains presence booleans only — never key material.
  *
+ * Says **env** out loud, because this reports build-time `STOCKZ_*` variables and nothing
+ * else. It prints before the vault has adopted anything from the URL or the key modal, so
+ * an unqualified "keys okx:false" a line above "adopted 5 credential fields from the URL"
+ * reads as a contradiction, and the reader is left unsure which one to believe.
+ *
  * @param {Record<string, unknown>} [bag] - env source; defaults to the Vite env bag.
- * @returns {string} e.g. 'keys okx:true etoro:false'.
+ * @returns {string} e.g. 'env keys okx:true etoro:false'.
  */
 export function keyPresenceBanner(bag = envBag()) {
   const { okx, etoro } = venueKeyPresence(bag)
-  return `keys okx:${okx} etoro:${etoro}`
+  return `env keys okx:${okx} etoro:${etoro}`
 }
