@@ -46,6 +46,19 @@ describe('makeIntent', () => {
 
     // The venue comes off the qualified symbol when not stated.
     expect(makeIntent({ symbol: 'etoro:AAPL', size: 1, type: 'market' }).intent.venue).toBe('etoro')
+
+    // The bare `instrument` shape is accepted too - it is the shape this function *returns*
+    // and the shape the bot's mapper emits, so its output can be fed back in. Without this
+    // every bot order died here as "no instrument", which is why an armed, opted-in bot
+    // with passing signals still never placed a trade.
+    const fromBot = makeIntent({ instrument: 'BTC-USDT', venue: 'okx', size: 0.01, type: 'market' })
+    expect(fromBot.ok).toBe(true)
+    expect(fromBot.intent).toMatchObject({ instrument: 'BTC-USDT', venue: 'okx', size: 0.01 })
+    // An explicit symbol still wins, and a qualified instrument still splits.
+    expect(makeIntent({ instrument: 'okx:ETH-USDT', size: 1, type: 'market' }).intent).toMatchObject({
+      instrument: 'ETH-USDT',
+      venue: 'okx',
+    })
     expect(TIF).toContain('post_only')
     expect(ORDER_TYPES).toEqual(['market', 'limit'])
   })

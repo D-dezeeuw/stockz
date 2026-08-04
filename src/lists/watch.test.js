@@ -6,6 +6,7 @@ import {
   seedUniverse,
   buildWatchRows,
   quoteIndex,
+  repaintRows,
   refreshQuotes,
   toggleAutoWatchlist,
   registerWatchActions,
@@ -60,9 +61,20 @@ describe('seedUniverse', () => {
     expect(lists[0].symbols).toHaveLength(20)
     expect(lists[0].symbols[0]).toBe('okx:BTC-USDT')
     expect(appState.settings.activeListId).toBe('crypto')
+    // Something has to be focused or the desk does nothing at all: the socket subscribes
+    // to the focused instrument, so an untouched desk received no ticks and gave the
+    // strategies nothing to read.
+    expect(appState.market.focus).toBe('okx:BTC-USDT')
 
     // "The desk keeps a list for you" must not mean "the desk edits your lists".
     expect(lists.find((l) => l.id === 'mine').symbols).toEqual(['okx:PEPE-USDT'])
+
+    // A focus the trader already chose is never stolen back by a re-seed.
+    setValue(PATHS.market.focus, 'okx:SOL-USDT')
+    tick()
+    seedUniverse()
+    tick()
+    expect(appState.market.focus).toBe('okx:SOL-USDT')
 
     // Re-seeding replaces its own lists rather than appending second copies.
     seedUniverse()
@@ -114,6 +126,34 @@ describe('buildWatchRows', () => {
     expect(buildWatchRows(['okx:BTC-USDT'], [{ symbol: 'BTC-USDT', last: 1, changePct: 0 }])[0].tone)
       .toBe('flat')
     expect(buildWatchRows(null, null)).toEqual([])
+  })
+})
+
+describe('repaintRows', () => {
+  it('moves the highlight on a focus change without waiting for the quote timer', async () => {
+    seedBlocks()
+    commitLists([{ id: 'crypto', name: 'Crypto 20', symbols: ['okx:BTC-USDT', 'okx:ETH-USDT'] }])
+    setValue(PATHS.settings.activeListId, 'crypto')
+    setValue(PATHS.market.focus, 'okx:BTC-USDT')
+    tick()
+    await refreshQuotes({ fetch: serving(TICKERS) })
+    tick()
+    expect(appState.market.watchRows[0].active).toBe(true)
+
+    // A click must not wait up to four seconds to show which row it selected, on a desk
+    // whose whole claim is sub-100ms feedback.
+    setValue(PATHS.market.focus, 'okx:ETH-USDT')
+    tick()
+    const rows = repaintRows()
+    tick()
+    expect(rows[0].active).toBe(false)
+    expect(rows[1].active).toBe(true)
+    // Repainted from the quotes already in hand rather than another round trip.
+    expect(rows[1].price).not.toBe('—')
+
+    commitLists([])
+    tick()
+    expect(repaintRows()).toEqual([])
   })
 })
 

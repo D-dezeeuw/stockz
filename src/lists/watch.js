@@ -1,4 +1,4 @@
-import { setValue, appState } from '../app/engine.js'
+import { setValue, appState, watch } from '../app/engine.js'
 import { PATHS } from '../state/paths.js'
 import { currentLists, commitLists, activeList } from './state.js'
 import { createList, splitSymbol, qualifySymbol } from './ops.js'
@@ -75,6 +75,15 @@ export function seedUniverse() {
     setValue(PATHS.settings.activeListId, UNIVERSE[0].id)
   }
 
+  // Something has to be focused or the desk does nothing at all. `market.focus` shipped as
+  // '' with only a click able to set it, and the socket subscribes to the focused
+  // instrument — so an untouched desk received no ticks, drew no book, and gave the
+  // strategies nothing to read. The first row is as good a default as exists, and it is
+  // the most-traded instrument on the venue.
+  if (!String(appState?.market?.focus ?? '') && ordered[0]?.symbols?.length) {
+    setValue(PATHS.market.focus, ordered[0].symbols[0])
+  }
+
   log.info(`universe: ${ordered.length} lists, ${universeSymbols().length} instruments`)
   return ordered
 }
@@ -123,6 +132,35 @@ export function quoteIndex(rows) {
 }
 
 /**
+ * The last quote snapshot, held outside the reactive tree.
+ *
+ * So the rows can be rebuilt without a fetch when only the *highlight* needs to move.
+ */
+let lastQuotes = []
+
+/**
+ * Repaint the rows from the quotes already in hand.
+ *
+ * Focus changes on a click and the quote timer runs every four seconds, so without this the
+ * highlight would follow the click by up to four seconds — on a desk whose whole claim is
+ * sub-100ms feedback. It also fixes the first paint: `seedUniverse` sets the focus through
+ * `setValue`, which lands next tick, so the rows built immediately after it read the *old*
+ * (empty) focus and nothing appeared selected at all.
+ *
+ * @returns {object[]} the rows now in state.
+ */
+export function repaintRows() {
+  const list = activeList()
+  const symbols = Array.isArray(list?.symbols) ? list.symbols : []
+  if (symbols.length === 0) return []
+
+  const rows = buildWatchRows(symbols, lastQuotes, String(appState?.market?.focus ?? ''))
+  setValue(PATHS.market.watchRows, rows)
+
+  return rows
+}
+
+/**
  * Re-quote the visible rows and publish them.
  *
  * @param {object} [options] - injected fetch.
@@ -147,8 +185,9 @@ export async function refreshQuotes(options = {}) {
   }
 
   const result = await fetchTickers(options)
-  const quoted = result.ok ? quoteIndex(result.rows) : []
-  const rows = buildWatchRows(symbols, quoted, String(appState?.market?.focus ?? ''))
+  // Kept, so a focus change can repaint the highlight without another round trip.
+  if (result.ok) lastQuotes = quoteIndex(result.rows)
+  const rows = buildWatchRows(symbols, result.ok ? lastQuotes : [], String(appState?.market?.focus ?? ''))
 
   setValue(PATHS.market.watchRows, rows)
   // Leaves the placeholder the block has shown since phase 2. Nothing ever moved this
@@ -206,6 +245,9 @@ export function startWatchlist(options = {}) {
   const timer = options.timer ?? globalThis
   const quoteEvery = Number(options.quoteMs) > 0 ? Number(options.quoteMs) : QUOTE_MS
 
+  // The highlight follows the click, not the four-second quote timer.
+  const unfocus = watch([PATHS.market.focus], () => repaintRows())
+
   const listed = seedUniverse()
   // The symbols are passed straight across rather than read back out of state, which has
   // not flushed yet — `commitLists` writes through `setValue`, which lands next tick, so
@@ -214,5 +256,8 @@ export function startWatchlist(options = {}) {
   refreshQuotes(first).catch(() => [])
 
   const quotes = timer.setInterval?.(() => refreshQuotes(options).catch(() => []), quoteEvery)
-  return () => timer.clearInterval?.(quotes)
+  return () => {
+    unfocus?.()
+    timer.clearInterval?.(quotes)
+  }
 }

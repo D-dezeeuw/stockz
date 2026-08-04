@@ -102,6 +102,19 @@ export function syncArm() {
   setValue(PATHS.settings.botStrategies, opted)
   setValue(PATHS.settings.botArmed, armed)
 
+  // Dry run comes *off* on paper, and goes back on for live.
+  //
+  // Dry run predates paper mode, and stacking them means nothing happens twice over: dry
+  // run logs an order and returns a fake id, so a paper desk produced no fills, no
+  // positions and no P&L — the exact "why is nothing trading" this is here to answer.
+  // Paper mode is the simulation now, and it is a stronger one, because it books the fill
+  // and cannot reach a venue by construction.
+  //
+  // Going live puts it back, deliberately: a bot armed by hand against real money should
+  // start by telling you what it *would* do. That is a safety posture, and a mode change
+  // is exactly when a safety posture should reset rather than be inherited.
+  setValue(PATHS.settings.botDryRun, !paperMode())
+
   return armed
 }
 

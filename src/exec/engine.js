@@ -207,7 +207,18 @@ export async function submit(input, deps = {}) {
     return { ok: false, clientId, reason: result?.reason ?? 'unknown' }
   }
 
-  apply(clientId, result.order?.state === 'filled' ? 'filled' : 'live', { ts: now() })
+  // The venue's own numbers, not just its verdict. On OKX a fill normally arrives later on
+  // the order channel, so `apply` is called again with the detail and dropping it here
+  // costs nothing — but a venue that fills synchronously reports `filled` and `avgPx` in
+  // this very response, and throwing them away books a fill of zero at a price of zero.
+  // That is exactly what happened to every paper trade: the order went to 'filled' with
+  // nothing in it, so the position store saw no quantity and the book stayed empty.
+  const filled = result.order?.state === 'filled'
+  apply(clientId, filled ? 'filled' : 'live', {
+    ts: now(),
+    ...(Number.isFinite(Number(result.order?.filled)) ? { filled: Number(result.order.filled) } : {}),
+    ...(Number.isFinite(Number(result.order?.avgPx)) ? { avgPx: Number(result.order.avgPx) } : {}),
+  })
   return { ok: true, clientId, reason: '' }
 }
 
