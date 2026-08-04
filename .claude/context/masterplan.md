@@ -3418,16 +3418,16 @@
 **What:** The user fades overstretched moves: entries when price pierces VWAP deviation bands and snaps back.
 **How:** Incremental session VWAP and Welford stdev defineFns feeding a band-touch reversion signal on the strategy engine.
 
-- [ ] **T21.2.1 - Branch and scaffold VWAP module** - What: A clean workspace for the reversion strategy. How: git checkout -b feature/f21-2-vwap-revert; create src/strategies/vwapRevert.js with the descriptor skeleton.
-- [ ] **T21.2.2 - Build sessionVwap fn** - What: A running fair-value anchor for the session. How: Implement incremental sessionVwap(state, price, size) accumulating price*size and volume; register via defineFn.
-- [ ] **T21.2.3 - Build vwapDeviation fn** - What: A live measure of how stretched price is from VWAP. How: Implement Welford-based incremental stdev of the price-VWAP distance in vwapDeviation(state, distance).
-- [ ] **T21.2.4 - Build bandTouch fn** - What: Detection of price piercing the k-sigma band, the fade setup. How: Implement bandTouch(price, vwap, sigma, k) returning fade-long, fade-short or null.
-- [ ] **T21.2.5 - Build revertConfirm fn** - What: No knife-catching: entry only after one tick back toward VWAP. How: Implement revertConfirm(lastTicks, side) requiring a confirming print before the signal passes.
-- [ ] **T21.2.6 - Wire strategy into engine** - What: Reversion signals flow live from ticks to the signal bus. How: addSystem() subscription on the tick channel chaining the four fns and emitting trigger('strategy:signal').
-- [ ] **T21.2.7 - Build vwapExit fn** - What: Exits at VWAP touch or a fixed tick target, stop beyond the band. How: Implement vwapExit(position, price, vwap, targetTicks, stopTicks) wired into the engine exit hook.
-- [ ] **T21.2.8 - Params and band readout** - What: sigmaK, minDeviationTicks and stopTicks user-tunable with live band values visible. How: Params via setValue('strat.vwap.params'); band edges shown in the strategy row through computed() bindings.
-- [ ] **T21.2.9 - Write single unit tests** - What: Each math fn locked in with exactly one test. How: One Vitest test each for sessionVwap, vwapDeviation, bandTouch, revertConfirm and vwapExit; targeted vitest -t runs.
-- [ ] **T21.2.10 - Verify on volatile replay and merge** - What: Behavior confirmed on rough data before shipping. How: Replay a volatile recorded session from IndexedDB, check band entries and exits, ESLint, merge to main.
+- [x] **T21.2.1 - Branch and scaffold VWAP module** - What: A clean workspace for the reversion strategy. How: git checkout -b feature/f21-2-vwap-revert; create src/strategies/vwapRevert.js with the descriptor skeleton.
+- [x] **T21.2.2 - Build sessionVwap fn** - What: A running fair-value anchor for the session. How: Implement incremental sessionVwap(state, price, size) accumulating price*size and volume; register via defineFn.
+- [x] **T21.2.3 - Build vwapDeviation fn** - What: A live measure of how stretched price is from VWAP. How: Implement Welford-based incremental stdev of the price-VWAP distance in vwapDeviation(state, distance).
+- [x] **T21.2.4 - Build bandTouch fn** - What: Detection of price piercing the k-sigma band, the fade setup. How: Implement bandTouch(price, vwap, sigma, k) returning fade-long, fade-short or null.
+- [x] **T21.2.5 - Build revertConfirm fn** - What: No knife-catching: entry only after one tick back toward VWAP. How: Implement revertConfirm(lastTicks, side) requiring a confirming print before the signal passes.
+- [x] **T21.2.6 - Wire strategy into engine** - What: Reversion signals flow live from ticks to the signal bus. How: addSystem() subscription on the tick channel chaining the four fns and emitting trigger('strategy:signal').
+- [x] **T21.2.7 - Build vwapExit fn** - What: Exits at VWAP touch or a fixed tick target, stop beyond the band. How: Implement vwapExit(position, price, vwap, targetTicks, stopTicks) wired into the engine exit hook.
+- [x] **T21.2.8 - Params and band readout** - What: sigmaK, minDeviationTicks and stopTicks user-tunable with live band values visible. How: Params via setValue('strat.vwap.params'); band edges shown in the strategy row through computed() bindings.
+- [x] **T21.2.9 - Write single unit tests** - What: Each math fn locked in with exactly one test. How: One Vitest test each for sessionVwap, vwapDeviation, bandTouch, revertConfirm and vwapExit; targeted vitest -t runs.
+- [x] **T21.2.10 - Verify on volatile replay and merge** - What: Behavior confirmed on rough data before shipping. How: Replay a volatile recorded session from IndexedDB, check band entries and exits, ESLint, merge to main.
 
 ### F21.3 - Post-Only Spread Capture
 

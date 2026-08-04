@@ -12,6 +12,18 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ### Added
 
+- **VWAP mean reversion bands** — the other half of the scalper's book and deliberately the
+  momentum strategy's opposite: this one fades. Price stretched several sigma from the
+  session's volume-weighted fair value tends to snap back, because the move was one
+  impatient participant rather than a repricing. The rule that stops it being a slow way to
+  lose money is **confirmation**: a band touch alone is a falling knife — price at three
+  sigma can go to five, and fading the first touch of a genuine trend is how a
+  mean-reversion account dies — so the setup arms on the touch and fires only once a print
+  comes back toward VWAP. Bands are measured in sigma of the price-to-VWAP distance rather
+  than in ticks, so the same settings mean the same thing on a quiet instrument and a wild
+  one. The target is VWAP itself, since past fair value the reason to hold is gone, and a
+  hard sigma stop exists because holding a losing fade "until it reverts" is the failure
+  mode of the whole genre.
 - **Momentum burst breakout** — a scalper's momentum, which is not "price went up over five
   minutes" but "the tape just got fast". Tick **velocity** leads price on a burst, because
   the flurry of orders arrives before the level breaks; by the time a five-minute candle
