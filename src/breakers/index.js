@@ -28,6 +28,7 @@ export { updateDayPnl, dailyPct, dailyLossCheck, refreshDaily, resetDay } from '
 export {
   getPosSize,
   isReducing,
+  isExit,
   capFor,
   positionCheck,
   onRealizedFill,
@@ -41,6 +42,20 @@ export {
 } from './position.js'
 
 export { killSwitch, tripAction, killLatency, rearm, registerKillActions } from './kill.js'
+
+export {
+  TRIP_ACTIONS,
+  actionFor,
+  retryOnce,
+  markPending,
+  clearPending,
+  reconcilePending,
+  watchPending,
+  pendingInstruments,
+  executeTripAction,
+  watchTrip,
+  resetTrip,
+} from './trip.js'
 
 /**
  * Every soft check an order must pass: the ones that block *this order* without halting

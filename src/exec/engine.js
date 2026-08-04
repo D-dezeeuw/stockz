@@ -11,7 +11,7 @@ import { ingestFill } from '../positions/store.js'
 import { captureIntent, scoreFill } from '../hud/quality.js'
 import { recordFee } from '../hud/fees.js'
 import { routeExecAlert } from '../alerts/exec.js'
-import { dailyLossCheck, orderChecks, breakerRejection, TRIP } from '../breakers/index.js'
+import { dailyLossCheck, orderChecks, breakerRejection, isExit, TRIP } from '../breakers/index.js'
 import { createLogger } from '../utils/log.js'
 
 const log = createLogger('exec')
@@ -141,8 +141,13 @@ export async function submit(input, deps = {}) {
   // after validation, so the size being checked is the size that would actually go. It is
   // primitive comparisons against a cached threshold: it costs under a microsecond, which
   // is the only reason it can afford to be here at all.
-  const trip = dailyLossCheck({ position: intent.size, now: at })
-  if (trip !== TRIP.NONE) return breakerRejection(trip)
+  // Exits are never what a halt is for. A desk that stopped itself and then refused to let
+  // the position be closed would trap the exact exposure it halted over — including the
+  // flatten the trip itself dispatched, which would make the wipe a no-op.
+  if (!isExit(intent)) {
+    const trip = dailyLossCheck({ position: intent.size, now: at })
+    if (trip !== TRIP.NONE) return breakerRejection(trip)
+  }
 
   // The soft checks: these refuse *this order* and leave the desk running. A cap breach is
   // a typo far more often than an emergency, and flattening the book over one is a cure

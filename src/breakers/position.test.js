@@ -2,6 +2,7 @@ import { describe, it, expect, beforeEach } from 'vitest'
 import {
   getPosSize,
   isReducing,
+  isExit,
   capFor,
   positionCheck,
   onRealizedFill,
@@ -52,6 +53,20 @@ describe('isReducing', () => {
 
     // Flat: nothing to reduce.
     expect(isReducing({ side: 'sell' }, 0)).toBe(false)
+  })
+})
+
+describe('isExit', () => {
+  it('trusts the reduce-only flag on its own, and falls back to the sign', () => {
+    const sources = { positions: POSITIONS }
+
+    // The flag is enough: a venue honouring reduce-only cannot turn the order into an
+    // opening trade whatever the book does between here and the fill.
+    expect(isExit({ instrument: 'SOL-USDT', side: 'buy', reduceOnly: true }, sources)).toBe(true)
+
+    expect(isExit({ instrument: 'BTC-USDT', side: 'sell' }, sources)).toBe(true)
+    expect(isExit({ instrument: 'BTC-USDT', side: 'buy' }, sources)).toBe(false)
+    expect(isExit({ instrument: 'SOL-USDT', side: 'sell' }, sources)).toBe(false)
   })
 })
 

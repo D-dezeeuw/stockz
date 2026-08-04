@@ -12,9 +12,9 @@ beforeEach(() => {
 
 describe('closeIntent', () => {
   it('builds an order that cannot overshoot into a new position', () => {
-    expect(closeIntent({ venue: 'okx', instrument: 'BTC-USDT', qty: 2 })).toEqual({
+    expect(closeIntent({ venue: 'okx', instrument: 'BTC-USDT-SWAP', qty: 2 })).toEqual({
       venue: 'okx',
-      symbol: 'BTC-USDT',
+      symbol: 'BTC-USDT-SWAP',
       // Opposite side, absolute size, reduce-only, market: together these make an
       // overshoot into a fresh position in the other direction impossible.
       side: 'sell',
@@ -22,6 +22,11 @@ describe('closeIntent', () => {
       type: 'market',
       reduceOnly: true,
     })
+
+    // Spot has no position to reduce and the flag is refused as unsupported, so carrying
+    // it there would make the exit fail rather than make it safer.
+    expect(closeIntent({ venue: 'okx', instrument: 'BTC-USDT', qty: 2 }).reduceOnly).toBeUndefined()
+    expect(closeIntent({ venue: 'etoro', instrument: 'AAPL', qty: 2 }).reduceOnly).toBeUndefined()
 
     expect(closeIntent({ venue: 'okx', instrument: 'BTC-USDT', qty: -2 }).side).toBe('buy')
 

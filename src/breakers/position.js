@@ -1,7 +1,8 @@
 import { setValue, appState } from '../app/engine.js'
 import { PATHS } from '../state/paths.js'
 import { openPositions } from '../positions/store.js'
-import { currentThresholds, TRIP } from './core.js'
+import { currentThresholds } from './core.js'
+import { TRIP } from './codes.js'
 
 /**
  * The position breaker, and the loss-streak pause.
@@ -60,6 +61,21 @@ export function isReducing(order, held) {
   // A sell against a long, or a buy against a short. Exits go through whatever the cap
   // says — a trader who cannot close what they hold is trapped by their own safety net.
   return size > 0 ? side === 'sell' : side === 'buy'
+}
+
+/**
+ * Is this order getting the desk *out* of something?
+ *
+ * @param {{instrument?: string, side?: string, reduceOnly?: boolean}} order - the order.
+ * @param {{positions?: object[]}} [sources] - injectable state.
+ * @returns {boolean} true when it can only reduce exposure.
+ */
+export function isExit(order, sources = {}) {
+  // The flag is enough on its own: a venue that honours reduce-only cannot turn the order
+  // into an opening trade whatever the book does between here and the fill.
+  if (order?.reduceOnly === true) return true
+
+  return isReducing(order, getPosSize(order?.instrument, sources.positions ?? openPositions()))
 }
 
 /**

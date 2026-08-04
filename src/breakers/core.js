@@ -2,6 +2,7 @@ import { setValue, appState } from '../app/engine.js'
 import { PATHS } from '../state/paths.js'
 import { emitAlert } from '../alerts/bus.js'
 import { killBot } from '../bot/runner.js'
+import { TRIP, TRIP_REASONS } from './codes.js'
 
 /**
  * The circuit breakers.
@@ -25,22 +26,8 @@ import { killBot } from '../bot/runner.js'
  * failing market would fire the flatten path forty times a second.
  */
 
-/** Why the desk stopped. Numeric because this is compared on the hot path. */
-export const TRIP = Object.freeze({
-  NONE: 0,
-  DAILY_LOSS: 1,
-  POSITION: 2,
-  LOSS_STREAK: 3,
-  KILL: 4,
-})
-
-/** What each code says out loud. */
-export const TRIP_REASONS = Object.freeze({
-  [TRIP.DAILY_LOSS]: 'daily loss limit',
-  [TRIP.POSITION]: 'position limit',
-  [TRIP.LOSS_STREAK]: 'losing streak',
-  [TRIP.KILL]: 'kill switch',
-})
+// Re-exported from the leaf so every existing `from './core.js'` import keeps working.
+export { TRIP, TRIP_REASONS }
 
 /**
  * The thresholds, flat and pre-computed.

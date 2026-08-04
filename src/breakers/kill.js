@@ -4,8 +4,7 @@ import { registerAction } from '../actions/registry.js'
 import { ACTIONS } from '../actions/names.js'
 import { tripBreaker, resetBreaker, TRIP } from './core.js'
 import { clearPause } from './position.js'
-import { cancelAll } from '../ticket/shortcuts.js'
-import { flattenAll } from '../positions/flatten.js'
+import { executeTripAction, resetTrip } from './trip.js'
 
 /**
  * The kill switch, and what a trip actually does.
@@ -49,17 +48,11 @@ export function killSwitch(options = {}) {
  * @returns {{cancelled: boolean, flattened: boolean}} what was dispatched.
  */
 export function tripAction(options = {}) {
-  const cancel = typeof options.cancel === 'function' ? options.cancel : cancelAll
-  const flatten = typeof options.flatten === 'function' ? options.flatten : flattenAll
+  // Delegated rather than duplicated: two wipe implementations would drift, and the one
+  // that drifts is the one nobody exercises until the day it matters.
+  const wiped = executeTripAction(TRIP.KILL, options)
 
-  // Cancel first, and in the same synchronous turn: a resting bid that fills behind the
-  // flatten leaves the trader in a fresh position created by the safety mechanism itself.
-  // The rejections are swallowed because there is nothing useful to do with them here —
-  // the desk is already halted, and the alert has already gone out.
-  Promise.resolve(cancel()).catch(() => {})
-  Promise.resolve(flatten()).catch(() => {})
-
-  return { cancelled: true, flattened: true }
+  return { cancelled: wiped.cancelled, flattened: wiped.flattened }
 }
 
 /**
@@ -91,6 +84,9 @@ export function rearm(now = 0) {
   // refuse every entry, which is the most confusing state available.
   const cleared = resetBreaker(now)
   const unpaused = clearPause()
+  // And the wipe's own guard, or the next kill would find a stale in-flight flag and
+  // dispatch nothing at all.
+  if (cleared) resetTrip()
 
   return cleared || unpaused
 }
