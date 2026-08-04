@@ -3235,16 +3235,16 @@
 **What:** A crisp contract so any strategy plugs in with init/onTick/onCandle and just works.
 **How:** defineStrategy factory in vanilla ES modules validating the hook shape and handing each strategy a controlled context object.
 
-- [ ] **T20.1.1 - Cut contract branch** - What: Isolated start for the engine's foundation. How: git checkout -b feature/f20.1-strategy-contract from a fresh main.
-- [ ] **T20.1.2 - Contract typedef module** - What: One documented shape every strategy author reads. How: src/strategy/contract.js with JSDoc typedefs for Strategy, Hooks and Signal plus exported hook name constants.
-- [ ] **T20.1.3 - validateStrategyShape fn** - What: Broken strategies fail loud at registration, not mid-session. How: Pure fn checking id, params schema and callable init/onTick/onCandle, throwing named errors per violation.
-- [ ] **T20.1.4 - defineStrategy factory fn** - What: Authors get a frozen, safe descriptor from plain objects. How: Factory running validateStrategyShape then Object.freeze on the descriptor with defaulted optional hooks.
-- [ ] **T20.1.5 - createStrategyContext fn** - What: Strategies see instrument data and params, nothing else. How: Pure fn building {instrument, params, ind, log, now} passed into every hook invocation.
-- [ ] **T20.1.6 - Noop reference strategy** - What: A living example proving the contract end to end. How: src/strategy/builtin/noop.js implementing all three hooks and returning a neutral signal.
-- [ ] **T20.1.7 - Engine entry module** - What: A single import point for all engine consumers. How: src/strategy/engine.js exporting the factory, context builder and registry seams for later features.
-- [ ] **T20.1.8 - Inspect exposure** - What: Registered contracts visible in devtools while building. How: Feed descriptor summaries through describe() so spektrum/inspect lists them under a strategies group.
-- [ ] **T20.1.9 - Single tests for contract fns** - What: Validation, factory and context proven in isolation. How: One Vitest test each for validateStrategyShape, defineStrategy and createStrategyContext, run via -t filters.
-- [ ] **T20.1.10 - Merge contract to main** - What: The plug-in surface every later feature builds on. How: ESLint plus the three targeted Vitest runs, then merge feature/f20.1.
+- [x] **T20.1.1 - Cut contract branch** - What: Isolated start for the engine's foundation. How: git checkout -b feature/f20.1-strategy-contract from a fresh main.
+- [x] **T20.1.2 - Contract typedef module** - What: One documented shape every strategy author reads. How: src/strategy/contract.js with JSDoc typedefs for Strategy, Hooks and Signal plus exported hook name constants.
+- [x] **T20.1.3 - validateStrategyShape fn** - What: Broken strategies fail loud at registration, not mid-session. How: Pure fn checking id, params schema and callable init/onTick/onCandle, throwing named errors per violation.
+- [x] **T20.1.4 - defineStrategy factory fn** - What: Authors get a frozen, safe descriptor from plain objects. How: Factory running validateStrategyShape then Object.freeze on the descriptor with defaulted optional hooks.
+- [x] **T20.1.5 - createStrategyContext fn** - What: Strategies see instrument data and params, nothing else. How: Pure fn building {instrument, params, ind, log, now} passed into every hook invocation.
+- [x] **T20.1.6 - Noop reference strategy** - What: A living example proving the contract end to end. How: src/strategy/builtin/noop.js implementing all three hooks and returning a neutral signal.
+- [x] **T20.1.7 - Engine entry module** - What: A single import point for all engine consumers. How: src/strategy/engine.js exporting the factory, context builder and registry seams for later features.
+- [x] **T20.1.8 - Inspect exposure** - What: Registered contracts visible in devtools while building. How: Feed descriptor summaries through describe() so spektrum/inspect lists them under a strategies group.
+- [x] **T20.1.9 - Single tests for contract fns** - What: Validation, factory and context proven in isolation. How: One Vitest test each for validateStrategyShape, defineStrategy and createStrategyContext, run via -t filters.
+- [x] **T20.1.10 - Merge contract to main** - What: The plug-in surface every later feature builds on. How: ESLint plus the three targeted Vitest runs, then merge feature/f20.1.
 
 ### F20.2 - Registry and run lifecycle
 

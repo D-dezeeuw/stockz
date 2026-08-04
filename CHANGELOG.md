@@ -10,6 +10,21 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ## [Unreleased]
 
+### Added
+
+- **Strategy contract** — the plug-in surface the rest of phase 20 builds on. A strategy is
+  a plain object with `onTick`/`onCandle` (and an optional `init`), and the context it is
+  handed is **the only surface it gets**: instrument, resolved params, an indicator
+  snapshot, a namespaced logger and an injected clock. No `setValue`, no order function, no
+  live store — a bug in somebody's mean-reversion idea should be a wrong signal, not a
+  wrong position, and the only way to guarantee that is to make the unsafe thing
+  unreachable rather than discouraged. Registration **fails loudly**: a misspelled hook
+  that silently never fires is worse than a refusal to load, because the desk then looks
+  like it is running a strategy that is doing nothing at all. A hook that throws is
+  silenced for that tick and logged, never for the session and never taking the frame with
+  it. An unrecognised signal action is silence rather than a guess — coercing a typo to
+  `flat` would have a misspelling close positions.
+
 ## [0.19.0] — 2026-08-04 — Phase 19: Latency & Metrics HUD
 
 The desk now measures itself: venue round-trip, submit→ack latency, live spread,
