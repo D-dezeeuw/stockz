@@ -99,6 +99,7 @@ export function initialState(overrides = {}) {
     [PATHS.trade.orders]: [],
     [PATHS.trade.positions]: [],
     [PATHS.trade.dayPnl]: 0,
+    [PATHS.trade.pnl]: { unrealized: 0, realized: 0, fees: 0, count: 0 },
     [PATHS.trade.buyingPower]: 0,
     [PATHS.trade.lastReject]: '',
     [PATHS.trade.queue]: [],

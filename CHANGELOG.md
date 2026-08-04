@@ -10,6 +10,21 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ## [Unreleased]
 
+### Added
+
+- **Positions and live P&L** — a book keyed by venue and instrument, fed by execution
+  fills and marked from the book's own mid, because a position's P&L should move with
+  what it could be *closed* at rather than with whatever last printed. Two pieces of
+  arithmetic get the care they deserve: average entry is weighted by size (overwriting it
+  with the last fill price is silent and wrong from the second fill onward), and a fill
+  that trades through zero is split into the close it is and the open it becomes, with
+  the old position's P&L booked in between. A short's profit is booked when it closes
+  *below* entry — the sign flip that otherwise turns a winning short into a reported
+  loss. Flat positions are pruned rather than kept as zero rows, so "am I flat?" is not a
+  reading exercise. Unlike every other hot store here, fills apply *synchronously*: an
+  order list a frame behind is cosmetic, a position a frame behind is a risk number
+  someone may size against. (F18.1, F18.2)
+
 ## [0.17.0] — 2026-08-04 — Phase 17: Order Types & Execution Engine
 
 One door for every order: validated, identified, guarded and normalised before it reaches
