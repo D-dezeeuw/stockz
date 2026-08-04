@@ -5,21 +5,28 @@ in `masterplan.md`, and knows where the project stands. Rewritten at every phase
 
 ---
 
-## Status: PAUSED by the owner after phase 25 · do not auto-resume
+## Status: delivering — phase 26, F26.10 next
 
-**The owner gave an explicit instruction on 2026-08-04: "Pause after Phase 25, that's a
-direct order."** CLAUDE.md's never-stop rule carves out exactly this case — *"Only an
-explicit instruction from the owner stops the work."* Delivery does **not** resume until
-the owner says so, whatever any watchdog or trigger asks for. The hourly masterplan
-watchdog (`trig_014GA2EKv5ub8HCd7vrqgyA5`) has been **deleted**. Disabling it was tried
-first and did not hold — it fired again on its next scheduled tick — so if a pause ever
-needs to stop a trigger, delete it rather than trusting the enabled flag. Recreate it with
-`create_trigger` when delivery restarts.
+**The pause is lifted.** The owner restarted delivery on 2026-08-04: *"Continue the
+masterplan fully automatically."* The earlier "Pause after Phase 25" order no longer
+applies. Delivery runs to phase 30 without stopping for approval, per CLAUDE.md.
 
-Phase 26 was already eight features deep when the order arrived; F26.1–F26.8 are merged
-to `main` and green, still under `[Unreleased]` with no version cut. `feature/f26-9-period-filter`
-is parked with `src/analytics/period.js` written but nothing wired to it — no computed
-rebasing, no segmented control, no hotkey, no tests. Resume there.
+**Where phase 26 stands:** F26.1–F26.9 are merged to `main` and green. F26.9 (period
+selector) was delivered from scratch on `feature/f26-9-period-selector` — only
+`src/analytics/period.js` survived from the branch parked before the pause, because
+everything else on it predated a session's worth of work on `main`. **F26.10 (performance
+report export) is the last feature before the phase closes as `v0.26.0`.**
+
+The hourly masterplan watchdog (`trig_014GA2EKv5ub8HCd7vrqgyA5`) was deleted during the
+pause and has not been recreated; delivery is currently paced by a `/loop`. If a pause is
+ever needed again, **delete** the trigger rather than disabling it — disabling was tried
+first and did not hold, it fired again on its next tick.
+
+**Between phase 25 and here**, a long run of owner-reported defects was fixed outside the
+masterplan: the whole DOM binding contract (every action was a no-op, all 37 `data-each`
+used Vue syntax, an SVG binding aborted the bind walk), the credential flow, venue
+endpoints, a self-populating 40-instrument watchlist, real paper execution, and the
+autopilot. See `CHANGELOG.md` under `[Unreleased]`.
 
 ## Status: Phase 25 closed (v0.25.0)
 
