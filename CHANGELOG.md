@@ -12,6 +12,20 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ### Added
 
+- **Alert durability** — the definitions already survived a reload (they live under
+  `settings.*`, the one persisted namespace), so this is about the three things that go wrong
+  *around* stored data, all of them silent. **A stale fired flag**: an alert saved while
+  disarmed comes back disarmed and sits out its cooldown against a `firedAt` from yesterday —
+  indistinguishable from one that simply has not triggered — so loading strips the transient
+  state and "armed" is the only state a restored alert can have. **A shape from an older
+  build**: a renamed field leaves alerts that look valid and never fire, which is the worst
+  kind of broken, so migration is versioned and stepwise. **A full localStorage**: the browser
+  throws, the desk swallows it, and alerts quietly stop saving — the guard raises it while
+  there is still room to act, measuring UTF-16 bytes rather than characters, which understate
+  a payload by half. Export strips everything local to one machine by an explicit **pick**
+  rather than an omit list, so a field added later has to be decided about rather than shipped
+  by default. And a restored alert still cannot fire at boot, because a cross needs two prices
+  and the first tick has only one.
 - **Alert log block** — the record of everything the desk said, including everything it was
   told not to say out loud: this is the half of do-not-disturb that makes muting safe, since
   the switch stops the interruptions and the log keeps the information. It is deliberately a

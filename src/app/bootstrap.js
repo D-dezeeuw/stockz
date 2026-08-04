@@ -29,6 +29,7 @@ import { wireAlertSounds, unlockAudio } from '../alerts/sounds.js'
 import { registerNotifyActions, wireNativeAlerts, permissionState } from '../alerts/notify.js'
 import { registerDndActions, refreshDnd } from '../alerts/dnd.js'
 import { registerLogActions } from '../alerts/log.js'
+import { registerPersistActions, rehydrateAlerts } from '../alerts/persist.js'
 import { onAlert } from '../alerts/bus.js'
 import { knownStrategies } from '../strategy/registry.js'
 import { connectFeeds } from './feeds.js'
@@ -109,6 +110,10 @@ export function bootstrap(options = {}) {
   registerNotifyActions()
   registerDndActions()
   registerLogActions()
+  registerPersistActions()
+  // Stored definitions come back armed with their transient state stripped. A restored
+  // alert still cannot fire until the market moves past it while the desk is watching.
+  rehydrateAlerts(undefined, Date.now())
   wireNativeAlerts(onAlert)
   permissionState()
   refreshDnd(Date.now())
