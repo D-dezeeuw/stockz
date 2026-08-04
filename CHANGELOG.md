@@ -12,6 +12,30 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ### Added
 
+- **F27.5 — headless backtest runner.** Score a strategy against a recording in seconds
+  without rendering a pixel: 4,000 recorded ticks crunch in ~80ms inside a module Worker
+  while the desk stays at sixty frames. A launcher block in the analytics section picks a
+  recording and a strategy, shows percent complete rather than a spinner, and reports what
+  the run emitted. Backtests run in an isolated headless state container and can never
+  touch live desk state. A module worker gets no importmap, so nothing in the worker's
+  graph may reach the bare specifier `spektrum` — a guard test enforces that, written
+  against a control proving it can actually see one.
+
+### Fixed
+
+- **The live-trading checkbox did the opposite of what it says.** Ticking "trade live with
+  real funds" grounded the entire autopilot — strategies stopped, the bot disarmed, dry run
+  came back on — so the one control that turns real trading on reliably stopped the desk
+  from trading. The checkbox is now the decision it claims to be: the strategy set keeps
+  flying across the switch and its orders reach the venue adapter. Every gate downstream is
+  unchanged; live changes which adapter an order arrives at, not which checks it passes.
+- **`range-fade` wrote to live state**, breaking the strategy contract's own "a strategy
+  never calls setValue" rule. Its level overlay now goes through an injectable sink that
+  defaults to a no-op — which is also what stops a backtest of it from repainting the live
+  chart.
+
+### Added (earlier this cycle)
+
 - **F27.4 — playback drives the whole desk.** Replayed ticks go down the same pipe as live
   ones, so the ladder, tape and charts render a recording without a forked code path. The
   live feed is *muted* while playback runs rather than left going underneath, where its
