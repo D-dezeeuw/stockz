@@ -148,7 +148,10 @@ export function downloadFile(file, deps = {}) {
   const url = deps.url ?? globalThis.URL
   if (!doc?.createElement || !url?.createObjectURL) return false
 
-  const href = url.createObjectURL(new Blob([String(file?.text ?? '')], { type: 'application/json' }))
+  // The MIME type travels with the file rather than being hard-coded: a CSV served as JSON
+  // is a CSV some spreadsheets refuse to open by double-click.
+  const type = String(file?.type ?? 'application/json')
+  const href = url.createObjectURL(new Blob([String(file?.text ?? '')], { type }))
   const anchor = doc.createElement('a')
   anchor.href = href
   anchor.download = String(file?.name ?? 'stockz-session.json')

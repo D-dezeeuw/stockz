@@ -109,6 +109,18 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
   journal that opened on the day's disasters is a journal people stop opening. What the slice
   *hides* is shown alongside it: a filter that quietly matched nothing looks exactly like a
   day with no trades.
+- **The slice, as a spreadsheet** — the desk is not where a monthly review happens, and
+  pretending otherwise means rebuilding pivot tables badly. What the filters show is what
+  downloads. Everything is **locale-independent on purpose**: fixed decimal points and ISO
+  8601, never `toLocaleString`, because a file exported on a machine with a comma decimal
+  separator imports as text into a spreadsheet expecting dots and fails *silently* — the
+  columns look right and every sum reads zero. Escaping is RFC 4180 rather than "wrap it if it
+  has a comma": a note containing a quote, a comma or a newline is a note a trader actually
+  wrote, and each breaks a naive writer differently. A missing number is written blank rather
+  than as zero, since a spreadsheet averaging the column cannot tell an absent value from a
+  real one and only one of those changes the answer. The header row is always emitted, so an
+  empty filter yields a valid file rather than a broken one, and a toast confirms the download
+  because a button that appears to do nothing gets pressed four more times.
 
 ## [0.24.0] — 2026-08-04 — Phase 24: Circuit Breakers & Risk Kill Switch
 
