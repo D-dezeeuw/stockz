@@ -10,6 +10,23 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ## [Unreleased]
 
+### Added
+
+- **Execution engine** — one door every order goes through, so something true can be said
+  about *all* of them: validated before the network, given a client id, its rejection
+  normalised into one vocabulary, its state moved only through legal transitions. Venue
+  quirks live in adapters (OKX wants strings and folds time-in-force into the order type;
+  needing credentials is a property of the venue, not of execution), and capabilities are
+  declared honestly — a post-only that would silently become an ordinary limit is refused
+  before it costs a taker fee nobody agreed to. The transition table is *imported* from
+  the order lifecycle rather than redeclared: two tables would drift, and the moment they
+  disagreed the desk would show one status while acting on another. (F17.1, F17.2)
+
+### Removed
+
+- `src/ticket/send.js` — the engine subsumed it. Its one unique behaviour, refusing to
+  send without credentials, moved into the OKX adapter where it belongs.
+
 ## [0.16.0] — 2026-08-04 — Phase 16: Hotkeys & Command Palette
 
 Hands never leave the keyboard: a scoped keymap over the desk's own actions, a stock
