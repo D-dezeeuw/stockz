@@ -12,6 +12,18 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ### Added
 
+- **Order-book imbalance** — the book says what people intend, the tape says what they did,
+  and this one trades the intention: when resting depth is heavily loaded on one side and
+  *stays* loaded, price moves away from the heavy side, because the thin side is where it is
+  cheap to push. Raw imbalance is famously noisy, so two filters do all the work.
+  **Persistence** — a ratio spiking for one update is a large order placed and pulled, and a
+  side flip restarts the count outright, since a ratio that swung from bid-heavy to ask-heavy
+  has not been persistent, it has been volatile. **Microprice agreement** — the size-weighted
+  mid leads the last trade, so requiring the two to point the same way discards the setups
+  where depth is loaded and nothing is actually moving, which is what a spoof looks like from
+  here. The exit is the book turning, which usually comes before price does — the whole
+  reason to trade the book rather than the tape. An empty book reads as balanced, never as
+  loaded, so a disconnect cannot fire an entry.
 - **Post-only spread capture** — the only strategy here that earns rather than predicts. It
   quotes both sides passively and has no opinion about direction at all, which means its
   risks and its failure modes are entirely different from the other two. Three of them shape
