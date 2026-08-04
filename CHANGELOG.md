@@ -12,6 +12,11 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ### Added
 
+- **Price level lines** — last price and every open entry, tagged on the right axis with
+  size, because the number a scalper needs constantly is the *distance* to their entry and
+  that distance only means money once the size is on it. Winning is green whichever way
+  the position points, and a level that scrolls off the plot keeps its tag and gains an
+  arrow rather than vanishing — an absent line reads as no position at all. (F13.7)
 - **Fill markers** — executions drawn on the wiggle they caught, which is the only way to
   see whether an entry landed on the sweep or two ticks after it. Buys point up from
   below the fill and sells down from above, so a glyph never covers the price it marks,
