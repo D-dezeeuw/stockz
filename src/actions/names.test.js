@@ -12,6 +12,7 @@ import { registerPrefillActions } from '../book/prefill.js'
 import { registerGroupingActions } from '../book/grouping.js'
 import { registerTapeActions } from '../book/tape.js'
 import { registerCompactActions } from '../hud/compact.js'
+import { registerStrategyActions } from '../strategy/registry.js'
 import { registerTicketActions } from '../ticket/actions.js'
 import { registerSizingActions } from '../ticket/sizing.js'
 import { registerSubmitAction } from '../ticket/submit.js'
@@ -41,6 +42,7 @@ describe('allActionNames', () => {
       'ui.paletteMove',
       'ui.paletteRun',
       'ui.toggleCompactHud',
+      'strategy.stop',
       'book.prefill',
       'book.setGroup',
       'book.setFloor',
@@ -91,6 +93,7 @@ describe('allActionNames', () => {
     registerGroupingActions()
     registerTapeActions()
     registerCompactActions()
+    registerStrategyActions()
     registerTicketActions()
     registerSizingActions()
     registerSubmitAction()

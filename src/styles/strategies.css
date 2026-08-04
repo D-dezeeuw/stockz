@@ -1,0 +1,61 @@
+/*
+ * Live strategy runs.
+ *
+ * One row per strategy × instrument, because that is the unit that starts and stops. The
+ * signal chip carries colour and the stop button is always reachable — a run the trader
+ * cannot stop in one click is a run they will not start in the first place.
+ */
+.runs {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1, 0.25rem);
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.runs__rows {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1, 0.25rem);
+}
+
+.runs__row {
+  display: grid;
+  grid-template-columns: 1fr auto auto auto;
+  align-items: center;
+  gap: var(--space-2, 0.5rem);
+  padding: var(--space-1, 0.25rem) 0;
+  border-bottom: 1px solid var(--line);
+  font-size: var(--font-size-xs, 0.6875rem);
+}
+
+.runs__name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.runs__instrument {
+  color: var(--ink-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.runs__signal {
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.runs__signal--buy {
+  color: var(--green);
+}
+
+.runs__signal--sell {
+  color: var(--orange);
+}
+
+/* Neither a buy nor a sell is not a third opinion — it is the absence of one, and it
+   should read as quiet rather than as a third colour competing for attention. */
+.runs__signal--none,
+.runs__signal--flat {
+  color: var(--ink-muted);
+}

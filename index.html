@@ -44,6 +44,7 @@
   <link rel="stylesheet" href="./src/styles/ticket.css">
   <link rel="stylesheet" href="./src/styles/positions.css">
   <link rel="stylesheet" href="./src/styles/hud.css">
+  <link rel="stylesheet" href="./src/styles/strategies.css">
   <link rel="stylesheet" href="./src/styles/utilities.css">
 
   <!-- The UI engine, straight from the CDN. Pinned to an exact version: the live page
@@ -397,7 +398,21 @@
                 </span>
               </div>
             </div>
-            <p class="label" data-if="block.id !== 'book' &amp;&amp; block.id !== 'tape' &amp;&amp; block.id !== 'ticket' &amp;&amp; block.id !== 'positions' &amp;&amp; block.id !== 'hud'">ready</p>
+            <!-- Live strategy runs. One row per strategy×instrument, each with its own
+                 stop — a strategy is registered once and runs many times. -->
+            <div class="runs" data-if="block.id === 'strategies'">
+              <p class="label" data-if="strategy.running.length === 0">nothing running</p>
+              <div class="runs__rows" data-each="run in strategy.running">
+                <div class="runs__row">
+                  <span class="runs__name">{{run.name}}</span>
+                  <span class="runs__instrument">{{run.instrument}}</span>
+                  <span class="runs__signal" :class="'runs__signal runs__signal--' + run.action">{{run.action}}</span>
+                  <button type="button" class="chip" data-action="click" data-fn="strategy.stop"
+                          :data-key="run.key">stop</button>
+                </div>
+              </div>
+            </div>
+            <p class="label" data-if="block.id !== 'book' &amp;&amp; block.id !== 'tape' &amp;&amp; block.id !== 'ticket' &amp;&amp; block.id !== 'positions' &amp;&amp; block.id !== 'hud' &amp;&amp; block.id !== 'strategies'">ready</p>
           </div>
         </div>
       </section>
