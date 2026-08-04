@@ -10,6 +10,14 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ## [Unreleased]
 
+## [0.24.0] — 2026-08-04 — Phase 24: Circuit Breakers & Risk Kill Switch
+
+One safety net on a desk built around never slowing the trader down — and the rule that
+shapes all of it is that **a breaker never asks**. Three severities kept deliberately
+distinct: a cap breach blocks one order, a losing run pauses entries while exits stay
+open, and a halt cancels, flattens and disarms. Getting back in is the one deliberate
+gesture on the desk, and it takes a second, not paperwork.
+
 ### Added
 
 - **Circuit breakers: the core and the daily loss limit** — the one safety net on a desk built
@@ -1443,7 +1451,8 @@ with a test policy and a live URL.
   literal `APP_VERSION` (a JSON import is bundler-only), guarded by a test that fails if
   it drifts from `package.json`; static assets moved from `public/` to the repo root.
 
-[Unreleased]: https://github.com/D-dezeeuw/stockz/compare/v0.23.0...HEAD
+[Unreleased]: https://github.com/D-dezeeuw/stockz/compare/v0.24.0...HEAD
+[0.24.0]: https://github.com/D-dezeeuw/stockz/compare/v0.23.0...v0.24.0
 [0.23.0]: https://github.com/D-dezeeuw/stockz/compare/v0.22.0...v0.23.0
 [0.22.0]: https://github.com/D-dezeeuw/stockz/compare/v0.21.0...v0.22.0
 [0.21.0]: https://github.com/D-dezeeuw/stockz/compare/v0.20.0...v0.21.0

@@ -5,11 +5,107 @@ in `masterplan.md`, and knows where the project stands. Rewritten at every phase
 
 ---
 
-## Status: Phase 23 closed (v0.23.0) · Phase 24 next
+## Status: Phase 24 closed (v0.24.0) · Phase 25 next
 
 **Live:** https://d-dezeeuw.github.io/stockz/ (Pages serves `main` root — pushing is deploying)
-**Tests:** 949, one per function, all passing individually. Every gated file >80% branches.
+**Tests:** 1022, one per function, all passing individually. Every gated file >80% branches.
 **Branch model:** everything merges to `main`; no feature branches outstanding.
+
+## Phase 24 — Circuit Breakers & Risk Kill Switch (closed)
+
+| Feature | What now exists | Where |
+| --- | --- | --- |
+| — | `TRIP`, `TRIP_REASONS` (leaf module, no imports) | `src/breakers/codes.js` |
+| F24.1 | `refreshThresholds`, `currentThresholds`, `checkBreakers`, `trippedCode`, `tripBreaker`, `resetBreaker`, `breakerRejection` | `src/breakers/core.js` |
+| F24.2 | `updateDayPnl`, `dailyPct`, `dailyLossCheck`, `refreshDaily`, `resetDay` | `src/breakers/daily.js` |
+| F24.3, F24.4 | `getPosSize`, `isReducing`, `isExit`, `capFor`, `positionCheck`, `onRealizedFill`, `streakCheck`, `pauseTrading`, `clearPause`, `pauseCheck`, `recordBlock`, `pauseState`, `resumeDue`, `resetPause` | `src/breakers/position.js` |
+| F24.5 | `killSwitch`, `tripAction`, `killLatency`, `rearm`, `registerKillActions` | `src/breakers/kill.js` |
+| F24.6 | `TRIP_ACTIONS`, `actionFor`, `retryOnce`, `markPending`, `clearPending`, `reconcilePending`, `pendingInstruments`, `executeTripAction`, `watchTrip`, `watchPending`, `resetTrip` | `src/breakers/trip.js` |
+| F24.7 | `WARN_AT`, `ledStateFor`, `exposurePct`, `streakPct`, `breakerLeds`, `refreshLeds` | `src/breakers/leds.js` |
+| F24.8 | `HOLD_MS`, `stillOverLimit`, `startHold`, `armHoldProgress`, `cancelHold`, `holdState`, `holdFrame`, `holdLoop`, `mountRelease`, `rearmDesk`, `registerRearmActions` | `src/breakers/rearm.js` |
+| F24.9 | `eventLabel`, `logBreakerEvent`, `breakerEvents`, `flushBreakerLog`, `loadBreakerLog`, `pruneBreakerEvents`, `copyBreakerLog`, `registerLogActions`, `resetBreakerLog` | `src/breakers/log.js` |
+| F24.10 | `BREAKER_LIMITS`, `validateBreakerSettings`, `breakerSettings`, `breakerContext`, `refreshBreakerCard`, `watchBreakerSettings` | `src/breakers/settings.js` |
+| — | `orderChecks`, plus every re-export | `src/breakers/index.js` |
+
+**A breaker never asks.** No confirm dialog, no "are you sure", no modal in the order
+path — a breaker that asks is one that gets clicked through at exactly the moment it was
+built for. A trip is a state change plus a rejection object; the trader finds out because
+the desk stopped, and stopping is the feature.
+
+**Three severities, kept distinct on purpose.** Conflating them would be worse than not
+showing them:
+- **Block** (`positionCheck`) — refuses one order, desk untouched. A fat-fingered size is a
+  typo far more often than an emergency, and flattening the book over one is a cure worse
+  than the mistake.
+- **Pause** (`pauseCheck`) — no new entries, exits always allowed. Trading through a bad run
+  turns a bad hour into a bad week, but a trader who cannot close is trapped by their own net.
+- **Halt** (`tripBreaker` → `executeTripAction`) — disarm, cancel, flatten, in that order and
+  none of it awaited.
+
+**Exits are exempt from all three**, by the reduce-only flag or by sign (`isExit`). This is
+not a nicety: without it the halt latch rejects the trip's own flatten, and the kill switch
+cancels everything and then closes nothing.
+
+**The order path**, inside `submit()` after `prepare()`: `isExit` → `dailyLossCheck` (halt)
+→ `orderChecks` (pause, then cap). Primitive comparisons against a cached threshold object;
+nothing on the hot path reads settings, walks a list, or allocates.
+
+**Hot-path seams elsewhere**: `appendRealization` (ledger) feeds `onRealizedFill`;
+`refreshDaily`, `refreshLeds` and `resumeDue` run on the okx frame flush; `killBot` is
+called first and synchronously by every trip.
+
+New state: `breaker.paused`, `lossStreak`, `lastBlock`, `blocked`, `killLatencyMs`,
+`flattenPending`, `leds`, `holdPct`, `lastRearm`, `log`, `limits`. New settings:
+`maxConsecLosses`, `pauseMinutes`. New actions: `breaker.kill`, `breaker.rearm`,
+`breaker.hold`, `breaker.release`, `breaker.copyLog`. New hotkey: **Ctrl+Shift+K**, which
+fires from inside a focused field via `ALWAYS_ON` in `src/keys/keymap.js`. New stylesheet:
+`src/styles/breakers.css`.
+
+**Deviations in phase 24, all deliberate:**
+- The breaker log stores to **localStorage, not IndexedDB**. The plan assumed a shared IDB
+  upgrade helper "used for tick recordings" that does not exist; nothing else here uses IDB.
+  A hundred bounded entries pruned at thirty days do not justify a second storage engine plus
+  a fake-IDB test dependency, and the guarantees asked for are all met.
+- `capOverrides` is not flattened into the threshold cache; `capFor` reads
+  `settings.botCapOverrides` — the same map phase 23's `bot/caps.js` uses — in one property
+  access.
+- F24.9's "journal mirror" is deferred: the phase-25 journal does not exist yet. The log ring
+  and `breakerEvents()` are the seam.
+- `breaker.session.blocked` is a flat `breaker.blocked` counter.
+
+**Two real bugs fixed on the way through**, both of which made the wipe a no-op exactly when
+it fired: the halt latch rejected its own flatten (see *exits are exempt*), and `closeIntent`
+carried `reduceOnly` onto spot and eToro where it is unsupported and the order is refused
+outright — so FLAT ALL had been silently doing nothing on those venues. A third seam: the
+streak *check* read `maxConsecLosses` while the cached *threshold* read `botCooldownAfter`,
+so one number configured half a breaker.
+
+### Gotchas a fresh context should not rediscover
+
+- **Import cycles bite on top-level consts.** `core.js` imports `bot/runner.js`, so anything
+  importing `TRIP` from `core.js` inherits that dependency; the first module to build a lookup
+  table keyed by a trip code found the enum in its temporal dead zone. Hence `codes.js` as a
+  leaf. Function-level cycles are fine; module-evaluation-time ones are not.
+- **`setValue` lands next tick, and objects MERGE.** Two writes to one path in a frame lose
+  the first. Modules that own a list (pending instruments, the log ring) keep their own array
+  and publish a copy — never read state back and write it again in the same frame.
+- **Inline arrows are invisible to the coverage gate.** Extract them as named exported
+  functions with their own single test (`holdLoop`, `reconcilePending`).
+- **A CSS animation on an element that only changed its text never replays.** The ticket's
+  block flash alternates class names on the block counter to force a restart.
+- **A `0` sentinel collides with a monotonic clock.** `holdFrom` is `null` for "no press",
+  because `performance.now()` reads near zero early in a page's life.
+- **Vitest `-t` matches substrings** — expect reporter noise from sibling names.
+- **`spektrum-devtools` throws one unhandled `reading 'length'` error during
+  `bootstrap.test.js`** in jsdom. Pre-existing, unrelated to any phase's changes, and does not
+  fail the suite.
+
+## Next up — Phase 25
+
+Read `.claude/context/masterplan.md` at `### F25.1` and start there. Nothing about phase 25
+has been decided yet beyond what the masterplan says. Phase 30's plan text still assumes a
+`gh-pages` branch that no longer exists — Pages serves `main` root — and must be revised
+when it is reached.
 
 ## Phase 23 — Auto-Trade Bot Runner (closed)
 
@@ -56,7 +152,6 @@ IndexedDB — phase 24 owns the store, and `sessionReport()` is the seam. There 
 it inherits the settings drawer and the transient-restore rule. Bot session P&L is not
 separately summed: the scoreboard already attributes closes per strategy, and a second
 attribution path would be a second thing to disagree.
-
 ## Phase 22 — Alerts & Notifications (closed)
 
 | Feature | What now exists | Where |
@@ -601,20 +696,6 @@ go stale, and faults that reach the trader instead of the console.
 | F2.8 | `mountDevtools` (dev only), `devDumpState`, `devReplayTo` | `src/app/devtools.js` |
 | F2.9 | `pushToast`, `dismissToast`, `expireToasts`, `describeEngineError`, `wireEngineErrors` | `src/ui/toast.js` |
 | F2.10 | `collectExpressions`, `renderPrecompileModule`, `cspMeta`, `npm run build:csp` | `src/app/csp.js`, `docs/csp.md` |
-
-## Next up: Phase 24 — Lean Circuit Breakers
-
-Read the phase's own section in `masterplan.md` — the plan is authoritative, and the
-"next up" guesses written at earlier closes have been wrong twice.
-
-- The seams a breaker needs already exist: `killBot(reason)` stops the auto-trader dead,
-  `positions/flatten.js` closes positions, `ticket/` owns the manual arm flag, and
-  `alerts/bus.js` can announce a trip at `error` severity. The daily-loss and max-position
-  settings have existed since phase 7 and nothing enforces them yet — that is the phase.
-- **CLAUDE.md's rule 6 applies hardest here**: one lean breaker set, no confirm dialogs.
-  A breaker that asks "are you sure" is a breaker that does not trip.
-- The recurring trap remains **`setValue` lands next tick** (fold locally, write once)
-  and **object writes merge** (`clearedMap` is the pattern for clearing one).
 
 ### Still outstanding across phases
 *(none — the boot-time feed gap recorded here through phase 13 was closed in phase 14;
