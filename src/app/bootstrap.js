@@ -37,6 +37,7 @@ import { watchBreakerSettings } from '../breakers/settings.js'
 import { loadOpenLots } from '../journal/pairing.js'
 import { registerTagActions, loadAnnotations } from '../journal/tags.js'
 import { registerCheckpointActions } from '../journal/checkpoints.js'
+import { registerExportActions } from '../journal/export.js'
 import { registerKillActions } from '../breakers/kill.js'
 import { registerRearmActions, mountRelease } from '../breakers/rearm.js'
 import {
@@ -145,6 +146,7 @@ export function bootstrap(options = {}) {
   loadOpenLots()
   registerTagActions()
   registerCheckpointActions()
+  registerExportActions()
   loadAnnotations()
   pruneBreakerEvents(Date.now())
   // The daily-loss trip has no other reaction path — it publishes a code and returns a

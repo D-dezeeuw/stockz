@@ -4134,16 +4134,16 @@
 **What:** The whole trading session downloads as one JSON file, so the user owns a portable, shareable record of the day.
 **How:** Wrap Spektrum serialize() in exportSession() adding a metadata envelope, redacting secrets, and downloading through a Blob object URL.
 
-- [ ] **T25.5.1 - Cut export branch** - What: Export work stays off main. How: git checkout -b feature/f25.5-session-export from main.
-- [ ] **T25.5.2 - Implement exportSession()** - What: The complete app state captured in one call. How: exportSession() in src/journal/export.js invoking Spektrum serialize() and returning the raw state payload.
-- [ ] **T25.5.3 - Add the metadata envelope** - What: Exports carry version, date and venue context for future imports. How: buildEnvelope() wrapping the payload with schemaVersion, exportedAt ISO date, app version and instrument list.
-- [ ] **T25.5.4 - Redact secrets before export** - What: An exported file can never leak API keys. How: redactSecrets(payload) deep-deleting any OKX or EToro key, secret or passphrase paths before serialization to text.
-- [ ] **T25.5.5 - Optionally bundle tick recordings** - What: Exports can include the raw ticks that drove the session. How: When the include-ticks checkbox is set, read the session range from IndexedDB and attach it under envelope.ticks.
-- [ ] **T25.5.6 - Compress large exports** - What: Multi-hour sessions download in megabytes, not hundreds. How: Pipe the JSON through CompressionStream('gzip') into the Blob when payload size exceeds 5 MB, naming the file .json.gz.
-- [ ] **T25.5.7 - Trigger the file download** - What: One click saves stockz-session-YYYYMMDD.json to disk. How: Create a Blob object URL and click a temporary anchor with a date-stamped download attribute, then revoke the URL.
-- [ ] **T25.5.8 - Place the export control** - What: Export reachable from the journal without hunting menus. How: Add an Export Session button to the journal block header bound with data-action to exportSession, styled per the design system.
-- [ ] **T25.5.9 - Write single unit tests for export fns** - What: buildEnvelope and redactSecrets each proven by one test. How: One Vitest test per function in export.test.js asserting envelope fields and key removal, run via vitest run -t.
-- [ ] **T25.5.10 - Verify and merge export** - What: Export ships green with no secret leakage. How: Run targeted tests, export a real paper session and grep the file for key material, then merge to main.
+- [x] **T25.5.1 - Cut export branch** - What: Export work stays off main. How: git checkout -b feature/f25.5-session-export from main.
+- [x] **T25.5.2 - Implement exportSession()** - What: The complete app state captured in one call. How: exportSession() in src/journal/export.js invoking Spektrum serialize() and returning the raw state payload.
+- [x] **T25.5.3 - Add the metadata envelope** - What: Exports carry version, date and venue context for future imports. How: buildEnvelope() wrapping the payload with schemaVersion, exportedAt ISO date, app version and instrument list.
+- [x] **T25.5.4 - Redact secrets before export** - What: An exported file can never leak API keys. How: redactSecrets(payload) deep-deleting any OKX or EToro key, secret or passphrase paths before serialization to text.
+- [x] **T25.5.5 - Optionally bundle tick recordings** - What: Exports can include the raw ticks that drove the session. How: When the include-ticks checkbox is set, read the session range from IndexedDB and attach it under envelope.ticks.
+- [x] **T25.5.6 - Compress large exports** - What: Multi-hour sessions download in megabytes, not hundreds. How: Pipe the JSON through CompressionStream('gzip') into the Blob when payload size exceeds 5 MB, naming the file .json.gz.
+- [x] **T25.5.7 - Trigger the file download** - What: One click saves stockz-session-YYYYMMDD.json to disk. How: Create a Blob object URL and click a temporary anchor with a date-stamped download attribute, then revoke the URL.
+- [x] **T25.5.8 - Place the export control** - What: Export reachable from the journal without hunting menus. How: Add an Export Session button to the journal block header bound with data-action to exportSession, styled per the design system.
+- [x] **T25.5.9 - Write single unit tests for export fns** - What: buildEnvelope and redactSecrets each proven by one test. How: One Vitest test per function in export.test.js asserting envelope fields and key removal, run via vitest run -t.
+- [x] **T25.5.10 - Verify and merge export** - What: Export ships green with no secret leakage. How: Run targeted tests, export a real paper session and grep the file for key material, then merge to main.
 
 ### F25.6 - Session Import and Step Replay
 

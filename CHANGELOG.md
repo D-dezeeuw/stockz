@@ -70,6 +70,19 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
   act on it. A failed snapshot loses the pin and never the trade, and returning to live clears
   the flag even when there is nothing to return to: a desk stuck showing "viewing history"
   with no way out is worse than one that simply carries on.
+- **The whole session as a file the trader owns** — a trading day that exists only inside one
+  browser tab is a day one cache clear from never having happened. State tree, paired trades,
+  annotations and metrics in one JSON file with a schema version, because an export with no
+  version is an export nothing can ever safely import. **Redaction is the precondition, not a
+  feature**: the state tree goes out verbatim and a desk holds venue credentials, so anything
+  named like one — matched on the *key name*, deep, rather than against a list of known paths,
+  since a path list goes stale the first time somebody adds a field and fails silently — is
+  replaced with a marker that says it was removed, so a reader can tell redaction from
+  absence. A separate audit runs over the finished text rather than the object it came from,
+  because the guarantee that matters is about the bytes that leave. The object URL is revoked
+  immediately: a held one keeps the whole session's JSON alive for the life of the tab. A
+  serialize failure exports the journal alone rather than nothing, since the trades are the
+  part nobody can reconstruct and the state tree is the part nobody needs to.
 
 ## [0.24.0] — 2026-08-04 — Phase 24: Circuit Breakers & Risk Kill Switch
 
