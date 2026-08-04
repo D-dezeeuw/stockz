@@ -194,8 +194,17 @@
             </div>
             <!-- The tape. Newest print at the top; the buffer arrives newest-first so
                  nothing is reversed on a frame. -->
+            <div class="tape__bar" data-if="block.id === 'tape'">
+              <button type="button" class="chip" data-action="click" data-fn="book.setFloor"
+                      data-min-size="0">all</button>
+              <button type="button" class="chip" data-action="click" data-fn="book.setFloor"
+                      data-min-size="1000">1K</button>
+              <button type="button" class="chip" data-action="click" data-fn="book.setFloor"
+                      data-min-size="10000">10K</button>
+              <span class="tape__hidden" data-if="market.tapeHidden > 0">{{market.tapeHidden}} hidden</span>
+            </div>
             <div class="tape" data-if="block.id === 'tape'" data-each="print in market.tape">
-              <div class="tape__row" :class="print.cls">
+              <div class="tape__row" :class="print.whale ? print.cls + ' tape__row--whale' : print.cls">
                 <span class="tape__time">{{print.timeLabel}}</span>
                 <span class="tape__price">{{print.priceLabel}}</span>
                 <span class="tape__size">{{print.sizeLabel}}</span>

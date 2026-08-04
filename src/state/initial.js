@@ -58,6 +58,7 @@ export function initialState(overrides = {}) {
     ),
     [PATHS.settings.presets]: {},
     [PATHS.settings.priceGroups]: {},
+    [PATHS.settings.tapeFloors]: {},
     [PATHS.settings.watchlists]: [],
     [PATHS.settings.activeListId]: '',
 
@@ -71,6 +72,7 @@ export function initialState(overrides = {}) {
     [PATHS.market.book]: { bids: [], asks: [], seqId: 0, ts: 0 },
     [PATHS.market.ladder]: { bids: [], asks: [], spread: null },
     [PATHS.market.tape]: [],
+    [PATHS.market.tapeHidden]: 0,
     [PATHS.market.whales]: [],
     [PATHS.market.whaleCount]: 0,
     [PATHS.market.imbalance]: { raw: 0, value: 0, bidPct: 50, askPct: 50, side: 'flat', hot: false, label: '0%' },

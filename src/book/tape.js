@@ -1,8 +1,11 @@
 import { formatClock } from '../charts/crosshair.js'
 import { formatPrice } from '../charts/scale.js'
 import { recentTrades } from '../pipeline/bus.js'
-import { setValue } from '../app/engine.js'
+import { setValue, appState } from '../app/engine.js'
+import { registerAction } from '../actions/registry.js'
+import { ACTIONS } from '../actions/names.js'
 import { PATHS } from '../state/paths.js'
+import { isWhale, rollingMedian } from './whale.js'
 
 /**
  * Time & sales — the flow, coloured by who crossed the spread.
@@ -131,7 +134,95 @@ export function flushTape(focus, options = {}) {
   const key = String(focus ?? '')
   if (!key) return 0
 
-  const rows = tapeRows(key, options)
+  const { rows, hidden } = filterTape(tapeRows(key, options), options)
   setValue(PATHS.market.tape, rows)
+  // The badge is published, not derived in the template: "how much am I not seeing" is
+  // the question a noise floor creates, and it must always have an answer on screen.
+  setValue(PATHS.market.tapeHidden, hidden)
+
   return rows.length
+}
+
+/**
+ * Whether a print clears the noise floor.
+ *
+ * @param {{sz: number}} print - the print.
+ * @param {number} minSize - the floor.
+ * @param {boolean} [bypass] - true for prints that show regardless (whales).
+ * @returns {boolean} true when the print should be shown.
+ */
+export function passesFilter(print, minSize, bypass = false) {
+  // A whale is never filtered away. The floor exists to hide dust, and the one print
+  // that most changes what the flow means must not be a casualty of hiding dust.
+  if (bypass) return true
+
+  const size = Number(print?.sz)
+  const floor = Number(minSize)
+  if (!Number.isFinite(size)) return false
+  if (!Number.isFinite(floor) || floor <= 0) return true
+
+  return size >= floor
+}
+
+/**
+ * How many prints a floor is hiding.
+ *
+ * @param {object[]} prints - the unfiltered tape.
+ * @param {number} minSize - the floor.
+ * @param {{multiplier?: number, median?: number}} [whaleOptions] - whale bypass options.
+ * @returns {number} the suppressed count.
+ */
+export function hiddenCount(prints, minSize, whaleOptions = {}) {
+  const list = Array.isArray(prints) ? prints : []
+  const median = Number.isFinite(Number(whaleOptions.median))
+    ? Number(whaleOptions.median)
+    : rollingMedian(list.map((p) => Number(p?.sz)))
+  const multiplier = Number(whaleOptions.multiplier) || undefined
+
+  // Counted rather than inferred from lengths: the badge has to be right even when the
+  // caller filtered with a different bypass rule than the one being reported.
+  return list.filter((print) => !passesFilter(print, minSize, isWhale(print?.sz, median, multiplier)))
+    .length
+}
+
+/**
+ * Apply the noise floor to a set of tape rows, keeping whales regardless.
+ *
+ * @param {object[]} rows - tape rows.
+ * @param {{minSize?: number, multiplier?: number, median?: number}} [options] - filter options.
+ * @returns {{rows: object[], hidden: number}} the visible rows and what was suppressed.
+ */
+export function filterTape(rows, options = {}) {
+  const list = Array.isArray(rows) ? rows : []
+  const { minSize = 0, multiplier } = options
+  const median = Number.isFinite(Number(options.median))
+    ? Number(options.median)
+    : rollingMedian(list.map((row) => Number(row?.sz)))
+
+  const visible = list
+    .map((row) => ({ ...row, whale: isWhale(row?.sz, median, multiplier) }))
+    .filter((row) => passesFilter(row, minSize, row.whale))
+
+  return { rows: visible, hidden: list.length - visible.length }
+}
+
+/**
+ * Register the tape floor action.
+ *
+ * @returns {string} the registered action name.
+ */
+export function registerTapeActions() {
+  registerAction(ACTIONS.book.setFloor, (_state, payload) => {
+    const symbol = String(payload?.symbol ?? appState.market?.focus ?? '')
+    const floor = Number(payload?.minSize ?? payload)
+    if (!symbol || !Number.isFinite(floor) || floor < 0) return false
+
+    setValue(PATHS.settings.tapeFloors, {
+      ...(appState.settings?.tapeFloors ?? {}),
+      [symbol]: floor,
+    })
+    return true
+  })
+
+  return ACTIONS.book.setFloor
 }
