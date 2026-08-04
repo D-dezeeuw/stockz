@@ -195,6 +195,15 @@ export const SETTINGS_SCHEMA = Object.freeze([
     default: 1,
   },
   {
+    key: 'okxDemo',
+    group: 'trading',
+    // OKX keeps demo and live keys in separate universes: a demo key on the live endpoint
+    // is not "wrong", it does not exist there, and the venue says exactly that (50119).
+    label: 'OKX demo trading (keys from OKX’s demo account)',
+    kind: 'toggle',
+    default: false,
+  },
+  {
     key: 'modeChosen',
     group: 'trading',
     // Not a preference anybody sets deliberately — it records that the trader has met the

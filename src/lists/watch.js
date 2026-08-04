@@ -138,6 +138,12 @@ export function quoteIndex(rows) {
  */
 let lastQuotes = []
 
+/** Forget the retained quotes (tests, and a venue switch). */
+export function resetQuotes() {
+  lastQuotes = []
+  return true
+}
+
 /**
  * Repaint the rows from the quotes already in hand.
  *
@@ -187,12 +193,27 @@ export async function refreshQuotes(options = {}) {
   const result = await fetchTickers(options)
   // Kept, so a focus change can repaint the highlight without another round trip.
   if (result.ok) lastQuotes = quoteIndex(result.rows)
-  const rows = buildWatchRows(symbols, result.ok ? lastQuotes : [], String(appState?.market?.focus ?? ''))
+  // The last good quotes, not a blank slate. A failed poll does not un-happen the prices
+  // the desk already had, and blanking forty rows to `—` for one hiccup is a bigger lie
+  // than showing a price four seconds old.
+  const rows = buildWatchRows(symbols, lastQuotes, String(appState?.market?.focus ?? ''))
 
   setValue(PATHS.market.watchRows, rows)
   // Leaves the placeholder the block has shown since phase 2. Nothing ever moved this
   // block off `empty`, so it rendered "nothing to show yet" no matter what it held.
-  setBlockStatus('watchlist', result.ok ? 'ready' : 'error')
+  //
+  // A *failed poll* is not an error state while there are rows to show. The previous
+  // quotes are still the best answer the desk has, and the rows carry their own staleness
+  // — so flipping to `error` threw away a readable watchlist to announce a hiccup the next
+  // poll usually fixes.
+  //
+  // It was also expensive out of all proportion. Block status lives in `settings.blocks`,
+  // the grid is one `data-each` over that array, and Spektrum's unkeyed reconciliation
+  // rebuilds from the first item whose identity changed — the watchlist is item zero, so
+  // every flap re-cloned all fifteen blocks. On a flaky feed that is a 460ms frame every
+  // poll, which is what a burst of requestAnimationFrame violations in the console
+  // actually was.
+  setBlockStatus('watchlist', result.ok || lastQuotes.length > 0 ? 'ready' : 'error')
 
   return rows
 }

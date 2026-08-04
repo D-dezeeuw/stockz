@@ -105,6 +105,17 @@ export function playSound(name, options = {}) {
   const ctx = options.ctx ?? makeAudioContext()
   if (!ctx?.createOscillator) return 0
 
+  // A suspended context cannot play, and scheduling into one is not merely wasted — the
+  // browser logs a warning per attempt, and the tones stay *queued* against a clock that
+  // is not running. The desk connects its venue socket at boot, which emits a
+  // venue-transition alert before any click has happened; every one of those tones would
+  // fire at once the moment the trader's first click unlocked audio.
+  //
+  // `suspended` is checked rather than `ui.audioReady`, because the browser is the
+  // authority on whether it will make a sound and the state flag is only our belief
+  // about it.
+  if (ctx.state && ctx.state !== 'running') return 0
+
   const start = Number(ctx.currentTime) || 0
   let played = 0
   for (const step of steps) {
@@ -145,7 +156,11 @@ export function resumeAudio(scope = globalThis) {
   // because the next click will try again.
   ctx?.resume?.()?.catch?.(() => {})
 
-  const ready = Boolean(ctx)
+  // Running, not merely existing. A context is created suspended and stays that way until
+  // a gesture unlocks it, so reporting readiness from its existence claimed the desk could
+  // make a sound from the moment it booted — and every alert until the first click was
+  // silently dropped by the browser while the flag said otherwise.
+  const ready = Boolean(ctx) && (!ctx.state || ctx.state === 'running')
   setValue(PATHS.ui.audioReady, ready)
 
   return ready

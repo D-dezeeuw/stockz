@@ -54,7 +54,10 @@ export function settingsGroups(settings = appState?.settings ?? {}) {
  * @returns {unknown} the stored value, or null when the key is not a real setting.
  */
 export function updateSetting(_state, payload = {}) {
-  const { key, value } = payload
+  // `field` is accepted alongside `key` so a control can always be named without risking
+  // the `data-key` collision: on any element that also carries `data-each`, Spektrum reads
+  // `data-key` as the clone key expression rather than as a payload.
+  const { key = payload.field, value } = payload
   const coerced = coerceSetting(key, value)
 
   if (coerced === undefined) {

@@ -154,6 +154,7 @@ export const PATHS = Object.freeze({
     // Backtest fill assumptions. Here rather than under `backtest.*` because settings is
     // the only persisted branch, and assumptions that reset on reload are assumptions
     // nobody tunes twice.
+    okxDemo: 'settings.okxDemo',
     modeChosen: 'settings.modeChosen',
     paperStartBalance: 'settings.paperStartBalance',
     paperLatencyMs: 'settings.paperLatencyMs',

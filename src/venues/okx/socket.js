@@ -1,5 +1,6 @@
 import { retryDelay } from '../../state/async.js'
 import { createLogger } from '../../utils/log.js'
+import { appState } from '../../app/engine.js'
 
 /**
  * OKX WebSocket client.
@@ -21,6 +22,32 @@ const log = createLogger('okx-ws')
 
 export const OKX_PUBLIC_URL = 'wss://ws.okx.com:8443/ws/v5/public'
 export const OKX_PRIVATE_URL = 'wss://ws.okx.com:8443/ws/v5/private'
+
+/**
+ * OKX demo trading lives on a different host entirely.
+ *
+ * The REST side takes an `x-simulated-trading` header on the same origin, but the sockets
+ * do not — demo streams come from `wspap`. A desk that flipped the header and kept the
+ * live socket URL would authenticate its REST calls and then sit on a private socket that
+ * never logs in, which is a worse failure than not supporting demo at all because half of
+ * it appears to work.
+ */
+export const OKX_DEMO_PUBLIC_URL = 'wss://wspap.okx.com:8443/ws/v5/public'
+export const OKX_DEMO_PRIVATE_URL = 'wss://wspap.okx.com:8443/ws/v5/private'
+
+/**
+ * Which socket to open.
+ *
+ * @param {string} kind - 'public' or 'private'.
+ * @param {boolean} demo - whether the desk is on demo trading.
+ * @returns {string} the URL.
+ */
+export function okxSocketUrl(kind, demo) {
+  const isPrivate = String(kind) === 'private'
+  if (demo === true) return isPrivate ? OKX_DEMO_PRIVATE_URL : OKX_DEMO_PUBLIC_URL
+
+  return isPrivate ? OKX_PRIVATE_URL : OKX_PUBLIC_URL
+}
 
 /** Connection states the header LEDs bind to. */
 export const WS_STATE = Object.freeze({
@@ -107,7 +134,10 @@ export function isStale(lastMessageAt, now, limitMs = 10000) {
  */
 export function createOkxSocket(options = {}) {
   const {
-    url = OKX_PUBLIC_URL,
+    // Resolved rather than hard-defaulted, so flipping demo trading moves the socket with
+    // the REST header. Authenticating REST against demo while the socket still points at
+    // live is a worse failure than no demo support at all, because half of it works.
+    url = okxSocketUrl('public', appState?.settings?.okxDemo === true),
     factory = (target) => new globalThis.WebSocket(target),
     onFrame = () => {},
     onState = () => {},
