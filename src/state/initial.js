@@ -218,6 +218,8 @@ export function initialState(overrides = {}) {
     [PATHS.breaker.killLatencyMs]: 0,
     [PATHS.breaker.flattenPending]: [],
     [PATHS.breaker.leds]: [],
+    [PATHS.breaker.holdPct]: 0,
+    [PATHS.breaker.lastRearm]: null,
 
     // alerts
     [PATHS.alerts.fired]: null,

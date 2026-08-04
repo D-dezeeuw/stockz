@@ -44,6 +44,20 @@ export {
 export { killSwitch, tripAction, killLatency, rearm, registerKillActions } from './kill.js'
 
 export {
+  HOLD_MS,
+  stillOverLimit,
+  startHold,
+  armHoldProgress,
+  cancelHold,
+  holdState,
+  holdFrame,
+  holdLoop,
+  mountRelease,
+  rearmDesk,
+  registerRearmActions,
+} from './rearm.js'
+
+export {
   WARN_AT,
   ledStateFor,
   exposurePct,

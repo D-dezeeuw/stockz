@@ -78,6 +78,23 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
   exact numbers in a native tooltip — no popover widget on the one bar that must never be busy
   — and is a button onto the limit behind it. Red blinks, except under reduced motion where it
   goes solid rather than silent.
+- **Hold to get back in** — the one place on this desk where a deliberate gesture is right,
+  and the asymmetry is the reason: a mis-click that halts costs a trader thirty seconds, and a
+  mis-click that un-halts hands the market back the account the limit was protecting. So
+  re-arming is a **one-second hold** — not a dialog, not a checkbox, not a typed confirmation,
+  nothing to read and nothing to click through, which is exactly what makes those useless.
+  Press and keep pressing; the bar fills; letting go cancels it. Completing the press *is* the
+  re-arm, because waiting for a release would mean a trader who held for two seconds — the
+  obvious way to be sure — never re-armed at all. The limit is re-checked at that moment
+  rather than trusted from the trip, so a desk let back in under a still-blown limit cannot
+  trip again on the very next order and read as broken. The day's P&L and the loss streak
+  survive; the bot does not come back, because re-arming says the human is ready and says
+  nothing about the robot. The unguarded latch-clear is no longer bound to anything a button
+  can reach — leaving it registered would have made the limit re-check optional. The release
+  listens on the window, since a finger that slides off the control before lifting would
+  otherwise leave the bar filling under a hand that had already let go, and the press start is
+  tracked as null rather than zero because a monotonic clock reads near zero early in a page's
+  life and a sentinel a real timestamp can equal is a press that silently never starts.
 
 ## [0.23.0] — 2026-08-04 — Phase 23: Auto-Trade Bot Runner
 

@@ -228,6 +228,8 @@ export const PATHS = Object.freeze({
     killLatencyMs: 'breaker.killLatencyMs',
     flattenPending: 'breaker.flattenPending',
     leds: 'breaker.leds',
+    holdPct: 'breaker.holdPct',
+    lastRearm: 'breaker.lastRearm',
   }),
   strategy: Object.freeze({
     registered: 'strategy.registered',

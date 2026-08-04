@@ -107,6 +107,35 @@
   animation: kill-alarm 1.1s ease-in-out infinite;
 }
 
+/*
+ * The hold. A bar rather than a literal ring — at header height a radial sweep is four
+ * pixels of arc nobody can read, and the honest version of "how far through am I" here is a
+ * line that fills. Green as it fills, so the completion reads as the desk coming back
+ * rather than as more alarm.
+ */
+.kill__ring {
+  position: absolute;
+  inset-inline: 0;
+  inset-block-end: 0;
+  block-size: 3px;
+  inline-size: var(--held, 0%);
+  background: var(--green);
+  /* Short, because the ring must never lag the finger: a bar still travelling after the
+     press landed would read as a hold that had not finished. */
+  transition: inline-size 60ms linear;
+}
+
+.kill--tripped {
+  position: relative;
+  overflow: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .kill__ring {
+    transition: none;
+  }
+}
+
 .kill__why {
   max-inline-size: 11rem;
   font-size: var(--fs-0);

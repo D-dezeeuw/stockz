@@ -34,6 +34,7 @@ import { registerBotActions, createBotRunner } from '../bot/runner.js'
 import { registerSessionActions } from '../bot/session.js'
 import { watchThresholds, watchTrip, watchPending } from '../breakers/index.js'
 import { registerKillActions } from '../breakers/kill.js'
+import { registerRearmActions, mountRelease } from '../breakers/rearm.js'
 import { onAlert } from '../alerts/bus.js'
 import { knownStrategies } from '../strategy/registry.js'
 import { connectFeeds } from './feeds.js'
@@ -122,6 +123,8 @@ export function bootstrap(options = {}) {
   registerSessionActions()
   watchThresholds()
   registerKillActions()
+  registerRearmActions()
+  mountRelease()
   // The daily-loss trip has no other reaction path — it publishes a code and returns a
   // rejection — so without these the desk would halt with its orders still resting.
   watchTrip()

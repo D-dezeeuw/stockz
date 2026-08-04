@@ -104,7 +104,9 @@ export function registerKillActions() {
 
     return fired
   })
-  registerAction(ACTIONS.breaker.rearm, () => rearm(Date.now()))
+  // `breaker.rearm` is registered by the re-arm module, not here. The primitive below
+  // clears the latch unconditionally; the only thing a button should be able to reach is
+  // the guarded version that first checks the limit is no longer breached.
 
   return ACTIONS.breaker.kill
 }
