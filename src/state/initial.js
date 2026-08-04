@@ -91,6 +91,7 @@ export function initialState(overrides = {}) {
     [PATHS.ui.alertDraft]: 0,
     [PATHS.ui.alertDirection]: 'either',
     [PATHS.ui.alertChips]: [],
+    [PATHS.ui.alertToggles]: [],
     [PATHS.ui.hud]: {
       latencyMs: 0,
       latencyGrade: 'warn',
@@ -120,6 +121,7 @@ export function initialState(overrides = {}) {
     [PATHS.settings.customPresets]: {},
     [PATHS.settings.strategyStats]: [],
     [PATHS.settings.alerts]: [],
+    [PATHS.settings.alertToggles]: {},
     [PATHS.settings.tapeFloors]: {},
     [PATHS.settings.chords]: {},
     [PATHS.settings.watchlists]: [],

@@ -23,6 +23,8 @@ import { registerTapeActions } from '../book/tape.js'
 import { registerCompactActions } from '../hud/compact.js'
 import { registerStrategyActions } from '../strategy/registry.js'
 import { registerAlertActions } from '../alerts/price.js'
+import { publishToggles } from '../alerts/signals.js'
+import { knownStrategies } from '../strategy/registry.js'
 import { connectFeeds } from './feeds.js'
 import { registerTicketActions } from '../ticket/actions.js'
 import { registerSizingActions } from '../ticket/sizing.js'
@@ -92,6 +94,8 @@ export function bootstrap(options = {}) {
   registerCompactActions()
   registerStrategyActions()
   registerAlertActions()
+  // After the strategies register, so every one of them gets a mute switch.
+  publishToggles(knownStrategies())
   registerTicketActions()
   registerSizingActions()
   // The venue call is injected rather than imported inside the action, so the fast path

@@ -14,6 +14,7 @@ import { snapshotRing, resetHistory } from './history.js'
 import { setWeight, publishWeights } from './composite.js'
 import { applyPreset, presetNames, presetDirty } from './presets.js'
 import { recordFire, flushScoreboard, resetScoreboard, saveScoreboard } from './scoreboard.js'
+import { routeSignalAlert } from '../alerts/signals.js'
 
 /**
  * Who is registered, and what is running where.
@@ -161,6 +162,8 @@ export function startStrategy(strategyId, instrument, options = {}) {
     // Scored on the same call that publishes, for the same reason history is: a second
     // place to record a fire is a place that will eventually be forgotten.
     recordFire({ ...run.signal, strategyId: strategy.id, instrument: run.instrument })
+    // And onto the alert bus, so a fire reaches a trader looking at the order book.
+    routeSignalAlert(run.signal, { strategyId: strategy.id, name: strategy.name })
   })
 
   runs.set(key, run)

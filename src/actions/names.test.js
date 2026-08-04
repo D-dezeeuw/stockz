@@ -52,6 +52,7 @@ describe('allActionNames', () => {
       'alerts.create',
       'alerts.update',
       'alerts.remove',
+      'alerts.toggle',
       'book.prefill',
       'book.setGroup',
       'book.setFloor',

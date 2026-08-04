@@ -77,6 +77,7 @@ export const PATHS = Object.freeze({
     alertDraft: 'ui.alertDraft',
     alertDirection: 'ui.alertDirection',
     alertChips: 'ui.alertChips',
+    alertToggles: 'ui.alertToggles',
     captureFor: 'ui.captureFor',
     capturePreview: 'ui.capturePreview',
   }),
@@ -113,6 +114,7 @@ export const PATHS = Object.freeze({
     customPresets: 'settings.customPresets',
     strategyStats: 'settings.strategyStats',
     alerts: 'settings.alerts',
+    alertToggles: 'settings.alertToggles',
     chords: 'settings.chords',
   }),
   market: Object.freeze({

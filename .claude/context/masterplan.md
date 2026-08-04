@@ -3585,16 +3585,16 @@
 **What:** The user never misses a strategy fire: every signal becomes an alert with strategy, side and instrument.
 **How:** watch() on the strategy engine's trigger('strategy:signal') events mapped to alert payloads with per-strategy toggles.
 
-- [ ] **T22.2.1 - Branch and scaffold signal alerts** - What: A dedicated branch bridging strategies to alerts. How: git checkout -b feature/f22-2-signal-alerts; create src/alerts/signalAlerts.js.
-- [ ] **T22.2.2 - Build mapSignalToAlert fn** - What: Raw strategy events become readable alert payloads. How: Implement mapSignalToAlert(event) producing source, severity, text, instrument and ts with side and strategy name.
-- [ ] **T22.2.3 - Per-strategy toggle state** - What: Noisy strategies muted individually. How: Hold an alerts.signals.enabled map in Spektrum state keyed by strategy id, defaulting to on.
-- [ ] **T22.2.4 - Wire signal watch** - What: Every enabled strategy fire lands on the alert bus instantly. How: watch() on trigger('strategy:signal') filtering by the enabled map and emitting trigger('alert:fired').
-- [ ] **T22.2.5 - Build dedupeSignal fn** - What: Identical rapid-fire signals collapse into one alert. How: Implement dedupeSignal(state, alert, debounceMs) suppressing same-key alerts inside the window.
-- [ ] **T22.2.6 - Build signalSeverity fn** - What: Entries, exits and strategy errors ranked correctly for styling and sound. How: Implement signalSeverity(event) mapping entry and exit to info and strategy errors to warn.
-- [ ] **T22.2.7 - Toggle settings UI** - What: Per-strategy alert checkboxes in the settings panel. How: data-each rows over registered strategies with data-model bound checkboxes writing the enabled map.
-- [ ] **T22.2.8 - Route to output pipelines** - What: Signal alerts reach toasts, sounds and the log with one wire. How: Forward alert:fired payloads into the F22.5 toast queue and the F22.9 log append path.
-- [ ] **T22.2.9 - Write single unit tests** - What: Mapping, dedupe and severity each covered once. How: One Vitest test each for mapSignalToAlert, dedupeSignal and signalSeverity; targeted runs.
-- [ ] **T22.2.10 - Verify with replay fires and merge** - What: Replayed strategy fires appear as alerts exactly as toggled. How: Replay recorded IndexedDB ticks so strategies fire, confirm alert flow and toggles, ESLint, merge.
+- [x] **T22.2.1 - Branch and scaffold signal alerts** - What: A dedicated branch bridging strategies to alerts. How: git checkout -b feature/f22-2-signal-alerts; create src/alerts/signalAlerts.js.
+- [x] **T22.2.2 - Build mapSignalToAlert fn** - What: Raw strategy events become readable alert payloads. How: Implement mapSignalToAlert(event) producing source, severity, text, instrument and ts with side and strategy name.
+- [x] **T22.2.3 - Per-strategy toggle state** - What: Noisy strategies muted individually. How: Hold an alerts.signals.enabled map in Spektrum state keyed by strategy id, defaulting to on.
+- [x] **T22.2.4 - Wire signal watch** - What: Every enabled strategy fire lands on the alert bus instantly. How: watch() on trigger('strategy:signal') filtering by the enabled map and emitting trigger('alert:fired').
+- [x] **T22.2.5 - Build dedupeSignal fn** - What: Identical rapid-fire signals collapse into one alert. How: Implement dedupeSignal(state, alert, debounceMs) suppressing same-key alerts inside the window.
+- [x] **T22.2.6 - Build signalSeverity fn** - What: Entries, exits and strategy errors ranked correctly for styling and sound. How: Implement signalSeverity(event) mapping entry and exit to info and strategy errors to warn.
+- [x] **T22.2.7 - Toggle settings UI** - What: Per-strategy alert checkboxes in the settings panel. How: data-each rows over registered strategies with data-model bound checkboxes writing the enabled map.
+- [x] **T22.2.8 - Route to output pipelines** - What: Signal alerts reach toasts, sounds and the log with one wire. How: Forward alert:fired payloads into the F22.5 toast queue and the F22.9 log append path.
+- [x] **T22.2.9 - Write single unit tests** - What: Mapping, dedupe and severity each covered once. How: One Vitest test each for mapSignalToAlert, dedupeSignal and signalSeverity; targeted runs.
+- [x] **T22.2.10 - Verify with replay fires and merge** - What: Replayed strategy fires appear as alerts exactly as toggled. How: Replay recorded IndexedDB ticks so strategies fire, confirm alert flow and toggles, ESLint, merge.
 
 ### F22.3 - Execution Event Notifications
 
