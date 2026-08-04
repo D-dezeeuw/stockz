@@ -19,6 +19,7 @@ import { evaluateAlerts, publishAlertChips } from '../../alerts/price.js'
 import { flushAlerts } from '../../alerts/bus.js'
 import { checkHealth, venueTransition } from '../../alerts/health.js'
 import { refreshDnd, expireSnooze } from '../../alerts/dnd.js'
+import { refreshLog } from '../../alerts/log.js'
 import { evictStale } from '../../exec/latency.js'
 import { setValue, appState } from '../../app/engine.js'
 import { PATHS } from '../../state/paths.js'
@@ -170,6 +171,7 @@ export function flushFeed(focus, options = {}) {
   const wall = Date.now()
   expireSnooze(wall)
   refreshDnd(wall)
+  refreshLog(wall)
   flushQuality(spreadBps())
   // Swept on the same frame: an order whose ack never came would otherwise sit in the
   // latency map for the life of the session.

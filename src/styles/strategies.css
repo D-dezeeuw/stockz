@@ -295,3 +295,63 @@
   padding: 0 0 0 0.2rem;
   font: inherit;
 }
+
+/*
+ * The alert log. Terminal rows: fixed-width time, source, then the text — the same three
+ * columns a tail has had for fifty years, because the eye already knows where to look.
+ */
+.alog {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1, 0.25rem);
+  min-height: 0;
+}
+
+.alog__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.15rem;
+}
+
+.alog__chips .is-active {
+  border-color: var(--green);
+  color: var(--green);
+}
+
+.alog__rows {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.alog__row {
+  display: grid;
+  grid-template-columns: 5.5rem 3.5rem 1fr;
+  gap: var(--space-1, 0.25rem);
+  align-items: baseline;
+  padding: 0.1rem 0;
+  font-size: var(--font-size-xs, 0.6875rem);
+  cursor: pointer;
+}
+
+.alog__time,
+.alog__source {
+  color: var(--ink-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Only the two tiers worth interrupting for get a colour here. Colouring every row would
+   make the log exactly as unreadable as the toast stack it exists to replace. */
+.alog__row--warn .alog__text,
+.alog__row--error .alog__text {
+  color: var(--orange);
+}
+
+.alog__row--success .alog__text {
+  color: var(--green);
+}
+
+.alog__text {
+  min-width: 0;
+}

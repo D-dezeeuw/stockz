@@ -16,6 +16,7 @@ import { registerAlertActions } from '../alerts/price.js'
 import { registerToastActions } from '../ui/toast.js'
 import { registerNotifyActions } from '../alerts/notify.js'
 import { registerDndActions } from '../alerts/dnd.js'
+import { registerLogActions } from '../alerts/log.js'
 import { registerStrategyActions } from '../strategy/registry.js'
 import { registerTicketActions } from '../ticket/actions.js'
 import { registerSizingActions } from '../ticket/sizing.js'
@@ -62,6 +63,9 @@ describe('allActionNames', () => {
       'alerts.enableNative',
       'alerts.toggleDnd',
       'alerts.snooze',
+      'alerts.filterLog',
+      'alerts.clearLog',
+      'alerts.jumpTo',
       'book.prefill',
       'book.setGroup',
       'book.setFloor',
@@ -116,6 +120,7 @@ describe('allActionNames', () => {
     registerToastActions()
     registerNotifyActions()
     registerDndActions()
+    registerLogActions()
     registerStrategyActions()
     registerTicketActions()
     registerSizingActions()

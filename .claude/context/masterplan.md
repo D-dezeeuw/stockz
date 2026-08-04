@@ -3697,16 +3697,16 @@
 **What:** The user scrolls a terminal-style block of recent alerts with time, severity and source filters, nothing lost.
 **How:** 500-entry ring buffer in state rendered as a dashboard grid block with data-each rows and computed filters.
 
-- [ ] **T22.9.1 - Branch and scaffold log block** - What: A branch plus dashboard block for alert history. How: git checkout -b feature/f22-9-alert-log; create src/alerts/alertLog.js and register the grid block in the shell.
-- [ ] **T22.9.2 - Build appendLog fn** - What: Every alert kept, memory bounded at 500 entries. How: Implement appendLog(state, alert) as a capped ring buffer via addValue with head trim.
-- [ ] **T22.9.3 - Wire pre-DND tap** - What: Muted alerts still make history. How: watch() on trigger('alert:fired') calling appendLog before any isSilenced gating runs.
-- [ ] **T22.9.4 - Build formatTs fn and row render** - What: Rows show HH:MM:SS.mmm, severity dot, source and text. How: Implement formatTs(ts) and a data-each row template with {{ts}}, {{severity}}, {{source}} and {{text}} bindings.
-- [ ] **T22.9.5 - Build filteredLog computed** - What: One-tap filters by severity and source narrow the view instantly. How: A filter chip toggle set in state feeding a filteredLog computed() consumed by the data-each.
-- [ ] **T22.9.6 - Row jump wiring** - What: Clicking a log row jumps to the instrument it came from. How: data-intent on rows carrying the instrument id, handled by the dashboard navigation intent handler.
-- [ ] **T22.9.7 - Unread badge and clear** - What: A count of unseen alerts on the block plus one-click clear. How: computed() unread count since last block focus and a clear-log data-action resetting the buffer.
-- [ ] **T22.9.8 - Style terminal rows** - What: The log reads like a proper terminal tail in both themes. How: Monospace rows, green/orange severity accents, newest-first pinned scroll with pause on hover.
-- [ ] **T22.9.9 - Write single unit tests** - What: Buffer and formatting proven once per fn. How: One Vitest test each for appendLog, formatTs and the filteredLog fn; targeted vitest -t runs.
-- [ ] **T22.9.10 - Verify burst cap and merge** - What: A 1000-alert burst leaves exactly 500 clean rows. How: Script a burst, assert cap and ordering, check scroll performance, ESLint, merge to main.
+- [x] **T22.9.1 - Branch and scaffold log block** - What: A branch plus dashboard block for alert history. How: git checkout -b feature/f22-9-alert-log; create src/alerts/alertLog.js and register the grid block in the shell.
+- [x] **T22.9.2 - Build appendLog fn** - What: Every alert kept, memory bounded at 500 entries. How: Implement appendLog(state, alert) as a capped ring buffer via addValue with head trim.
+- [x] **T22.9.3 - Wire pre-DND tap** - What: Muted alerts still make history. How: watch() on trigger('alert:fired') calling appendLog before any isSilenced gating runs.
+- [x] **T22.9.4 - Build formatTs fn and row render** - What: Rows show HH:MM:SS.mmm, severity dot, source and text. How: Implement formatTs(ts) and a data-each row template with {{ts}}, {{severity}}, {{source}} and {{text}} bindings.
+- [x] **T22.9.5 - Build filteredLog computed** - What: One-tap filters by severity and source narrow the view instantly. How: A filter chip toggle set in state feeding a filteredLog computed() consumed by the data-each.
+- [x] **T22.9.6 - Row jump wiring** - What: Clicking a log row jumps to the instrument it came from. How: data-intent on rows carrying the instrument id, handled by the dashboard navigation intent handler.
+- [x] **T22.9.7 - Unread badge and clear** - What: A count of unseen alerts on the block plus one-click clear. How: computed() unread count since last block focus and a clear-log data-action resetting the buffer.
+- [x] **T22.9.8 - Style terminal rows** - What: The log reads like a proper terminal tail in both themes. How: Monospace rows, green/orange severity accents, newest-first pinned scroll with pause on hover.
+- [x] **T22.9.9 - Write single unit tests** - What: Buffer and formatting proven once per fn. How: One Vitest test each for appendLog, formatTs and the filteredLog fn; targeted vitest -t runs.
+- [x] **T22.9.10 - Verify burst cap and merge** - What: A 1000-alert burst leaves exactly 500 clean rows. How: Script a burst, assert cap and ordering, check scroll performance, ESLint, merge to main.
 
 ### F22.10 - Persistent Alert Definitions
 
