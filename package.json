@@ -23,7 +23,7 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "deploy": "git push origin main && bash scripts/verify-pages.sh",
-    "check:secrets": "git grep -nIE '[A-Za-z0-9+/_-]{32,}={0,2}' -- ':!package-lock.json' ':!*.md' ':!*.svg' ':!.claude/**' || echo 'no secret-shaped strings found'",
+    "check:secrets": "bash scripts/check-secrets.sh",
     "verify:pages": "bash scripts/verify-pages.sh",
     "build:csp": "node scripts/compile-templates.mjs && vite build"
   },
