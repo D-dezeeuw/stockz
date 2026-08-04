@@ -2098,16 +2098,16 @@
 **What:** A live tick-by-tick price line with a pulsing last-price dot - the raw wiggle itself.
 **How:** Canvas polyline drawn from the phase 11 tick ring buffer with min/max column downsampling, dirty-marked on every tick.
 
-- [ ] **T13.3.1 - Branch tick chart work** - What: The headline renderer ships on its own line. How: git checkout -b feature/13-3-tick-chart from main.
-- [ ] **T13.3.2 - Build drawTickLine renderer** - What: The core price polyline on screen. How: Renderer in src/charts/tickline.js walking the ring buffer through timeToX/priceToY into a single ctx.stroke path.
-- [ ] **T13.3.3 - Implement downsampleColumn** - What: Thousands of ticks per pixel without mush or lag. How: Min/max-per-pixel-column reducer so each x column draws at most one vertical segment.
-- [ ] **T13.3.4 - Draw the last-price pulse dot** - What: The living heartbeat of the market on screen. How: Dot at the newest tick with radius eased from performance.now(), re-pulsed on each arriving tick.
-- [ ] **T13.3.5 - Break the line on stale gaps** - What: Honest gaps instead of fake flat lines during feed stalls. How: gapSplit fn cutting the path where tick spacing exceeds a staleness threshold.
-- [ ] **T13.3.6 - Draw right-axis price labels** - What: A current price scale always beside the line. How: Render formatPrice labels at niceTicks positions along the right edge each frame.
-- [ ] **T13.3.7 - Wire ticks to the dirty flag** - What: The chart moves the instant a tick lands. How: Spektrum watch on the instrument tick store calling markDirty for the tick surface per update.
-- [ ] **T13.3.8 - Style the phosphor line glow** - What: Signature money-hacker terminal look. How: Stroke with the palette line color plus a low-alpha shadowBlur pass tuned for day and night.
-- [ ] **T13.3.9 - Write single unit tests for tick fns** - What: Downsampling and gap logic locked. How: One Vitest test each for downsampleColumn and gapSplit, run individually via vitest run -t.
-- [ ] **T13.3.10 - Verify and merge tick chart** - What: The main scalping view live on the dashboard. How: Targeted tests green plus a visual pass against live OKX ticks, then merge feature/13-3-tick-chart into main.
+- [x] **T13.3.1 - Branch tick chart work** - What: The headline renderer ships on its own line. How: git checkout -b feature/13-3-tick-chart from main.
+- [x] **T13.3.2 - Build drawTickLine renderer** - What: The core price polyline on screen. How: Renderer in src/charts/tickline.js walking the ring buffer through timeToX/priceToY into a single ctx.stroke path.
+- [x] **T13.3.3 - Implement downsampleColumn** - What: Thousands of ticks per pixel without mush or lag. How: Min/max-per-pixel-column reducer so each x column draws at most one vertical segment.
+- [x] **T13.3.4 - Draw the last-price pulse dot** - What: The living heartbeat of the market on screen. How: Dot at the newest tick with radius eased from performance.now(), re-pulsed on each arriving tick.
+- [x] **T13.3.5 - Break the line on stale gaps** - What: Honest gaps instead of fake flat lines during feed stalls. How: gapSplit fn cutting the path where tick spacing exceeds a staleness threshold.
+- [x] **T13.3.6 - Draw right-axis price labels** - What: A current price scale always beside the line. How: Render formatPrice labels at niceTicks positions along the right edge each frame.
+- [x] **T13.3.7 - Wire ticks to the dirty flag** - What: The chart moves the instant a tick lands. How: Spektrum watch on the instrument tick store calling markDirty for the tick surface per update.
+- [x] **T13.3.8 - Style the phosphor line glow** - What: Signature money-hacker terminal look. How: Stroke with the palette line color plus a low-alpha shadowBlur pass tuned for day and night.
+- [x] **T13.3.9 - Write single unit tests for tick fns** - What: Downsampling and gap logic locked. How: One Vitest test each for downsampleColumn and gapSplit, run individually via vitest run -t.
+- [x] **T13.3.10 - Verify and merge tick chart** - What: The main scalping view live on the dashboard. How: Targeted tests green plus a visual pass against live OKX ticks, then merge feature/13-3-tick-chart into main.
 
 ### F13.4 - Micro-Candle Renderer
 
