@@ -2496,16 +2496,16 @@
 **What:** Instant audible and visual confirmation of every ack, fill and reject without ever stealing focus.
 **How:** Non-blocking toast layer driven by trigger() events plus WebAudio blips generated per outcome type.
 
-- [ ] **T15.7.1 - Feedback branch** - What: Separate branch for feedback plumbing. How: Branch feature/f15-07-feedback from main.
-- [ ] **T15.7.2 - Toast overlay region** - What: Notifications that never block clicks. How: Fixed pointer-events-none container with data-each over a toasts queue key, hidden by data-cloak at boot.
-- [ ] **T15.7.3 - pushToast() function** - What: One-line API for any feedback message. How: Append toast objects with type, text and ttl via addValue plus an expiry timestamp sweep.
-- [ ] **T15.7.4 - Lifecycle listeners** - What: Fills and rejects announce themselves. How: watch() orders.byId transitions and trigger ack, fill and reject toasts automatically.
-- [ ] **T15.7.5 - playCue() WebAudio blips** - What: Hear outcomes without looking. How: OscillatorNode cues - rising chirp on fill, flat tick on ack, low buzz on reject.
-- [ ] **T15.7.6 - Sound settings** - What: Volume control that sticks. How: volume and mute keys in phase-7 settings synced through spektrum/persist and read by playCue.
-- [ ] **T15.7.7 - Toast styling** - What: Feedback in the desk's own language. How: Green fill and orange reject cards with a CSS slide-in keyframe, theme-aware via day/night variables.
-- [ ] **T15.7.8 - coalesceToasts() function** - What: Burst fills never bury the screen. How: Merge identical toasts within 500ms into one card with an xN repeat counter.
-- [ ] **T15.7.9 - Single tests for toast fns** - What: Feedback logic pinned down. How: One Vitest test each for pushToast and coalesceToasts, run only via vitest -t.
-- [ ] **T15.7.10 - Merge feedback** - What: Ack/fill/reject feedback on main. How: Lint and targeted tests green, merge feature/f15-07-feedback.
+- [x] **T15.7.1 - Feedback branch** - What: Separate branch for feedback plumbing. How: Branch feature/f15-07-feedback from main.
+- [x] **T15.7.2 - Toast overlay region** - What: Notifications that never block clicks. How: Fixed pointer-events-none container with data-each over a toasts queue key, hidden by data-cloak at boot.
+- [x] **T15.7.3 - pushToast() function** - What: One-line API for any feedback message. How: Append toast objects with type, text and ttl via addValue plus an expiry timestamp sweep.
+- [x] **T15.7.4 - Lifecycle listeners** - What: Fills and rejects announce themselves. How: watch() orders.byId transitions and trigger ack, fill and reject toasts automatically.
+- [x] **T15.7.5 - playCue() WebAudio blips** - What: Hear outcomes without looking. How: OscillatorNode cues - rising chirp on fill, flat tick on ack, low buzz on reject.
+- [x] **T15.7.6 - Sound settings** - What: Volume control that sticks. How: volume and mute keys in phase-7 settings synced through spektrum/persist and read by playCue.
+- [x] **T15.7.7 - Toast styling** - What: Feedback in the desk's own language. How: Green fill and orange reject cards with a CSS slide-in keyframe, theme-aware via day/night variables.
+- [x] **T15.7.8 - coalesceToasts() function** - What: Burst fills never bury the screen. How: Merge identical toasts within 500ms into one card with an xN repeat counter.
+- [x] **T15.7.9 - Single tests for toast fns** - What: Feedback logic pinned down. How: One Vitest test each for pushToast and coalesceToasts, run only via vitest -t.
+- [x] **T15.7.10 - Merge feedback** - What: Ack/fill/reject feedback on main. How: Lint and targeted tests green, merge feature/f15-07-feedback.
 
 ### F15.8 - Burst-Click Order Queue
 

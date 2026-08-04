@@ -1,5 +1,6 @@
 import { setValue, appState } from '../app/engine.js'
 import { PATHS } from '../state/paths.js'
+import { announceOrder } from './feedback.js'
 
 /**
  * Order lifecycle.
@@ -95,11 +96,33 @@ export function applyOrderEvent(orders, event) {
  * @param {object} event - the venue event.
  * @returns {object[]} the order list now in state.
  */
-export function ingestOrderEvent(event) {
-  const next = applyOrderEvent(appState.trade?.orders, event)
+export function ingestOrderEvent(event, options = {}) {
+  const before = Array.isArray(appState.trade?.orders) ? appState.trade.orders : []
+  const next = applyOrderEvent(before, event)
   setValue(PATHS.trade.orders, next)
 
+  const id = String(event?.clOrdId ?? '')
+  const wasTerminal = isTerminal(before.find((order) => order?.clOrdId === id))
+  const order = next.find((o) => o?.clOrdId === id)
+
+  // Announced here rather than by a watcher: the transition is known exactly at this
+  // point, and a watcher diffing the array would announce the same fill twice whenever
+  // an unrelated order changed in the same frame.
+  if (!wasTerminal && isTerminal(order)) announce(order, options)
+
   return next
+}
+
+/**
+ * Announce an outcome, unless the caller asked for silence (replay, backfill).
+ *
+ * @param {object} order - the terminal order.
+ * @param {{silent?: boolean, now?: number}} options - announcement options.
+ * @returns {object|null} the feedback delivered.
+ */
+function announce(order, options) {
+  if (options?.silent) return null
+  return announceOrder(order, options)
 }
 
 /**
