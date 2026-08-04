@@ -19,6 +19,7 @@ import { registerDndActions } from '../alerts/dnd.js'
 import { registerLogActions } from '../alerts/log.js'
 import { registerPersistActions } from '../alerts/persist.js'
 import { registerBotActions } from '../bot/runner.js'
+import { registerSessionActions } from '../bot/session.js'
 import { registerStrategyActions } from '../strategy/registry.js'
 import { registerTicketActions } from '../ticket/actions.js'
 import { registerSizingActions } from '../ticket/sizing.js'
@@ -74,6 +75,8 @@ describe('allActionNames', () => {
       'bot.setAuto',
       'bot.disableAll',
       'bot.resume',
+      'bot.toggleDry',
+      'bot.resetSession',
       'book.prefill',
       'book.setGroup',
       'book.setFloor',
@@ -131,6 +134,7 @@ describe('allActionNames', () => {
     registerLogActions()
     registerPersistActions()
     registerBotActions()
+    registerSessionActions()
     registerStrategyActions()
     registerTicketActions()
     registerSizingActions()

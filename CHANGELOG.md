@@ -12,6 +12,21 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ### Added
 
+- **Position caps, dry run, the session report and the hard stop** — the cap is what stops the
+  bot pyramiding: a strategy that keeps signalling the same direction is not wrong, it is doing
+  exactly what it was written to do, and without a cap the desk ends up with ten times the
+  intended position in whichever instrument the strategy likes today. It measures **open plus
+  in flight**, because counting only what has filled lets a burst of signals in the second
+  before the first ack all pass the same cap — and it reports the *numbers* on refusal, since
+  "position cap" alone leaves the trader guessing whether it was one lot over or ten. A
+  hand-placed order never consumes the bot's allowance. **Dry run is the default**, and that is
+  the whole opinion here: software that places orders should have to be switched into doing so,
+  and going live is logged as its own moment. The rehearsal's accounting is deliberately
+  identical to the live path — same gates, same throttle stamps, same caps — because a
+  rehearsal that skipped the counters would predict numbers the live run does not produce,
+  which is worse than no rehearsal because it would be believed. The hard stop **clears the
+  loop before disarming**, so no drain can start between the two, and it disarms even with no
+  runner attached: a kill switch with an exception is not one.
 - **Signal-to-order mapper, rate throttle and losing-streak cooldown** — the translation from
   "a strategy thinks this" to "the venue is asked for that" is a pure function, so everything
   it decides is inspectable in a test rather than argued about after a fill. A passive entry

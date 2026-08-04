@@ -4,6 +4,8 @@ import { createRing } from '../pipeline/ring.js'
 import { submit } from '../exec/engine.js'
 import { mapSignalToOrder, rulesFor } from './mapper.js'
 import { throttleGate, cooldownGate, clearCooldown } from './throttle.js'
+import { capGate } from './caps.js'
+import { dispatchOrDry, countSignal, hardStop } from './session.js'
 import { emitAlert } from '../alerts/bus.js'
 import { registerAction } from '../actions/registry.js'
 import { ACTIONS } from '../actions/names.js'
@@ -155,8 +157,11 @@ export function decide(signal, context = {}) {
     () => optInGate(strategy),
     (sig, ctx) => throttleGate(sig, ctx),
     (sig, ctx) => cooldownGate(sig, ctx),
+    (sig, ctx) => capGate(sig, ctx),
   ]
   const verdict = runGates(signal, { ...context, now, gates: [...base, ...(context.gates ?? [])] })
+
+  countSignal(verdict.pass)
 
   return pushDecision({
     ts: now,
@@ -186,7 +191,7 @@ export async function dispatchOrder(signal, options = {}) {
   // Straight through `submit`, which means `prepare()`: the same validation, capability
   // check, grid rounding and both guards a hand-typed order passes. A second execution path
   // is a second answer to "is this order sane".
-  return send(mapped.order)
+  return dispatchOrDry(mapped.order, { send, now: Number(signal?.ts) || 0, dry: options.dry })
 }
 
 /**
@@ -256,10 +261,35 @@ export function createBotRunner(options = {}) {
   // can do in one frame, and it is still four times faster than a person.
   const handle = timer.setInterval?.(() => drainTick(options), every)
 
-  return () => {
+  const stop = () => {
     timer.clearInterval?.(handle)
     unsubscribe?.()
   }
+
+  // The kill switch phase 24 will pull. Wired here rather than there so the runner owns
+  // the one call that stops it, and nothing else has to know how it is stopped.
+  killSwitch = (reason, now) => hardStop({ stop, now, reason })
+
+  return stop
+}
+
+/** How the desk stops the bot dead. Set by `createBotRunner`. */
+let killSwitch = null
+
+/**
+ * Stop the bot immediately, from anywhere.
+ *
+ * @param {string} reason - why.
+ * @param {number} [now] - the current time.
+ * @returns {boolean} true when a runner was stopped.
+ */
+export function killBot(reason, now = 0) {
+  // Disarms even with no runner attached: a kill that did nothing because the loop had not
+  // started would be a kill switch with an exception, and a kill switch with an exception
+  // is not one.
+  if (typeof killSwitch !== 'function') return hardStop({ now, reason })
+
+  return killSwitch(reason, now)
 }
 
 /**

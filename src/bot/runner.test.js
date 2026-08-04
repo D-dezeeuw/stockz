@@ -17,6 +17,7 @@ import {
   disableAllAuto,
   refreshBotStatus,
   registerBotActions,
+  killBot,
   INTAKE_SIZE,
   DECISION_SIZE,
   DRAIN_MS,
@@ -153,7 +154,10 @@ describe('dispatchOrder', () => {
     armed()
     const sent = []
 
+    // Explicitly live: dry run is the default, and an order that reaches a venue has to
+    // have been asked for.
     const result = await dispatchOrder(signal(), {
+      dry: false,
       send: async (order) => (sent.push(order), { ok: true, clientId: 'c1', reason: '' }),
     })
 
@@ -177,6 +181,7 @@ describe('dispatchOrder', () => {
     // Refused at the mapper is refused before the network: a size that rounds to zero is
     // not worth a round trip to find out.
     const refused = await dispatchOrder(signal(), {
+      dry: false,
       rules: { size: 0.0001, lotSize: 0.001, mid: 1 },
       send: async () => ({ ok: true }),
     })
@@ -190,14 +195,17 @@ describe('drainTick', () => {
     enqueueSignal(signal())
     enqueueSignal(signal({ source: 'not-enabled', ts: 1100 }))
 
-    const taken = await drainTick({ send: async () => ({ ok: false, reason: 'size above limit' }) })
+    const taken = await drainTick({
+      dry: false,
+      send: async () => ({ ok: false, reason: 'size above limit' }),
+    })
 
     // Only the enabled strategy got as far as an order.
     expect(taken).toHaveLength(1)
     expect(alertLog().some((a) => a.text.includes('size above limit'))).toBe(true)
 
     // The queue is drained, so a second call with nothing new does nothing.
-    expect(await drainTick({ send: async () => ({ ok: true }) })).toEqual([])
+    expect(await drainTick({ dry: false, send: async () => ({ ok: true }) })).toEqual([])
   })
 })
 
@@ -326,5 +334,27 @@ describe('registerBotActions', () => {
     dispatchAction(ACTIONS.bot.disableAll, {})
     tick()
     expect(appState.settings.botStrategies.a).toBe(false)
+  })
+})
+
+describe('killBot', () => {
+  it('disarms even with no runner attached, because an exception is not a kill switch', () => {
+    setValue('settings.botArmed', true)
+    tick()
+
+    // No loop started yet: a kill that did nothing here would be a kill switch with an
+    // exception, and a kill switch with an exception is not one.
+    expect(killBot('breaker tripped', 1000)).toBe(true)
+    tick()
+    expect(appState.settings.botArmed).toBe(false)
+    expect(botDecisions().at(-1)).toMatchObject({ action: 'KILLED', reason: 'breaker tripped' })
+
+    // With a runner, the loop is stopped as well.
+    let cleared = 0
+    createBotRunner({
+      timer: { setInterval: () => 1, clearInterval: () => (cleared += 1) },
+    })
+    expect(killBot('manual', 2000)).toBe(true)
+    expect(cleared).toBe(1)
   })
 })

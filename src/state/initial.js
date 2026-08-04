@@ -130,6 +130,7 @@ export function initialState(overrides = {}) {
     [PATHS.settings.alertToggles]: {},
     [PATHS.settings.botStrategies]: {},
     [PATHS.settings.botRules]: {},
+    [PATHS.settings.botCapOverrides]: {},
     [PATHS.settings.tapeFloors]: {},
     [PATHS.settings.chords]: {},
     [PATHS.settings.watchlists]: [],
@@ -200,6 +201,8 @@ export function initialState(overrides = {}) {
     [PATHS.bot.status]: { armed: false, enabled: 0, queued: 0 },
     [PATHS.bot.limits]: { used: 0, limit: 30, hot: false, streak: 0, cooldownLeft: 0, cooldownLabel: '' },
     [PATHS.bot.cooldownUntil]: 0,
+    [PATHS.bot.capped]: [],
+    [PATHS.bot.session]: { signals: 0, orders: 0, dry: 0, blocked: 0, startedAt: 0 },
 
     // alerts
     [PATHS.alerts.fired]: null,

@@ -215,6 +215,22 @@ export const SETTINGS_SCHEMA = Object.freeze([
     default: 10,
   },
   {
+    key: 'botMaxPerInstrument',
+    group: 'risk',
+    label: 'Auto-trade cap per instrument',
+    kind: 'number',
+    min: 0,
+    step: 0.01,
+    default: 1,
+  },
+  {
+    key: 'botDryRun',
+    group: 'risk',
+    label: 'Auto-trade dry run',
+    kind: 'toggle',
+    default: true,
+  },
+  {
     key: 'compactHud',
     group: 'appearance',
     label: 'Compact HUD row',
