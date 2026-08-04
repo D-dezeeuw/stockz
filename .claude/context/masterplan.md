@@ -2281,16 +2281,16 @@
 **What:** An instant read on bid/ask pressure with a glow the moment it crosses your threshold.
 **How:** Pure imbalance math over top-N book levels rendered as a split gauge, threshold glow via a Spektrum computed class.
 
-- [ ] **T14.4.1 - Branch imbalance work** - What: Pressure metrics built without touching the book. How: git checkout -b feature/14-4-imbalance from main.
-- [ ] **T14.4.2 - Implement sumDepth** - What: Honest volume totals per side. How: Pure fn summing sizes over the top N levels of a bid or ask array.
-- [ ] **T14.4.3 - Implement computeImbalance** - What: One number telling who is heavier. How: Pure fn returning (bidVol - askVol) / (bidVol + askVol) from sumDepth results, zero-safe.
-- [ ] **T14.4.4 - Implement emaSmooth** - What: A steady signal instead of flicker. How: Pure exponential moving average fn applied to successive imbalance readings.
-- [ ] **T14.4.5 - Build the split gauge markup** - What: Pressure visible as a two-tone bar. How: Gauge div in the ladder block with bid/ask segment widths bound via :style percentages.
-- [ ] **T14.4.6 - Add the depth selector** - What: Tune the read to 5, 10, or 20 levels mid-session. How: data-model bound select feeding N into the imbalance computed chain.
-- [ ] **T14.4.7 - Persist the glow threshold** - What: Your pressure trigger survives reloads. How: Threshold setting in the phase 7 settings store synced through spektrum/persist.
-- [ ] **T14.4.8 - Wire the threshold glow** - What: Unmissable signal when pressure crosses your line. How: Computed class applying a box-shadow glow when absolute smoothed imbalance exceeds the threshold.
-- [ ] **T14.4.9 - Write single unit tests for imbalance fns** - What: Pressure math locked against drift. How: One Vitest test each for sumDepth, computeImbalance, and emaSmooth, run individually via vitest run -t.
-- [ ] **T14.4.10 - Verify and merge imbalance** - What: A trusted pressure gauge above the ladder. How: Cross-check gauge values against hand-computed book slices, then merge feature/14-4-imbalance into main.
+- [x] **T14.4.1 - Branch imbalance work** - What: Pressure metrics built without touching the book. How: git checkout -b feature/14-4-imbalance from main.
+- [x] **T14.4.2 - Implement sumDepth** - What: Honest volume totals per side. How: Pure fn summing sizes over the top N levels of a bid or ask array.
+- [x] **T14.4.3 - Implement computeImbalance** - What: One number telling who is heavier. How: Pure fn returning (bidVol - askVol) / (bidVol + askVol) from sumDepth results, zero-safe.
+- [x] **T14.4.4 - Implement emaSmooth** - What: A steady signal instead of flicker. How: Pure exponential moving average fn applied to successive imbalance readings.
+- [x] **T14.4.5 - Build the split gauge markup** - What: Pressure visible as a two-tone bar. How: Gauge div in the ladder block with bid/ask segment widths bound via :style percentages.
+- [x] **T14.4.6 - Add the depth selector** - What: Tune the read to 5, 10, or 20 levels mid-session. How: data-model bound select feeding N into the imbalance computed chain.
+- [x] **T14.4.7 - Persist the glow threshold** - What: Your pressure trigger survives reloads. How: Threshold setting in the phase 7 settings store synced through spektrum/persist.
+- [x] **T14.4.8 - Wire the threshold glow** - What: Unmissable signal when pressure crosses your line. How: Computed class applying a box-shadow glow when absolute smoothed imbalance exceeds the threshold.
+- [x] **T14.4.9 - Write single unit tests for imbalance fns** - What: Pressure math locked against drift. How: One Vitest test each for sumDepth, computeImbalance, and emaSmooth, run individually via vitest run -t.
+- [x] **T14.4.10 - Verify and merge imbalance** - What: A trusted pressure gauge above the ladder. How: Cross-check gauge values against hand-computed book slices, then merge feature/14-4-imbalance into main.
 
 ### F14.5 - Whale Highlight
 
