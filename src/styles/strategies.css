@@ -21,7 +21,7 @@
 
 .runs__row {
   display: grid;
-  grid-template-columns: 1fr auto auto auto auto auto;
+  grid-template-columns: 1fr auto auto auto auto auto auto;
   align-items: center;
   gap: var(--space-2, 0.5rem);
   padding: var(--space-1, 0.25rem) 0;
@@ -354,4 +354,66 @@
 
 .alog__text {
   min-width: 0;
+}
+
+/*
+ * The auto-trade block. The arm switch is the largest control on the desk on purpose: it
+ * is the one that decides whether the software spends money without being asked.
+ */
+.bot {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1, 0.25rem);
+  min-height: 0;
+}
+
+.bot__arm {
+  padding: var(--space-2, 0.5rem);
+  border: 1px solid var(--line);
+  border-radius: var(--radius, 2px);
+  background: transparent;
+  color: var(--ink-muted);
+  font: inherit;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+}
+
+/* Armed is the loud state. A disarmed bot looking the same as an armed one is the only
+   truly unacceptable outcome in this block. */
+.bot__arm.is-armed {
+  border-color: var(--green);
+  color: var(--green);
+  box-shadow: 0 0 10px color-mix(in srgb, var(--green) 35%, transparent);
+}
+
+.bot__rows {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.bot__row {
+  display: grid;
+  grid-template-columns: 1fr auto 1.6fr;
+  gap: var(--space-1, 0.25rem);
+  padding: 0.1rem 0;
+  font-size: var(--font-size-xs, 0.6875rem);
+  color: var(--ink-muted);
+}
+
+/* A decision that became an order stands out from the many that did not. */
+.bot__row.is-taken .bot__action {
+  color: var(--green);
+}
+
+.bot__reason {
+  min-width: 0;
+  text-align: right;
+}
+
+.runs__auto b {
+  color: var(--green);
+  font-size: var(--font-size-xs, 0.6875rem);
+  letter-spacing: 0.04em;
 }

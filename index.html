@@ -501,6 +501,13 @@
                   <!-- Slowness is visible before it hurts: a throttled run says so rather
                        than just going quiet. -->
                   <span class="chip chip--warn" data-if="run.throttled">1/{{run.stride}} · {{run.costMs}}ms</span>
+                  <!-- Opt-in, not opt-out: being told about a signal and having money placed
+                       on it are different enough that the defaults must differ. -->
+                  <label class="runs__auto" :title="'let ' + run.strategyId + ' trade by itself'">
+                    <input type="checkbox" :checked="settings.botStrategies[run.strategyId]"
+                           data-action="change" data-fn="bot.setAuto" :data-strategy="run.strategyId">
+                    <b data-if="settings.botStrategies[run.strategyId]">AUTO</b>
+                  </label>
                   <button type="button" class="chip" data-action="click" data-fn="strategy.stop"
                           :data-key="run.key">stop</button>
                   <!-- The last few calls in context: the question after a bad trade is not
@@ -548,7 +555,29 @@
               <button type="button" class="chip" data-action="click"
                       data-fn="alerts.clearLog">clear ({{ui.alertPanel.total}})</button>
             </div>
-            <p class="label" data-if="block.id !== 'book' &amp;&amp; block.id !== 'tape' &amp;&amp; block.id !== 'ticket' &amp;&amp; block.id !== 'positions' &amp;&amp; block.id !== 'hud' &amp;&amp; block.id !== 'strategies' &amp;&amp; block.id !== 'scoreboard' &amp;&amp; block.id !== 'alerts'">ready</p>
+            <!-- The arm switch is deliberately unmissable, and deliberately a different
+                 switch from the ticket's: manual trading must not stop because the bot was
+                 disarmed, and the bot must not start because the ticket was armed. -->
+            <div class="bot" data-if="block.id === 'bot'">
+              <button type="button" data-action="click" data-fn="bot.toggleArm"
+                      :class="bot.status.armed ? 'bot__arm is-armed' : 'bot__arm'">
+                <span data-if="bot.status.armed">● ARMED</span>
+                <span data-if="!bot.status.armed">○ DISARMED</span>
+              </button>
+              <p class="label">{{bot.status.enabled}} strategies enabled · {{bot.status.queued}} queued · shift+A</p>
+              <button type="button" class="chip" data-action="click"
+                      data-fn="bot.disableAll">revoke all</button>
+              <!-- Every decision with its reason: "why did it not take that" must be
+                   answerable without a debugger. -->
+              <div class="bot__rows" data-each="d in bot.decisions">
+                <div class="bot__row" :class="d.taken ? 'bot__row is-taken' : 'bot__row'">
+                  <span class="bot__strategy truncate">{{d.strategy}}</span>
+                  <span class="bot__action">{{d.action}}</span>
+                  <span class="bot__reason truncate">{{d.reason}}</span>
+                </div>
+              </div>
+            </div>
+            <p class="label" data-if="block.id !== 'book' &amp;&amp; block.id !== 'tape' &amp;&amp; block.id !== 'ticket' &amp;&amp; block.id !== 'positions' &amp;&amp; block.id !== 'hud' &amp;&amp; block.id !== 'strategies' &amp;&amp; block.id !== 'scoreboard' &amp;&amp; block.id !== 'alerts' &amp;&amp; block.id !== 'bot'">ready</p>
           </div>
         </div>
       </section>

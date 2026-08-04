@@ -3752,32 +3752,32 @@
 **What:** One master switch arms or disarms all auto-trading instantly, fully separate from manual order arming.
 **How:** Spektrum boolean bot.masterArmed flipped by a data-action, checked first in the decision pipeline, excluded from persistence so sessions boot disarmed.
 
-- [ ] **T23.2.1 - Branch master arm** - What: Isolated work on the master switch. How: git checkout -b feature/f23.2-master-arm from an up-to-date main.
-- [ ] **T23.2.2 - Arm gate implementation** - What: A disarmed bot never places a single order. How: setValue('bot.masterArmed', false) as default and implement armGate rejecting signals with reason 'master-disarmed'.
-- [ ] **T23.2.3 - Toggle action** - What: One click flips auto-trading on or off. How: defineFn toggleMasterArm flipping the flag and firing trigger('bot.armChanged'), bound with data-action on the switch element.
-- [ ] **T23.2.4 - Flip-switch UI** - What: An unmistakable arm control in the bot block. How: Build a flip-switch showing green ARMED / orange DISARMED using phase-3 money-hacker tokens and data-if labels.
-- [ ] **T23.2.5 - Separation from manual arm** - What: Manual trading is never affected by bot state. How: Keep the phase-15 manual flow on its own manual.armed key and add a module comment forbidding cross-reads between the two flags.
-- [ ] **T23.2.6 - Safe boot default** - What: The bot never wakes up armed after a reload. How: Exclude bot.masterArmed from the spektrum/persist mapping so every session starts disarmed regardless of last state.
-- [ ] **T23.2.7 - Arm hotkey** - What: Arm or disarm without touching the mouse. How: Register Shift+A in the phase-16 hotkey registry calling toggleMasterArm.
-- [ ] **T23.2.8 - Feed entries on arm change** - What: Every arm flip is on the record with a timestamp. How: Push an ARMED or DISARMED entry via pushDecision from a watch on bot.armChanged.
-- [ ] **T23.2.9 - Single unit tests for arm fns** - What: Switch logic proven once per function. How: One Vitest test each for toggleMasterArm and armGate, run via npx vitest run -t targeted at each fn.
-- [ ] **T23.2.10 - Merge master arm** - What: The master switch lands on main. How: Green targeted Vitest runs plus ESLint, then merge feature/f23.2-master-arm into main and delete the branch.
+- [x] **T23.2.1 - Branch master arm** - What: Isolated work on the master switch. How: git checkout -b feature/f23.2-master-arm from an up-to-date main.
+- [x] **T23.2.2 - Arm gate implementation** - What: A disarmed bot never places a single order. How: setValue('bot.masterArmed', false) as default and implement armGate rejecting signals with reason 'master-disarmed'.
+- [x] **T23.2.3 - Toggle action** - What: One click flips auto-trading on or off. How: defineFn toggleMasterArm flipping the flag and firing trigger('bot.armChanged'), bound with data-action on the switch element.
+- [x] **T23.2.4 - Flip-switch UI** - What: An unmistakable arm control in the bot block. How: Build a flip-switch showing green ARMED / orange DISARMED using phase-3 money-hacker tokens and data-if labels.
+- [x] **T23.2.5 - Separation from manual arm** - What: Manual trading is never affected by bot state. How: Keep the phase-15 manual flow on its own manual.armed key and add a module comment forbidding cross-reads between the two flags.
+- [x] **T23.2.6 - Safe boot default** - What: The bot never wakes up armed after a reload. How: Exclude bot.masterArmed from the spektrum/persist mapping so every session starts disarmed regardless of last state.
+- [x] **T23.2.7 - Arm hotkey** - What: Arm or disarm without touching the mouse. How: Register Shift+A in the phase-16 hotkey registry calling toggleMasterArm.
+- [x] **T23.2.8 - Feed entries on arm change** - What: Every arm flip is on the record with a timestamp. How: Push an ARMED or DISARMED entry via pushDecision from a watch on bot.armChanged.
+- [x] **T23.2.9 - Single unit tests for arm fns** - What: Switch logic proven once per function. How: One Vitest test each for toggleMasterArm and armGate, run via npx vitest run -t targeted at each fn.
+- [x] **T23.2.10 - Merge master arm** - What: The master switch lands on main. How: Green targeted Vitest runs plus ESLint, then merge feature/f23.2-master-arm into main and delete the branch.
 
 ### F23.3 - Per-strategy auto opt-in
 
 **What:** Each strategy is opted into auto mode individually, so only trusted logic trades on its own.
 **How:** An autoEnabled flag per strategy config in Spektrum state, edited from the strategy list and enforced by optInGate in the pipeline.
 
-- [ ] **T23.3.1 - Branch strategy opt-in** - What: Isolated work on per-strategy auto mode. How: git checkout -b feature/f23.3-strategy-opt-in from an up-to-date main.
-- [ ] **T23.3.2 - Extend strategy schema** - What: Every strategy carries its own auto permission. How: Add autoEnabled:false to the phase-20 strategy config objects and their default factory.
-- [ ] **T23.3.3 - Opt-in gate fn** - What: Signals from non-opted strategies are silently benched. How: Implement optInGate(sig, state) reading strategies.byId[sig.strategyId].autoEnabled and rejecting with reason 'not-opted-in'.
-- [ ] **T23.3.4 - Opt-in toggle UI** - What: One checkbox per strategy row grants auto mode. How: Add a data-each strategy list checkbox bound with data-model to autoEnabled.
-- [ ] **T23.3.5 - AUTO badge** - What: Opted-in strategies are visible at a glance. How: Render a small green AUTO badge next to opted strategies with data-if and phase-3 badge styles.
-- [ ] **T23.3.6 - Persist opt-ins** - What: Auto permissions survive reloads. How: Map the strategies autoEnabled flags into localStorage via spektrum/persist.
-- [ ] **T23.3.7 - All-off action** - What: One click revokes auto mode everywhere. How: defineFn disableAllAuto clearing every autoEnabled flag, bound to a data-action button above the strategy list.
-- [ ] **T23.3.8 - Gate order verification** - What: Confidence the opt-in check runs right after the master gate. How: Trace a synthetic signal through decide() with spektrum/devtools and confirm gate ordering and reasons.
-- [ ] **T23.3.9 - Single unit tests for opt-in fns** - What: Opt-in logic proven once per function. How: One Vitest test each for optInGate and disableAllAuto with targeted npx vitest run -t invocations.
-- [ ] **T23.3.10 - Merge strategy opt-in** - What: Per-strategy auto mode lands on main. How: Green targeted tests plus ESLint, merge feature/f23.3-strategy-opt-in into main, delete the branch.
+- [x] **T23.3.1 - Branch strategy opt-in** - What: Isolated work on per-strategy auto mode. How: git checkout -b feature/f23.3-strategy-opt-in from an up-to-date main.
+- [x] **T23.3.2 - Extend strategy schema** - What: Every strategy carries its own auto permission. How: Add autoEnabled:false to the phase-20 strategy config objects and their default factory.
+- [x] **T23.3.3 - Opt-in gate fn** - What: Signals from non-opted strategies are silently benched. How: Implement optInGate(sig, state) reading strategies.byId[sig.strategyId].autoEnabled and rejecting with reason 'not-opted-in'.
+- [x] **T23.3.4 - Opt-in toggle UI** - What: One checkbox per strategy row grants auto mode. How: Add a data-each strategy list checkbox bound with data-model to autoEnabled.
+- [x] **T23.3.5 - AUTO badge** - What: Opted-in strategies are visible at a glance. How: Render a small green AUTO badge next to opted strategies with data-if and phase-3 badge styles.
+- [x] **T23.3.6 - Persist opt-ins** - What: Auto permissions survive reloads. How: Map the strategies autoEnabled flags into localStorage via spektrum/persist.
+- [x] **T23.3.7 - All-off action** - What: One click revokes auto mode everywhere. How: defineFn disableAllAuto clearing every autoEnabled flag, bound to a data-action button above the strategy list.
+- [x] **T23.3.8 - Gate order verification** - What: Confidence the opt-in check runs right after the master gate. How: Trace a synthetic signal through decide() with spektrum/devtools and confirm gate ordering and reasons.
+- [x] **T23.3.9 - Single unit tests for opt-in fns** - What: Opt-in logic proven once per function. How: One Vitest test each for optInGate and disableAllAuto with targeted npx vitest run -t invocations.
+- [x] **T23.3.10 - Merge strategy opt-in** - What: Per-strategy auto mode lands on main. How: Green targeted tests plus ESLint, merge feature/f23.3-strategy-opt-in into main, delete the branch.
 
 ### F23.4 - Signal-to-order mapper
 

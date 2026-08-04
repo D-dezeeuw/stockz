@@ -24,6 +24,9 @@ export const DEFAULT_BINDINGS = Object.freeze([
   { chord: 'KeyC', action: ACTIONS.orders.cancelAll, payload: {}, label: 'cancel all orders' },
   { chord: 'Escape', action: ACTIONS.keys.panic, payload: {}, label: 'close · Esc Esc = panic' },
   { chord: 'KeyA', action: ACTIONS.ticket.arm, payload: {}, label: 'arm / disarm' },
+  // Shift+A, not A: the bot's arm and the ticket's arm are different switches, and a chord
+  // one keystroke away from the manual arm would eventually be pressed by mistake.
+  { chord: 'shift+KeyA', action: ACTIONS.bot.toggleArm, payload: {}, label: 'arm / disarm auto-trading' },
   { chord: 'KeyR', action: ACTIONS.ticket.repeatLast, payload: {}, label: 'repeat last order' },
   { chord: 'Digit1', action: ACTIONS.ticket.setSize, payload: { preset: 0.25 }, label: 'size ¼' },
   { chord: 'Digit2', action: ACTIONS.ticket.setSize, payload: { preset: 0.5 }, label: 'size ½' },

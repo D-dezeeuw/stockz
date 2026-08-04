@@ -139,6 +139,10 @@ export const SETTINGS_SCHEMA = Object.freeze([
     label: 'Auto-trade armed',
     kind: 'toggle',
     default: false,
+    // Never restored. A bot that came back armed because it was armed yesterday is the
+    // single most dangerous default this desk could have, and "the trader will notice" is
+    // not a safety mechanism.
+    transient: true,
   },
   {
     key: 'botSize',
@@ -251,6 +255,15 @@ export const SETTINGS_SCHEMA = Object.freeze([
     default: 'BTC-USDT,ETH-USDT',
   },
 ])
+
+/**
+ * Settings that are stored but never restored.
+ *
+ * @returns {string[]} the transient keys.
+ */
+export function transientSettings() {
+  return SETTINGS_SCHEMA.filter((field) => field.transient === true).map((field) => field.key)
+}
 
 /** The drawer's sections, in order. */
 export const SETTINGS_GROUPS = Object.freeze(['appearance', 'trading', 'risk', 'instruments'])

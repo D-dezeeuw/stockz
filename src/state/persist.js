@@ -1,6 +1,7 @@
 import { appState, setValue, watch } from '../app/engine.js'
 import { PATHS, PERSISTED_NAMESPACES } from './paths.js'
 import { createLogger } from '../utils/log.js'
+import { transientSettings } from './settings-schema.js'
 
 /**
  * Settings persistence.
@@ -100,9 +101,14 @@ export function migrateSettings(payload) {
  */
 export function restoreSettings(storage = globalThis.localStorage) {
   const settings = migrateSettings(loadSettings(storage))
+  const transient = new Set(transientSettings())
   const restored = []
 
   for (const [key, value] of Object.entries(settings)) {
+    // Some settings are stored and deliberately not restored — the auto-trade arm switch
+    // above all. Boot must be the safe state whatever the last session ended in.
+    if (transient.has(key)) continue
+
     const path = `settings.${key}`
     setValue(path, value)
     restored.push(path)

@@ -12,6 +12,18 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ### Added
 
+- **Master arm switch and per-strategy opt-in** — the bot's arm is a **different flag** from
+  the ticket's, and nothing reads across: manual trading must not stop because the bot was
+  disarmed, and the bot must not start because somebody armed the ticket to click a button.
+  `botArmed` is now a **transient** setting — stored but never restored — so a session always
+  boots disarmed whatever the last one ended in; "the trader will notice" is not a safety
+  mechanism. Every flip is recorded with a timestamp and announced, because "when did I arm
+  this" is the first question asked about any trade the bot took. Auto permission is granted
+  per strategy from its row in the Strategies block, with an AUTO badge and a one-click revoke
+  for all of them — and revoking writes every key `false` rather than replacing the map, since
+  `setValue` merges objects and a bare `{}` would leave every permission exactly where it was.
+  The hotkey is **Shift+A**, not A: a chord one keystroke from the manual arm would eventually
+  be pressed by mistake.
 - **Bot loop core** — the point of the whole desk arriving at once: strategies already have
   opinions and the execution engine already validates and guards, and this is the thin thing
   that lets the first drive the second with nobody clicking. Every bot order goes through
