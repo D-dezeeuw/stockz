@@ -1,4 +1,5 @@
 import { dispatchAction } from '../actions/registry.js'
+import { scopeChain } from './scopes.js'
 
 /**
  * The keymap.
@@ -13,8 +14,11 @@ import { dispatchAction } from '../actions/registry.js'
  * QWERTY board, which is where the trader's finger goes.
  */
 
-/** chord -> {action, label, payload, enabled}. */
+/** chord (optionally scope-prefixed) -> {action, label, payload, enabled, scope}. */
 const bindings = new Map()
+
+/** Separates a scope from its chord in a registry key. Not legal in either half. */
+const SCOPE_SEP = ' '
 
 /** Modifier order, so one chord has exactly one spelling. */
 const MODIFIERS = Object.freeze(['ctrl', 'alt', 'shift', 'meta'])
@@ -54,13 +58,29 @@ export function registerBinding(chord, action, meta = {}) {
   const key = String(chord ?? '')
   if (!key || !action) return ''
 
-  bindings.set(key, {
+  bindings.set(registryKey(key, meta.scope), {
     action: String(action),
     label: String(meta.label ?? action),
     payload: meta.payload ?? {},
     enabled: meta.enabled !== false,
+    scope: meta.scope ? String(meta.scope) : 'global',
   })
   return key
+}
+
+/**
+ * The registry key for a chord in a scope.
+ *
+ * Scoped bindings share one Map under a prefixed key, so a chord can mean different
+ * things in different places without a second data structure to keep in step.
+ *
+ * @param {string} chord - the chord.
+ * @param {string} [scope] - the owning scope, empty for global.
+ * @returns {string} the registry key.
+ */
+export function registryKey(chord, scope = '') {
+  const key = String(chord ?? '')
+  return scope && scope !== 'global' ? `${scope}${SCOPE_SEP}${key}` : key
 }
 
 /**
@@ -69,8 +89,8 @@ export function registerBinding(chord, action, meta = {}) {
  * @param {string} chord - the chord string.
  * @returns {boolean} true when something was removed.
  */
-export function unregisterBinding(chord) {
-  return bindings.delete(String(chord ?? ''))
+export function unregisterBinding(chord, scope = '') {
+  return bindings.delete(registryKey(chord, scope))
 }
 
 /**
@@ -79,16 +99,26 @@ export function unregisterBinding(chord) {
  * @param {string} chord - the chord string.
  * @returns {object|null} the binding, or null when unbound or disabled.
  */
-export function resolveKey(chord) {
-  const found = bindings.get(String(chord ?? ''))
-  if (!found || !found.enabled) return null
+export function resolveKey(chord, chain = scopeChain()) {
+  const key = String(chord ?? '')
+  if (!key) return null
 
-  return found
+  // Nearest scope first, stopping at the first hit: a modal's binding beats a block's,
+  // which beats the global layout.
+  for (const scope of Array.isArray(chain) && chain.length ? chain : ['global']) {
+    const found = bindings.get(registryKey(key, scope))
+    if (found?.enabled) return found
+  }
+
+  return null
 }
 
 /** @returns {Array<object>} every binding, for the palette and the cheat sheet. */
 export function allBindings() {
-  return [...bindings.entries()].map(([chord, binding]) => ({ chord, ...binding }))
+  return [...bindings.entries()].map(([key, binding]) => ({
+    chord: key.includes(SCOPE_SEP) ? key.slice(key.indexOf(SCOPE_SEP) + 1) : key,
+    ...binding,
+  }))
 }
 
 /** Forget every binding. */

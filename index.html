@@ -125,7 +125,8 @@
     <!-- The grid: every cell identical in size, driven entirely by the block registry.
          data-each binds the CONTAINER, and its first child is the repeated template. -->
     <main class="app-grid" data-each="block in settings.blocks">
-      <section class="block" :class="block.status === 'error' ? 'block has-error' : 'block'">
+      <section class="block" :data-block-id="block.id"
+               :class="block.status === 'error' ? 'block has-error' : 'block'" tabindex="0">
         <div class="block__bar">
           <span class="block__title">{{block.title}}</span>
           <span class="block__actions label">{{block.status}}</span>

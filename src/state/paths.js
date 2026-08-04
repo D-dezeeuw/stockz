@@ -60,6 +60,7 @@ export const PATHS = Object.freeze({
     paletteQuery: 'ui.paletteQuery',
     paletteIndex: 'ui.paletteIndex',
     paletteRows: 'ui.paletteRows',
+    scope: 'ui.scope',
   }),
   settings: Object.freeze({
     theme: 'settings.theme',

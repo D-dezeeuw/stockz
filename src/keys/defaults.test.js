@@ -66,9 +66,11 @@ describe('DEFAULT_BINDINGS', () => {
       expect(binding.label.length).toBeGreaterThan(0)
     }
 
-    // No chord is bound twice, which would make the layout order-dependent.
-    const chords = DEFAULT_BINDINGS.map((b) => b.chord)
-    expect(new Set(chords).size).toBe(chords.length)
+    // No chord is bound twice *in the same scope*, which would make the layout
+    // order-dependent. Across scopes a repeat is the point: ArrowDown moves the palette
+    // selection and nudges the price, and only one of those is ever listening.
+    const ids = DEFAULT_BINDINGS.map((b) => `${b.scope ?? 'global'} ${b.chord}`)
+    expect(new Set(ids).size).toBe(ids.length)
   })
 })
 

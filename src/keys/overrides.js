@@ -33,13 +33,18 @@ export const BINDINGS_VERSION = 1
 export function mergeBindings(defaults, overrides) {
   const base = Array.isArray(defaults) ? defaults : []
   const custom = overrides && typeof overrides === 'object' ? overrides : {}
-  const merged = new Map(base.map((binding) => [binding.chord, binding]))
+  // Keyed by scope *and* chord: the same chord legitimately means different things in
+  // different scopes (ArrowDown moves the palette selection and nudges the price), so
+  // chord alone would collapse two real bindings into one.
+  const idOf = (scope, chord) => `${scope || 'global'} ${chord}`
+  const merged = new Map(base.map((binding) => [idOf(binding.scope, binding.chord), binding]))
 
   for (const [chord, action] of Object.entries(custom)) {
-    // An explicit null unbinds; a missing entry simply leaves the default alone. The
-    // difference matters — otherwise there is no way to say "this key does nothing".
-    if (action === null) merged.delete(chord)
-    else if (action) merged.set(chord, { chord, action, payload: {}, label: `custom: ${action}` })
+    // Overrides are global by definition — a trader rebinds "B", not "B inside the book
+    // block". An explicit null unbinds; a missing entry leaves the default alone.
+    const id = idOf('global', chord)
+    if (action === null) merged.delete(id)
+    else if (action) merged.set(id, { chord, action, payload: {}, label: `custom: ${action}` })
   }
 
   return [...merged.values()]

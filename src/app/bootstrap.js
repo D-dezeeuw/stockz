@@ -31,6 +31,7 @@ import { applyDefaultBindings } from '../keys/defaults.js'
 import { mountKeymap } from '../keys/keymap.js'
 import { registerBindingActions } from '../keys/overrides.js'
 import { registerPaletteActions } from '../keys/palette.js'
+import { trackBlockFocus } from '../keys/scopes.js'
 import { appVersion } from './version.js'
 
 /**
@@ -106,6 +107,7 @@ export function bootstrap(options = {}) {
   tick()
   observeLayout({ doc })
   const unkey = mountKeymap(doc?.defaultView ?? globalThis.window)
+  const unfocus = trackBlockFocus(doc)
   revealApp(doc)
   checkpoint('boot', { version: appVersion() })
 
@@ -125,6 +127,7 @@ export function bootstrap(options = {}) {
     derived,
     cleanup: () => {
       unkey()
+      unfocus()
       cleanup?.()
     },
     feeds,

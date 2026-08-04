@@ -80,15 +80,27 @@ describe('allBindings', () => {
     registerBinding('ctrl+KeyK', 'ui.palette', { label: 'command palette' })
 
     expect(allBindings()).toEqual([
-      { chord: 'KeyB', action: 'ticket.submit', label: 'buy', payload: {}, enabled: true },
+      {
+        chord: 'KeyB',
+        action: 'ticket.submit',
+        label: 'buy',
+        payload: {},
+        enabled: true,
+        scope: 'global',
+      },
       {
         chord: 'ctrl+KeyK',
         action: 'ui.palette',
         label: 'command palette',
         payload: {},
         enabled: true,
+        scope: 'global',
       },
     ])
+
+    // A scoped binding lists under its own chord, not under its registry key.
+    registerBinding('PageDown', 'book.setGroup', { scope: 'block:book' })
+    expect(allBindings().at(-1)).toMatchObject({ chord: 'PageDown', scope: 'block:book' })
   })
 })
 

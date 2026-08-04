@@ -50,6 +50,43 @@ export const DEFAULT_BINDINGS = Object.freeze([
   { chord: 'KeyM', action: ACTIONS.ticket.setMode, payload: { mode: 'market' }, label: 'market' },
   { chord: 'KeyL', action: ACTIONS.ticket.setMode, payload: { mode: 'limit' }, label: 'limit' },
   { chord: 'KeyT', action: ACTIONS.ui.setTheme, payload: {}, label: 'toggle theme' },
+  // Scoped: only while the palette owns the keyboard, which is what lets Enter and the
+  // arrows mean something different there than they do on the desk.
+  {
+    chord: 'Enter',
+    action: ACTIONS.ui.paletteRun,
+    payload: {},
+    label: 'run the selected command',
+    scope: 'modal:palette',
+  },
+  {
+    chord: 'ArrowDown',
+    action: ACTIONS.ui.paletteMove,
+    payload: { delta: 1 },
+    label: 'next command',
+    scope: 'modal:palette',
+  },
+  {
+    chord: 'ArrowUp',
+    action: ACTIONS.ui.paletteMove,
+    payload: { delta: -1 },
+    label: 'previous command',
+    scope: 'modal:palette',
+  },
+  {
+    chord: 'PageDown',
+    action: ACTIONS.book.setGroup,
+    payload: { group: 0.5 },
+    label: 'coarser depth grouping',
+    scope: 'block:book',
+  },
+  {
+    chord: 'PageUp',
+    action: ACTIONS.book.setGroup,
+    payload: { group: 0 },
+    label: 'finest depth grouping',
+    scope: 'block:book',
+  },
   {
     chord: 'ctrl+KeyK',
     action: ACTIONS.ui.palette,
@@ -77,6 +114,7 @@ export function applyDefaultBindings(overrides = {}) {
     registerBinding(binding.chord, binding.action, {
       label: binding.label,
       payload: binding.payload,
+      scope: binding.scope,
     })
   }
 
