@@ -61,6 +61,7 @@ export const ACTIONS = Object.freeze({
     editNote: 'journal.editNote',
     jump: 'journal.jump',
     live: 'journal.live',
+    export: 'journal.export',
   }),
   bot: Object.freeze({
     toggleArm: 'bot.toggleArm',

@@ -403,6 +403,10 @@
                 </span>
               </div>
             </div>
+            <!-- A trading day that exists only inside one browser tab is a day one cache
+                 clear from never having happened. Credentials never travel with it. -->
+            <button type="button" class="chip journal__export" data-if="block.id === 'journal'"
+                    data-action="click" data-fn="journal.export">export session</button>
             <!-- Every closed scalp drops a labelled pin. One click stands in the moment it
                  finished; the way back is always on screen while you are away from live. -->
             <div class="journal__pins" data-if="block.id === 'journal'"

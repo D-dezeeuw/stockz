@@ -108,6 +108,11 @@
   font-size: var(--fs-0);
 }
 
+.journal__export {
+  justify-self: start;
+  font-size: var(--fs-0);
+}
+
 .journal__pins {
   display: flex;
   flex-wrap: wrap;
