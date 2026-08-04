@@ -173,7 +173,16 @@
                 </div>
               </div>
             </div>
-            <p class="label" data-if="block.id !== 'ladder'">ready</p>
+            <!-- The tape. Newest print at the top; the buffer arrives newest-first so
+                 nothing is reversed on a frame. -->
+            <div class="tape" data-if="block.id === 'tape'" data-each="print in market.tape">
+              <div class="tape__row" :class="print.cls">
+                <span class="tape__time">{{print.timeLabel}}</span>
+                <span class="tape__price">{{print.priceLabel}}</span>
+                <span class="tape__size">{{print.sizeLabel}}</span>
+              </div>
+            </div>
+            <p class="label" data-if="block.id !== 'ladder' &amp;&amp; block.id !== 'tape'">ready</p>
           </div>
         </div>
       </section>
