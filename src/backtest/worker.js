@@ -98,6 +98,10 @@ export async function runRequest(request, post, deps = {}) {
     runId,
     result: {
       ...result,
+      // Carried inside the result as well as on the envelope: the archive stores the
+      // result, and a stored run with no id is one nothing can pin.
+      runId,
+      at: typeof deps.now === 'function' ? deps.now() : Date.now(),
       sessionId: String(request?.sessionId ?? ''),
       strategyId: String(strategy.id),
       params: request?.params ?? {},

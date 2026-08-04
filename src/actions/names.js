@@ -105,6 +105,8 @@ export const ACTIONS = Object.freeze({
     sweep: 'backtest.sweep',
     sortSweep: 'backtest.sortSweep',
     applyCombo: 'backtest.applyCombo',
+    pin: 'backtest.pin',
+    clearSlots: 'backtest.clearSlots',
   }),
   bot: Object.freeze({
     toggleArm: 'bot.toggleArm',
