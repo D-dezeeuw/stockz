@@ -25,12 +25,6 @@ import {
  * instrument the trader is not looking at.
  */
 
-/** The lists a new desk starts with. */
-export const STARTER_LISTS = Object.freeze([
-  { id: 'majors', name: 'OKX Majors', symbols: ['BTC-USDT', 'ETH-USDT', 'SOL-USDT'] },
-  { id: 'alts', name: 'Fast Alts', symbols: ['DOGE-USDT', 'PEPE-USDT'] },
-])
-
 /** @returns {object[]} the lists currently in state. */
 export function currentLists() {
   return Array.isArray(appState?.settings?.watchlists) ? appState.settings.watchlists : []
@@ -46,23 +40,6 @@ export function commitLists(lists) {
   const next = Array.isArray(lists) ? lists : []
   setValue(PATHS.settings.watchlists, next)
   return next
-}
-
-/**
- * Seed the starter lists, without trampling what a returning trader arranged.
- *
- * @param {boolean} [force] - replace existing lists (reset-to-defaults).
- * @returns {object[]} the lists now in state.
- */
-export function seedLists(force = false) {
-  const existing = currentLists()
-  if (existing.length > 0 && !force) return existing
-
-  let lists = []
-  for (const starter of STARTER_LISTS) {
-    lists = createList(lists, starter.name, { id: starter.id, symbols: starter.symbols })
-  }
-  return commitLists(lists)
 }
 
 /**

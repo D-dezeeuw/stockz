@@ -2,7 +2,8 @@ import { setValue, appState } from '../app/engine.js'
 import { PATHS } from '../state/paths.js'
 import { currentLists, commitLists, activeList } from './state.js'
 import { createList, splitSymbol, qualifySymbol } from './ops.js'
-import { fetchTickers, rankBlueChips } from '../venues/okx/tickers.js'
+import { fetchTickers, mapTicker } from '../venues/okx/tickers.js'
+import { UNIVERSE, universeSymbols, instrumentName } from './universe.js'
 import { setBlockStatus } from '../blocks/registry.js'
 import { registerAction } from '../actions/registry.js'
 import { ACTIONS } from '../actions/names.js'
@@ -16,26 +17,16 @@ import { createLogger } from '../utils/log.js'
  * it — the whole `lists/` module was built, tested and wired to no UI at all. This is the
  * missing half.
  *
- * It populates itself. A desk that opens on an empty list and waits to be told what to
- * watch is a desk that cannot start without a human, and the top instruments by real
- * traded volume are a better default than anyone's typed guess. Quotes come from the
- * public tickers endpoint, so rows are live before a single credential exists.
+ * It fills itself from the shipped universe (see `universe.js`), so a desk that has just
+ * been opened is already watching forty instruments and needs nobody to tell it what to
+ * look at. Quotes come from the public tickers endpoint, which needs no credentials — the
+ * rows are live before a single key has been entered.
  */
 
 const log = createLogger('watchlist')
 
-/** How many instruments the auto list holds. */
-export const AUTO_LIMIT = 8
-
-/** The auto-populated list's id and name. */
-export const AUTO_LIST_ID = 'bluechips'
-export const AUTO_LIST_NAME = 'Blue Chips'
-
 /** How often the rows are re-quoted. */
 export const QUOTE_MS = 4000
-
-/** How often the membership itself is re-ranked. */
-export const RERANK_MS = 15 * 60 * 1000
 
 /**
  * Is the desk allowed to manage the watchlist itself?
@@ -51,28 +42,29 @@ export function autoEnabled(state = appState) {
 }
 
 /**
- * Replace the auto list's membership.
+ * Install the shipped universe as the desk's lists.
  *
- * Only ever touches its own list. A trader's hand-made lists are left exactly alone —
- * "the desk manages a list for you" must not mean "the desk edits your lists".
+ * Only ever touches the lists it owns. A trader's hand-made list is left exactly alone —
+ * "the desk keeps a list for you" must not mean "the desk edits your lists".
  *
- * @param {string[]} symbols - qualified or bare symbols, ranked.
  * @returns {object[]} the lists now in state.
  */
-export function commitAutoList(symbols) {
-  const wanted = (Array.isArray(symbols) ? symbols : []).filter(Boolean)
-  if (wanted.length === 0) return currentLists()
+export function seedUniverse() {
+  if (!autoEnabled()) return currentLists()
 
-  const others = currentLists().filter((list) => list?.id !== AUTO_LIST_ID)
-  const rebuilt = createList(others, AUTO_LIST_NAME, { id: AUTO_LIST_ID, symbols: wanted })
+  const owned = new Set(UNIVERSE.map((list) => list.id))
+  const mine = currentLists().filter((list) => !owned.has(list?.id))
 
-  // The auto list leads: it is the one the desk keeps current, so it is the one a trader
-  // opening the desk should be looking at.
-  const ordered = [
-    ...rebuilt.filter((list) => list.id === AUTO_LIST_ID),
-    ...rebuilt.filter((list) => list.id !== AUTO_LIST_ID),
-  ]
+  let rebuilt = []
+  for (const list of UNIVERSE) {
+    rebuilt = createList(rebuilt, list.name, {
+      id: list.id,
+      symbols: list.instruments.map((row) => row.symbol),
+    })
+  }
 
+  // The desk's lists lead, so a trader opening the desk is looking at one of them.
+  const ordered = [...rebuilt, ...mine]
   commitLists(ordered)
 
   // Checked against the rebuilt lists rather than through `activeList()`, which falls back
@@ -80,46 +72,23 @@ export function commitAutoList(symbols) {
   // yes and the stored id would stay empty forever.
   const active = String(appState?.settings?.activeListId ?? '')
   if (!ordered.some((list) => list.id === active)) {
-    setValue(PATHS.settings.activeListId, AUTO_LIST_ID)
+    setValue(PATHS.settings.activeListId, UNIVERSE[0].id)
   }
 
+  log.info(`universe: ${ordered.length} lists, ${universeSymbols().length} instruments`)
   return ordered
-}
-
-/**
- * Re-rank the auto list from live venue volume.
- *
- * @param {object} [options] - injected fetch.
- * @returns {Promise<{ok: boolean, symbols: string[], error?: string}>} the outcome.
- */
-export async function refreshBlueChips(options = {}) {
-  if (!autoEnabled()) return { ok: false, symbols: [], error: 'auto watchlist off' }
-
-  const result = await fetchTickers(options)
-  // A failed fetch keeps whatever is already listed. Emptying the watchlist because the
-  // venue had a bad second would take the desk's instruments away over a hiccup.
-  if (!result.ok) return { ok: false, symbols: [], error: result.error }
-
-  const ranked = rankBlueChips(result.rows, options.limit ?? AUTO_LIMIT)
-  if (ranked.length === 0) return { ok: false, symbols: [], error: 'no tradeable pairs' }
-
-  const symbols = ranked.map((row) => row.symbol)
-  commitAutoList(symbols)
-  log.info(`blue chips: ${symbols.join(', ')}`)
-
-  return { ok: true, symbols }
 }
 
 /**
  * Build the rows the block renders, quoting each against a ticker snapshot.
  *
  * @param {string[]} symbols - the list's qualified symbols.
- * @param {object[]} ranked - normalised ticker rows.
+ * @param {object[]} quoted - normalised ticker rows.
  * @param {string} [focus] - the focused instrument.
  * @returns {object[]} rows ready to bind.
  */
-export function buildWatchRows(symbols, ranked, focus = '') {
-  const quotes = new Map((Array.isArray(ranked) ? ranked : []).map((row) => [row.symbol, row]))
+export function buildWatchRows(symbols, quoted, focus = '') {
+  const quotes = new Map((Array.isArray(quoted) ? quoted : []).map((row) => [row.symbol, row]))
   const focused = String(focus ?? '')
 
   return (Array.isArray(symbols) ? symbols : []).map((qualified) => {
@@ -130,6 +99,9 @@ export function buildWatchRows(symbols, ranked, focus = '') {
     return {
       id: qualified,
       symbol,
+      // The name, because `XMU` and `XSNDK` are Micron and SanDisk and nobody should have
+      // to remember that. Blank for anything outside the shipped universe.
+      name: instrumentName(symbol),
       // A row with no quote yet says so rather than showing 0.00, which reads as a real
       // price that happens to be zero.
       price: quote ? formatPrice(quote.last, quote.last >= 100 ? 0.01 : 0.0001) : '—',
@@ -138,6 +110,16 @@ export function buildWatchRows(symbols, ranked, focus = '') {
       active: symbol === focused || qualified === focused,
     }
   })
+}
+
+/**
+ * Index a raw ticker payload by symbol.
+ *
+ * @param {object[]} rows - raw OKX ticker rows.
+ * @returns {object[]} normalised quotes.
+ */
+export function quoteIndex(rows) {
+  return (Array.isArray(rows) ? rows : []).map(mapTicker).filter(Boolean)
 }
 
 /**
@@ -165,8 +147,8 @@ export async function refreshQuotes(options = {}) {
   }
 
   const result = await fetchTickers(options)
-  const ranked = result.ok ? rankBlueChips(result.rows, 500) : []
-  const rows = buildWatchRows(symbols, ranked, String(appState?.market?.focus ?? ''))
+  const quoted = result.ok ? quoteIndex(result.rows) : []
+  const rows = buildWatchRows(symbols, quoted, String(appState?.market?.focus ?? ''))
 
   setValue(PATHS.market.watchRows, rows)
   // Leaves the placeholder the block has shown since phase 2. Nothing ever moved this
@@ -179,9 +161,9 @@ export async function refreshQuotes(options = {}) {
 /**
  * Hand the watchlist to the trader, or back to the desk.
  *
- * The override. Off means the desk stops re-ranking and the list is theirs to edit; on
- * means it takes the instruments back over and re-ranks immediately, rather than leaving
- * a stale list until the next quarter-hour.
+ * The override. Off means the desk stops installing its universe and the lists are theirs
+ * to edit; on means it puts the shipped forty back immediately, rather than waiting for a
+ * reload to do what the switch just said.
  *
  * @param {object} _state - engine state (unused).
  * @param {{value?: boolean}} [payload] - the new setting.
@@ -191,7 +173,12 @@ export function toggleAutoWatchlist(_state, payload = {}) {
   const next = typeof payload?.value === 'boolean' ? payload.value : !autoEnabled()
   setValue(PATHS.settings.autoWatchlist, next)
 
-  if (next) refreshBlueChips().then(() => refreshQuotes()).catch(() => {})
+  // Taken back over immediately rather than at the next reload, so the switch does what it
+  // says the moment it is flipped.
+  if (next) {
+    seedUniverse()
+    refreshQuotes({ symbols: universeSymbols().map((s) => qualifySymbol(s)) }).catch(() => [])
+  }
 
   return next
 }
@@ -212,36 +199,20 @@ export function registerWatchActions() {
 /**
  * Start the watchlist: populate, quote, and keep both current.
  *
- * @param {{timer?: object, quoteMs?: number, rerankMs?: number}} [options] - plumbing.
+ * @param {{timer?: object, quoteMs?: number}} [options] - plumbing.
  * @returns {() => void} stop.
  */
 export function startWatchlist(options = {}) {
   const timer = options.timer ?? globalThis
   const quoteEvery = Number(options.quoteMs) > 0 ? Number(options.quoteMs) : QUOTE_MS
-  const rerankEvery = Number(options.rerankMs) > 0 ? Number(options.rerankMs) : RERANK_MS
 
-  // Ranked first, then quoted, so the first paint already shows the right instruments
-  // rather than the seeded guess being replaced a second later.
-  refreshBlueChips(options)
-    .catch(() => ({}))
-    // The ranked symbols are passed straight across rather than read back out of state,
-    // which has not flushed yet.
-    .then((ranked) =>
-      refreshQuotes(
-        ranked?.symbols?.length
-          ? { ...options, symbols: ranked.symbols.map((s) => qualifySymbol(s)) }
-          : options,
-      ),
-    )
-    .catch(() => [])
+  const listed = seedUniverse()
+  // The symbols are passed straight across rather than read back out of state, which has
+  // not flushed yet — `commitLists` writes through `setValue`, which lands next tick, so
+  // the first quote pass would otherwise read the previous (empty) list and paint nothing.
+  const first = listed[0]?.symbols?.length ? { ...options, symbols: listed[0].symbols } : options
+  refreshQuotes(first).catch(() => [])
 
   const quotes = timer.setInterval?.(() => refreshQuotes(options).catch(() => []), quoteEvery)
-  // Membership changes on the hour, not on the second: a watchlist that reshuffles while
-  // being read is unusable, however current it is.
-  const rerank = timer.setInterval?.(() => refreshBlueChips(options).catch(() => ({})), rerankEvery)
-
-  return () => {
-    timer.clearInterval?.(quotes)
-    timer.clearInterval?.(rerank)
-  }
+  return () => timer.clearInterval?.(quotes)
 }

@@ -593,11 +593,19 @@
                  the public tickers endpoint so the rows are live before any key exists.
                  A row is a click away from becoming the traded instrument. -->
             <div class="watchlist" data-if="block.id === 'watchlist'">
+              <!-- Crypto and tokenized equities are one venue and one order path, but they
+                   are two different things to trade, so they are two tabs. -->
+              <div class="watchlist__tabs" data-each="settings.watchlists" data-as="wl">
+                <button type="button" class="chip" data-action="click" data-fn="lists.setActive"
+                        :data-id="wl.id"
+                        :class="settings.activeListId === wl.id ? 'chip chip--on' : 'chip'">{{wl.name}}</button>
+              </div>
               <div class="watchlist__rows" data-each="market.watchRows" data-as="row">
                 <button type="button" class="watchlist__row" data-action="click"
                         data-fn="lists.focus" :data-symbol="row.symbol"
                         :class="row.active ? 'watchlist__row is-active' : 'watchlist__row'">
                   <span class="watchlist__sym">{{row.symbol}}</span>
+                  <span class="watchlist__name label truncate">{{row.name}}</span>
                   <span class="watchlist__price num">{{row.price}}</span>
                   <span class="watchlist__chg num" :class="'watchlist__chg num tone--' + row.tone">{{row.change}}</span>
                 </button>
@@ -605,7 +613,7 @@
               <label class="field field--row watchlist__auto">
                 <input type="checkbox" data-action="change" data-fn="lists.auto"
                        :checked="settings.autoWatchlist !== false">
-                <span class="label">Desk picks the instruments, by traded volume.</span>
+                <span class="label">Keep the desk's instrument list.</span>
               </label>
             </div>
             <!-- An alert set in under three seconds: level, direction, done. -->
@@ -973,6 +981,19 @@
                  autocomplete="off" spellcheck="false">
           <button type="submit" class="btn">save etoro</button>
         </form>
+
+        <!-- The one switch on this desk that decides whether money is real. Deliberately
+             here, next to the keys, because it is the same decision: these credentials do
+             nothing until this is ticked. -->
+        <label class="field field--row keys__live">
+          <input type="checkbox" data-action="change" data-fn="keys.liveTrading"
+                 :checked="trade.mode === 'live'">
+          <span class="label">Trade live with real funds. Off = paper: orders are
+            simulated against the book and never sent to a venue.</span>
+        </label>
+        <p class="label keys__mode" :class="trade.mode === 'live' ? 'label keys__mode is-live' : 'label keys__mode'">
+          {{trade.mode === 'live' ? 'LIVE — orders go to the venue' : 'PAPER — nothing leaves this browser'}}
+        </p>
 
         <label class="field field--row">
           <input type="checkbox" data-action="change" data-fn="keys.remember"

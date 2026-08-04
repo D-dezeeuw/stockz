@@ -1,10 +1,8 @@
 // @vitest-environment jsdom
 import { describe, it, expect, beforeEach } from 'vitest'
 import {
-  STARTER_LISTS,
   currentLists,
   commitLists,
-  seedLists,
   activeList,
   setActiveList,
   focusSymbol,
@@ -18,6 +16,14 @@ import { appState, setValue, tick, resetState } from '../app/engine.js'
 import { PATHS } from '../state/paths.js'
 import { clearActions, actionNames, dispatchAction } from '../actions/registry.js'
 import { ACTIONS } from '../actions/names.js'
+
+/** The two lists these tests exercise, committed locally rather than by a seeder. */
+function seedLists() {
+  return commitLists([
+    { id: 'majors', name: 'OKX Majors', symbols: ['okx:BTC-USDT', 'okx:ETH-USDT', 'okx:SOL-USDT'] },
+    { id: 'alts', name: 'Fast Alts', symbols: ['okx:DOGE-USDT', 'okx:PEPE-USDT'] },
+  ])
+}
 
 beforeEach(() => {
   resetState()
@@ -39,23 +45,6 @@ describe('currentLists', () => {
     commitLists([{ id: 'a', name: 'A', symbols: [] }])
     tick()
     expect(currentLists()).toHaveLength(1)
-  })
-})
-
-describe('seedLists', () => {
-  it('seeds starters once and never tramples a trader’s own lists', () => {
-    const seeded = seedLists()
-    tick()
-
-    expect(seeded).toHaveLength(STARTER_LISTS.length)
-    expect(seeded[0].symbols[0]).toBe('okx:BTC-USDT')
-
-    commitLists([{ id: 'mine', name: 'Mine', symbols: [] }])
-    tick()
-    expect(seedLists().map((l) => l.id)).toEqual(['mine'])
-
-    // A reset explicitly asks for the starters back.
-    expect(seedLists(true)).toHaveLength(STARTER_LISTS.length)
   })
 })
 

@@ -224,6 +224,46 @@ export function promptForKeys(state = appState) {
 }
 
 /**
+ * Switch the desk between paper and live.
+ *
+ * The only control on this desk that decides whether money is real, which is why it sits
+ * next to the keys rather than in the settings drawer: entering credentials and choosing
+ * to use them are the same decision, and separating them is how somebody ends up live
+ * without having meant it.
+ *
+ * Not persisted and not restored — `trade.mode` is absent from the settings schema on
+ * purpose, so every reload comes back on paper. A desk that came back live because it was
+ * live yesterday is the same defaulting mistake as a bot that comes back armed.
+ *
+ * @param {object} _state - engine state (unused).
+ * @param {{value?: boolean}} [payload] - true for live.
+ * @returns {string} the mode now in force.
+ */
+export function toggleLiveTrading(_state, payload = {}) {
+  const wantsLive =
+    typeof payload?.value === 'boolean'
+      ? payload.value
+      : String(appState?.trade?.mode ?? 'paper') !== 'live'
+
+  // Going live with no credentials would fill the screen with rejections and read as the
+  // desk being broken. Refused, and said out loud.
+  if (wantsLive && !keyPresence().okx && !keyPresence().etoro) {
+    pushToast('add venue keys before trading live', 'warn')
+    setValue(PATHS.trade.mode, 'paper')
+    return 'paper'
+  }
+
+  const mode = wantsLive ? 'live' : 'paper'
+  setValue(PATHS.trade.mode, mode)
+  pushToast(
+    mode === 'live' ? 'LIVE — orders now go to the venue' : 'paper — orders are simulated',
+    mode === 'live' ? 'warn' : 'success',
+  )
+
+  return mode
+}
+
+/**
  * Register the key actions.
  *
  * @returns {string[]} names registered by this call.
@@ -233,5 +273,8 @@ export function registerKeyActions() {
     registerAction(ACTIONS.keys.submit, submitKeys, { description: 'Save venue credentials' }),
     registerAction(ACTIONS.keys.lock, lockKeys, { description: 'Clear all credentials' }),
     registerAction(ACTIONS.keys.remember, toggleRemember, { description: 'Remember credentials' }),
+    registerAction(ACTIONS.keys.liveTrading, toggleLiveTrading, {
+      description: 'Trade live with real funds instead of on paper',
+    }),
   ]
 }

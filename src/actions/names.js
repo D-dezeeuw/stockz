@@ -130,6 +130,7 @@ export const ACTIONS = Object.freeze({
     submit: 'keys.submit',
     lock: 'keys.lock',
     remember: 'keys.remember',
+    liveTrading: 'keys.liveTrading',
     rebind: 'keys.rebind',
     resetBindings: 'keys.resetBindings',
     panic: 'keys.panic',

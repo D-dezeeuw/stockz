@@ -134,6 +134,13 @@ export const SETTINGS_SCHEMA = Object.freeze([
     default: 0,
   },
   {
+    key: 'autopilot',
+    group: 'risk',
+    label: 'Autopilot: run strategies automatically (paper only)',
+    kind: 'toggle',
+    default: true,
+  },
+  {
     key: 'botArmed',
     group: 'risk',
     label: 'Auto-trade armed',

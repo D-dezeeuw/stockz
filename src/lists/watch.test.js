@@ -1,20 +1,17 @@
 // @vitest-environment jsdom
 import { describe, it, expect, beforeEach } from 'vitest'
 import {
-  AUTO_LIST_ID,
-  AUTO_LIST_NAME,
-  AUTO_LIMIT,
   QUOTE_MS,
-  RERANK_MS,
   autoEnabled,
-  commitAutoList,
-  refreshBlueChips,
+  seedUniverse,
   buildWatchRows,
+  quoteIndex,
   refreshQuotes,
   toggleAutoWatchlist,
   registerWatchActions,
   startWatchlist,
 } from './watch.js'
+import { UNIVERSE, universeSymbols } from './universe.js'
 import { commitLists, currentLists } from './state.js'
 import { seedBlocks } from '../blocks/seed.js'
 import { currentBlocks } from '../blocks/registry.js'
@@ -50,64 +47,49 @@ describe('autoEnabled', () => {
   })
 })
 
-describe('commitAutoList', () => {
-  it('rebuilds its own list, leads with it, and never touches a hand-made one', () => {
+describe('seedUniverse', () => {
+  it('installs the shipped lists, leads with them, and never touches a hand-made one', () => {
     commitLists([{ id: 'mine', name: 'Mine', symbols: ['okx:PEPE-USDT'] }])
     tick()
 
-    commitAutoList(['BTC-USDT', 'ETH-USDT'])
+    const lists = seedUniverse()
     tick()
 
-    const lists = currentLists()
-    // The desk's list leads: it is the one kept current, so it is the one a trader
-    // opening the desk should be looking at.
-    expect(lists[0]).toMatchObject({ id: AUTO_LIST_ID, name: AUTO_LIST_NAME })
-    expect(lists[0].symbols).toEqual(['okx:BTC-USDT', 'okx:ETH-USDT'])
-    expect(appState.settings.activeListId).toBe(AUTO_LIST_ID)
+    // The desk's lists lead, so a trader opening the desk is looking at one of them.
+    expect(lists.map((l) => l.id)).toEqual(['crypto', 'equities', 'mine'])
+    expect(lists[0].symbols).toHaveLength(20)
+    expect(lists[0].symbols[0]).toBe('okx:BTC-USDT')
+    expect(appState.settings.activeListId).toBe('crypto')
 
-    // "The desk manages a list for you" must not mean "the desk edits your lists".
+    // "The desk keeps a list for you" must not mean "the desk edits your lists".
     expect(lists.find((l) => l.id === 'mine').symbols).toEqual(['okx:PEPE-USDT'])
 
-    // A rebuild replaces its own membership rather than appending a second copy.
-    commitAutoList(['SOL-USDT'])
+    // Re-seeding replaces its own lists rather than appending second copies.
+    seedUniverse()
     tick()
-    expect(currentLists().filter((l) => l.id === AUTO_LIST_ID)).toHaveLength(1)
-    expect(currentLists()[0].symbols).toEqual(['okx:SOL-USDT'])
+    expect(currentLists().filter((l) => l.id === 'crypto')).toHaveLength(1)
+    expect(currentLists()).toHaveLength(3)
 
-    // Nothing to commit changes nothing, rather than emptying the watchlist.
-    commitAutoList([])
+    // Switched off, the desk does not install anything at all.
+    commitLists([{ id: 'mine', name: 'Mine', symbols: [] }])
+    setValue(PATHS.settings.autoWatchlist, false)
     tick()
-    expect(currentLists()[0].symbols).toEqual(['okx:SOL-USDT'])
+    expect(seedUniverse().map((l) => l.id)).toEqual(['mine'])
   })
 })
 
-describe('refreshBlueChips', () => {
-  it('ranks the list from live volume and keeps what it has when the venue is down', async () => {
-    expect(await refreshBlueChips({ fetch: serving(TICKERS) })).toEqual({
-      ok: true,
-      symbols: ['BTC-USDT', 'ETH-USDT', 'SOL-USDT'],
-    })
-    tick()
-    expect(currentLists()[0].symbols).toEqual(['okx:BTC-USDT', 'okx:ETH-USDT', 'okx:SOL-USDT'])
+describe('quoteIndex', () => {
+  it('normalises a raw ticker payload and drops what cannot be quoted', () => {
+    expect(quoteIndex(TICKERS)).toHaveLength(3)
+    expect(quoteIndex(TICKERS)[0]).toMatchObject({ symbol: 'BTC-USDT', last: 60000 })
 
-    // Emptying the watchlist because the venue had a bad second would take the desk's
-    // instruments away over a hiccup.
-    const dead = await refreshBlueChips({
-      fetch: async () => {
-        throw new Error('offline')
-      },
-    })
-    expect(dead.ok).toBe(false)
-    tick()
-    expect(currentLists()[0].symbols).toHaveLength(3)
+    // Unlike the watchlist itself, this keeps *everything* quotable - the rows decide
+    // what they want, and a tokenized equity must not be filtered out as "not a pair".
+    expect(quoteIndex([{ instId: 'XNVDA-USDT', last: '10', open24h: '9', volCcy24h: '1' }]))
+      .toHaveLength(1)
 
-    const nothing = await refreshBlueChips({ fetch: serving([]) })
-    expect(nothing).toMatchObject({ ok: false, error: 'no tradeable pairs' })
-
-    // Switched off, the desk does not touch the list at all.
-    setValue(PATHS.settings.autoWatchlist, false)
-    tick()
-    expect(await refreshBlueChips({ fetch: serving(TICKERS) })).toMatchObject({ ok: false })
+    expect(quoteIndex([{ instId: 'BAD-USDT', last: '0' }])).toEqual([])
+    expect(quoteIndex(null)).toEqual([])
   })
 })
 
@@ -138,7 +120,8 @@ describe('buildWatchRows', () => {
 describe('refreshQuotes', () => {
   it('publishes the rows and moves the block off the empty state it shipped stuck in', async () => {
     seedBlocks()
-    commitAutoList(['BTC-USDT', 'ETH-USDT'])
+    commitLists([{ id: 'crypto', name: 'Crypto 20', symbols: ['okx:BTC-USDT', 'okx:ETH-USDT'] }])
+    setValue(PATHS.settings.activeListId, 'crypto')
     tick()
 
     const rows = await refreshQuotes({ fetch: serving(TICKERS) })
@@ -203,16 +186,19 @@ describe('startWatchlist', () => {
       },
     })
 
-    // Quotes tick fast; membership changes on the quarter-hour. A watchlist that
-    // reshuffles while being read is unusable however current it is.
-    expect(timers.map(([, ms]) => ms)).toEqual([QUOTE_MS, RERANK_MS])
-    expect(QUOTE_MS).toBeLessThan(RERANK_MS)
-    expect(AUTO_LIMIT).toBe(8)
+    // One clock: membership is fixed, so only the quotes need re-reading.
+    expect(timers.map(([, ms]) => ms)).toEqual([QUOTE_MS])
 
-    // Ranked and quoted before the first paint rather than a tick later.
+    // Seeded synchronously, so the very first paint already has forty instruments.
+    tick()
+    expect(currentLists()[0].symbols).toHaveLength(20)
+    expect(universeSymbols()).toHaveLength(40)
+
+    // And quoted without waiting for the first interval to come round.
     await new Promise((resolve) => setTimeout(resolve, 0))
     tick()
-    expect(appState.market.watchRows.length).toBeGreaterThan(0)
+    expect(appState.market.watchRows.length).toBe(20)
+    expect(UNIVERSE[0].id).toBe('crypto')
 
     expect(() => stop()).not.toThrow()
     expect(() => startWatchlist({ timer: {} })()).not.toThrow()

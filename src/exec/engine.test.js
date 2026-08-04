@@ -11,8 +11,10 @@ import {
   resetEngine,
   startEngine,
   deskMarket,
+  paperMode,
 } from './engine.js'
 import { appState, setValue, tick, resetState } from '../app/engine.js'
+import { PATHS } from '../state/paths.js'
 import { openPositions, resetPositions } from '../positions/store.js'
 
 beforeEach(() => {
@@ -55,6 +57,43 @@ describe('registerAdapter', () => {
     expect(registerAdapter({ venue: 'half', submit: () => {} })).toBe('')
     expect(registerAdapter(null)).toBe('')
     expect(adapterFor('nope')).toBeNull()
+  })
+})
+
+describe('paperMode', () => {
+  it('treats anything that is not explicitly live as paper', () => {
+    // The safe reading of an absent or unrecognised mode. A desk that defaulted to live
+    // because a setting failed to load would send real orders on a boot failure.
+    expect(paperMode({})).toBe(true)
+    expect(paperMode({ trade: {} })).toBe(true)
+    expect(paperMode({ trade: { mode: 'nonsense' } })).toBe(true)
+    expect(paperMode({ trade: { mode: 'paper' } })).toBe(true)
+
+    expect(paperMode({ trade: { mode: 'live' } })).toBe(false)
+  })
+})
+
+describe('adapterFor', () => {
+  it('diverts every venue to the simulator on paper, and lets live through', () => {
+    const real = fakeAdapter()
+    const paper = { ...fakeAdapter(), venue: 'paper' }
+    registerAdapter(real)
+    registerAdapter(paper)
+
+    // Paper is the default, and the substitution happens on the one lookup every order
+    // goes through — ticket, hotkey, bot and flatten alike.
+    expect(adapterFor('okx').venue).toBe('paper')
+
+    setValue(PATHS.trade.mode, 'live')
+    tick()
+    expect(adapterFor('okx').venue).toBe('okx')
+
+    // An unknown venue stays unknown even on paper: conjuring an adapter for a venue the
+    // desk cannot trade would turn a typo into a position.
+    setValue(PATHS.trade.mode, 'paper')
+    tick()
+    expect(adapterFor('binance')).toBeNull()
+    expect(adapterFor('')).toBeNull()
   })
 })
 
@@ -205,9 +244,12 @@ describe('liveOrders', () => {
 
 describe('startEngine', () => {
   it('brings up the venues this build supports', () => {
-    expect(startEngine({ okx: fakeAdapter() })).toEqual(['okx', 'etoro'])
+    expect(startEngine({ okx: fakeAdapter() })).toEqual(['okx', 'etoro', 'paper'])
     expect(adapterFor('okx')).toBeTruthy()
     expect(adapterFor('etoro')).toBeTruthy()
+    // Always up, whatever the mode: `adapterFor` swaps it in for whichever venue an order
+    // names while the desk is on paper, so it has to exist before the first order.
+    expect(adapterFor('paper')).toBeTruthy()
   })
 })
 
