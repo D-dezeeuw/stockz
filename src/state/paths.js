@@ -264,6 +264,8 @@ export const PATHS = Object.freeze({
     segments: 'analytics.segments',
     fees: 'analytics.fees',
     venueFees: 'analytics.venueFees',
+    underwater: 'analytics.underwater',
+    worstRun: 'analytics.worstRun',
   }),
   journal: Object.freeze({
     trades: 'journal.trades',

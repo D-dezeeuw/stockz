@@ -570,6 +570,15 @@
               <canvas id="fees-canvas" class="fees__bars"></canvas>
               <span class="fees__venue label" data-each="v in analytics.venueFees">{{v.venue}} {{v.fees}} ({{v.fills}} fills)</span>
             </div>
+            <!-- The equity curve shows where the money went; this shows how it felt. The
+                 question that decides whether a strategy is survivable is not "does it make
+                 money" but "how long, and how far down, does it make you wait". -->
+            <div class="underwater" data-if="block.id === 'analytics'">
+              <span class="underwater__depth">{{analytics.worstRun.depthLabel}}</span>
+              <span class="label">max drawdown over {{analytics.worstRun.durationLabel}}{{analytics.worstRun.recovered ? '' : ' · not recovered'}}</span>
+              <canvas id="underwater-canvas" class="underwater__canvas"></canvas>
+              <span class="label" data-if="analytics.worstRun.current < 0">currently {{analytics.worstRun.currentLabel}} below peak</span>
+            </div>
             <!-- An alert set in under three seconds: level, direction, done. -->
             <div class="alerts" data-if="block.id === 'watchlist'">
               <form class="alerts__form" data-action="submit" data-fn="alerts.create"

@@ -11,6 +11,7 @@ import { refreshRanking } from '../analytics/instruments.js'
 import { refreshHoldTimes } from '../analytics/holdtime.js'
 import { refreshStreaks } from '../analytics/streaks.js'
 import { refreshFees } from '../analytics/fees.js'
+import { refreshDrawdown } from '../analytics/drawdown.js'
 
 /**
  * Finding the trades worth studying.
@@ -133,6 +134,7 @@ export function refreshFiltered(rows = refreshJournalRows(), filters = appState.
   refreshHoldTimes(visible)
   refreshStreaks(visible)
   refreshFees(visible)
+  refreshDrawdown(visible)
 
   return visible
 }

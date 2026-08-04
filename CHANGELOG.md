@@ -100,6 +100,19 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
   break-even and then flips sign, at precisely the moment a readable number matters most. A
   losing day reads "—" rather than 0%. Both bars share one scale, since side-by-side bars on
   independent scales are how a chart makes 90% fee drag look like a fair fight.
+- **How it felt, not just where it went** — the equity curve says where the money ended up;
+  the underwater chart says what it cost to sit through. The question that decides whether a
+  strategy is survivable is not "does it make money" but "how long, and how far down, does it
+  make you wait", and a curve that ends up four thousand having spent three weeks eight
+  thousand under water is one almost nobody actually holds through. Measured from the
+  **running peak**, so a trader up two thousand who gives back fifteen hundred sees the
+  drawdown a zero-based chart would draw as a flat green line. A trough with no recovery is
+  reported as **unrecovered** rather than as recovered-at-the-end — "still down" and
+  "recovered on the last trade" are different facts, and the second is the more comfortable
+  lie. Duration is counted in trades rather than milliseconds: a scalper's drawdown is
+  measured in how many more decisions they had to make while under water. The area is filled
+  rather than stroked, because a line at those coordinates reads as a value moving around and
+  an area reads as time spent under, which is the thing that actually breaks people.
 
 ## [0.25.0] — 2026-08-04 — Phase 25: Trade Journal & Time-Travel Audit
 

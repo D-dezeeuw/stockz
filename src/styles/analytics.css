@@ -279,3 +279,26 @@
   grid-column: 1 / -1;
   color: var(--ink-muted);
 }
+
+/* The underwater area. Orange and filled: the area is the message — a line at the same
+   coordinates reads as a value moving around, and an area reads as time spent under water. */
+.underwater {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--sp-1) var(--sp-2);
+  align-items: baseline;
+  margin-block-start: var(--sp-2);
+}
+
+.underwater__depth {
+  color: var(--orange);
+  font-size: var(--fs-3);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.underwater__canvas {
+  grid-column: 1 / -1;
+  inline-size: 100%;
+  block-size: 3.5rem;
+}

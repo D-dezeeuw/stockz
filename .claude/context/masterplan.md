@@ -4349,16 +4349,16 @@
 **What:** An underwater equity chart plus max drawdown depth, duration and recovery stats, so the user knows the worst pain the strategy inflicts.
 **How:** drawdownSeries() and maxDrawdown() fns over the equity series rendered as a canvas area chart with a marked deepest trough.
 
-- [ ] **T26.8.1 - Cut drawdown branch** - What: Drawdown work stays off main. How: git checkout -b feature/f26.8-drawdown from main.
-- [ ] **T26.8.2 - Implement drawdownSeries()** - What: Distance below the running equity peak at every trade. How: Pure drawdownSeries(equity) in src/analytics/drawdown.js tracking the running max and emitting peak-minus-equity points.
-- [ ] **T26.8.3 - Implement maxDrawdown()** - What: Depth, duration and recovery time of the worst slide. How: maxDrawdown(series) locating the deepest trough with its peak start, trough timestamp and recovery index or null if unrecovered.
-- [ ] **T26.8.4 - Render the underwater area** - What: Every drawdown visible as an orange lake under zero. How: drawUnderwater(ctx, series, size) filling the area between zero and the drawdown line with translucent orange on canvas.
-- [ ] **T26.8.5 - Mark the maximum drawdown** - What: The single worst moment labeled on the chart. How: Draw a marker at the trough with a depth label and a bracket spanning peak to recovery along the time axis.
-- [ ] **T26.8.6 - Add drawdown stat tiles** - What: Max depth, duration and current drawdown as plain numbers. How: Three tiles bound to a computed('analytics.drawdown') exposing maxDepth, maxDuration and currentDepth.
-- [ ] **T26.8.7 - Track live current drawdown** - What: The user always knows how far below peak the session sits. How: Extend the computed to derive currentDepth from the latest equity point, tinting the tile orange while below peak.
-- [ ] **T26.8.8 - Wire redraws and hover** - What: The lake deepens live and any point is inspectable. How: Spektrum watch scheduling drawUnderwater on trade closes plus pointermove tooltip showing depth and date at the cursor.
-- [ ] **T26.8.9 - Write single unit tests for drawdown fns** - What: drawdownSeries and maxDrawdown each proven by one test. How: One Vitest test per function in drawdown.test.js including an unrecovered-trough fixture, run via vitest run -t.
-- [ ] **T26.8.10 - Verify and merge drawdown** - What: Drawdown truth lands green on main. How: Run targeted tests, verify the marked trough matches a hand-computed fixture, merge the feature branch.
+- [x] **T26.8.1 - Cut drawdown branch** - What: Drawdown work stays off main. How: git checkout -b feature/f26.8-drawdown from main.
+- [x] **T26.8.2 - Implement drawdownSeries()** - What: Distance below the running equity peak at every trade. How: Pure drawdownSeries(equity) in src/analytics/drawdown.js tracking the running max and emitting peak-minus-equity points.
+- [x] **T26.8.3 - Implement maxDrawdown()** - What: Depth, duration and recovery time of the worst slide. How: maxDrawdown(series) locating the deepest trough with its peak start, trough timestamp and recovery index or null if unrecovered.
+- [x] **T26.8.4 - Render the underwater area** - What: Every drawdown visible as an orange lake under zero. How: drawUnderwater(ctx, series, size) filling the area between zero and the drawdown line with translucent orange on canvas.
+- [x] **T26.8.5 - Mark the maximum drawdown** - What: The single worst moment labeled on the chart. How: Draw a marker at the trough with a depth label and a bracket spanning peak to recovery along the time axis.
+- [x] **T26.8.6 - Add drawdown stat tiles** - What: Max depth, duration and current drawdown as plain numbers. How: Three tiles bound to a computed('analytics.drawdown') exposing maxDepth, maxDuration and currentDepth.
+- [x] **T26.8.7 - Track live current drawdown** - What: The user always knows how far below peak the session sits. How: Extend the computed to derive currentDepth from the latest equity point, tinting the tile orange while below peak.
+- [x] **T26.8.8 - Wire redraws and hover** - What: The lake deepens live and any point is inspectable. How: Spektrum watch scheduling drawUnderwater on trade closes plus pointermove tooltip showing depth and date at the cursor.
+- [x] **T26.8.9 - Write single unit tests for drawdown fns** - What: drawdownSeries and maxDrawdown each proven by one test. How: One Vitest test per function in drawdown.test.js including an unrecovered-trough fixture, run via vitest run -t.
+- [x] **T26.8.10 - Verify and merge drawdown** - What: Drawdown truth lands green on main. How: Run targeted tests, verify the marked trough matches a hand-computed fixture, merge the feature branch.
 
 ### F26.9 - Period Selector: Day/Week/Month/All
 

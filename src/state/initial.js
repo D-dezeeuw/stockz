@@ -247,6 +247,8 @@ export function initialState(overrides = {}) {
     [PATHS.analytics.segments]: [],
     [PATHS.analytics.fees]: { gross: 0, fees: 0, net: 0, ratio: 0, ratioLabel: '—', tone: 'flat', trades: 0 },
     [PATHS.analytics.venueFees]: [],
+    [PATHS.analytics.underwater]: [],
+    [PATHS.analytics.worstRun]: { depth: 0, duration: 0, recovered: false, current: 0, depthLabel: '0.00', durationLabel: '0 trades', currentLabel: '0.00' },
 
     // journal
     [PATHS.journal.trades]: [],
