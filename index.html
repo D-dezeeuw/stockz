@@ -270,10 +270,12 @@
               </p>
               <div class="ticket__buttons">
                 <button type="button" class="ticket__go ticket__go--buy" data-action="click"
-                        data-fn="ticket.setSide" data-side="buy" :disabled="!trade.armed">BUY</button>
+                        data-fn="ticket.submit" data-side="buy" :disabled="!trade.armed">BUY</button>
                 <button type="button" class="ticket__go ticket__go--sell" data-action="click"
-                        data-fn="ticket.setSide" data-side="sell" :disabled="!trade.armed">SELL</button>
+                        data-fn="ticket.submit" data-side="sell" :disabled="!trade.armed">SELL</button>
               </div>
+              <!-- Why the last click did not send, in the trader's own words. -->
+              <p class="ticket__reject" data-if="trade.lastReject">{{trade.lastReject}}</p>
               <button type="button" class="ticket__arm" data-action="click" data-fn="ticket.arm"
                       :class="trade.armed ? 'ticket__arm ticket__arm--on' : 'ticket__arm'">{{trade.armed ? 'ARMED' : 'SAFE'}}</button>
             </div>

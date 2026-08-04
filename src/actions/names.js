@@ -31,6 +31,7 @@ export const ACTIONS = Object.freeze({
     arm: 'ticket.arm',
     applyPreset: 'ticket.applyPreset',
     stepQty: 'ticket.stepQty',
+    submit: 'ticket.submit',
   }),
   app: Object.freeze({
     reset: 'app.reset',

@@ -136,3 +136,10 @@
     animation: none;
   }
 }
+
+.ticket__reject {
+  margin: 0;
+  color: var(--orange);
+  font-size: var(--font-size-xs, 0.6875rem);
+  letter-spacing: 0.04em;
+}
