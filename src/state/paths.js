@@ -68,6 +68,7 @@ export const PATHS = Object.freeze({
     slippage: 'ui.slippage',
     spreadAlert: 'ui.spreadAlert',
     session: 'ui.session',
+    fees: 'ui.fees',
     captureFor: 'ui.captureFor',
     capturePreview: 'ui.capturePreview',
   }),

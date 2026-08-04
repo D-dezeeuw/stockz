@@ -12,6 +12,17 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ### Added
 
+- **Fee burn meter** — a scalper's edge is measured in ticks and their fees are measured in
+  the same ticks, so the two numbers belong on the same screen: a hundred round trips at a
+  two-tick edge and a one-tick fee is a day that reads as a win on gross and is a loss in
+  the account. **What the venue actually billed always outranks the estimate of it** — the
+  rate card (OKX spot 8/10bp, perpetuals 2/5bp, EToro's ~1% markup, which is a fee by
+  another name) exists only for the fills nobody has been charged for yet, and an unknown
+  venue is priced as OKX rather than as free, because a zero-fee estimate is the one error
+  that makes a losing strategy look profitable. The hourly burn rate is **floored at five
+  minutes of session**: extrapolating an hour from the first ninety seconds is
+  arithmetically true and practically a lie, and a tile that prints a four-figure rate off
+  two trades is a tile nobody reads by lunchtime.
 - **Session tiles: pace, streak and traded size** — three readings a scalper takes on
   themselves rather than on the market. Pace is **extrapolated from a sliding hour, not
   counted since the open**: ten trades in the last ten minutes is a pace of sixty an hour,

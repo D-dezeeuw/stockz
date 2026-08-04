@@ -12,6 +12,7 @@ import { sample as sampleEquity } from '../../positions/equity.js'
 import { refreshHud, spreadBps } from '../../hud/state.js'
 import { flushQuality } from '../../hud/quality.js'
 import { refreshSession } from '../../hud/session.js'
+import { flushFees } from '../../hud/fees.js'
 import { evictStale } from '../../exec/latency.js'
 import { setValue, appState } from '../../app/engine.js'
 import { PATHS } from '../../state/paths.js'
@@ -125,6 +126,7 @@ export function flushFeed(focus, options = {}) {
   sampleEquity(Number(appState.trade?.dayTotal) || 0, at)
   refreshHud({ now: at })
   refreshSession({ now: at })
+  flushFees({ now: at })
   flushQuality(spreadBps())
   // Swept on the same frame: an order whose ack never came would otherwise sit in the
   // latency map for the life of the session.
