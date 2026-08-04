@@ -1,5 +1,6 @@
 import { describe, serialize, replay, history } from './engine.js'
 import { createLogger } from '../utils/log.js'
+import { describeStrategies } from '../strategy/engine.js'
 
 /**
  * Developer instrumentation — live in dev, absent in production.
@@ -72,6 +73,9 @@ export function devDumpState() {
   return {
     state: manifest.state,
     historyLength: history.length,
+    // The strategies the desk knows about, with the hooks each one actually implements —
+    // "why is my strategy not firing" is answered here rather than by reading its module.
+    strategies: describeStrategies(),
     json: serialize(),
   }
 }
