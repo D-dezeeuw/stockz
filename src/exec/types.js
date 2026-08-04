@@ -145,3 +145,42 @@ export function normalizeReject(error) {
 export function isSettled(state) {
   return TERMINAL.includes(String(state ?? ''))
 }
+
+/**
+ * Snap a size and price onto the venue's grid.
+ *
+ * An off-grid value is rejected outright by every venue, which costs a full round trip to
+ * learn something the desk already knew. Rounding here, once, in the shape every adapter
+ * shares, is cheaper than each adapter remembering to.
+ *
+ * @param {{size?: number, price?: number}} values - the raw values.
+ * @param {{lotSize?: number, tickSize?: number}} grid - the instrument's increments.
+ * @returns {{size: number, price: number}} the snapped values.
+ */
+export function roundToLotTick(values, grid = {}) {
+  const lot = Number(grid.lotSize)
+  const tick = Number(grid.tickSize)
+
+  const rawSize = Number(values?.size)
+  const rawPrice = Number(values?.price)
+
+  // Size rounds *down*: rounding a size up can exceed a limit that was just checked, and
+  // the trader asked for "at most this".
+  const size =
+    Number.isFinite(rawSize) && rawSize > 0
+      ? Number.isFinite(lot) && lot > 0
+        ? Number((Math.floor(rawSize / lot) * lot).toFixed(10))
+        : rawSize
+      : 0
+
+  // Price rounds to *nearest*: a price is a target, and moving it a whole tick in one
+  // direction every time would systematically place worse than asked.
+  const price =
+    Number.isFinite(rawPrice) && rawPrice > 0
+      ? Number.isFinite(tick) && tick > 0
+        ? Number((Math.round(rawPrice / tick) * tick).toFixed(10))
+        : rawPrice
+      : 0
+
+  return { size, price }
+}

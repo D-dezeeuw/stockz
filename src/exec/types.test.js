@@ -4,6 +4,7 @@ import {
   advanceOrderState,
   normalizeReject,
   isSettled,
+  roundToLotTick,
   TIF,
   ORDER_TYPES,
   REJECT_REASONS,
@@ -96,5 +97,31 @@ describe('isSettled', () => {
     expect(isSettled('live')).toBe(false)
     expect(isSettled('partial')).toBe(false)
     expect(isSettled(null)).toBe(false)
+  })
+})
+
+describe('roundToLotTick', () => {
+  it('rounds size down and price to nearest, which are different asks', () => {
+    // Size down: rounding up can exceed a limit that was just checked, and the trader
+    // asked for "at most this".
+    expect(roundToLotTick({ size: 1.279, price: 100.04 }, { lotSize: 0.01, tickSize: 0.1 })).toEqual(
+      { size: 1.27, price: 100 },
+    )
+
+    // Price to nearest: a price is a target, and always moving it one way would place
+    // systematically worse than asked.
+    expect(roundToLotTick({ size: 1, price: 100.06 }, { lotSize: 1, tickSize: 0.1 }).price).toBe(
+      100.1,
+    )
+
+    // Under one whole lot is no order at all.
+    expect(roundToLotTick({ size: 0.5, price: 100 }, { lotSize: 1 }).size).toBe(0)
+
+    // No grid known yet leaves the values alone rather than zeroing the ticket.
+    expect(roundToLotTick({ size: 1.279, price: 100.04 }, {})).toEqual({
+      size: 1.279,
+      price: 100.04,
+    })
+    expect(roundToLotTick({}, { lotSize: 1, tickSize: 1 })).toEqual({ size: 0, price: 0 })
   })
 })

@@ -98,6 +98,8 @@ export const PATHS = Object.freeze({
     bid: 'market.bid',
     ask: 'market.ask',
     quoteTs: 'market.quoteTs',
+    tickSize: 'market.tickSize',
+    lotSize: 'market.lotSize',
     book: 'market.book',
     ladder: 'market.ladder',
     tape: 'market.tape',
