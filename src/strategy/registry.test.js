@@ -178,13 +178,13 @@ describe('resetStrategies', () => {
 describe('registerStrategyActions', () => {
   it('registers the built-ins once and wires the stop button', () => {
     expect(registerStrategyActions()).toBe(ACTIONS.strategy.stop)
-    expect(knownStrategies().map((s) => s.id)).toEqual(['noop', 'composite'])
+    expect(knownStrategies().map((s) => s.id)).toEqual(['noop', 'momentum-burst', 'composite'])
 
     // Boot may run twice in a hot reload. The action registry rejects the duplicate — its
     // job — but the built-ins must not be registered a second time behind it.
     clearActions()
     registerStrategyActions()
-    expect(knownStrategies()).toHaveLength(2)
+    expect(knownStrategies()).toHaveLength(3)
 
     const bus = fakeBus()
     const run = startStrategy('noop', 'okx:BTC-USDT', { subscribe: bus.subscribe })

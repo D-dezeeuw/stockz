@@ -168,6 +168,11 @@ export function createStrategyContext(options = {}) {
     // snapshot rather than the live store — a strategy that could reach the store could
     // mutate it under the next strategy in the run.
     ind: Object.freeze(indicatorKit(options.ind)),
+    // The strategy's own scratchpad: created here, populated by `init`, read and written by
+    // the hooks. The context is frozen but this object is not — which is what lets a
+    // strategy keep a ring buffer or a running baseline without a per-tick allocation, and
+    // without module scope that two runs on two instruments would share.
+    state: options.state ?? {},
     log: options.log ?? createLogger(`strategy:${id}`),
     // The clock is injected. A strategy that reads the wall clock cannot be replayed, and
     // replay is how a signal gets explained after the fact.

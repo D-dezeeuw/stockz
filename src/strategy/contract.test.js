@@ -85,8 +85,18 @@ describe('createStrategyContext', () => {
 
     // No setValue, no order function, no live store — the unsafe thing is unreachable
     // rather than merely discouraged.
-    expect(Object.keys(ctx).sort()).toEqual(['ind', 'instrument', 'log', 'now', 'params'])
+    expect(Object.keys(ctx).sort()).toEqual([
+      'ind',
+      'instrument',
+      'log',
+      'now',
+      'params',
+      'state',
+    ])
     expect(Object.isFrozen(ctx)).toBe(true)
+    // The scratchpad is the one mutable thing: a strategy keeping a ring buffer needs
+    // somewhere to put it that two runs on two instruments do not share.
+    expect(Object.isFrozen(ctx.state)).toBe(false)
     expect(Object.isFrozen(ctx.ind)).toBe(true)
 
     expect(createStrategyContext().now).toBe(0)

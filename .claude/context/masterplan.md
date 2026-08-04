@@ -3402,16 +3402,16 @@
 **What:** Entries fire the instant tick velocity spikes, so the user rides momentum bursts before the move is obvious.
 **How:** Rolling tick-velocity and baseline defineFns on the phase-20 strategy engine emitting entries via trigger().
 
-- [ ] **T21.1.1 - Branch and scaffold momentum module** - What: An isolated branch and file skeleton so the momentum strategy ships independently. How: git checkout -b feature/f21-1-momentum-burst; create src/strategies/momentumBurst.js exporting a strategy descriptor object.
-- [ ] **T21.1.2 - Build tickVelocity fn** - What: A raw speed metric: ticks per second over a rolling window. How: Implement pure tickVelocity(ticks, windowMs) on a timestamp ring buffer and register it with defineFn.
-- [ ] **T21.1.3 - Build velocityBaseline fn** - What: A calm-market reference so real spikes stand out from noise. How: Implement EMA velocityBaseline(prev, sample, alpha) updated per tick inside the strategy state slice.
-- [ ] **T21.1.4 - Build burstSignal fn** - What: The go/no-go call: velocity above N x baseline fires long or short. How: Implement burstSignal(velocity, baseline, multiple, priceDelta) returning null, long or short from the spike-window delta sign.
-- [ ] **T21.1.5 - Wire strategy into engine** - What: The strategy runs live on streaming ticks without manual steps. How: Register momentumBurst via addSystem() on the phase-11 tick channel and emit trigger('strategy:signal') on fire.
-- [ ] **T21.1.6 - Build decayExit fn** - What: Trades close fast on a time stop or when the burst dies. How: Implement decayExit(entryTs, velocity, baseline, timeStopMs) and hook it into the engine's exit evaluation.
-- [ ] **T21.1.7 - Expose tunable params** - What: windowMs, multiple and timeStopMs adjustable per user without code edits. How: Hold params under setValue('strat.momentum.params') and read them through computed() in the signal path.
-- [ ] **T21.1.8 - Add HUD status row** - What: Armed and fired state visible at a glance in the strategy list block. How: Add a row template with {{state}} binding and data-if fired flash using design-system green/orange tokens.
-- [ ] **T21.1.9 - Write single unit tests** - What: Proof each signal fn is correct in isolation. How: One Vitest test each for tickVelocity, velocityBaseline, burstSignal and decayExit, run with vitest -t per function only.
-- [ ] **T21.1.10 - Verify on replay and merge** - What: A proven strategy landing on main. How: Replay a recorded OKX tick session from IndexedDB, confirm expected fires, run ESLint, merge the branch into main.
+- [x] **T21.1.1 - Branch and scaffold momentum module** - What: An isolated branch and file skeleton so the momentum strategy ships independently. How: git checkout -b feature/f21-1-momentum-burst; create src/strategies/momentumBurst.js exporting a strategy descriptor object.
+- [x] **T21.1.2 - Build tickVelocity fn** - What: A raw speed metric: ticks per second over a rolling window. How: Implement pure tickVelocity(ticks, windowMs) on a timestamp ring buffer and register it with defineFn.
+- [x] **T21.1.3 - Build velocityBaseline fn** - What: A calm-market reference so real spikes stand out from noise. How: Implement EMA velocityBaseline(prev, sample, alpha) updated per tick inside the strategy state slice.
+- [x] **T21.1.4 - Build burstSignal fn** - What: The go/no-go call: velocity above N x baseline fires long or short. How: Implement burstSignal(velocity, baseline, multiple, priceDelta) returning null, long or short from the spike-window delta sign.
+- [x] **T21.1.5 - Wire strategy into engine** - What: The strategy runs live on streaming ticks without manual steps. How: Register momentumBurst via addSystem() on the phase-11 tick channel and emit trigger('strategy:signal') on fire.
+- [x] **T21.1.6 - Build decayExit fn** - What: Trades close fast on a time stop or when the burst dies. How: Implement decayExit(entryTs, velocity, baseline, timeStopMs) and hook it into the engine's exit evaluation.
+- [x] **T21.1.7 - Expose tunable params** - What: windowMs, multiple and timeStopMs adjustable per user without code edits. How: Hold params under setValue('strat.momentum.params') and read them through computed() in the signal path.
+- [x] **T21.1.8 - Add HUD status row** - What: Armed and fired state visible at a glance in the strategy list block. How: Add a row template with {{state}} binding and data-if fired flash using design-system green/orange tokens.
+- [x] **T21.1.9 - Write single unit tests** - What: Proof each signal fn is correct in isolation. How: One Vitest test each for tickVelocity, velocityBaseline, burstSignal and decayExit, run with vitest -t per function only.
+- [x] **T21.1.10 - Verify on replay and merge** - What: A proven strategy landing on main. How: Replay a recorded OKX tick session from IndexedDB, confirm expected fires, run ESLint, merge the branch into main.
 
 ### F21.2 - VWAP Mean Reversion Bands
 
