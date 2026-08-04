@@ -1184,6 +1184,28 @@
                 </div>
               </div>
               <p class="label" data-if="trade.paperResting.length === 0">no working paper orders</p>
+              <!-- Is the practice translating? The only question that matters about paper
+                   trading, and the one nobody can answer from two separate screens. Both
+                   books come from the same journal through the same statistics, so the
+                   difference is trading rather than an artefact of the code. -->
+              <div class="book-cmp" data-if="trade.bookCompare.rows.length > 0">
+                <div class="cmp__row">
+                  <span class="cmp__label label">stat</span>
+                  <span class="cmp__a label">paper</span>
+                  <span class="cmp__b label">live</span>
+                  <span class="cmp__delta label">Δ</span>
+                </div>
+                <div class="cmp" data-each="trade.bookCompare.rows" data-as="r">
+                  <div class="cmp__row">
+                    <span class="cmp__label label">{{r.label}}</span>
+                    <span class="cmp__a num">{{r.paper}}</span>
+                    <span class="cmp__b num">{{r.live}}</span>
+                    <span :class="'cmp__delta num cmp__delta--' + r.tone">{{r.delta}}</span>
+                  </div>
+                </div>
+                <canvas id="book-canvas" class="bt-chart"></canvas>
+                <p class="label" data-if="trade.bookCompare.hint">{{trade.bookCompare.hint}}</p>
+              </div>
               <!-- Held, not confirmed. A dialog is wrong by this project's rules, and a
                    stray click that erases a week of practice is worse than one that costs
                    a trade. -->

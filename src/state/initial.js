@@ -172,6 +172,7 @@ export function initialState(overrides = {}) {
     [PATHS.trade.paperResting]: [],
     [PATHS.trade.paperBalance]: 10000,
     [PATHS.trade.resetHoldPct]: 0,
+    [PATHS.trade.bookCompare]: { rows: [], curves: [], hint: 'no practice trades yet' },
     [PATHS.trade.paperAccount]: {
       balance: 10000,
       equity: 10000,
