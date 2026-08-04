@@ -55,6 +55,7 @@ export const PATHS = Object.freeze({
     columns: 'ui.columns',
     density: 'ui.density',
     keysPresent: 'ui.keysPresent',
+    candleInterval: 'ui.candleInterval',
   }),
   settings: Object.freeze({
     theme: 'settings.theme',
@@ -70,6 +71,7 @@ export const PATHS = Object.freeze({
     maxDailyLoss: 'settings.maxDailyLoss',
     maxPosition: 'settings.maxPosition',
     favourites: 'settings.favourites',
+    debugCharts: 'settings.debugCharts',
   }),
   market: Object.freeze({
     venues: 'market.venues',

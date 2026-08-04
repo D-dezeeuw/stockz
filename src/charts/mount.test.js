@@ -1,9 +1,13 @@
 // @vitest-environment jsdom
 import { describe, it, expect, beforeEach } from 'vitest'
-import { tickWindow, markOnTick, mountTickChart } from './mount.js'
+import { tickWindow, markOnTick, mountTickChart, mountCandleChart, startChart } from './mount.js'
 import { publishTick, resetBus } from '../pipeline/bus.js'
+import { addTrade, resetCandles } from '../pipeline/candles.js'
 
-beforeEach(() => resetBus())
+beforeEach(() => {
+  resetBus()
+  resetCandles()
+})
 
 /** A canvas double with a recording 2D context. */
 function fakeCanvas() {
@@ -30,6 +34,7 @@ function fakeCanvas() {
       moveTo: record('moveTo'),
       lineTo: record('lineTo'),
       stroke: record('stroke'),
+      fillRect: record('fillRect'),
       fillText: record('fillText'),
       arc: record('arc'),
       fill: record('fill'),
@@ -113,5 +118,62 @@ describe('mountTickChart', () => {
     chart.dispose()
     expect(chart.loop.running()).toBe(false)
     expect(chart.draw(null, { width: 10, height: 10 })).toBe(0)
+  })
+})
+
+describe('mountCandleChart', () => {
+  it('frames the series by its wicks and draws volume under the bodies', () => {
+    const canvas = fakeCanvas()
+    const frames = []
+    let interval = '1s'
+
+    addTrade('BTC-USDT', { px: 100, sz: 2, ts: 1000 })
+    addTrade('BTC-USDT', { px: 130, sz: 1, ts: 1400 })
+    addTrade('BTC-USDT', { px: 110, sz: 3, ts: 2000 })
+
+    const chart = mountCandleChart(canvas, {
+      symbol: 'BTC-USDT',
+      interval: () => interval,
+      raf: (fn) => frames.push(fn),
+    })
+
+    frames.shift()()
+    expect(chart.loop.drawCount()).toBe(1)
+
+    const bars = canvas.calls.filter(([name]) => name === 'fillRect')
+    // Two candles: two bodies plus two volume bars, all sharing one x geometry.
+    expect(bars).toHaveLength(4)
+    // The spike to 130 is inside the frame — a range built from closes would clip it.
+    expect(bars.every(([, x]) => x >= 0 && x <= 200)).toBe(true)
+
+    // Flipping the interval is just a different read of the same prints.
+    interval = '1m'
+    chart.loop.markDirty()
+    frames.shift()()
+    expect(chart.loop.drawCount()).toBe(2)
+
+    chart.dispose()
+    expect(chart.draw(null, { width: 10, height: 10 })).toBe(0)
+  })
+})
+
+describe('startChart', () => {
+  it('runs any renderer on a loop that stops cleanly when disposed', () => {
+    const frames = []
+    const drawn = []
+    const chart = startChart(
+      (_ctx, size) => drawn.push(size),
+      { raf: (fn) => frames.push(fn), size: () => ({ width: 10, height: 5 }), symbol: 'X' },
+    )
+
+    frames.shift()()
+    expect(drawn).toEqual([{ width: 10, height: 5 }])
+    expect(chart.loop.running()).toBe(true)
+
+    // Dispose stops the loop and unsubscribes, so a later print draws nothing.
+    chart.dispose()
+    publishTick({ symbol: 'X', px: 1, ts: 1, venue: 'okx' })
+    expect(chart.loop.frame()).toBe(false)
+    expect(drawn).toHaveLength(1)
   })
 })

@@ -12,6 +12,11 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ### Added
 
+- **Micro-candles with a volume band** — 1s/5s/1m bodies and wicks at scalping
+  resolution, framed by their wicks so a spike is never clipped, with the volume
+  histogram sharing the candles' x geometry exactly: bars that drift a pixel from their
+  candle lie about which second the size traded in. The interval toggle ignores unknown
+  values rather than leaving the desk without candles. (F13.4)
 - **Tick line chart** — the raw wiggle, drawn honestly and cheaply: a feed stall becomes
   a gap rather than a flat line implying the market sat still, and thousands of prints
   collapse to one min/max segment per pixel column so a one-print spike survives

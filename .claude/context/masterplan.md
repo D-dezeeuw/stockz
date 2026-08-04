@@ -2114,16 +2114,16 @@
 **What:** 1s and 5s candles with volume bars - micro-structure for timing entries and exits.
 **How:** Bucket ticks into OHLCV aggregates and draw candle bodies, wicks, and a volume histogram on the shared canvas surface.
 
-- [ ] **T13.4.1 - Branch micro-candle work** - What: Candle rendering isolated from the tick line. How: git checkout -b feature/13-4-micro-candles from main.
-- [ ] **T13.4.2 - Implement bucketTicks** - What: Ticks rolled into exact 1s/5s OHLCV buckets. How: Pure fn flooring timestamps via intervalStart and folding open/high/low/close/volume.
-- [ ] **T13.4.3 - Build the rolling candle store** - What: Bounded candle history that never leaks memory. How: Fixed-length circular array per interval updated in place, exposed as a Spektrum value.
-- [ ] **T13.4.4 - Build drawCandles renderer** - What: The classic candle read at micro scale. How: Bodies and wicks via fillRect and stroke, green up and orange down from the chart palette.
-- [ ] **T13.4.5 - Draw the volume histogram band** - What: The size behind every move visible at a glance. How: Scaled volume bars in a bottom band sharing the candle time scale.
-- [ ] **T13.4.6 - Animate the live forming candle** - What: The current second breathing in real time. How: Update the open bucket in place per tick, mark dirty, and close it exactly on interval rollover.
-- [ ] **T13.4.7 - Add the interval toggle** - What: Flip 1s/5s instantly mid-trade. How: data-action buttons calling setValue on candleInterval with a computed re-bucketing from the ring buffer.
-- [ ] **T13.4.8 - Style candle metrics** - What: Candles match the design system in both themes. How: Wick width, body inset, and volume alpha read from phase 3 CSS custom properties at palette load.
-- [ ] **T13.4.9 - Write single unit tests for candle fns** - What: Aggregation boundaries proven correct. How: One Vitest test each for bucketTicks and intervalStart, run individually via vitest run -t.
-- [ ] **T13.4.10 - Verify and merge micro-candles** - What: A second lens on price live for every instrument. How: Targeted tests plus ESLint green, then merge feature/13-4-micro-candles into main.
+- [x] **T13.4.1 - Branch micro-candle work** - What: Candle rendering isolated from the tick line. How: git checkout -b feature/13-4-micro-candles from main.
+- [x] **T13.4.2 - Implement bucketTicks** - What: Ticks rolled into exact 1s/5s OHLCV buckets. How: Pure fn flooring timestamps via intervalStart and folding open/high/low/close/volume.
+- [x] **T13.4.3 - Build the rolling candle store** - What: Bounded candle history that never leaks memory. How: Fixed-length circular array per interval updated in place, exposed as a Spektrum value.
+- [x] **T13.4.4 - Build drawCandles renderer** - What: The classic candle read at micro scale. How: Bodies and wicks via fillRect and stroke, green up and orange down from the chart palette.
+- [x] **T13.4.5 - Draw the volume histogram band** - What: The size behind every move visible at a glance. How: Scaled volume bars in a bottom band sharing the candle time scale.
+- [x] **T13.4.6 - Animate the live forming candle** - What: The current second breathing in real time. How: Update the open bucket in place per tick, mark dirty, and close it exactly on interval rollover.
+- [x] **T13.4.7 - Add the interval toggle** - What: Flip 1s/5s instantly mid-trade. How: data-action buttons calling setValue on candleInterval with a computed re-bucketing from the ring buffer.
+- [x] **T13.4.8 - Style candle metrics** - What: Candles match the design system in both themes. How: Wick width, body inset, and volume alpha read from phase 3 CSS custom properties at palette load.
+- [x] **T13.4.9 - Write single unit tests for candle fns** - What: Aggregation boundaries proven correct. How: One Vitest test each for bucketTicks and intervalStart, run individually via vitest run -t.
+- [x] **T13.4.10 - Verify and merge micro-candles** - What: A second lens on price live for every instrument. How: Targeted tests plus ESLint green, then merge feature/13-4-micro-candles into main.
 
 ### F13.5 - Crosshair & Readout
 
