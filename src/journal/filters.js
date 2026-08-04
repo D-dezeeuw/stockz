@@ -8,6 +8,7 @@ import { refreshKpis } from '../analytics/kpis.js'
 import { refreshEquity } from '../analytics/equity.js'
 import { refreshHeatmap } from '../analytics/heatmap.js'
 import { refreshRanking } from '../analytics/instruments.js'
+import { refreshHoldTimes } from '../analytics/holdtime.js'
 
 /**
  * Finding the trades worth studying.
@@ -127,6 +128,7 @@ export function refreshFiltered(rows = refreshJournalRows(), filters = appState.
   refreshEquity(visible)
   refreshHeatmap(visible)
   refreshRanking(visible)
+  refreshHoldTimes(visible)
 
   return visible
 }

@@ -540,6 +540,14 @@
             </div>
             <button type="button" class="chip" data-if="block.id === 'analytics' &amp;&amp; analytics.rankingTotal > 10"
                     data-action="click" data-fn="analytics.expandRanking">{{analytics.rankingExpanded ? 'top 10' : 'show all'}}</button>
+            <!-- The most common way a scalper stops being one is by holding: a good entry,
+                 watched working, then stayed in long past the point the move was over. The
+                 P&L nets it out and the win rate counts it as one loss; here it is a bucket
+                 with plenty of trades and a red average. -->
+            <div class="holds" data-if="block.id === 'analytics'">
+              <canvas id="holds-canvas" class="holds__canvas"></canvas>
+              <p class="holds__centre label">median hold {{analytics.holdCentre.medianLabel}} · mean {{analytics.holdCentre.meanLabel}}</p>
+            </div>
             <!-- An alert set in under three seconds: level, direction, done. -->
             <div class="alerts" data-if="block.id === 'watchlist'">
               <form class="alerts__form" data-action="submit" data-fn="alerts.create"

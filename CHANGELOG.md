@@ -62,6 +62,21 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
   as "no data" and that is a different claim from "barely made anything". Rows are DOM rather
   than canvas — the same reason the ladder is — so one click lands on that instrument's trades
   in the journal, which is the whole reason to look at the ranking at all.
+- **How long the edge actually lives** — the most common way a scalper stops being one is by
+  holding: a good entry, watched working, then stayed in long past the point the move was
+  over. That failure is invisible everywhere else on this desk — the P&L nets it out, the win
+  rate counts it as one loss, the equity curve shows a dip indistinguishable from a bad trade
+  — and it is completely obvious here as a bucket with plenty of trades and a red average.
+  Bins are **logarithmic** because they have to be: a linear axis spanning five seconds to
+  half an hour puts ninety percent of a scalper's trades in the first bar, which tells the
+  reader nothing except that they scalp. Bars are coloured by **average** P&L per bucket, not
+  total, since total makes the busiest bucket the greenest by construction and the busiest
+  bucket is exactly the one whose per-trade quality matters most. Bin boundaries are
+  upper-exclusive, so a round-number hold lands in the faster bin rather than every one of
+  them sliding a bin slower. The centre line reports the **median** as well as the mean: one
+  trade held overnight by accident drags a mean past every hold the trader intends to take.
+  The colour scale is shared with the heatmap on purpose — two charts using different colour
+  languages for the same idea is two charts the reader has to learn separately.
 
 ## [0.25.0] — 2026-08-04 — Phase 25: Trade Journal & Time-Travel Audit
 
