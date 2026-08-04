@@ -3681,16 +3681,16 @@
 **What:** The user silences everything with one switch or a timed snooze while the log still records every event.
 **How:** dnd and snoozeUntil keys in Spektrum state consulted by all dispatchers, header toggle, addAsync snooze expiry.
 
-- [ ] **T22.8.1 - Branch and scaffold DND module** - What: A branch for the master silence switch. How: git checkout -b feature/f22-8-dnd; create src/alerts/dnd.js with dnd and snoozeUntil state keys.
-- [ ] **T22.8.2 - Build isSilenced fn** - What: One truth for whether outputs may make noise. How: Implement isSilenced(dnd, snoozeUntil, nowTs) returning true on the flag or an active snooze.
-- [ ] **T22.8.3 - Gate all dispatchers** - What: Toasts, sounds and native pings all obey the switch; the log never does. How: Insert isSilenced checks in toast, sound and notify dispatch paths while appendLog stays ungated.
-- [ ] **T22.8.4 - Header toggle button** - What: Bell on/off in the header, one click to silence the desk. How: Icon button with data-action toggleDnd and an orange active state class in day and night themes.
-- [ ] **T22.8.5 - Snooze menu** - What: Silence for 5, 15 or 60 minutes with a live countdown. How: Menu options setting snoozeUntil via setValue plus a computed() countdown label in the header.
-- [ ] **T22.8.6 - Auto-expire snooze** - What: Sound comes back on schedule without user action. How: An addAsync timer clearing snoozeUntil at expiry and emitting a quiet info toast on resume.
-- [ ] **T22.8.7 - Critical bypass option** - What: Error-level execution alerts can pierce DND when the user wants. How: A bypassCritical flag in settings checked inside the gate for severity-error exec events.
-- [ ] **T22.8.8 - Persist DND state** - What: A silenced desk stays silenced across reloads. How: Map dnd, snoozeUntil and bypassCritical through spektrum/persist under stockz.alerts.dnd.
-- [ ] **T22.8.9 - Write single unit tests** - What: Gate logic verified once per fn. How: One Vitest test each for isSilenced, toggleDnd and the snooze setter fn; run only those tests.
-- [ ] **T22.8.10 - Verify full silence and merge** - What: With DND on, zero noise while the log keeps filling. How: Fire mixed alerts under DND, confirm log-only behavior and the bypass path, ESLint, merge.
+- [x] **T22.8.1 - Branch and scaffold DND module** - What: A branch for the master silence switch. How: git checkout -b feature/f22-8-dnd; create src/alerts/dnd.js with dnd and snoozeUntil state keys.
+- [x] **T22.8.2 - Build isSilenced fn** - What: One truth for whether outputs may make noise. How: Implement isSilenced(dnd, snoozeUntil, nowTs) returning true on the flag or an active snooze.
+- [x] **T22.8.3 - Gate all dispatchers** - What: Toasts, sounds and native pings all obey the switch; the log never does. How: Insert isSilenced checks in toast, sound and notify dispatch paths while appendLog stays ungated.
+- [x] **T22.8.4 - Header toggle button** - What: Bell on/off in the header, one click to silence the desk. How: Icon button with data-action toggleDnd and an orange active state class in day and night themes.
+- [x] **T22.8.5 - Snooze menu** - What: Silence for 5, 15 or 60 minutes with a live countdown. How: Menu options setting snoozeUntil via setValue plus a computed() countdown label in the header.
+- [x] **T22.8.6 - Auto-expire snooze** - What: Sound comes back on schedule without user action. How: An addAsync timer clearing snoozeUntil at expiry and emitting a quiet info toast on resume.
+- [x] **T22.8.7 - Critical bypass option** - What: Error-level execution alerts can pierce DND when the user wants. How: A bypassCritical flag in settings checked inside the gate for severity-error exec events.
+- [x] **T22.8.8 - Persist DND state** - What: A silenced desk stays silenced across reloads. How: Map dnd, snoozeUntil and bypassCritical through spektrum/persist under stockz.alerts.dnd.
+- [x] **T22.8.9 - Write single unit tests** - What: Gate logic verified once per fn. How: One Vitest test each for isSilenced, toggleDnd and the snooze setter fn; run only those tests.
+- [x] **T22.8.10 - Verify full silence and merge** - What: With DND on, zero noise while the log keeps filling. How: Fire mixed alerts under DND, confirm log-only behavior and the bypass path, ESLint, merge.
 
 ### F22.9 - Alert Log Block
 

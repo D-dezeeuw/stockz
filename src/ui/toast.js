@@ -2,6 +2,7 @@ import { setValue, appState, onError } from '../app/engine.js'
 import { registerAction } from '../actions/registry.js'
 import { ACTIONS } from '../actions/names.js'
 import { onAlert } from '../alerts/bus.js'
+import { mayInterrupt } from '../alerts/dnd.js'
 import { PATHS } from '../state/paths.js'
 import { createLogger } from '../utils/log.js'
 
@@ -247,5 +248,10 @@ export function wireAlertToasts(options = {}) {
 
   // One subscription, not one per source: the whole reason the alert bus exists is that a
   // new alert type should not need a new wire into every output.
-  return onAlert((alert) => toastFromAlert(alert, now()))
+  return onAlert((alert) => {
+    const at = now()
+    // Gated here rather than at the bus: the log is fed by the bus and must keep filling
+    // while the desk is silent. Silence means "do not interrupt me", not "do not tell me".
+    return mayInterrupt(alert, at) ? toastFromAlert(alert, at) : null
+  })
 }

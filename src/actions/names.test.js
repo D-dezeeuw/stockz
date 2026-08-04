@@ -15,6 +15,7 @@ import { registerCompactActions } from '../hud/compact.js'
 import { registerAlertActions } from '../alerts/price.js'
 import { registerToastActions } from '../ui/toast.js'
 import { registerNotifyActions } from '../alerts/notify.js'
+import { registerDndActions } from '../alerts/dnd.js'
 import { registerStrategyActions } from '../strategy/registry.js'
 import { registerTicketActions } from '../ticket/actions.js'
 import { registerSizingActions } from '../ticket/sizing.js'
@@ -59,6 +60,8 @@ describe('allActionNames', () => {
       'alerts.toggle',
       'alerts.testSound',
       'alerts.enableNative',
+      'alerts.toggleDnd',
+      'alerts.snooze',
       'book.prefill',
       'book.setGroup',
       'book.setFloor',
@@ -112,6 +115,7 @@ describe('allActionNames', () => {
     registerAlertActions()
     registerToastActions()
     registerNotifyActions()
+    registerDndActions()
     registerStrategyActions()
     registerTicketActions()
     registerSizingActions()

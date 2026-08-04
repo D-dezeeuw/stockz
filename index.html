@@ -108,6 +108,16 @@
       <span class="price tnum" :class="fmt.cls(trade.dayPnl)">{{fmt.signed(trade.dayPnl)}}</span>
       <span class="label num nowrap">{{app.clock}} UTC</span>
 
+      <!-- One switch for every output. Silence means "do not interrupt me", never
+           "do not tell me" — the alert log keeps filling either way. -->
+      <button type="button" class="icon-btn" :class="ui.dnd.silenced ? 'icon-btn is-silenced' : 'icon-btn'"
+              data-action="click" data-fn="alerts.toggleDnd" aria-label="Do not disturb">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"
+             data-if="!ui.dnd.silenced"><path d="M8 1.4 A1.1 1.1 0 0 1 9.1 2.5 V3 A4 4 0 0 1 12 6.8 V10 L13.4 12 H2.6 L4 10 V6.8 A4 4 0 0 1 6.9 3 V2.5 A1.1 1.1 0 0 1 8 1.4 Z M6.4 13 H9.6 A1.6 1.6 0 0 1 6.4 13 Z"/></svg>
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"
+             data-if="ui.dnd.silenced"><path d="M8 1.4 A1.1 1.1 0 0 1 9.1 2.5 V3 A4 4 0 0 1 12 6.8 V10 L13.4 12 H2.6 L4 10 V6.8 A4 4 0 0 1 6.9 3 V2.5 A1.1 1.1 0 0 1 8 1.4 Z M2 2 L14 14 L13 15 L1 3 Z"/></svg>
+      </button>
+      <span class="label nowrap" data-if="ui.dnd.countdown">{{ui.dnd.countdown}}</span>
       <button type="button" class="icon-btn" data-action="click" data-fn="ui.toggleOverlay"
               data-modal="hotkeys" aria-label="Keyboard shortcuts">
         <svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M1 3 H15 V13 H1 Z M2.6 4.6 V11.4 H13.4 V4.6 Z M4 6 H6 V7.4 H4 Z M7 6 H9 V7.4 H7 Z M10 6 H12 V7.4 H10 Z M4 8.6 H12 V10 H4 Z"/></svg>
@@ -623,6 +633,23 @@
         <label class="field field--row">
           <input type="checkbox" data-model="settings.soundEnabled">
           <span class="label">Sounds</span>
+        </label>
+        <!-- "Not now" rather than "not ever": a permanent mute switched on for a phone
+             call is a permanent mute that stays on until something expensive happens. -->
+        <div class="field field--row">
+          <span class="label">snooze</span>
+          <button type="button" class="chip" data-action="click" data-fn="alerts.snooze"
+                  data-minutes="5">5m</button>
+          <button type="button" class="chip" data-action="click" data-fn="alerts.snooze"
+                  data-minutes="15">15m</button>
+          <button type="button" class="chip" data-action="click" data-fn="alerts.snooze"
+                  data-minutes="60">60m</button>
+          <button type="button" class="chip" data-action="click" data-fn="alerts.snooze"
+                  data-minutes="0">clear</button>
+        </div>
+        <label class="field field--row">
+          <input type="checkbox" data-model="settings.bypassCritical">
+          <span class="label">let errors through DND</span>
         </label>
         <!-- Asked on a click, never on load: a page that fires the browser prompt in its
              first second gets "block" from most people, permanently and silently. -->

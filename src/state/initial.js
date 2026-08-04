@@ -94,6 +94,7 @@ export function initialState(overrides = {}) {
     [PATHS.ui.alertToggles]: [],
     [PATHS.ui.audioReady]: false,
     [PATHS.ui.notifyPermission]: 'default',
+    [PATHS.ui.dnd]: { silenced: false, muted: false, countdown: '' },
     [PATHS.ui.hud]: {
       latencyMs: 0,
       latencyGrade: 'warn',
