@@ -5,11 +5,56 @@ in `masterplan.md`, and knows where the project stands. Rewritten at every phase
 
 ---
 
-## Status: Phase 21 closed (v0.21.0) · Phase 22 next
+## Status: Phase 22 closed (v0.22.0) · Phase 23 next
 
 **Live:** https://d-dezeeuw.github.io/stockz/ (Pages serves `main` root — pushing is deploying)
-**Tests:** 815, one per function, all passing individually. Every gated file >80% branches.
+**Tests:** 898, one per function, all passing individually. Every gated file >80% branches.
 **Branch model:** everything merges to `main`; no feature branches outstanding.
+
+## Phase 22 — Alerts & Notifications (closed)
+
+| Feature | What now exists | Where |
+| --- | --- | --- |
+| F22.2 | `makeAlert`, `isDuplicate`, `emitAlert`, `onAlert`, `alertLog`, `flushAlerts`, `alertEnabled`, `resetAlerts` — **the bus** | `src/alerts/bus.js` |
+| F22.1 | `createAlert`, `evalPriceCross`, `rearmAlert`, `markFired`, `saveAlert`, `updateAlert`, `removeAlert`, `evaluateAlerts`, `alertChips`, `publishAlertChips`, `registerAlertActions` | `src/alerts/price.js` |
+| F22.2 | `signalSeverity`, `mapSignalToAlert`, `routeSignalAlert`, `setAlertToggle`, `toggleRows`, `publishToggles` | `src/alerts/signals.js` |
+| F22.3 | `execSeverity`, `parseRejectReason`, `mapOrderEvent`, `coalescePartials`, `routeExecAlert`, `REJECT_CODES` | `src/alerts/exec.js` |
+| F22.4 | `spreadBaseline`, `spreadSpike`, `latencySpike`, `formatDowntime`, `venueTransition`, `checkHealth` | `src/alerts/health.js` |
+| F22.5 | `coalesceToast`, `pauseToast`, `toastFromAlert`, `registerToastActions`, `wireAlertToasts` (added to the phase-2 module) | `src/ui/toast.js` |
+| F22.6 | `scheduleTone`, `playSound`, `soundForAlert`, `resumeAudio`, `unlockAudio`, `soundAlert`, `wireAlertSounds` | `src/alerts/sounds.js` |
+| F22.7 | `permissionState`, `requestPermission`, `visibilityGate`, `sendNotification`, `routeNative`, `wireNativeAlerts` | `src/alerts/notify.js` |
+| F22.8 | `isSilenced`, `mayInterrupt`, `toggleDnd`, `snooze`, `snoozeLabel`, `expireSnooze`, `refreshDnd` | `src/alerts/dnd.js` |
+| F22.9 | `formatTs`, `filterLog`, `logChips`, `unreadCount`, `refreshLog`, `toggleFilter`, `markLogSeen` | `src/alerts/log.js` |
+| F22.10 | `sanitizeAlert`, `sanitizeOnLoad`, `migrateAlerts`, `portableAlert`, `exportAlerts`, `importAlerts`, `quotaGuard`, `rehydrateAlerts` | `src/alerts/persist.js` |
+
+**One shape in, one door out.** Every source builds the same alert record and calls
+`emitAlert`; every output takes exactly one `onAlert` subscription. That is the whole point:
+a new alert type must not need a new wire into every output, or the fourth one gets
+forgotten. Alerts carry a `kind` subtype so outputs style and sound off it rather than
+re-parsing the text.
+
+**The severity ladder decides what interrupts**, and the desk stays usable only while
+`error` is rare enough to still mean something. Debounce is per-source and deliberate: 5s on
+signals, 400ms on fills, **0 on rejects** — two rejects in a row are two decisions.
+
+**DND gates the outputs, never the bus.** Silence means "do not interrupt me", not "do not
+tell me": the log keeps filling while muted, which is what makes muting safe to use. Errors
+pierce DND by default.
+
+**A gap through a level is a cross.** Price alerts always compare *two* prices, which is
+also why a restored alert cannot fire at boot — the first tick has only one.
+
+New state: `alerts.fired`, `alerts.log`, `ui.alertChips`, `ui.alertToggles`, `ui.alertPanel`,
+`ui.logFilter`, `ui.logSeenAt`, `ui.dnd`, `ui.audioReady`, `ui.notifyPermission`,
+`ui.alertDraft`, `ui.alertDirection`. New settings: `alerts`, `alertToggles`, `dnd`,
+`snoozeUntil`, `bypassCritical`, `spreadSpikeK`, `latencyWarnMs`. New block: `alerts`.
+
+**Deviations in phase 22:** there is no `trigger('alert:fired')` event system as the plan's
+wording assumes — the bus's `onAlert` is the seam, and it is better because subscription is
+explicit. The toast queue was **extended** rather than rebuilt: phase 2 already shipped one,
+and two toast stacks would be exactly the duplication this phase exists to avoid. Alert
+definitions persist through the existing `settings.*` store rather than a second
+`spektrum/persist` slice.
 
 ## Phase 21 — Built-in Scalping Strategies (closed)
 
@@ -511,14 +556,16 @@ go stale, and faults that reach the trader instead of the console.
 | F2.9 | `pushToast`, `dismissToast`, `expireToasts`, `describeEngineError`, `wireEngineErrors` | `src/ui/toast.js` |
 | F2.10 | `collectExpressions`, `renderPrecompileModule`, `cspMeta`, `npm run build:csp` | `src/app/csp.js`, `docs/csp.md` |
 
-## Next up: Phase 22 — Alerts & Notifications
+## Next up: Phase 23 — Auto-Trade Bot Runner
 
 Read the phase's own section in `masterplan.md` — the plan is authoritative, and the
 "next up" guesses written at earlier closes have been wrong twice.
 
-- The desk has plenty worth alerting on now: `hud/` knows latency, spread and slippage,
-  `strategy/` emits signals with reasons and ttls, `positions/` knows exposure and P&L, and
-  `book/integrity.js` already knows when a book has gone stale.
+- Everything a bot needs already exists and is already safe: `exec/engine.js`'s `prepare()`
+  is the one door every order passes (validation, capabilities, grid rounding, size and
+  slippage guards), `strategy/` emits signals with conviction and expiry, `alerts/` can
+  announce anything, and `positions/` knows exposure. A runner should be the thin thing that
+  turns a signal into a `submit()` — not a second execution path.
 - The recurring trap remains **`setValue` lands next tick** (fold locally, write once)
   and **object writes merge** (`clearedMap` is the pattern for clearing one).
 

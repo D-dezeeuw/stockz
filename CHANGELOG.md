@@ -10,6 +10,13 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ## [Unreleased]
 
+## [0.22.0] — 2026-08-04 — Phase 22: Alerts & Notifications
+
+The desk taps the trader on the shoulder. One alert bus with one shape and one door, fed by
+price crosses, strategy signals, execution events and feed health, and delivered as toasts,
+a WebAudio sound pack and native OS notifications — with one mute switch over all of them
+and a log that keeps filling regardless.
+
 ### Added
 
 - **Alert durability** — the definitions already survived a reload (they live under
@@ -1251,7 +1258,8 @@ with a test policy and a live URL.
   literal `APP_VERSION` (a JSON import is bundler-only), guarded by a test that fails if
   it drifts from `package.json`; static assets moved from `public/` to the repo root.
 
-[Unreleased]: https://github.com/D-dezeeuw/stockz/compare/v0.21.0...HEAD
+[Unreleased]: https://github.com/D-dezeeuw/stockz/compare/v0.22.0...HEAD
+[0.22.0]: https://github.com/D-dezeeuw/stockz/compare/v0.21.0...v0.22.0
 [0.21.0]: https://github.com/D-dezeeuw/stockz/compare/v0.20.0...v0.21.0
 [0.20.0]: https://github.com/D-dezeeuw/stockz/compare/v0.19.0...v0.20.0
 [0.19.0]: https://github.com/D-dezeeuw/stockz/compare/v0.18.0...v0.19.0
