@@ -121,6 +121,18 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
   real one and only one of those changes the answer. The header row is always emitted, so an
   empty filter yields a valid file rather than a broken one, and a toast confirms the download
   because a button that appears to do nothing gets pressed four more times.
+- **A line per trading day** — hundreds of rows produce exactly one question worth asking at
+  the close: was today good, and why. That is answered by a line, not a list — trades, win
+  rate, gross, fees, net — and by the gap between gross and net, which on a scalping desk is
+  usually the whole story, so the fee share is a field rather than something the reader is
+  left to subtract. Days key on **UTC**, matching the session rollover the rest of the desk
+  uses: a local key would split one trading session across two rows for anyone trading through
+  their own midnight, and each half would read as a quiet day. Scratches count as neither wins
+  nor losses, because a desk that scratched half its trades would otherwise report a fifty
+  percent win rate while making nothing. Today's row stays pinned at the top of the block —
+  the running score is what a trader checks between trades, and scrolling for it is scrolling
+  away from the ticket — and one day expands at a time, since a journal with every day open is
+  the list the summaries existed to replace.
 
 ## [0.24.0] — 2026-08-04 — Phase 24: Circuit Breakers & Risk Kill Switch
 

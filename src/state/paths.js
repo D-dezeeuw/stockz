@@ -259,6 +259,8 @@ export const PATHS = Object.freeze({
     filtered: 'journal.filtered',
     instruments: 'journal.instruments',
     hidden: 'journal.hidden',
+    days: 'journal.days',
+    openDay: 'journal.openDay',
   }),
   strategy: Object.freeze({
     registered: 'strategy.registered',

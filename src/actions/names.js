@@ -66,6 +66,7 @@ export const ACTIONS = Object.freeze({
     sort: 'journal.sort',
     clearFilters: 'journal.clearFilters',
     csv: 'journal.csv',
+    toggleDay: 'journal.toggleDay',
   }),
   replay: Object.freeze({
     step: 'replay.step',
