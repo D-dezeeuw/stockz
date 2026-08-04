@@ -3283,16 +3283,16 @@
 **What:** Every strategy speaks one signal dialect: direction, strength, ttl and a human-readable reason.
 **How:** normalizeSignal producing {dir, strength, ttl, reason, ts} stored per instrument in Spektrum state with ttl-based expiry sweeping.
 
-- [ ] **T20.4.1 - Fork signal branch** - What: Dedicated space for the signal spine. How: Create feature/f20.4-signal-shape from main.
-- [ ] **T20.4.2 - Signal constants module** - What: Shared vocabulary for every producer and consumer. How: src/strategy/signal.js exporting DIR.LONG/SHORT/FLAT and default ttl constants.
-- [ ] **T20.4.3 - clampStrength fn** - What: Strength is always a trustworthy 0..1. How: Pure fn clamping numbers and mapping NaN or missing values to 0.
-- [ ] **T20.4.4 - normalizeSignal fn** - What: Sloppy strategy returns become canonical signals. How: Pure fn coercing dir to -1/0/1, clamping strength, defaulting ttl and stamping ts from the context clock.
-- [ ] **T20.4.5 - isExpired fn** - What: Stale signals are provably dead. How: Pure fn comparing ts + ttl against now, treating ttl 0 as never-expiring.
-- [ ] **T20.4.6 - publishSignal fn** - What: One write path for every strategy's output. How: setValue signals.<runKey> with the normalized signal after each hook return.
-- [ ] **T20.4.7 - Expiry sweeper system** - What: Dead signals disappear on their own. How: addAsync sweep every second flipping expired entries to a flat signal via isExpired.
-- [ ] **T20.4.8 - Signal chip UI** - What: Direction and strength readable at a glance per instrument. How: Small chip in the strategy block binding an arrow glyph, strength bar and reason tooltip via :attr.
-- [ ] **T20.4.9 - Single tests for signal fns** - What: Clamping, normalization, expiry and publish proven alone. How: One Vitest test per fn with boundary fixtures, run through -t filters only.
-- [ ] **T20.4.10 - Merge signal spine** - What: The common dialect shipped for all strategies. How: Lint and targeted tests green, then merge to main.
+- [x] **T20.4.1 - Fork signal branch** - What: Dedicated space for the signal spine. How: Create feature/f20.4-signal-shape from main.
+- [x] **T20.4.2 - Signal constants module** - What: Shared vocabulary for every producer and consumer. How: src/strategy/signal.js exporting DIR.LONG/SHORT/FLAT and default ttl constants.
+- [x] **T20.4.3 - clampStrength fn** - What: Strength is always a trustworthy 0..1. How: Pure fn clamping numbers and mapping NaN or missing values to 0.
+- [x] **T20.4.4 - normalizeSignal fn** - What: Sloppy strategy returns become canonical signals. How: Pure fn coercing dir to -1/0/1, clamping strength, defaulting ttl and stamping ts from the context clock.
+- [x] **T20.4.5 - isExpired fn** - What: Stale signals are provably dead. How: Pure fn comparing ts + ttl against now, treating ttl 0 as never-expiring.
+- [x] **T20.4.6 - publishSignal fn** - What: One write path for every strategy's output. How: setValue signals.<runKey> with the normalized signal after each hook return.
+- [x] **T20.4.7 - Expiry sweeper system** - What: Dead signals disappear on their own. How: addAsync sweep every second flipping expired entries to a flat signal via isExpired.
+- [x] **T20.4.8 - Signal chip UI** - What: Direction and strength readable at a glance per instrument. How: Small chip in the strategy block binding an arrow glyph, strength bar and reason tooltip via :attr.
+- [x] **T20.4.9 - Single tests for signal fns** - What: Clamping, normalization, expiry and publish proven alone. How: One Vitest test per fn with boundary fixtures, run through -t filters only.
+- [x] **T20.4.10 - Merge signal spine** - What: The common dialect shipped for all strategies. How: Lint and targeted tests green, then merge to main.
 
 ### F20.5 - Trend indicators: EMA and RSI
 

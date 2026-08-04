@@ -172,6 +172,6 @@ export function initialState(overrides = {}) {
     // strategies
     [PATHS.strategy.registered]: [],
     [PATHS.strategy.running]: [],
-    [PATHS.strategy.signals]: [],
+    [PATHS.strategy.signals]: {},
   }
 }

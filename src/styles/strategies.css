@@ -45,19 +45,41 @@
   letter-spacing: 0.04em;
 }
 
-.runs__signal--buy {
+.runs__signal {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1, 0.25rem);
+}
+
+.runs__signal--long {
   color: var(--green);
 }
 
-.runs__signal--sell {
+.runs__signal--short {
   color: var(--orange);
 }
 
-/* Neither a buy nor a sell is not a third opinion — it is the absence of one, and it
-   should read as quiet rather than as a third colour competing for attention. */
-.runs__signal--none,
+/* Neither long nor short is not a third opinion — it is the absence of one, and it should
+   read as quiet rather than as a third colour competing for attention. */
 .runs__signal--flat {
   color: var(--ink-muted);
+}
+
+/* Conviction as a bar, because "0.72" is a number the eye has to read and a bar is one it
+   does not. */
+.runs__strength {
+  display: block;
+  width: 2.5rem;
+  height: 2px;
+  background: var(--line);
+  overflow: hidden;
+}
+
+.runs__strength i {
+  display: block;
+  height: 100%;
+  width: 0;
+  background: currentColor;
 }
 
 /*

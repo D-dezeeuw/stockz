@@ -14,6 +14,7 @@ import { flushQuality } from '../../hud/quality.js'
 import { refreshSession } from '../../hud/session.js'
 import { flushFees } from '../../hud/fees.js'
 import { refreshCompact } from '../../hud/compact.js'
+import { tickStrategies } from '../../strategy/registry.js'
 import { evictStale } from '../../exec/latency.js'
 import { setValue, appState } from '../../app/engine.js'
 import { PATHS } from '../../state/paths.js'
@@ -132,6 +133,10 @@ export function flushFeed(focus, options = {}) {
   // trails them by one frame. Sixteen milliseconds on a readout nobody trades off, and
   // the alternative is a second copy of every metric's derivation.
   if (appState.settings?.compactHud === true) refreshCompact()
+  // Signals age out on the same pump. A ttl that only expired when the next tick of that
+  // instrument arrived would never fire on the instrument that went quiet — which is
+  // exactly the one whose signal has gone stale.
+  tickStrategies(at)
   flushQuality(spreadBps())
   // Swept on the same frame: an order whose ack never came would otherwise sit in the
   // latency map for the life of the session.

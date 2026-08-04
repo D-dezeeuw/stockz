@@ -431,7 +431,13 @@
                 <div class="runs__row">
                   <span class="runs__name">{{run.name}}</span>
                   <span class="runs__instrument">{{run.instrument}}</span>
-                  <span class="runs__signal" :class="'runs__signal runs__signal--' + run.action">{{run.action}}</span>
+                  <!-- Glyph, strength bar and the reason as a tooltip: a chip that says
+                       "short" and nothing else cannot be argued with after the fact. -->
+                  <span class="runs__signal" :class="'runs__signal runs__signal--' + run.tone"
+                        :title="run.title">
+                    <b>{{run.glyph}}</b>
+                    <span class="runs__strength"><i :style="'width:' + run.pct + '%'"></i></span>
+                  </span>
                   <button type="button" class="chip" data-action="click" data-fn="strategy.stop"
                           :data-key="run.key">stop</button>
                 </div>
