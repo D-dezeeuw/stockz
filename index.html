@@ -572,8 +572,21 @@
                 <span class="label bot__cooldown">benched {{bot.limits.cooldownLabel}}</span>
                 <button type="button" class="chip" data-action="click" data-fn="bot.resume">resume</button>
               </div>
-              <button type="button" class="chip" data-action="click"
-                      data-fn="bot.disableAll">revoke all</button>
+              <!-- Dry run is the default and says so in the loudest way available: software
+                   that places orders has to be switched into doing so. -->
+              <p class="bot__dry" data-if="settings.botDryRun">DRY RUN — orders are recorded, not sent</p>
+              <div class="field field--row">
+                <button type="button" class="chip" data-action="click"
+                        data-fn="bot.toggleDry">{{settings.botDryRun ? 'go live' : 'back to dry run'}}</button>
+                <button type="button" class="chip" data-action="click"
+                        data-fn="bot.disableAll">revoke all</button>
+                <button type="button" class="chip" data-action="click"
+                        data-fn="bot.resetSession">reset session</button>
+              </div>
+              <p class="label">{{bot.session.signals}} signals · {{bot.session.orders}} sent · {{bot.session.dry}} dry · {{bot.session.blocked}} blocked</p>
+              <p class="label bot__cooldown" data-if="bot.capped.length > 0" data-each="c in bot.capped">
+                <span>{{c.instrument}} at cap {{c.cap}}</span>
+              </p>
               <!-- Every decision with its reason: "why did it not take that" must be
                    answerable without a debugger. -->
               <div class="bot__rows" data-each="d in bot.decisions">

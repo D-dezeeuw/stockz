@@ -22,6 +22,8 @@ import { refreshDnd, expireSnooze } from '../../alerts/dnd.js'
 import { refreshLog } from '../../alerts/log.js'
 import { flushDecisions, refreshBotStatus } from '../../bot/runner.js'
 import { refreshLimits } from '../../bot/throttle.js'
+import { refreshCaps } from '../../bot/caps.js'
+import { refreshSession as refreshBotSession } from '../../bot/session.js'
 import { evictStale } from '../../exec/latency.js'
 import { setValue, appState } from '../../app/engine.js'
 import { PATHS } from '../../state/paths.js'
@@ -177,6 +179,8 @@ export function flushFeed(focus, options = {}) {
   flushDecisions()
   refreshBotStatus()
   refreshLimits(wall)
+  refreshCaps()
+  refreshBotSession()
   flushQuality(spreadBps())
   // Swept on the same frame: an order whose ack never came would otherwise sit in the
   // latency map for the life of the session.

@@ -31,6 +31,7 @@ import { registerDndActions, refreshDnd } from '../alerts/dnd.js'
 import { registerLogActions } from '../alerts/log.js'
 import { registerPersistActions, rehydrateAlerts } from '../alerts/persist.js'
 import { registerBotActions, createBotRunner } from '../bot/runner.js'
+import { registerSessionActions } from '../bot/session.js'
 import { onAlert } from '../alerts/bus.js'
 import { knownStrategies } from '../strategy/registry.js'
 import { connectFeeds } from './feeds.js'
@@ -116,6 +117,7 @@ export function bootstrap(options = {}) {
   // alert still cannot fire until the market moves past it while the desk is watching.
   rehydrateAlerts(undefined, Date.now())
   registerBotActions()
+  registerSessionActions()
   // The runner comes up disarmed by construction: `botArmed` is transient and never
   // restored, so the loop can run from boot and still place nothing.
   createBotRunner()

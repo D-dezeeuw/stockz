@@ -3832,64 +3832,64 @@
 **What:** The bot can never pyramid one instrument past a set exposure cap.
 **How:** capGate compares current open size plus pending bot orders for the signal's instrument against a settings cap in one comparison.
 
-- [ ] **T23.7.1 - Branch position cap** - What: Isolated work on exposure caps. How: git checkout -b feature/f23.7-position-cap from an up-to-date main.
-- [ ] **T23.7.2 - Cap settings** - What: A default cap plus per-instrument exceptions. How: Add bot.maxPositionPerInstrument and a bot.capOverrides map to settings state with phase-7 persistence.
-- [ ] **T23.7.3 - Open size lookup** - What: Exposure reads cost nothing. How: Implement getOpenSize(instId) as an O(1) read from the phase-18 positions.byInstrument index.
-- [ ] **T23.7.4 - Pending exposure fn** - What: In-flight bot orders count against the cap too. How: Implement exposureFor(instId) summing open size plus unfilled origin:'bot' working orders from phase-17 state.
-- [ ] **T23.7.5 - Cap gate fn** - What: Over-cap signals are rejected in one comparison. How: Implement capGate rejecting when exposureFor(instId) + mapped size exceeds the resolved cap, reason 'position-cap'.
-- [ ] **T23.7.6 - Overrides editor** - What: Different caps for different instruments in seconds. How: Build a small data-each table of instrument/cap rows with data-model editing inside the settings panel.
-- [ ] **T23.7.7 - Cap feed entries** - What: Blocked signals show the exact numbers. How: Push a decision entry containing current exposure vs cap values whenever capGate rejects.
-- [ ] **T23.7.8 - Capped list display** - What: The trader sees which instruments are maxed out. How: Show a computed list of at-cap instruments in the bot block behind data-if.
-- [ ] **T23.7.9 - Single unit tests for cap fns** - What: Cap logic proven once per function. How: One Vitest test each for getOpenSize, exposureFor and capGate with targeted npx vitest run -t.
-- [ ] **T23.7.10 - Merge position cap** - What: The cap lands on main. How: Green targeted tests plus ESLint, merge feature/f23.7-position-cap into main, delete the branch.
+- [x] **T23.7.1 - Branch position cap** - What: Isolated work on exposure caps. How: git checkout -b feature/f23.7-position-cap from an up-to-date main.
+- [x] **T23.7.2 - Cap settings** - What: A default cap plus per-instrument exceptions. How: Add bot.maxPositionPerInstrument and a bot.capOverrides map to settings state with phase-7 persistence.
+- [x] **T23.7.3 - Open size lookup** - What: Exposure reads cost nothing. How: Implement getOpenSize(instId) as an O(1) read from the phase-18 positions.byInstrument index.
+- [x] **T23.7.4 - Pending exposure fn** - What: In-flight bot orders count against the cap too. How: Implement exposureFor(instId) summing open size plus unfilled origin:'bot' working orders from phase-17 state.
+- [x] **T23.7.5 - Cap gate fn** - What: Over-cap signals are rejected in one comparison. How: Implement capGate rejecting when exposureFor(instId) + mapped size exceeds the resolved cap, reason 'position-cap'.
+- [x] **T23.7.6 - Overrides editor** - What: Different caps for different instruments in seconds. How: Build a small data-each table of instrument/cap rows with data-model editing inside the settings panel.
+- [x] **T23.7.7 - Cap feed entries** - What: Blocked signals show the exact numbers. How: Push a decision entry containing current exposure vs cap values whenever capGate rejects.
+- [x] **T23.7.8 - Capped list display** - What: The trader sees which instruments are maxed out. How: Show a computed list of at-cap instruments in the bot block behind data-if.
+- [x] **T23.7.9 - Single unit tests for cap fns** - What: Cap logic proven once per function. How: One Vitest test each for getOpenSize, exposureFor and capGate with targeted npx vitest run -t.
+- [x] **T23.7.10 - Merge position cap** - What: The cap lands on main. How: Green targeted tests plus ESLint, merge feature/f23.7-position-cap into main, delete the branch.
 
 ### F23.8 - Bot status block with live decision feed
 
 **What:** A live scrolling feed of every bot decision with its reason - trust through transparency.
 **How:** A phase-4 grid block rendering the bot.decisions ring via Spektrum data-each, with color coding, filters and a heartbeat indicator.
 
-- [ ] **T23.8.1 - Branch bot block** - What: Isolated work on the status block. How: git checkout -b feature/f23.8-bot-block from an up-to-date main.
-- [ ] **T23.8.2 - Register bot block** - What: The bot gets its own uniform dashboard tile. How: Register a 'bot' block in the phase-4 grid registry with standard block chrome and title.
-- [ ] **T23.8.3 - Feed markup** - What: Decisions render as a clean scrolling list. How: Build data-each rows over bot.decisions showing {{ts}}, {{strategy}}, {{instrument}} and {{reason}}, with data-cloak to avoid flash.
-- [ ] **T23.8.4 - Decision color coding** - What: Outcome readable from color alone. How: Bind :class on entry.action mapping dispatched to green, blocked to orange and error to red via phase-3 tokens.
-- [ ] **T23.8.5 - Auto-scroll with hover pause** - What: Newest decisions always visible, reading never interrupted. How: Keep scrollTop pinned to newest and suspend pinning on pointerenter, resuming on pointerleave.
-- [ ] **T23.8.6 - Filter chips** - What: One tap isolates dispatched or blocked decisions. How: Add all/dispatched/blocked chips driving a defineFn feedFilter computed over the ring.
-- [ ] **T23.8.7 - Render window cap** - What: The feed stays snappy at full speed. How: Render only the latest 50 filtered entries via a computed slice to keep DOM node count flat.
-- [ ] **T23.8.8 - Heartbeat indicator** - What: Proof the loop is alive at a glance. How: Bind a pulsing dot and tick counter to bot.lastTickAt and bot.ticks set by drainTick.
-- [ ] **T23.8.9 - Single unit test for filter fn** - What: The filter proven once. How: One Vitest test for feedFilter covering each chip value, run via npx vitest run -t feedFilter.
-- [ ] **T23.8.10 - Merge bot block** - What: The status block lands on main. How: Green targeted test plus ESLint, merge feature/f23.8-bot-block into main, delete the branch.
+- [x] **T23.8.1 - Branch bot block** - What: Isolated work on the status block. How: git checkout -b feature/f23.8-bot-block from an up-to-date main.
+- [x] **T23.8.2 - Register bot block** - What: The bot gets its own uniform dashboard tile. How: Register a 'bot' block in the phase-4 grid registry with standard block chrome and title.
+- [x] **T23.8.3 - Feed markup** - What: Decisions render as a clean scrolling list. How: Build data-each rows over bot.decisions showing {{ts}}, {{strategy}}, {{instrument}} and {{reason}}, with data-cloak to avoid flash.
+- [x] **T23.8.4 - Decision color coding** - What: Outcome readable from color alone. How: Bind :class on entry.action mapping dispatched to green, blocked to orange and error to red via phase-3 tokens.
+- [x] **T23.8.5 - Auto-scroll with hover pause** - What: Newest decisions always visible, reading never interrupted. How: Keep scrollTop pinned to newest and suspend pinning on pointerenter, resuming on pointerleave.
+- [x] **T23.8.6 - Filter chips** - What: One tap isolates dispatched or blocked decisions. How: Add all/dispatched/blocked chips driving a defineFn feedFilter computed over the ring.
+- [x] **T23.8.7 - Render window cap** - What: The feed stays snappy at full speed. How: Render only the latest 50 filtered entries via a computed slice to keep DOM node count flat.
+- [x] **T23.8.8 - Heartbeat indicator** - What: Proof the loop is alive at a glance. How: Bind a pulsing dot and tick counter to bot.lastTickAt and bot.ticks set by drainTick.
+- [x] **T23.8.9 - Single unit test for filter fn** - What: The filter proven once. How: One Vitest test for feedFilter covering each chip value, run via npx vitest run -t feedFilter.
+- [x] **T23.8.10 - Merge bot block** - What: The status block lands on main. How: Green targeted test plus ESLint, merge feature/f23.8-bot-block into main, delete the branch.
 
 ### F23.9 - Dry-run mode
 
 **What:** Full bot behavior with zero live orders - see exactly what it would do before letting it loose.
 **How:** A bot.dryRun flag forks dispatch into logDryOrder() while every gate, throttle and counter behaves identically, entries marked DRY.
 
-- [ ] **T23.9.1 - Branch dry-run** - What: Isolated work on dry-run mode. How: git checkout -b feature/f23.9-dry-run from an up-to-date main.
-- [ ] **T23.9.2 - Dry-run flag and toggle** - What: One switch between rehearsal and live. How: Add bot.dryRun defaulting true, a data-action toggle in the bot block, persisted via spektrum/persist.
-- [ ] **T23.9.3 - Dispatch fork** - What: Dry mode never touches a venue. How: Implement dispatchOrDry(order) routing to logDryOrder when bot.dryRun else to the phase-17 submitOrder call.
-- [ ] **T23.9.4 - Dry order logger** - What: Every intended order is fully recorded. How: Implement logDryOrder(order) pushing a DRY feed entry with the full mapped order JSON and appending it to an IndexedDB dryRuns store.
-- [ ] **T23.9.5 - DRY banner** - What: No mistaking rehearsal for live. How: Render a striped orange DRY RUN banner across the bot block behind data-if on bot.dryRun.
-- [ ] **T23.9.6 - Identical accounting check** - What: Dry numbers genuinely predict live numbers. How: Verify throttle timestamps, caps and session counters fire for dry orders by replaying a recorded signal burst through the loop.
-- [ ] **T23.9.7 - Copy dry orders action** - What: Intended orders reviewable anywhere. How: defineFn copyDryOrders serializing the dryRuns entries to JSON onto navigator.clipboard via a data-action button.
-- [ ] **T23.9.8 - Live-switch feed entry** - What: Going live is an explicit, logged moment. How: Push a red LIVE MODE entry via pushDecision whenever bot.dryRun flips to false.
-- [ ] **T23.9.9 - Single unit tests for dry-run fns** - What: Fork and logger proven once each. How: One Vitest test each for dispatchOrDry and logDryOrder using fake-indexeddb, targeted npx vitest run -t.
-- [ ] **T23.9.10 - Merge dry-run** - What: Dry-run mode lands on main. How: Green targeted tests plus ESLint, merge feature/f23.9-dry-run into main, delete the branch.
+- [x] **T23.9.1 - Branch dry-run** - What: Isolated work on dry-run mode. How: git checkout -b feature/f23.9-dry-run from an up-to-date main.
+- [x] **T23.9.2 - Dry-run flag and toggle** - What: One switch between rehearsal and live. How: Add bot.dryRun defaulting true, a data-action toggle in the bot block, persisted via spektrum/persist.
+- [x] **T23.9.3 - Dispatch fork** - What: Dry mode never touches a venue. How: Implement dispatchOrDry(order) routing to logDryOrder when bot.dryRun else to the phase-17 submitOrder call.
+- [x] **T23.9.4 - Dry order logger** - What: Every intended order is fully recorded. How: Implement logDryOrder(order) pushing a DRY feed entry with the full mapped order JSON and appending it to an IndexedDB dryRuns store.
+- [x] **T23.9.5 - DRY banner** - What: No mistaking rehearsal for live. How: Render a striped orange DRY RUN banner across the bot block behind data-if on bot.dryRun.
+- [x] **T23.9.6 - Identical accounting check** - What: Dry numbers genuinely predict live numbers. How: Verify throttle timestamps, caps and session counters fire for dry orders by replaying a recorded signal burst through the loop.
+- [x] **T23.9.7 - Copy dry orders action** - What: Intended orders reviewable anywhere. How: defineFn copyDryOrders serializing the dryRuns entries to JSON onto navigator.clipboard via a data-action button.
+- [x] **T23.9.8 - Live-switch feed entry** - What: Going live is an explicit, logged moment. How: Push a red LIVE MODE entry via pushDecision whenever bot.dryRun flips to false.
+- [x] **T23.9.9 - Single unit tests for dry-run fns** - What: Fork and logger proven once each. How: One Vitest test each for dispatchOrDry and logDryOrder using fake-indexeddb, targeted npx vitest run -t.
+- [x] **T23.9.10 - Merge dry-run** - What: Dry-run mode lands on main. How: Green targeted tests plus ESLint, merge feature/f23.9-dry-run into main, delete the branch.
 
 ### F23.10 - Session report and kill-switch hard stop
 
 **What:** A per-session bot scoreboard plus an instant hard stop the moment the phase-24 breaker trips.
 **How:** Spektrum counters and computed PnL aggregated per session, with watch('breaker.tripped') invoking a synchronous hardStop of the loop.
 
-- [ ] **T23.10.1 - Branch session report** - What: Isolated work on reporting and the hard stop. How: git checkout -b feature/f23.10-session-report from an up-to-date main.
-- [ ] **T23.10.2 - Session counters** - What: Signals, orders, fills, wins and losses all counted live. How: addValue bot.session counters at each pipeline point: intake, dispatch and phase-18 fill events.
-- [ ] **T23.10.3 - Bot session PnL** - What: The bot's own profit line, separate from manual trades. How: Add a computed bot.session.pnl summing realized PnL of fills whose orders carry the origin:'bot' tag.
-- [ ] **T23.10.4 - Funnel report strip** - What: One glance shows signals to orders to fills conversion. How: Render a summary strip in the bot block binding {{bot.session.signalsSeen}}, {{bot.session.ordersSent}} and {{bot.session.fills}}.
-- [ ] **T23.10.5 - Report export** - What: The session is portable evidence. How: Implement downloadSessionReport() building a JSON Blob of counters, PnL and the decision ring served via URL.createObjectURL.
-- [ ] **T23.10.6 - Session reset** - What: A fresh scoreboard each day or on demand. How: Implement resetSession() clearing bot.session, wired to a data-action button and a local-midnight rollover check in drainTick.
-- [ ] **T23.10.7 - Breaker subscription** - What: A tripped breaker stops the bot with no human in the loop. How: Spektrum watch('breaker.tripped') invoking hardStop() the moment phase-24 publishes a trip.
-- [ ] **T23.10.8 - Hard stop semantics** - What: Not one queued signal escapes after a trip. How: Implement hardStop() clearing the setInterval, synchronously draining the queue with reason 'killed' and setting bot.masterArmed false.
-- [ ] **T23.10.9 - Single unit tests for report fns** - What: Stop and report logic proven once per function. How: One Vitest test each for hardStop, resetSession and downloadSessionReport with targeted npx vitest run -t.
-- [ ] **T23.10.10 - Merge session report** - What: Reporting and the hard stop land on main. How: Green targeted tests plus ESLint, merge feature/f23.10-session-report into main, delete the branch.
+- [x] **T23.10.1 - Branch session report** - What: Isolated work on reporting and the hard stop. How: git checkout -b feature/f23.10-session-report from an up-to-date main.
+- [x] **T23.10.2 - Session counters** - What: Signals, orders, fills, wins and losses all counted live. How: addValue bot.session counters at each pipeline point: intake, dispatch and phase-18 fill events.
+- [x] **T23.10.3 - Bot session PnL** - What: The bot's own profit line, separate from manual trades. How: Add a computed bot.session.pnl summing realized PnL of fills whose orders carry the origin:'bot' tag.
+- [x] **T23.10.4 - Funnel report strip** - What: One glance shows signals to orders to fills conversion. How: Render a summary strip in the bot block binding {{bot.session.signalsSeen}}, {{bot.session.ordersSent}} and {{bot.session.fills}}.
+- [x] **T23.10.5 - Report export** - What: The session is portable evidence. How: Implement downloadSessionReport() building a JSON Blob of counters, PnL and the decision ring served via URL.createObjectURL.
+- [x] **T23.10.6 - Session reset** - What: A fresh scoreboard each day or on demand. How: Implement resetSession() clearing bot.session, wired to a data-action button and a local-midnight rollover check in drainTick.
+- [x] **T23.10.7 - Breaker subscription** - What: A tripped breaker stops the bot with no human in the loop. How: Spektrum watch('breaker.tripped') invoking hardStop() the moment phase-24 publishes a trip.
+- [x] **T23.10.8 - Hard stop semantics** - What: Not one queued signal escapes after a trip. How: Implement hardStop() clearing the setInterval, synchronously draining the queue with reason 'killed' and setting bot.masterArmed false.
+- [x] **T23.10.9 - Single unit tests for report fns** - What: Stop and report logic proven once per function. How: One Vitest test each for hardStop, resetSession and downloadSessionReport with targeted npx vitest run -t.
+- [x] **T23.10.10 - Merge session report** - What: Reporting and the hard stop land on main. How: Green targeted tests plus ESLint, merge feature/f23.10-session-report into main, delete the branch.
 
 ---
 
