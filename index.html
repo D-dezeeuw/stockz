@@ -548,6 +548,18 @@
               <canvas id="holds-canvas" class="holds__canvas"></canvas>
               <p class="holds__centre label">median hold {{analytics.holdCentre.medianLabel}} · mean {{analytics.holdCentre.meanLabel}}</p>
             </div>
+            <!-- Streaks are where a trading day stops being arithmetic and starts being
+                 psychology. Four losses in a row is not four independent events to the
+                 person who just had them. The run in progress draws full height so it reads
+                 as the thing still happening rather than as more history. -->
+            <div class="streaks" data-if="block.id === 'analytics'">
+              <span class="streaks__now" :class="'streaks__now streaks__now--' + analytics.streaks.outcome">{{analytics.streaks.current}}{{analytics.streaks.outcome === 'win' ? 'W' : (analytics.streaks.outcome === 'loss' ? 'L' : '')}}</span>
+              <span class="label">best {{analytics.streaks.maxWin}}W · worst {{analytics.streaks.maxLoss}}L</span>
+              <canvas id="streak-canvas" class="streaks__strip"></canvas>
+              <!-- A hint, not a dialog. Phase 24 owns the mechanism that actually stops a
+                   desk; a nag here would be something to click through and learn to ignore. -->
+              <p class="streaks__tilt" data-if="analytics.streaks.tilt">{{analytics.streaks.current}} losses in a row — this is where days get away</p>
+            </div>
             <!-- An alert set in under three seconds: level, direction, done. -->
             <div class="alerts" data-if="block.id === 'watchlist'">
               <form class="alerts__form" data-action="submit" data-fn="alerts.create"

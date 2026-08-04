@@ -260,6 +260,8 @@ export const PATHS = Object.freeze({
     rankingExpanded: 'analytics.rankingExpanded',
     holds: 'analytics.holds',
     holdCentre: 'analytics.holdCentre',
+    streaks: 'analytics.streaks',
+    segments: 'analytics.segments',
   }),
   journal: Object.freeze({
     trades: 'journal.trades',

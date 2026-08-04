@@ -243,6 +243,8 @@ export function initialState(overrides = {}) {
     [PATHS.analytics.rankingExpanded]: false,
     [PATHS.analytics.holds]: [],
     [PATHS.analytics.holdCentre]: { median: 0, mean: 0, medianLabel: '—', meanLabel: '—' },
+    [PATHS.analytics.streaks]: { current: 0, outcome: 'none', maxWin: 0, maxLoss: 0, tilt: false },
+    [PATHS.analytics.segments]: [],
 
     // journal
     [PATHS.journal.trades]: [],
