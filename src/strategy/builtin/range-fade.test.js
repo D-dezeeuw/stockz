@@ -7,11 +7,13 @@ import {
   levelBreak,
   fadeTick,
   publishLevels,
+  setLevelSink,
   rangeFadeStrategy,
   RANGE_RING,
 } from './range-fade.js'
 import { createStrategyContext } from '../contract.js'
-import { appState, tick, resetState } from '../../app/engine.js'
+import { appState, setValue, tick, resetState } from '../../app/engine.js'
+import { PATHS } from '../../state/paths.js'
 
 function fading(params = {}) {
   const ctx = createStrategyContext({
@@ -163,9 +165,25 @@ describe('rangeFadeStrategy', () => {
   })
 })
 
+describe('setLevelSink', () => {
+  it('routes the overlay somewhere, and silences it when told to', () => {
+    const sent = []
+    expect(setLevelSink((rows) => sent.push(rows))).toBe(true)
+    publishLevels([{ px: 100, kind: 'high' }])
+    expect(sent).toHaveLength(1)
+
+    // Silenced by default, which is what makes a backtest safe: a run scoring this
+    // strategy over yesterday's tape must not repaint the live chart's overlay.
+    expect(setLevelSink(null)).toBe(true)
+    publishLevels([{ px: 101, kind: 'high' }])
+    expect(sent).toHaveLength(1)
+  })
+})
+
 describe('publishLevels', () => {
   it('hands the chart plain numbers, never the strategy’s own objects', () => {
     resetState()
+    setLevelSink((rows) => setValue(PATHS.market.levels, rows))
 
     const rows = publishLevels([{ px: 100, kind: 'high', touches: 3 }, { px: 95, kind: 'low' }])
     tick()
@@ -176,5 +194,6 @@ describe('publishLevels', () => {
     ])
     expect(appState.market.levels).toHaveLength(2)
     expect(publishLevels(null)).toEqual([])
+    setLevelSink(null)
   })
 })

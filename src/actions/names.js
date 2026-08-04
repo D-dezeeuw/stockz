@@ -97,6 +97,11 @@ export const ACTIONS = Object.freeze({
     speed: 'playback.speed',
     exit: 'playback.exit',
   }),
+  backtest: Object.freeze({
+    start: 'backtest.start',
+    cancel: 'backtest.cancel',
+    configure: 'backtest.configure',
+  }),
   bot: Object.freeze({
     toggleArm: 'bot.toggleArm',
     setAuto: 'bot.setAuto',

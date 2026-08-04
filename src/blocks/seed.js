@@ -21,6 +21,7 @@ export const DEFAULT_BLOCKS = Object.freeze([
   { id: 'bot', title: 'Auto-Trade', icon: 'bolt', order: 10, status: BLOCK_STATUS.ready },
   { id: 'journal', title: 'Journal', icon: 'clock', order: 11, status: BLOCK_STATUS.empty },
   { id: 'analytics', title: 'Analytics', icon: 'chart', order: 12, status: BLOCK_STATUS.empty },
+  { id: 'backtest', title: 'Backtest', icon: 'bolt', order: 13, status: BLOCK_STATUS.ready },
 ])
 
 /**

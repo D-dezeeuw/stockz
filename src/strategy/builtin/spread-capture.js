@@ -1,5 +1,5 @@
 import { defineStrategy } from '../contract.js'
-import { FEE_SCHEDULE } from '../../hud/fees.js'
+import { FEE_SCHEDULE } from '../../hud/fee-schedule.js'
 
 /**
  * Post-only spread capture.
