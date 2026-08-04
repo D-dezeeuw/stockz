@@ -36,6 +36,15 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
   analytics renderer rather than growing a second one. One click copies the whole result,
   trade list included, so whoever receives it can check it.
 
+- **F27.8 — parameter sweep.** One backtest answers "does this work"; a sweep answers the
+  question after it — "is this *setting* the reason", which is the only version that says
+  anything about tomorrow. The grid is derived from the strategy's own params schema and
+  run across a worker pool sized to leave the desk two cores, rows stream into a sortable
+  table as each combo lands, and every row is coloured by where its P&L sits between the
+  worst and the best so a winner is visible without reading a number. Clicking a row applies
+  its params to the live strategy, merged onto whatever was tuned by hand rather than
+  replacing it.
+
 ### Fixed
 
 - **Two `data-each` bindings rendered nothing and warned on every frame.** Spektrum binds

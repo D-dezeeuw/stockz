@@ -1043,6 +1043,36 @@
               <canvas id="backtest-canvas" class="bt-chart" data-if="backtest.summary.ran"></canvas>
               <div class="backtest__out" data-if="backtest.summary.ran">
                 <button type="button" class="chip" data-action="click" data-fn="backtest.copyReport">copy json</button>
+                <!-- One run says "does this work". The sweep says "is this *setting* the
+                     reason", which is the only version that says anything about tomorrow. -->
+                <button type="button" class="chip" data-action="click" data-fn="backtest.sweep"
+                        data-if="!backtest.sweep.active">sweep params</button>
+                <span class="label num" data-if="backtest.sweep.active">sweeping {{backtest.sweep.done}} / {{backtest.sweep.total}}</span>
+              </div>
+              <div class="sweep" data-if="backtest.sweepView.length > 0">
+                <div class="sweep__head">
+                  <button type="button" class="sweep__col" data-action="click" data-fn="backtest.sortSweep" data-key="net">net</button>
+                  <button type="button" class="sweep__col" data-action="click" data-fn="backtest.sortSweep" data-key="expectancy">exp</button>
+                  <button type="button" class="sweep__col" data-action="click" data-fn="backtest.sortSweep" data-key="trades">n</button>
+                  <button type="button" class="sweep__col" data-action="click" data-fn="backtest.sortSweep" data-key="winRate">win</button>
+                  <button type="button" class="sweep__col" data-action="click" data-fn="backtest.sortSweep" data-key="maxDrawdown">DD</button>
+                  <span class="sweep__col label">params</span>
+                </div>
+                <!-- Heat as a percentage the CSS mixes, so the gradient lives where the
+                     theme already does and a winner is visible without reading a number. -->
+                <div class="sweep__rows" data-each="backtest.sweepView" data-as="row">
+                  <div class="sweep__row" :class="row.best ? 'sweep__row is-best' : 'sweep__row'"
+                       :style="'--heat:' + row.heatPct + '%'"
+                       data-action="click" data-fn="backtest.applyCombo" :data-id="row.id"
+                       :title="'apply ' + row.label">
+                    <span class="sweep__cell num">{{row.netLabel}}</span>
+                    <span class="sweep__cell num">{{row.expectancyLabel}}</span>
+                    <span class="sweep__cell num">{{row.trades}}</span>
+                    <span class="sweep__cell num">{{row.winLabel}}</span>
+                    <span class="sweep__cell num">{{row.ddLabel}}</span>
+                    <span class="sweep__cell truncate">{{row.label}}</span>
+                  </div>
+                </div>
               </div>
             </div>
             <p class="label" data-if="block.id !== 'book' &amp;&amp; block.id !== 'tape' &amp;&amp; block.id !== 'ticket' &amp;&amp; block.id !== 'positions' &amp;&amp; block.id !== 'hud' &amp;&amp; block.id !== 'strategies' &amp;&amp; block.id !== 'scoreboard' &amp;&amp; block.id !== 'alerts' &amp;&amp; block.id !== 'bot' &amp;&amp; block.id !== 'backtest'">ready</p>
