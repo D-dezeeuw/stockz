@@ -1,6 +1,14 @@
 import { describe, it, expect } from 'vitest'
-import { PROGRESS_MS, signalSide, collectSignals, progressReporter, driveBacktest } from './harness.js'
+import {
+  PROGRESS_MS,
+  signalSide,
+  collectSignals,
+  progressReporter,
+  drainPending,
+  driveBacktest,
+} from './harness.js'
 import { defineStrategy } from '../strategy/contract.js'
+import { resolveFillConfig } from './fills.js'
 
 /** A strategy that buys above a threshold, sells below it, and can be told to explode. */
 const flipper = defineStrategy({
@@ -90,6 +98,42 @@ describe('progressReporter', () => {
   })
 })
 
+describe('drainPending', () => {
+  it('fills what has arrived, keeps working limits, and drops what cannot price', () => {
+    const config = resolveFillConfig({ spreadBps: 0, slippageBps: 0, sizeCurve: [{ size: 1, bps: 0 }] })
+    const queue = [
+      { side: 'buy', type: 'market', size: 1, arrivesAt: 900, reason: 'early' },
+      { side: 'buy', type: 'market', size: 1, arrivesAt: 5000, reason: 'later' },
+      { side: 'buy', type: 'limit', size: 1, price: 90, arrivesAt: 900, reason: 'passive' },
+    ]
+
+    const drained = drainPending(queue, { px: 100, ts: 1000 }, config)
+
+    // The market order fills at the touch; the limit at 90 has not been reached, so it
+    // stays working — dropping it would score a passive strategy as if it had cancelled
+    // every quote it ever posted.
+    expect(drained.fills).toHaveLength(1)
+    expect(drained.fills[0]).toMatchObject({ side: 'buy', price: 100, liquidity: 'taker', reason: 'early' })
+    // Fees come attached, so nothing downstream has to remember to charge them.
+    expect(drained.fills[0].fee).toBeGreaterThan(0)
+    expect(drained.pending.map((o) => o.reason)).toEqual(['later', 'passive'])
+
+    // Checked against every tick, not only the one matching the arrival stamp: a recording
+    // is an irregular clock, and an order arriving between two prints must fill on the next.
+    expect(drainPending(drained.pending, { px: 89, ts: 6000 }, config).fills.map((f) => f.reason)).toEqual([
+      'later',
+      'passive',
+    ])
+
+    // A market order that cannot price is dead rather than left in flight forever.
+    expect(drainPending([{ side: 'buy', type: 'market', size: 1, arrivesAt: 0 }], {}, config)).toEqual({
+      fills: [],
+      pending: [],
+    })
+    expect(drainPending(null, {}, config)).toEqual({ fills: [], pending: [] })
+  })
+})
+
 describe('driveBacktest', () => {
   it('runs one strategy over one instrument and reports what it emitted', () => {
     let clock = 0
@@ -99,6 +143,9 @@ describe('driveBacktest', () => {
       strategy: flipper,
       instrument: 'BTC-USDT',
       params: { level: 100 },
+      // One millisecond of wire, so the fill lands on the next print rather than the one
+      // that triggered it — the gap the latency model exists to charge for.
+      fillConfig: { latencyMs: 1 },
       now: () => (clock += 200),
       onProgress: (u) => progress.push(u),
     })
@@ -116,9 +163,35 @@ describe('driveBacktest', () => {
     ])
     expect(result.errors).toBe(1)
     expect(result.cancelled).toBe(false)
-    expect(result.state).toEqual({ run: { signals: 2, errors: 1 } })
+    expect(result.state).toEqual({ run: { signals: 2, fills: 2, errors: 1 } })
     expect(result.elapsedMs).toBeGreaterThan(0)
     expect(progress.at(-1)).toMatchObject({ played: 4, total: 4, signals: 2 })
+
+    // Signals became orders, and orders became fills only after the latency gap. The buy
+    // signalled on the tick at ts 1000 is still on the wire when that tick ends; it fills
+    // against ts 1002 — a different price, which is exactly the cost being modelled.
+    expect(result.fills).toHaveLength(2)
+    expect(result.fills[0]).toMatchObject({ side: 'buy', ts: 1002, liquidity: 'taker' })
+    // And it pays the offer plus adverse slippage, never the 100 that was on the tape.
+    expect(result.fills[0].price).toBeGreaterThan(100)
+    expect(result.fills[0].fee).toBeGreaterThan(0)
+    expect(result.fills[1]).toMatchObject({ side: 'sell', ts: 1004 })
+    expect(result.fillConfig).toMatchObject({ latencyMs: 1, instrument: 'BTC-USDT' })
+
+    // The same tape run passively is a different trade count. Quotes post 5% behind the
+    // touch: the sell at 103.95 is crossed by the 666 print, the buy at 95.95 never is —
+    // and the one the tape never reached is reported unfilled rather than force-filled at
+    // the end, which would credit the strategy with the fill it demonstrably did not get.
+    const passive = driveBacktest({
+      ticks,
+      strategy: flipper,
+      instrument: 'BTC-USDT',
+      params: { level: 100 },
+      fillConfig: { orderType: 'limit', limitOffsetBps: 500, latencyMs: 1 },
+    })
+    expect(passive.fills).toHaveLength(1)
+    expect(passive.fills[0]).toMatchObject({ side: 'sell', price: 103.95, liquidity: 'maker' })
+    expect(passive.unfilled).toBe(1)
 
     // Cancellation lands per tick, not per chunk: a misconfigured sweep over a long
     // recording must stop the moment it is told to.

@@ -85,6 +85,9 @@ export async function runRequest(request, post, deps = {}) {
     strategy,
     params: request?.params,
     instrument: request?.instrument,
+    // The assumptions travel with the request. A result whose fill assumptions were not
+    // recorded is a number nobody can reproduce.
+    fillConfig: request?.fillConfig,
     now: deps.now,
     cancelled: () => cancelled,
     onProgress: (update) => send({ type: 'progress', runId, ...update }),
