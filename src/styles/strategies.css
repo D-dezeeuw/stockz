@@ -134,3 +134,29 @@
   color: var(--orange);
   min-width: 0;
 }
+
+/*
+ * The recent-calls strip under a run. Deliberately tiny: it is context for a decision
+ * already made, not a reading to trade off, and anything larger would compete with the
+ * live signal chip beside it.
+ */
+.runs__recent {
+  grid-column: 1 / -1;
+  display: flex;
+  gap: var(--space-1, 0.25rem);
+  opacity: 0.6;
+}
+
+.runs__past {
+  font-size: var(--font-size-xs, 0.6875rem);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.runs__past--buy {
+  color: var(--green);
+}
+
+.runs__past--sell {
+  color: var(--orange);
+}

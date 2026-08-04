@@ -12,6 +12,17 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ### Added
 
+- **Signal history** — the question after a bad trade is never "what is the strategy saying
+  now" but "what was it saying when I clicked", and live state cannot answer it: it holds
+  one signal per run and overwrites it every tick. So every emission is appended to a
+  bounded ring, **one per run** rather than one shared log — a chatty strategy on a fast
+  instrument would otherwise evict a quiet strategy's whole history within a minute, and
+  the quiet one's three signals a day are exactly the ones somebody will want to look up. A
+  repeat of the same call is not appended, since a strategy holding an opinion for ten
+  seconds would otherwise fill its history with one decision. History is appended by the
+  same call that publishes, so no future emission path can quietly miss it, and
+  `exportSignals` reads across runs as **one timeline** — insertion order would be a
+  timeline only by accident.
 - **Sandboxed strategy errors** — a strategy is somebody's idea, written fast and tested
   less; it will throw, and the only question is whether it takes the tick loop, its
   neighbours and the feed with it. A throw becomes **data**: an `{ok, error}` result, a

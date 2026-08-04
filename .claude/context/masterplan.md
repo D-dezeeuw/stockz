@@ -3363,16 +3363,16 @@
 **What:** The last 512 signals per run kept in memory for the journal and instant context on any decision.
 **How:** Fixed-size rings appended on every publish, checkpoint-tagged via Spektrum serialize and exported through a plain-array snapshot API.
 
-- [ ] **T20.9.1 - Branch history buffer** - What: Clean room for the memory layer. How: git checkout -b feature/f20.9-signal-history from main.
-- [ ] **T20.9.2 - createSignalRing fn** - What: Bounded memory per run, guaranteed. How: 512-slot ring closure with append and overwrite-on-full semantics built on the shared ring pattern.
-- [ ] **T20.9.3 - Append on publish** - What: Every emitted signal is remembered automatically. How: Hook createSignalRing.append into publishSignal keyed by runKey.
-- [ ] **T20.9.4 - snapshotRing fn** - What: Consumers get plain data, not internals. How: Pure fn unrolling the ring into a chronologically ordered array of signal objects.
-- [ ] **T20.9.5 - ringStats fn** - What: Instant counts of long/short/flat emissions per run. How: Pure fn folding a snapshot into direction tallies and a last-emission timestamp.
-- [ ] **T20.9.6 - Checkpoint integration** - What: Signal history rides along with state time-travel. How: Include ring snapshots in checkpoint() payloads via serialize so replay sessions restore them.
-- [ ] **T20.9.7 - exportSignals fn** - What: The journal (phase 25) can pull history through one stable call. How: Public engine fn returning snapshots filtered by runKey and time range.
-- [ ] **T20.9.8 - Recent signals mini list** - What: The last few calls visible under each running strategy. How: data-each over a 5-entry snapshot slice in the runs block with dir glyphs and reasons.
-- [ ] **T20.9.9 - Single tests per history fn** - What: Ring bounds, snapshots, stats and export proven alone. How: One Vitest test per fn including a wraparound fixture, run via -t names.
-- [ ] **T20.9.10 - Merge history buffer** - What: Every signal accountable after the fact. How: Lint plus targeted runs, merge feature/f20.9 into main.
+- [x] **T20.9.1 - Branch history buffer** - What: Clean room for the memory layer. How: git checkout -b feature/f20.9-signal-history from main.
+- [x] **T20.9.2 - createSignalRing fn** - What: Bounded memory per run, guaranteed. How: 512-slot ring closure with append and overwrite-on-full semantics built on the shared ring pattern.
+- [x] **T20.9.3 - Append on publish** - What: Every emitted signal is remembered automatically. How: Hook createSignalRing.append into publishSignal keyed by runKey.
+- [x] **T20.9.4 - snapshotRing fn** - What: Consumers get plain data, not internals. How: Pure fn unrolling the ring into a chronologically ordered array of signal objects.
+- [x] **T20.9.5 - ringStats fn** - What: Instant counts of long/short/flat emissions per run. How: Pure fn folding a snapshot into direction tallies and a last-emission timestamp.
+- [x] **T20.9.6 - Checkpoint integration** - What: Signal history rides along with state time-travel. How: Include ring snapshots in checkpoint() payloads via serialize so replay sessions restore them.
+- [x] **T20.9.7 - exportSignals fn** - What: The journal (phase 25) can pull history through one stable call. How: Public engine fn returning snapshots filtered by runKey and time range.
+- [x] **T20.9.8 - Recent signals mini list** - What: The last few calls visible under each running strategy. How: data-each over a 5-entry snapshot slice in the runs block with dir glyphs and reasons.
+- [x] **T20.9.9 - Single tests per history fn** - What: Ring bounds, snapshots, stats and export proven alone. How: One Vitest test per fn including a wraparound fixture, run via -t names.
+- [x] **T20.9.10 - Merge history buffer** - What: Every signal accountable after the fact. How: Lint plus targeted runs, merge feature/f20.9 into main.
 
 ### F20.10 - Weighted vote composition
 

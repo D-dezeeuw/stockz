@@ -454,6 +454,12 @@
                   <span class="chip chip--warn" data-if="run.throttled">1/{{run.stride}} · {{run.costMs}}ms</span>
                   <button type="button" class="chip" data-action="click" data-fn="strategy.stop"
                           :data-key="run.key">stop</button>
+                  <!-- The last few calls in context: the question after a bad trade is not
+                       what the strategy is saying now but what it was saying then. -->
+                  <div class="runs__recent" data-each="past in run.recent">
+                    <span class="runs__past" :class="'runs__past runs__past--' + past.action"
+                          :title="past.reason">{{past.action}}</span>
+                  </div>
                 </div>
               </div>
             </div>
