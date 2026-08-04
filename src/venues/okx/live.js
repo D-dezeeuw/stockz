@@ -16,6 +16,7 @@ import { flushFees } from '../../hud/fees.js'
 import { refreshCompact } from '../../hud/compact.js'
 import { tickStrategies } from '../../strategy/registry.js'
 import { evaluateAlerts, publishAlertChips } from '../../alerts/price.js'
+import { flushAlerts } from '../../alerts/bus.js'
 import { evictStale } from '../../exec/latency.js'
 import { setValue, appState } from '../../app/engine.js'
 import { PATHS } from '../../state/paths.js'
@@ -149,6 +150,9 @@ export function flushFeed(focus, options = {}) {
     lastMid = mid
   }
   publishAlertChips(focus)
+  // Published once per frame like everything else: an alert stack that re-rendered on every
+  // emission would be the one part of the desk that ignores the rAF budget.
+  flushAlerts()
   flushQuality(spreadBps())
   // Swept on the same frame: an order whose ack never came would otherwise sit in the
   // latency map for the life of the session.

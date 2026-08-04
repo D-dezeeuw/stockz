@@ -2,6 +2,7 @@ import { setValue, appState } from '../app/engine.js'
 import { PATHS } from '../state/paths.js'
 import { registerAction } from '../actions/registry.js'
 import { ACTIONS } from '../actions/names.js'
+import { setAlertToggle } from './signals.js'
 
 /**
  * Price-cross alerts.
@@ -283,6 +284,9 @@ export function registerAlertActions() {
   registerAction(ACTIONS.alerts.remove, (_state, payload) => removeAlert(payload?.id ?? payload))
   registerAction(ACTIONS.alerts.update, (_state, payload) =>
     updateAlert(payload?.id, { price: Number(payload?.value ?? payload?.price) }),
+  )
+  registerAction(ACTIONS.alerts.toggle, (_state, payload) =>
+    setAlertToggle(payload?.group, payload?.key, payload?.checked ?? payload?.value !== 'false'),
   )
 
   return ACTIONS.alerts.create

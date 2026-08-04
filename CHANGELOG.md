@@ -12,6 +12,20 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ### Added
 
+- **The alert bus, and strategy signal alerts** — everything that wants the trader's
+  attention arrives in one shape, and everything that *delivers* attention subscribes to one
+  door; otherwise each new source has to be wired into every output separately and the fourth
+  one gets forgotten. The severity ladder is not decoration: it decides what interrupts, and
+  a desk stays usable only while `error` is rare enough to still mean something. A strategy
+  that fires while the trader is looking at the order book has said nothing at all, so every
+  entry and exit becomes an alert carrying **the strategy's own stated reason** — an alert
+  that says "SELL" and nothing else cannot be judged, and there is about a second to judge
+  it. The design problem is noise: eight strategies on four instruments is thirty-two sources,
+  several restating themselves every tick, and a stream that shouts constantly gets muted on
+  day two — at which point the feature is worse than absent, because the trader now believes
+  they are being told. So "no signal" never alerts, an identical call inside the window is
+  one alert while the same strategy flipping side is a new one, and every strategy has its
+  own mute — defaulting **on**, because opting out is a decision and opting in should not be.
 - **Price-cross alerts** — the one thing a scalper cannot do is watch six instruments at
   once, and the one thing they need is to know the moment one reaches a level. **A gap
   through the level is a cross**: price does not visit every number on the way, and on a fast
