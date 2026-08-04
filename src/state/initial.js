@@ -169,6 +169,7 @@ export function initialState(overrides = {}) {
     [PATHS.trade.armed]: false,
     [PATHS.trade.mode]: 'paper',
     [PATHS.trade.holdPct]: 0,
+    [PATHS.trade.paperResting]: [],
     [PATHS.trade.orders]: [],
     [PATHS.trade.positions]: [],
     [PATHS.trade.dayPnl]: 0,
