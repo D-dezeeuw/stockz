@@ -8,6 +8,7 @@ import { runHook, BUILTIN_STRATEGIES } from './engine.js'
 import { setStrategyParam, publishParamForm, applyParams, paramsFor } from './params.js'
 import { normalizeSignal, publishSignal, sweepSignals, signalChip } from './signal.js'
 import { sessionKey } from '../positions/ledger.js'
+import { measureTick, recordCost, shouldRunTick, DEFAULT_BUDGET_MS } from './budget.js'
 
 /**
  * Who is registered, and what is running where.
@@ -118,13 +119,33 @@ export function startStrategy(strategyId, instrument, options = {}) {
     ctx,
     memory: strategy.init(ctx),
     signal: null,
+    // A strategy runs inside the same frame as the book and the ticket. A slow one does
+    // not just make itself late, it makes the desk late.
+    budgetMs: Number(options.budgetMs ?? ctx.params?.budgetMs) || DEFAULT_BUDGET_MS,
+    costMs: undefined,
+    stride: 1,
+    throttled: false,
+    ticks: 0,
   }
+
+  const timed = measureTick(
+    (payload) => runHook(strategy, 'onTick', run.ctx, payload),
+    { clock: options.clock },
+  )
 
   run.unsubscribe = subscribe((tick) => {
     // Ticks arrive for every instrument on the bus; a run only sees its own.
     if (String(tick?.symbol ?? '') !== run.instrument) return
 
-    run.signal = normalizeSignal(runHook(strategy, 'onTick', run.ctx, tick), {
+    // The stride gate is a modulo and nothing else — it has to be cheaper than the work
+    // it is skipping, or throttling costs more than it saves.
+    run.ticks += 1
+    if (!shouldRunTick(run.ticks, run.stride)) return
+
+    const { result, costMs } = timed(tick)
+    recordCost(run, costMs)
+
+    run.signal = normalizeSignal(result, {
       now: Number(tick?.ts) || 0,
       source: strategy.id,
       instrument: run.instrument,
@@ -178,6 +199,11 @@ export function publishRunning() {
     startedAt: run.startedAt,
     action: run.signal?.action ?? 'none',
     ...signalChip(run.signal),
+    // Slowness is visible before it hurts, and a throttled run says so rather than just
+    // going quiet.
+    costMs: Number((Number(run.costMs) || 0).toFixed(2)),
+    stride: run.stride,
+    throttled: run.throttled === true,
   }))
 
   setValue(PATHS.strategy.running, rows)
@@ -237,7 +263,9 @@ export function tuneStrategy(payload) {
   // Applied within the tick, not behind a restart button: a tuning that needs a restart is
   // a tuning nobody uses mid-session, which is the only time it matters.
   for (const run of liveRuns()) {
-    if (run.strategyId === strategy.id) applyParams(run, next, strategy)
+    if (run.strategyId !== strategy.id) continue
+    applyParams(run, next, strategy)
+    run.budgetMs = Number(next.budgetMs) || run.budgetMs
   }
 
   return next

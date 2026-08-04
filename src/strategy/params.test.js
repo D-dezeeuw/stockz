@@ -130,8 +130,9 @@ describe('fieldDescriptors', () => {
   it('builds the whole form so no strategy ever ships its own settings UI', () => {
     const fields = fieldDescriptors(stub())
 
-    expect(fields.map((f) => f.key)).toEqual(['lookback', 'aggressive', 'mode'])
-    expect(fields.map((f) => f.kind)).toEqual(['number', 'toggle', 'select'])
+    // budgetMs leads: it is merged in by defineStrategy, so every strategy exposes one.
+    expect(fields.map((f) => f.key)).toEqual(['budgetMs', 'lookback', 'aggressive', 'mode'])
+    expect(fields.map((f) => f.kind)).toEqual(['number', 'number', 'toggle', 'select'])
     expect(fieldDescriptors(null)).toEqual([])
   })
 })
@@ -141,10 +142,11 @@ describe('paramsFor', () => {
     setValue('settings.strategyParams', { 'mean-rev': { lookback: 9999, mode: 'slow' } })
     tick()
 
-    expect(paramsFor(stub())).toEqual({ lookback: 200, aggressive: false, mode: 'slow' })
+    expect(paramsFor(stub())).toMatchObject({ lookback: 200, aggressive: false, mode: 'slow' })
 
     resetState()
-    expect(paramsFor(stub())).toEqual(defaultsFromSchema(SCHEMA))
+    expect(paramsFor(stub())).toMatchObject(defaultsFromSchema(SCHEMA))
+    expect(paramsFor(stub()).budgetMs).toBe(2)
   })
 })
 
@@ -153,13 +155,14 @@ describe('publishParamForm', () => {
     const fields = publishParamForm(stub(), { lookback: '35' })
     tick()
 
-    expect(fields).toHaveLength(3)
+    expect(fields).toHaveLength(4)
     expect(appState.settings.strategyParams['mean-rev']).toEqual({
+      budgetMs: 2,
       lookback: 35,
       aggressive: false,
       mode: 'fast',
     })
-    expect(appState.ui.strategyForm).toHaveLength(3)
+    expect(appState.ui.strategyForm).toHaveLength(4)
 
     expect(publishParamForm(null)).toEqual([])
   })

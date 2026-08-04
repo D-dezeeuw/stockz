@@ -12,6 +12,18 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ### Added
 
+- **Per-strategy tick budget** — a strategy runs inside the same frame as the book, the tape
+  and the order ticket, so a slow one does not just make itself late, it makes **the desk**
+  late. Each run carries a declared budget (2ms by default, merged into every strategy's
+  param schema whether or not its author thought about one) and an EWMA of what it actually
+  costs. Over budget, it is **throttled, never dropped**: every 2nd, 4th or 8th tick
+  depending on the overage, because a degraded signal is still a signal and silently
+  disabling one would leave the trader watching a strategy they believe is running. The
+  verdict carries 20% hysteresis, without which a strategy sitting exactly on its budget
+  flaps between full speed and quarter speed every few ticks — worse than either. The gate
+  itself is a modulo and nothing else: it has to be cheaper than the work it skips. A
+  throttled run wears its stride and cost in the runs list, so slowness is visible before
+  it hurts.
 - **VWAP, ATR and rolling stddev** — volume and volatility context on the same closure API
   and the same O(1) budget. The stddev uses **Welford**, not the textbook
   `E[x²] − E[x]²`: on instrument prices — numbers near 60000 whose variance is near 1 —

@@ -438,6 +438,9 @@
                     <b>{{run.glyph}}</b>
                     <span class="runs__strength"><i :style="'width:' + run.pct + '%'"></i></span>
                   </span>
+                  <!-- Slowness is visible before it hurts: a throttled run says so rather
+                       than just going quiet. -->
+                  <span class="chip chip--warn" data-if="run.throttled">1/{{run.stride}} · {{run.costMs}}ms</span>
                   <button type="button" class="chip" data-action="click" data-fn="strategy.stop"
                           :data-key="run.key">stop</button>
                 </div>

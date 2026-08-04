@@ -35,6 +35,22 @@ import { indicatorKit } from './indicators/index.js'
  * @property {(ctx: StrategyContext, candle: object) => Signal} onCandle - per closed bar.
  */
 
+/**
+ * The tick budget every strategy carries, declared for the author rather than by them.
+ *
+ * Merged into the params schema so it reaches the tuning form, the coercion and the saved
+ * settings by the same route as anything else — a budget that needed its own plumbing
+ * would be a budget nobody could change.
+ */
+export const BUDGET_PARAM = Object.freeze({
+  kind: 'number',
+  label: 'tick budget (ms)',
+  default: 2,
+  min: 0.5,
+  max: 50,
+  step: 0.5,
+})
+
 /** The hooks a strategy may implement. `init` is optional; the two readers are not. */
 export const HOOKS = Object.freeze(['init', 'onTick', 'onCandle'])
 
@@ -92,7 +108,7 @@ export function defineStrategy(descriptor) {
   return Object.freeze({
     id: String(descriptor.id),
     name: String(descriptor.name ?? descriptor.id),
-    params: Object.freeze({ ...(descriptor.params ?? {}) }),
+    params: Object.freeze({ budgetMs: BUDGET_PARAM, ...(descriptor.params ?? {}) }),
     // Defaulted rather than left undefined, so the runner can call all three without
     // checking — one branch in a per-tick path is one branch too many.
     init: descriptor.init ?? (() => null),
