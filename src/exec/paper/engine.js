@@ -4,6 +4,7 @@ import { onTick } from '../../pipeline/bus.js'
 import { ingestFill } from '../../positions/store.js'
 import { createLogger } from '../../utils/log.js'
 import { bookPaperFill } from './account.js'
+import { checkGap } from './guards.js'
 import {
   queuePosition,
   insertResting,
@@ -85,6 +86,9 @@ export function restOrder(intent, book = appState?.market?.book) {
   return order
 }
 
+/** The last price seen per instrument, so a gap can be told from a move. */
+const lastPrice = new Map()
+
 /**
  * Work one print against every resting order at its instrument.
  *
@@ -93,7 +97,23 @@ export function restOrder(intent, book = appState?.market?.book) {
  */
 export function workPrint(print) {
   const symbol = String(print?.symbol ?? '')
-  if (!symbol || resting.length === 0) return []
+  if (!symbol) return []
+
+  const px = Number(print?.px) || 0
+  const previous = lastPrice.get(symbol)
+  if (px > 0) lastPrice.set(symbol, px)
+
+  if (resting.length === 0) return []
+
+  // A limit order "filled" through a gap it was never in front of is the most flattering
+  // bug a sim can have: the strategy books the whole move and never had to be right. So a
+  // print that skipped is used to update the price and nothing else — refusing to fill
+  // teaches nothing wrong, while filling teaches a strategy that only works on bad data.
+  const gap = checkGap(px, previous)
+  if (!gap.ok) {
+    log.warn(`${symbol}: ${gap.reason} (${gap.bps}bp) — not filling against it`)
+    return []
+  }
 
   const fills = []
   const next = []
@@ -181,6 +201,7 @@ export function restingOrders() {
 /** Empty the resting book (tests, and a mode switch). */
 export function resetPaperBook() {
   resting = []
+  lastPrice.clear()
   return true
 }
 

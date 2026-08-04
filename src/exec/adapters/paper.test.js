@@ -46,11 +46,28 @@ describe('createPaperAdapter', () => {
     expect(filled.order).toMatchObject({ state: 'filled', avgPx: 101, filled: 2, paper: true })
 
     // Unfillable rather than filled at zero: a paper fill at no price books a position
-    // whose P&L is nonsense for the rest of the session.
+    // whose P&L is nonsense for the rest of the session. The guards name *why*, which is
+    // the difference between a refusal a trader can act on and one that looks like a bug.
     const blind = createPaperAdapter({ market: () => ({}) })
-    expect(await blind.submit({ clientId: 'p2', type: 'market' })).toMatchObject({
+    expect(await blind.submit({ clientId: 'p2', type: 'market', size: 1 })).toMatchObject({
       ok: false,
-      reason: 'no_market',
+      reason: 'no_book',
+    })
+
+    // A crossed book hands out free money in both directions — the one error a practice
+    // account must never teach.
+    const crossed = createPaperAdapter({ market: () => ({ bid: 101, ask: 99 }) })
+    expect(await crossed.submit({ clientId: 'p4', type: 'market', size: 1 })).toMatchObject({
+      reason: 'crossed',
+    })
+
+    // And a price nobody has refreshed for a minute is a memory, not a price.
+    const stale = createPaperAdapter({
+      market: () => ({ bid: 99, ask: 101, ts: 1000 }),
+      now: () => 1000 + 60000,
+    })
+    expect(await stale.submit({ clientId: 'p5', type: 'market', size: 1 })).toMatchObject({
+      reason: 'stale',
     })
 
     // Limits rest rather than filling on submit: the hardest thing about a resting order

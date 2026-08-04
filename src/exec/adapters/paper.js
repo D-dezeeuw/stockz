@@ -2,6 +2,7 @@ import { appState } from '../../app/engine.js'
 import { capabilityFor, capabilityFlags } from '../capabilities.js'
 import { restOrder, cancelPaperOrder } from '../paper/engine.js'
 import { afterLatency } from '../paper/latency.js'
+import { guardPaperFill } from '../paper/guards.js'
 
 /**
  * The paper adapter — the desk trading against itself.
@@ -68,7 +69,10 @@ export function createPaperAdapter(deps = {}) {
       bid: appState?.market?.bid,
       ask: appState?.market?.ask,
       mid: appState?.market?.mid,
+      // Carried so the guards can tell a live price from a remembered one.
+      ts: appState?.market?.quoteTs,
     }),
+    now = () => Date.now(),
   } = deps
 
   return {
@@ -98,7 +102,22 @@ export function createPaperAdapter(deps = {}) {
           }
         }
 
-        const price = paperFillPrice(intent, market())
+        const book = market()
+        // The states that make a simulator lie: a crossed book, a half-populated one, and
+        // a stalled feed whose last price is a memory rather than a price. Refusing to
+        // fill teaches nothing wrong; filling against a broken book teaches a strategy
+        // that only works when the data is broken.
+        const safe = guardPaperFill({
+          market: book,
+          size: intent?.size,
+          lastTs: book?.ts,
+          now: now(),
+        })
+        if (!safe.ok) {
+          return { ok: false, reason: safe.reason, message: `paper refused: ${safe.reason}`, clientId }
+        }
+
+        const price = paperFillPrice(intent, book)
 
         // Unfillable rather than silently filled at zero: a paper fill at no price would
         // book a position whose P&L is nonsense for the rest of the session.

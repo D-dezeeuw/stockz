@@ -127,7 +127,18 @@ export function restoreSettings(storage = globalThis.localStorage) {
 export function persistSettings(storage = globalThis.localStorage) {
   const watcher = (state) => saveSettings(state?.settings, storage)
 
-  watch([PATHS.settings.theme, PATHS.settings.blocks], watcher)
+  // *Every* declared setting, not two of them.
+  //
+  // This watched `theme` and `blocks` alone, which meant a change to anything else — the
+  // market mode, the bot's rate and caps, the backtest fill assumptions, the practice
+  // stake, the alert list — was written to state, rendered, and then lost on reload,
+  // unless the trader happened to also change the theme or drag a block in the same
+  // session. The whole settings object was being saved; it was just almost never being
+  // asked to save.
+  //
+  // Derived from `PATHS.settings` rather than listed, so a setting added later is
+  // persisted by existing rather than by somebody remembering to add it here.
+  watch(Object.values(PATHS.settings), watcher)
   return watcher
 }
 
