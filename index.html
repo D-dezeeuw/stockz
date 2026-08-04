@@ -409,7 +409,10 @@
               </svg>
               <div class="positions__rows" data-each="trade.positions" data-as="p">
                 <div class="positions__row" :class="'positions__row positions__row--' + p.side">
-                  <span class="positions__inst">{{p.instrument}}</span>
+                  <!-- The badge is on the *position*, not on the desk's current mode: a
+                       practice position left open across a switch to live must not start
+                       reading as real. Same block, same code — one extra chip. -->
+                  <span class="positions__inst">{{p.instrument}}<b class="pos-paper" data-if="p.paper">P</b></span>
                   <span class="positions__qty">{{p.qty}}</span>
                   <span class="positions__avg">{{fmt.price(p.avgPx)}}</span>
                   <span :class="p.unrealized >= 0 ? 'pnl pnl--up' : 'pnl pnl--down'">{{fmt.signed(p.unrealized)}}</span>

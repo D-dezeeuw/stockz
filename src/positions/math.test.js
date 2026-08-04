@@ -21,9 +21,13 @@ describe('makePosition', () => {
       fees: 0,
       openedAt: 0,
       mark: 0,
+      // Practice or real lives on the position, not on the desk's current mode: a paper
+      // position left open across a switch to live must not start reading as real.
+      paper: false,
     })
 
     expect(makePosition({ qty: -2, avgPx: 100 })).toMatchObject({ qty: -2, avgPx: 100 })
+    expect(makePosition({ paper: true }).paper).toBe(true)
     expect(makePosition()).toMatchObject({ qty: 0 })
   })
 })

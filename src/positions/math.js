@@ -38,6 +38,10 @@ export function makePosition(seed = {}) {
     fees: Number(seed.fees) || 0,
     openedAt: Number(seed.openedAt) || 0,
     mark: Number(seed.mark) || 0,
+    // Practice or real, on the position itself. The shared blocks badge from this rather
+    // than from `trade.mode`, so a paper position left open across a switch to live does
+    // not start reading as real.
+    paper: seed.paper === true,
   }
 }
 
@@ -144,6 +148,10 @@ export function applyFill(position, fill) {
         avgPx: avgEntryAfterAdd(held.qty, held.avgPx, opening, fillPx),
         fees,
         openedAt: held.openedAt || Number(fill?.ts) || 0,
+        // Sticky once set. A position opened on paper stays paper even if a later fill
+        // arrives without the flag — the alternative is a practice position that quietly
+        // starts reading as real, which is the one mislabel that costs money.
+        paper: held.paper === true || fill?.paper === true,
       },
       realized: 0,
     }
@@ -162,6 +170,9 @@ export function applyFill(position, fill) {
       realized: Number((held.realized + booked).toFixed(10)),
       fees,
       openedAt: flips ? Number(fill?.ts) || 0 : held.openedAt,
+      // A flip is a new position, so it takes the incoming fill's mode; a reduce leaves
+      // the one it already had.
+      paper: flips ? fill?.paper === true : held.paper === true,
     },
     realized: booked,
   }

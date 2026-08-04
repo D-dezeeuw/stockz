@@ -100,6 +100,11 @@ export function ingestFill(fill) {
     px: fill?.px,
     fee: fill?.fee,
     ts: fill?.ts,
+    // Carried onto the position so the shared blocks can badge it without a forked
+    // component. Whether a position is practice or real is a property of the position,
+    // not of whatever mode the desk happens to be in when somebody looks at it — a
+    // paper position left open across a switch to live must not start reading as real.
+    paper: fill?.paper === true,
   })
 
   // And into the journal, off the same fill. Fed here rather than from a watch on the
@@ -114,6 +119,9 @@ export function ingestFill(fill) {
     intentPx: fill?.intentPx,
     fee: fill?.fee,
     ts: fill?.ts,
+    // Journaled fully but tagged, so practice never pollutes the real record and both
+    // can still be studied — a paper trade dropped from the journal is a lesson lost.
+    paper: fill?.paper === true,
   })
 
   // A close is booked the moment it happens: the ledger is the session's only honest
