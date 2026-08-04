@@ -3903,32 +3903,32 @@
 **What:** Safety that costs under a millisecond per order - never a dialog, never a wait.
 **How:** src/breakers/core.js checkBreakers(ctx) running plain number comparisons against a precomputed threshold cache, returning a trip code or 0.
 
-- [ ] **T24.1.1 - Branch breaker core** - What: An isolated line of work for the breaker engine. How: git checkout -b feature/f24.1-breaker-core from an up-to-date main.
-- [ ] **T24.1.2 - Core check fn** - What: One tiny function guards every order. How: Create src/breakers/core.js exporting pure checkBreakers(ctx) doing only primitive comparisons, no state reads, no allocation.
-- [ ] **T24.1.3 - Threshold cache** - What: Zero settings lookups on the hot path. How: Implement refreshThresholds() copying breaker settings into a flat plain object, re-run from a Spektrum watch on settings changes.
-- [ ] **T24.1.4 - Order-path hook** - What: Every order passes the net exactly once. How: Insert a single checkBreakers call in the phase-17 execution engine submit path before any venue send.
-- [ ] **T24.1.5 - Trip code constants** - What: Unambiguous machine-readable trip reasons. How: Export a numeric enum (0 none, 1 daily-loss, 2 position-block, 3 loss-streak, 4 kill) as frozen constants.
-- [ ] **T24.1.6 - Trip publisher latch** - What: One trip fires exactly one reaction chain. How: Implement tripBreaker(code, values) setting breaker.tripped and firing trigger('breaker.tripped', code) behind an idempotent latch.
-- [ ] **T24.1.7 - No-dialog contract** - What: A rejection is a state change, never a popup. How: Return a rejection object from the order path and document the no-confirm no-modal rule in the module header comment.
-- [ ] **T24.1.8 - Perf benchmark** - What: Proof the check stays under budget. How: Add a Vitest bench running checkBreakers 1e6 times asserting under 1ms per 1000 calls on the dev machine.
-- [ ] **T24.1.9 - Single unit tests for core fns** - What: Core logic proven once per function. How: One Vitest test each for checkBreakers, refreshThresholds and tripBreaker via targeted npx vitest run -t.
-- [ ] **T24.1.10 - Merge breaker core** - What: The breaker engine lands on main. How: Green targeted tests plus ESLint, merge feature/f24.1-breaker-core into main, delete the branch.
+- [x] **T24.1.1 - Branch breaker core** - What: An isolated line of work for the breaker engine. How: git checkout -b feature/f24.1-breaker-core from an up-to-date main.
+- [x] **T24.1.2 - Core check fn** - What: One tiny function guards every order. How: Create src/breakers/core.js exporting pure checkBreakers(ctx) doing only primitive comparisons, no state reads, no allocation.
+- [x] **T24.1.3 - Threshold cache** - What: Zero settings lookups on the hot path. How: Implement refreshThresholds() copying breaker settings into a flat plain object, re-run from a Spektrum watch on settings changes.
+- [x] **T24.1.4 - Order-path hook** - What: Every order passes the net exactly once. How: Insert a single checkBreakers call in the phase-17 execution engine submit path before any venue send.
+- [x] **T24.1.5 - Trip code constants** - What: Unambiguous machine-readable trip reasons. How: Export a numeric enum (0 none, 1 daily-loss, 2 position-block, 3 loss-streak, 4 kill) as frozen constants.
+- [x] **T24.1.6 - Trip publisher latch** - What: One trip fires exactly one reaction chain. How: Implement tripBreaker(code, values) setting breaker.tripped and firing trigger('breaker.tripped', code) behind an idempotent latch.
+- [x] **T24.1.7 - No-dialog contract** - What: A rejection is a state change, never a popup. How: Return a rejection object from the order path and document the no-confirm no-modal rule in the module header comment.
+- [x] **T24.1.8 - Perf benchmark** - What: Proof the check stays under budget. How: Add a Vitest bench running checkBreakers 1e6 times asserting under 1ms per 1000 calls on the dev machine.
+- [x] **T24.1.9 - Single unit tests for core fns** - What: Core logic proven once per function. How: One Vitest test each for checkBreakers, refreshThresholds and tripBreaker via targeted npx vitest run -t.
+- [x] **T24.1.10 - Merge breaker core** - What: The breaker engine lands on main. How: Green targeted tests plus ESLint, merge feature/f24.1-breaker-core into main, delete the branch.
 
 ### F24.2 - Daily max-loss breaker
 
 **What:** Trading halts the instant the day's realized plus unrealized loss hits the limit.
 **How:** A single breaker.dayPnl number maintained from phase-18 events so the hot-path check is one comparison against a pre-negated threshold.
 
-- [ ] **T24.2.1 - Branch daily loss** - What: Isolated work on the daily-loss breaker. How: git checkout -b feature/f24.2-daily-loss from an up-to-date main.
-- [ ] **T24.2.2 - Day PnL accumulator** - What: One number always equals today's total PnL. How: Implement updateDayPnl() combining phase-18 realized totals and mark-to-market unrealized into breaker.dayPnl.
-- [ ] **T24.2.3 - Unrealized cadence** - What: Accuracy without per-tick cost. How: Recompute the unrealized component on the phase-11 tick batch flush, not on every raw tick.
-- [ ] **T24.2.4 - Pre-negated threshold** - What: The hot path stays a single <=. How: Store -maxDailyLoss in the threshold cache at refreshThresholds so no negation happens per order.
-- [ ] **T24.2.5 - Check wiring** - What: The limit binds on every single order. How: Implement dailyLossCheck inside checkBreakers comparing breaker.dayPnl against the cached negative limit, code 1.
-- [ ] **T24.2.6 - Day rollover** - What: Yesterday never blocks today. How: Implement resetDay() archiving the prior day PnL into IndexedDB and zeroing the accumulator at local midnight or manual reset.
-- [ ] **T24.2.7 - Near-limit percentage** - What: Warning light data before the trip. How: Add a computed breaker.dailyPct of limit consumed, feeding the F24.7 LEDs.
-- [ ] **T24.2.8 - Trip wiring with snapshot** - What: The trip records exactly what tripped it. How: Call tripBreaker(1, {dayPnl}) once via the latch the moment dailyLossCheck fires.
-- [ ] **T24.2.9 - Single unit tests for daily fns** - What: Daily-loss logic proven once per function. How: One Vitest test each for updateDayPnl, dailyLossCheck and resetDay via targeted npx vitest run -t.
-- [ ] **T24.2.10 - Merge daily loss** - What: The daily-loss breaker lands on main. How: Green targeted tests plus ESLint, merge feature/f24.2-daily-loss into main, delete the branch.
+- [x] **T24.2.1 - Branch daily loss** - What: Isolated work on the daily-loss breaker. How: git checkout -b feature/f24.2-daily-loss from an up-to-date main.
+- [x] **T24.2.2 - Day PnL accumulator** - What: One number always equals today's total PnL. How: Implement updateDayPnl() combining phase-18 realized totals and mark-to-market unrealized into breaker.dayPnl.
+- [x] **T24.2.3 - Unrealized cadence** - What: Accuracy without per-tick cost. How: Recompute the unrealized component on the phase-11 tick batch flush, not on every raw tick.
+- [x] **T24.2.4 - Pre-negated threshold** - What: The hot path stays a single <=. How: Store -maxDailyLoss in the threshold cache at refreshThresholds so no negation happens per order.
+- [x] **T24.2.5 - Check wiring** - What: The limit binds on every single order. How: Implement dailyLossCheck inside checkBreakers comparing breaker.dayPnl against the cached negative limit, code 1.
+- [x] **T24.2.6 - Day rollover** - What: Yesterday never blocks today. How: Implement resetDay() archiving the prior day PnL into IndexedDB and zeroing the accumulator at local midnight or manual reset.
+- [x] **T24.2.7 - Near-limit percentage** - What: Warning light data before the trip. How: Add a computed breaker.dailyPct of limit consumed, feeding the F24.7 LEDs.
+- [x] **T24.2.8 - Trip wiring with snapshot** - What: The trip records exactly what tripped it. How: Call tripBreaker(1, {dayPnl}) once via the latch the moment dailyLossCheck fires.
+- [x] **T24.2.9 - Single unit tests for daily fns** - What: Daily-loss logic proven once per function. How: One Vitest test each for updateDayPnl, dailyLossCheck and resetDay via targeted npx vitest run -t.
+- [x] **T24.2.10 - Merge daily loss** - What: The daily-loss breaker lands on main. How: Green targeted tests plus ESLint, merge feature/f24.2-daily-loss into main, delete the branch.
 
 ### F24.3 - Per-instrument max position breaker
 
