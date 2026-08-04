@@ -15,6 +15,7 @@ import { refreshSession } from '../../hud/session.js'
 import { flushFees } from '../../hud/fees.js'
 import { refreshCompact } from '../../hud/compact.js'
 import { tickStrategies } from '../../strategy/registry.js'
+import { evaluateAlerts, publishAlertChips } from '../../alerts/price.js'
 import { evictStale } from '../../exec/latency.js'
 import { setValue, appState } from '../../app/engine.js'
 import { PATHS } from '../../state/paths.js'
@@ -99,6 +100,9 @@ export function routeFrame(frame, context = {}) {
   return frame.channel
 }
 
+/** The previous mid, so an alert always compares two prices rather than one. */
+let lastMid = NaN
+
 /**
  * Publish everything the frame produced. Called once per animation frame.
  *
@@ -137,6 +141,14 @@ export function flushFeed(focus, options = {}) {
   // instrument arrived would never fire on the instrument that went quiet — which is
   // exactly the one whose signal has gone stale.
   tickStrategies(at)
+  // Alerts run off the book's own mid rather than the last print: a level is about where
+  // the market *is*, and a single stale trade should not trip one.
+  if (bid > 0 && ask > 0) {
+    const mid = (bid + ask) / 2
+    evaluateAlerts(instId, lastMid, mid, at)
+    lastMid = mid
+  }
+  publishAlertChips(focus)
   flushQuality(spreadBps())
   // Swept on the same frame: an order whose ack never came would otherwise sit in the
   // latency map for the life of the session.

@@ -22,6 +22,7 @@ import { registerGroupingActions } from '../book/grouping.js'
 import { registerTapeActions } from '../book/tape.js'
 import { registerCompactActions } from '../hud/compact.js'
 import { registerStrategyActions } from '../strategy/registry.js'
+import { registerAlertActions } from '../alerts/price.js'
 import { connectFeeds } from './feeds.js'
 import { registerTicketActions } from '../ticket/actions.js'
 import { registerSizingActions } from '../ticket/sizing.js'
@@ -90,6 +91,7 @@ export function bootstrap(options = {}) {
   registerTapeActions()
   registerCompactActions()
   registerStrategyActions()
+  registerAlertActions()
   registerTicketActions()
   registerSizingActions()
   // The venue call is injected rather than imported inside the action, so the fast path

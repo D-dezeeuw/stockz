@@ -244,3 +244,54 @@
   color: var(--ink-muted);
   text-align: right;
 }
+
+/*
+ * Alerts. The form is three controls on one line because the whole promise is "set an
+ * alert in under three seconds", and a control that needs scrolling to reach breaks it.
+ */
+.alerts {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1, 0.25rem);
+}
+
+.alerts__form {
+  display: grid;
+  grid-template-columns: 1fr 3rem auto;
+  gap: var(--space-1, 0.25rem);
+  align-items: center;
+}
+
+.alerts__form input,
+.alerts__form select {
+  min-width: 0;
+  background: var(--surface-2, transparent);
+  color: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: var(--radius, 2px);
+  padding: 0.15rem 0.3rem;
+  font: inherit;
+  font-variant-numeric: tabular-nums;
+}
+
+.alerts__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1, 0.25rem);
+}
+
+/* A spent alert stays on screen and reads as spent. Hiding it would look identical to an
+   armed alert that simply has not fired, which is the one confusion worth preventing. */
+.alerts__chip--spent {
+  opacity: 0.5;
+  border-style: dashed;
+}
+
+.alerts__x {
+  background: none;
+  border: 0;
+  color: inherit;
+  cursor: pointer;
+  padding: 0 0 0 0.2rem;
+  font: inherit;
+}

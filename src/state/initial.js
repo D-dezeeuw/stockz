@@ -88,6 +88,9 @@ export function initialState(overrides = {}) {
     [PATHS.ui.hudRow]: [],
     [PATHS.ui.strategyForm]: [],
     [PATHS.ui.compositeWeights]: [],
+    [PATHS.ui.alertDraft]: 0,
+    [PATHS.ui.alertDirection]: 'either',
+    [PATHS.ui.alertChips]: [],
     [PATHS.ui.hud]: {
       latencyMs: 0,
       latencyGrade: 'warn',
@@ -116,6 +119,7 @@ export function initialState(overrides = {}) {
     [PATHS.settings.activePresets]: {},
     [PATHS.settings.customPresets]: {},
     [PATHS.settings.strategyStats]: [],
+    [PATHS.settings.alerts]: [],
     [PATHS.settings.tapeFloors]: {},
     [PATHS.settings.chords]: {},
     [PATHS.settings.watchlists]: [],
@@ -180,5 +184,9 @@ export function initialState(overrides = {}) {
     [PATHS.strategy.quarantined]: [],
     [PATHS.strategy.signals]: {},
     [PATHS.strategy.scoreboard]: [],
+
+    // alerts
+    [PATHS.alerts.fired]: null,
+    [PATHS.alerts.log]: [],
   }
 }

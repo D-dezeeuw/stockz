@@ -3569,16 +3569,16 @@
 **What:** The user sets, edits and deletes above/below price alerts per instrument in seconds.
 **How:** Alert definitions in Spektrum state with a pure evalPriceCross fn run by watch() on each tick.
 
-- [ ] **T22.1.1 - Branch and scaffold price alerts** - What: An isolated branch and module for price alerting. How: git checkout -b feature/f22-1-price-alerts; create src/alerts/priceAlerts.js with the alert model shape.
-- [ ] **T22.1.2 - Build createAlert fn** - What: New above/below alerts created with a stable shape. How: Implement createAlert(instrument, direction, price, opts) generating an id and pushing into state via addValue.
-- [ ] **T22.1.3 - Build evalPriceCross fn** - What: Exact cross detection, including gap-throughs, in pure code. How: Implement evalPriceCross(alert, prevPrice, lastPrice) returning a fired boolean that covers gaps past the level.
-- [ ] **T22.1.4 - Wire tick evaluation** - What: Alerts fire live off every price update with no polling. How: watch() on per-instrument last-price keys running evalPriceCross and emitting trigger('alert:fired').
-- [ ] **T22.1.5 - Build updateAlert and removeAlert fns** - What: Alerts edited or deleted without recreating them. How: Implement updateAlert(id, patch) and removeAlert(id) mutating the alerts list via setValue.
-- [ ] **T22.1.6 - Build rearmAlert fn** - What: One-shot or repeating alerts with a cooldown between fires. How: Implement rearmAlert(alert, nowTs) honoring oneShot and cooldownMs fields after each fire.
-- [ ] **T22.1.7 - Alert form UI** - What: An alert set from an instrument block in under three seconds. How: Inputs bound with data-model, submit via data-action createAlert, inline range validation message via data-if.
-- [ ] **T22.1.8 - Armed alert chips** - What: Active alerts visible on watchlist rows with quick delete. How: data-each chip list per instrument with a data-action removeAlert on each chip's x button.
-- [ ] **T22.1.9 - Write single unit tests** - What: CRUD and cross logic each proven once. How: One Vitest test each for createAlert, evalPriceCross, updateAlert, removeAlert and rearmAlert; vitest -t only.
-- [ ] **T22.1.10 - Verify live cross and merge** - What: A real cross on live data fires exactly once. How: Set an alert near the live OKX ticker, watch it fire and re-arm correctly, ESLint, merge to main.
+- [x] **T22.1.1 - Branch and scaffold price alerts** - What: An isolated branch and module for price alerting. How: git checkout -b feature/f22-1-price-alerts; create src/alerts/priceAlerts.js with the alert model shape.
+- [x] **T22.1.2 - Build createAlert fn** - What: New above/below alerts created with a stable shape. How: Implement createAlert(instrument, direction, price, opts) generating an id and pushing into state via addValue.
+- [x] **T22.1.3 - Build evalPriceCross fn** - What: Exact cross detection, including gap-throughs, in pure code. How: Implement evalPriceCross(alert, prevPrice, lastPrice) returning a fired boolean that covers gaps past the level.
+- [x] **T22.1.4 - Wire tick evaluation** - What: Alerts fire live off every price update with no polling. How: watch() on per-instrument last-price keys running evalPriceCross and emitting trigger('alert:fired').
+- [x] **T22.1.5 - Build updateAlert and removeAlert fns** - What: Alerts edited or deleted without recreating them. How: Implement updateAlert(id, patch) and removeAlert(id) mutating the alerts list via setValue.
+- [x] **T22.1.6 - Build rearmAlert fn** - What: One-shot or repeating alerts with a cooldown between fires. How: Implement rearmAlert(alert, nowTs) honoring oneShot and cooldownMs fields after each fire.
+- [x] **T22.1.7 - Alert form UI** - What: An alert set from an instrument block in under three seconds. How: Inputs bound with data-model, submit via data-action createAlert, inline range validation message via data-if.
+- [x] **T22.1.8 - Armed alert chips** - What: Active alerts visible on watchlist rows with quick delete. How: data-each chip list per instrument with a data-action removeAlert on each chip's x button.
+- [x] **T22.1.9 - Write single unit tests** - What: CRUD and cross logic each proven once. How: One Vitest test each for createAlert, evalPriceCross, updateAlert, removeAlert and rearmAlert; vitest -t only.
+- [x] **T22.1.10 - Verify live cross and merge** - What: A real cross on live data fires exactly once. How: Set an alert near the live OKX ticker, watch it fire and re-arm correctly, ESLint, merge to main.
 
 ### F22.2 - Strategy Signal Alerts
 

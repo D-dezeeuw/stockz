@@ -30,6 +30,11 @@ export const ACTIONS = Object.freeze({
     setPreset: 'strategy.setPreset',
     resetScore: 'strategy.resetScore',
   }),
+  alerts: Object.freeze({
+    create: 'alerts.create',
+    update: 'alerts.update',
+    remove: 'alerts.remove',
+  }),
   book: Object.freeze({
     prefill: 'book.prefill',
     setGroup: 'book.setGroup',
