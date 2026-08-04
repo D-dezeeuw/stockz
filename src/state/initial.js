@@ -235,6 +235,8 @@ export function initialState(overrides = {}) {
     [PATHS.replay.error]: '',
 
     // analytics
+    [PATHS.analytics.period]: 'all',
+    [PATHS.analytics.trades]: [],
     [PATHS.analytics.kpis]: [],
     [PATHS.analytics.equity]: [],
     [PATHS.analytics.drawdown]: { maxDrawdown: 0, peak: 0, trough: 0 },

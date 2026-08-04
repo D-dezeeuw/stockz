@@ -57,6 +57,19 @@ export const DEFAULT_BINDINGS = Object.freeze([
   { chord: 'KeyM', action: ACTIONS.ticket.setMode, payload: { mode: 'market' }, label: 'market' },
   { chord: 'KeyL', action: ACTIONS.ticket.setMode, payload: { mode: 'limit' }, label: 'limit' },
   { chord: 'KeyT', action: ACTIONS.ui.setTheme, payload: {}, label: 'toggle theme' },
+  // Brackets, because they read as "narrower" and "wider" and sit together under one hand.
+  {
+    chord: 'BracketRight',
+    action: ACTIONS.analytics.cyclePeriod,
+    payload: { step: 1 },
+    label: 'next analytics period',
+  },
+  {
+    chord: 'BracketLeft',
+    action: ACTIONS.analytics.cyclePeriod,
+    payload: { step: -1 },
+    label: 'previous analytics period',
+  },
   // Scoped: only while the palette owns the keyboard, which is what lets Enter and the
   // arrows mean something different there than they do on the desk.
   {

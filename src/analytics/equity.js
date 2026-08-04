@@ -182,7 +182,7 @@ export function nearestPoint(px, series, width) {
  * @param {object[]} [trades] - the enriched trades.
  * @returns {object[]} the series.
  */
-export function refreshEquity(trades = appState.journal?.filtered) {
+export function refreshEquity(trades = appState.analytics?.trades) {
   // Oldest first: the journal publishes newest-first for reading, and a curve drawn in that
   // order would run backwards.
   const rows = [...(Array.isArray(trades) ? trades : [])].reverse()

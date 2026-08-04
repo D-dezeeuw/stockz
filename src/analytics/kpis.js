@@ -148,7 +148,7 @@ export function kpiLabel(value, kind = 'money') {
  * @param {object[]} [trades] - the enriched trades.
  * @returns {object[]} the tiles.
  */
-export function kpiTiles(trades = appState.journal?.filtered) {
+export function kpiTiles(trades = appState.analytics?.trades) {
   const rows = Array.isArray(trades) ? trades : []
   const { wins, losses, decided } = splitOutcomes(rows)
   const factor = profitFactor(rows)
@@ -209,7 +209,7 @@ export function toneOf(value) {
  * @param {object[]} [trades] - the enriched trades.
  * @returns {object[]} the tiles.
  */
-export function refreshKpis(trades = appState.journal?.filtered) {
+export function refreshKpis(trades = appState.analytics?.trades) {
   const tiles = kpiTiles(trades)
   setValue(PATHS.analytics.kpis, tiles)
 

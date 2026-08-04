@@ -56,6 +56,8 @@ export const ACTIONS = Object.freeze({
     copyLog: 'breaker.copyLog',
   }),
   analytics: Object.freeze({
+    setPeriod: 'analytics.setPeriod',
+    cyclePeriod: 'analytics.cyclePeriod',
     pickInstrument: 'analytics.pickInstrument',
     expandRanking: 'analytics.expandRanking',
   }),

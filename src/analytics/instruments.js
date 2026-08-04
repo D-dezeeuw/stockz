@@ -139,7 +139,7 @@ export function barWidth(row, max) {
  * @param {object[]} [trades] - the enriched trades.
  * @returns {object[]} the visible rows.
  */
-export function refreshRanking(trades = appState.journal?.filtered) {
+export function refreshRanking(trades = appState.analytics?.trades) {
   const ranked = rankInstruments(groupByInstrument(trades))
   const expanded = appState.analytics?.rankingExpanded === true
   const rows = expanded ? ranked : collapseTail(ranked)

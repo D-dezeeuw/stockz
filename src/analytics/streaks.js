@@ -153,7 +153,7 @@ export function drawStreakStrip(ctx, trades, size, palette = chartPalette()) {
  * @param {object[]} [trades] - the enriched trades, newest first.
  * @returns {object} the summary.
  */
-export function refreshStreaks(trades = appState.journal?.filtered) {
+export function refreshStreaks(trades = appState.analytics?.trades) {
   // Reversed into close order: the journal publishes newest-first for reading, and a run
   // computed backwards would report the *first* streak of the day as the current one.
   const ordered = [...(Array.isArray(trades) ? trades : [])].reverse()
@@ -177,7 +177,7 @@ export function startStreakStrip(deps = {}) {
   const canvas = doc?.getElementById?.('streak-canvas')
   if (!canvas) return null
 
-  const read = deps.trades ?? (() => [...(appState.journal?.filtered ?? [])].reverse())
+  const read = deps.trades ?? (() => [...(appState.analytics?.trades ?? [])].reverse())
   const redraw = () => {
     const size = sizeCanvas(canvas, { width: canvas.clientWidth, height: canvas.clientHeight })
     drawStreakStrip(canvas.getContext('2d'), read(), size)

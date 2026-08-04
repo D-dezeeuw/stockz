@@ -12,6 +12,7 @@ import { refreshHoldTimes } from '../analytics/holdtime.js'
 import { refreshStreaks } from '../analytics/streaks.js'
 import { refreshFees } from '../analytics/fees.js'
 import { refreshDrawdown } from '../analytics/drawdown.js'
+import { scopeToPeriod } from '../analytics/period.js'
 
 /**
  * Finding the trades worth studying.
@@ -125,16 +126,24 @@ export function refreshFiltered(rows = refreshJournalRows(), filters = appState.
   // The scorecard summarises the slice, not the whole journal: a day row that ignored the
   // filters would contradict the list directly under it.
   refreshDays(visible, slice.now)
+
+  // Analytics answers a *second* question of the same rows: not "what did I trade" but
+  // "over what stretch". The journal keeps its own filters; the period narrows what every
+  // chart and tile is computed from, and it is published so the canvas redraw closures read
+  // the same scoped list rather than the unscoped one they would otherwise reach for.
+  const scoped = scopeToPeriod(visible, slice.now)
+  setValue(PATHS.analytics.trades, scoped)
+
   // The KPIs describe the slice too. Tiles that answered a different question from the list
   // under them would be four numbers nobody could place.
-  refreshKpis(visible)
-  refreshEquity(visible)
-  refreshHeatmap(visible)
-  refreshRanking(visible)
-  refreshHoldTimes(visible)
-  refreshStreaks(visible)
-  refreshFees(visible)
-  refreshDrawdown(visible)
+  refreshKpis(scoped)
+  refreshEquity(scoped)
+  refreshHeatmap(scoped)
+  refreshRanking(scoped)
+  refreshHoldTimes(scoped)
+  refreshStreaks(scoped)
+  refreshFees(scoped)
+  refreshDrawdown(scoped)
 
   return visible
 }

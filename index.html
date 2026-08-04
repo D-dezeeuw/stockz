@@ -506,6 +506,24 @@
                  on the day with a profit factor of 1.02 has had a good day and does not have
                  an edge, and those call for completely different next weeks. Empty reads "—",
                  never zero: a desk that has not traded has no win rate. -->
+            <!-- One switch over every number below it. Short-term form and long-term edge
+                 are the same question asked of different stretches, and a dashboard where
+                 the tiles said "today" while the heatmap said "everything" would be worse
+                 than one that only ever showed all time. -->
+            <div class="period" data-if="block.id === 'analytics'">
+              <button type="button" class="chip" data-action="click" data-fn="analytics.setPeriod"
+                      data-period="day"
+                      :class="analytics.period === 'day' ? 'chip chip--on' : 'chip'">day</button>
+              <button type="button" class="chip" data-action="click" data-fn="analytics.setPeriod"
+                      data-period="week"
+                      :class="analytics.period === 'week' ? 'chip chip--on' : 'chip'">week</button>
+              <button type="button" class="chip" data-action="click" data-fn="analytics.setPeriod"
+                      data-period="month"
+                      :class="analytics.period === 'month' ? 'chip chip--on' : 'chip'">month</button>
+              <button type="button" class="chip" data-action="click" data-fn="analytics.setPeriod"
+                      data-period="all"
+                      :class="analytics.period === 'all' ? 'chip chip--on' : 'chip'">all</button>
+            </div>
             <div class="kpis" data-if="block.id === 'analytics'" data-each="analytics.kpis" data-as="k">
               <div class="kpi" :class="'kpi kpi--' + k.tone">
                 <span class="kpi__value">{{k.value}}</span>

@@ -165,7 +165,7 @@ export function drawHistogram(ctx, buckets, size, palette = chartPalette()) {
  * @param {object[]} [trades] - the enriched trades.
  * @returns {object[]} the buckets.
  */
-export function refreshHoldTimes(trades = appState.journal?.filtered) {
+export function refreshHoldTimes(trades = appState.analytics?.trades) {
   const buckets = holdTimeBuckets(trades)
   const median = medianHold(trades)
   const mean = avgHold(trades)

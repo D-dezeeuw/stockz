@@ -302,3 +302,16 @@
   inline-size: 100%;
   block-size: 3.5rem;
 }
+
+/*
+ * The period switch.
+ *
+ * Sits above the tiles because it governs every number under it - a control placed beside
+ * one chart would read as belonging to that chart alone.
+ */
+.period {
+  display: flex;
+  gap: var(--sp-1);
+  flex: 0 0 auto;
+  margin-block-end: var(--sp-1);
+}

@@ -260,6 +260,10 @@ export const PATHS = Object.freeze({
     error: 'replay.error',
   }),
   analytics: Object.freeze({
+    // The one switch every analytics number obeys, and the trade list it scopes to. The
+    // journal keeps its own filters; this is a separate question asked of the same data.
+    period: 'analytics.period',
+    trades: 'analytics.trades',
     kpis: 'analytics.kpis',
     equity: 'analytics.equity',
     drawdown: 'analytics.drawdown',
