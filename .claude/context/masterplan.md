@@ -2233,16 +2233,16 @@
 **What:** A bid/ask price ladder with proportional size bars - depth structure visible instantly.
 **How:** Spektrum data-each templates over derived bid/ask arrays with size bars as CSS width percentages inside a dashboard grid block.
 
-- [ ] **T14.1.1 - Branch ladder work** - What: The depth view ships on its own delivery line. How: git checkout -b feature/14-1-ladder from main per the feature-branch flow.
-- [ ] **T14.1.2 - Scaffold the ladder block template** - What: A home for depth inside the dashboard grid. How: Create src/blocks/ladder.html with ask rows above and bid rows below wired via data-each.
-- [ ] **T14.1.3 - Build the topN computed** - What: Only the actionable top of book on screen. How: Spektrum computed slicing the top 12 bids and asks from the book store, sorted best-first.
-- [ ] **T14.1.4 - Implement sizeToPct** - What: Bar length proportional to real resting size. How: Pure fn normalizing each level size against the visible max into a 0-100 width percentage.
-- [ ] **T14.1.5 - Add the spread and mid row** - What: Spread cost visible before every entry. How: Center row rendering spread in ticks and mid price from a computed over best bid/ask.
-- [ ] **T14.1.6 - Wire size bars via :style** - What: Bars move live with the book. How: Bind each row's bar width with a Spektrum :style expression calling sizeToPct.
-- [ ] **T14.1.7 - Format prices and sizes** - What: Venue-correct decimals in every cell. How: Reuse the phase 13 formatPrice fn plus a formatSize fn using instrument lotSize from the phase 12 store.
-- [ ] **T14.1.8 - Style the ladder** - What: Green bids, orange asks, aligned columns readable at speed. How: Money-hacker bar glow from phase 3 tokens with tabular-nums figures on all numerals.
-- [ ] **T14.1.9 - Write single unit tests for ladder fns** - What: Bar math and size display locked. How: One Vitest test each for sizeToPct and formatSize, run individually via vitest run -t.
-- [ ] **T14.1.10 - Verify and merge the ladder** - What: A live depth view on the dashboard. How: Visual pass against live OKX depth in Vite dev, targeted tests green, then merge feature/14-1-ladder into main.
+- [x] **T14.1.1 - Branch ladder work** - What: The depth view ships on its own delivery line. How: git checkout -b feature/14-1-ladder from main per the feature-branch flow.
+- [x] **T14.1.2 - Scaffold the ladder block template** - What: A home for depth inside the dashboard grid. How: Create src/blocks/ladder.html with ask rows above and bid rows below wired via data-each.
+- [x] **T14.1.3 - Build the topN computed** - What: Only the actionable top of book on screen. How: Spektrum computed slicing the top 12 bids and asks from the book store, sorted best-first.
+- [x] **T14.1.4 - Implement sizeToPct** - What: Bar length proportional to real resting size. How: Pure fn normalizing each level size against the visible max into a 0-100 width percentage.
+- [x] **T14.1.5 - Add the spread and mid row** - What: Spread cost visible before every entry. How: Center row rendering spread in ticks and mid price from a computed over best bid/ask.
+- [x] **T14.1.6 - Wire size bars via :style** - What: Bars move live with the book. How: Bind each row's bar width with a Spektrum :style expression calling sizeToPct.
+- [x] **T14.1.7 - Format prices and sizes** - What: Venue-correct decimals in every cell. How: Reuse the phase 13 formatPrice fn plus a formatSize fn using instrument lotSize from the phase 12 store.
+- [x] **T14.1.8 - Style the ladder** - What: Green bids, orange asks, aligned columns readable at speed. How: Money-hacker bar glow from phase 3 tokens with tabular-nums figures on all numerals.
+- [x] **T14.1.9 - Write single unit tests for ladder fns** - What: Bar math and size display locked. How: One Vitest test each for sizeToPct and formatSize, run individually via vitest run -t.
+- [x] **T14.1.10 - Verify and merge the ladder** - What: A live depth view on the dashboard. How: Visual pass against live OKX depth in Vite dev, targeted tests green, then merge feature/14-1-ladder into main.
 
 ### F14.2 - Checksum-Validated Book State
 

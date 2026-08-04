@@ -80,6 +80,8 @@ export const PATHS = Object.freeze({
     ticks: 'market.ticks',
     bid: 'market.bid',
     ask: 'market.ask',
+    book: 'market.book',
+    ladder: 'market.ladder',
     // derived (written by computed, never by hand)
     mid: 'market.mid',
     spread: 'market.spread',

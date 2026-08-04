@@ -108,6 +108,12 @@ describe('registerDerived', () => {
     expect(appState.trade.openOrders).toBe(1)
     expect(appState.ui.statusLine).toContain('101.00 (2.00)')
 
+    // The ladder derives from the book in the same pass, on one snapshot.
+    setValue(PATHS.market.book, { bids: [[100, 2]], asks: [[100.5, 1]] })
+    tick()
+    expect(appState.market.ladder.bids[0].px).toBe(100)
+    expect(appState.market.ladder.spread.crossed).toBe(false)
+
     // Moving one dependency re-derives without any manual recalculation.
     setValue(PATHS.market.ask, 100.5)
     tick()

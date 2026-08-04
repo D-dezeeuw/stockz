@@ -1,0 +1,115 @@
+/*
+ * The depth ladder.
+ *
+ * Read at speed, so every numeral is tabular: proportional figures make a column of
+ * prices jitter as digits change, and a jittering column is one the eye has to re-find
+ * on every update. The size bars are painted behind the text with a gradient rather than
+ * as separate elements — one node per row, one repaint, no layout.
+ */
+
+.ladder {
+  display: flex;
+  flex-direction: column;
+  font-variant-numeric: tabular-nums;
+  font-size: var(--font-size-sm, 0.75rem);
+  line-height: 1.5;
+  height: 100%;
+  overflow: hidden;
+}
+
+.ladder__side {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+/* Asks stack upward so the touch of both sides meets at the spread row. */
+.ladder__side--ask {
+  flex-direction: column-reverse;
+  justify-content: flex-start;
+}
+
+.ladder__row {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: var(--space-2, 0.5rem);
+  padding: 0 var(--space-2, 0.5rem);
+  cursor: pointer;
+  isolation: isolate;
+}
+
+/* The bar is a background layer, not a node: one element per row keeps a twelve-level
+   book at twelve DOM nodes per side however fast the sizes change. */
+.ladder__row::before {
+  content: '';
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: var(--bar, 0%);
+  z-index: -1;
+  transition: width 90ms linear;
+}
+
+.ladder__row--bid::before {
+  background: color-mix(in srgb, var(--green) 22%, transparent);
+}
+
+.ladder__row--ask::before {
+  background: color-mix(in srgb, var(--orange) 22%, transparent);
+}
+
+.ladder__row:hover {
+  background: color-mix(in srgb, var(--ink) 8%, transparent);
+}
+
+.ladder__price {
+  font-weight: 600;
+}
+
+.ladder__row--bid .ladder__price {
+  color: var(--green);
+}
+
+.ladder__row--ask .ladder__price {
+  color: var(--orange);
+}
+
+.ladder__size,
+.ladder__total {
+  color: var(--ink-muted);
+  text-align: right;
+}
+
+/* The spread row is the ladder's anchor — the one line the eye returns to. */
+.ladder__spread {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2, 0.5rem);
+  padding: var(--space-1, 0.25rem) var(--space-2, 0.5rem);
+  border-block: 1px solid var(--line);
+  background: color-mix(in srgb, var(--ink) 5%, transparent);
+  font-weight: 600;
+}
+
+.ladder__mid {
+  color: var(--ink);
+}
+
+.ladder__ticks {
+  color: var(--ink-muted);
+  font-size: var(--font-size-xs, 0.6875rem);
+}
+
+/* A crossed book is corrupt or stale; it must look wrong, not merely be wrong. */
+.ladder__spread--crossed {
+  color: var(--orange);
+  border-color: var(--orange);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ladder__row::before {
+    transition: none;
+  }
+}

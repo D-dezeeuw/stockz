@@ -2,6 +2,7 @@ import { computed } from '../app/engine.js'
 import { PATHS } from './paths.js'
 import { bpsDiff, roundToTick } from '../utils/math.js'
 import { formatPrice, formatSigned } from '../utils/format.js'
+import { ladderView } from '../book/ladder.js'
 
 /**
  * Derived state — values the desk shows but never writes by hand.
@@ -124,6 +125,10 @@ export function registerDerived() {
     bpsDiff(state.market?.ask ?? 0, state.market?.bid ?? 0),
   )
 
+  // One computed for the whole ladder, not three: bids, asks and the spread row must
+  // always come from the same book snapshot, or the ladder shows a spread that never was.
+  computed(PATHS.market.ladder, [PATHS.market.book], (state) => ladderView(state.market?.book))
+
   computed(PATHS.trade.exposure, [PATHS.trade.positions], (state) =>
     exposureOf(state.trade?.positions),
   )
@@ -159,6 +164,7 @@ export function registerDerived() {
     PATHS.market.spread,
     PATHS.market.mid,
     PATHS.market.spreadBps,
+    PATHS.market.ladder,
     PATHS.trade.exposure,
     PATHS.trade.openOrders,
     PATHS.ui.statusLine,
