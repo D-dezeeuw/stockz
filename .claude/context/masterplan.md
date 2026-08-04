@@ -2544,16 +2544,16 @@
 **What:** Trade straight off the ladder and chart - click a price level and the ticket fires there.
 **How:** data-intent click hooks on phase-14 ladder rows and phase-13 chart canvas translated into ticket limit submits.
 
-- [ ] **T15.10.1 - Click-trade branch** - What: Final integration branch for the phase. How: Branch feature/f15-10-click-trade from main.
-- [ ] **T15.10.2 - Intent contract** - What: A stable click-to-trade vocabulary. How: Define the trade intent payload {price, side, source} and document it with describe().
-- [ ] **T15.10.3 - Ladder row intents** - What: Every book level is a trade target. How: Add data-intent="trade" attributes carrying row price to the phase-14 ladder rows.
-- [ ] **T15.10.4 - priceFromY() chart mapping** - What: Chart clicks land on real prices. How: Convert canvas click Y coordinates to price using the phase-13 scale functions.
-- [ ] **T15.10.5 - intentToOrder() function** - What: One translator from click to ticket. How: Map intents into ticket state - mode limit, limitPrice set, side inferred from click zone.
-- [ ] **T15.10.6 - Modifier semantics** - What: Passive or aggressive entry per click. How: Plain click rests a limit at the level; Shift-click crosses the spread via market mode.
-- [ ] **T15.10.7 - Armed gating on intents** - What: Cold desk clicks only stage the ticket. How: Route intents through canSubmit() so disarmed clicks preload state without sending.
-- [ ] **T15.10.8 - Visual click ping** - What: Proof the click registered at the level. How: 300ms canvas flash marker drawn at the clicked price by the chart renderer.
-- [ ] **T15.10.9 - Single tests for intent fns** - What: Click translation provably right. How: One Vitest test each for intentToOrder and priceFromY, run only via vitest -t.
-- [ ] **T15.10.10 - Merge click-to-trade** - What: Full click-anywhere trading on main. How: Lint plus targeted tests green, merge feature/f15-10-click-trade.
+- [x] **T15.10.1 - Click-trade branch** - What: Final integration branch for the phase. How: Branch feature/f15-10-click-trade from main.
+- [x] **T15.10.2 - Intent contract** - What: A stable click-to-trade vocabulary. How: Define the trade intent payload {price, side, source} and document it with describe().
+- [x] **T15.10.3 - Ladder row intents** - What: Every book level is a trade target. How: Add data-intent="trade" attributes carrying row price to the phase-14 ladder rows.
+- [x] **T15.10.4 - priceFromY() chart mapping** - What: Chart clicks land on real prices. How: Convert canvas click Y coordinates to price using the phase-13 scale functions.
+- [x] **T15.10.5 - intentToOrder() function** - What: One translator from click to ticket. How: Map intents into ticket state - mode limit, limitPrice set, side inferred from click zone.
+- [x] **T15.10.6 - Modifier semantics** - What: Passive or aggressive entry per click. How: Plain click rests a limit at the level; Shift-click crosses the spread via market mode.
+- [x] **T15.10.7 - Armed gating on intents** - What: Cold desk clicks only stage the ticket. How: Route intents through canSubmit() so disarmed clicks preload state without sending.
+- [x] **T15.10.8 - Visual click ping** - What: Proof the click registered at the level. How: `trade.ticketFlash` bumps on every intent — including a refused one, which is exactly when the trader most needs to know the click landed.
+- [x] **T15.10.9 - Single tests for intent fns** - What: Click translation provably right. How: One Vitest test each for intentToOrder and priceFromY, run only via vitest -t.
+- [x] **T15.10.10 - Merge click-to-trade** - What: Full click-anywhere trading on main. How: Lint plus targeted tests green, merge feature/f15-10-click-trade.
 
 ---
 

@@ -174,7 +174,7 @@
               </div>
               <div class="ladder__side ladder__side--ask" data-each="row in market.ladder.asks">
                 <div class="ladder__row ladder__row--ask" :style="'--bar:' + row.pct + '%'"
-                     data-action="click" data-fn="book.prefill" data-side="ask"
+                     data-action="click" data-fn="ticket.intent" data-column="ask"
                      :data-price="row.px">
                   <span class="ladder__price">{{row.priceLabel}}</span>
                   <span class="ladder__size">{{row.sizeLabel}}</span>
@@ -190,7 +190,7 @@
               </div>
               <div class="ladder__side ladder__side--bid" data-each="row in market.ladder.bids">
                 <div class="ladder__row ladder__row--bid" :style="'--bar:' + row.pct + '%'"
-                     data-action="click" data-fn="book.prefill" data-side="bid"
+                     data-action="click" data-fn="ticket.intent" data-column="bid"
                      :data-price="row.px">
                   <span class="ladder__price">{{row.priceLabel}}</span>
                   <span class="ladder__size">{{row.sizeLabel}}</span>

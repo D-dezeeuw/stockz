@@ -1,7 +1,8 @@
 // @vitest-environment jsdom
 import { describe, it, expect, beforeEach } from 'vitest'
-import { bootstrap, revealApp, makeBootClock } from './bootstrap.js'
+import { bootstrap, revealApp, makeBootClock, submitFromIntent } from './bootstrap.js'
 import { appState, resetState } from './engine.js'
+import { clearActions, registerAction } from '../actions/registry.js'
 
 beforeEach(() => {
   resetState()
@@ -57,5 +58,23 @@ describe('makeBootClock', () => {
     // 0, NaN and undefined all mean "use real time", not "the epoch".
     expect(makeBootClock(0)()).toBeGreaterThanOrEqual(before)
     expect(makeBootClock(NaN)()).toBeGreaterThanOrEqual(before)
+  })
+})
+
+describe('submitFromIntent', () => {
+  it('routes a click-to-trade intent at the submit action', () => {
+    clearActions()
+    const seen = []
+    registerAction('ticket.submit', (_state, payload) => {
+      seen.push(payload)
+      return 'sent'
+    })
+
+    expect(submitFromIntent({ side: 'sell' })).toBe('sent')
+    expect(seen).toEqual([{ side: 'sell' }])
+
+    // No such action registered is a warning, not a throw on the order path.
+    clearActions()
+    expect(submitFromIntent({ side: 'buy' })).toBeNull()
   })
 })

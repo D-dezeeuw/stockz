@@ -33,6 +33,7 @@ export const ACTIONS = Object.freeze({
     stepQty: 'ticket.stepQty',
     submit: 'ticket.submit',
     repeatLast: 'ticket.repeatLast',
+    intent: 'ticket.intent',
   }),
   orders: Object.freeze({
     cancelAll: 'orders.cancelAll',
