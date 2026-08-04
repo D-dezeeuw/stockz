@@ -117,6 +117,7 @@ export function initialState(overrides = {}) {
     },
     [PATHS.ui.captureFor]: '',
     [PATHS.ui.capturePreview]: null,
+    [PATHS.ui.paperHint]: false,
 
     // preferences (the only persisted branch) - defaults come from the schema so the
     // drawer, the migration and reset-to-defaults can never disagree about them

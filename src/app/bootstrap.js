@@ -60,7 +60,7 @@ import { registerSweepActions } from '../backtest/sweep.js'
 import { registerCompareActions, startCompareChart, refreshRuns } from '../backtest/compare.js'
 import { setLevelSink } from '../strategy/builtin/range-fade.js'
 import { syncOkxClock } from '../venues/okx/clock.js'
-import { registerModeActions, applyModeParam } from '../exec/mode.js'
+import { registerModeActions, applyModeParam, applyFirstRunMode } from '../exec/mode.js'
 import { startPaperBook } from '../exec/paper/engine.js'
 import { startPaperAccount } from '../exec/paper/account.js'
 import { startBookCompare } from '../exec/paper/compare.js'
@@ -135,6 +135,10 @@ export function bootstrap(options = {}) {
 
   // Before any adapter binds. A link that opens the desk into paper has to win over the
   // persisted mode, or the override is advice rather than an override.
+  // Paper first, always. Not because paper is the safer default in the abstract, but
+  // because the alternative is a stranger's first click reaching a venue — and a desk that
+  // does that has no way to earn back the trust it just spent.
+  applyFirstRunMode()
   applyModeParam(globalThis.location?.search ?? '')
 
   // Actions and derivations must exist before bindDOM: data-fn attributes would bind to

@@ -103,6 +103,8 @@ export const PATHS = Object.freeze({
     logSeenAt: 'ui.logSeenAt',
     captureFor: 'ui.captureFor',
     capturePreview: 'ui.capturePreview',
+    // The one-time paper-trading intro, shown until the trader touches the mode control.
+    paperHint: 'ui.paperHint',
   }),
   settings: Object.freeze({
     theme: 'settings.theme',
@@ -152,6 +154,7 @@ export const PATHS = Object.freeze({
     // Backtest fill assumptions. Here rather than under `backtest.*` because settings is
     // the only persisted branch, and assumptions that reset on reload are assumptions
     // nobody tunes twice.
+    modeChosen: 'settings.modeChosen',
     paperStartBalance: 'settings.paperStartBalance',
     paperLatencyMs: 'settings.paperLatencyMs',
     paperLatencyJitter: 'settings.paperLatencyJitter',

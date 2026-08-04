@@ -92,6 +92,11 @@ export function setTradeMode(_state, payload = {}) {
   setValue(PATHS.trade.queue, [])
   setValue(PATHS.trade.mode, mode)
 
+  // Choosing by hand is choosing. The first-run hint has served its purpose the moment
+  // the trader touches the control it is pointing at.
+  setValue(PATHS.settings.modeChosen, true)
+  setValue(PATHS.ui.paperHint, false)
+
   log.warn(`mode → ${mode}${queued > 0 ? ` (dropped ${queued} queued)` : ''}`)
   pushToast(
     mode === 'live' ? 'LIVE — orders now go to the venue' : 'paper — orders are simulated',
@@ -137,6 +142,52 @@ export function cancelGoLive(state, payload) {
 }
 
 /**
+ * Has this desk ever been told which mode to be in?
+ *
+ * @param {object} [state] - engine state.
+ * @returns {boolean} true when the trader has never chosen.
+ */
+export function isFirstRun(state = appState) {
+  return state?.settings?.modeChosen !== true
+}
+
+/**
+ * Start every new desk on paper, and say so once.
+ *
+ * The first trade on STOCKZ is always a free one. Not because paper is the safer default
+ * in the abstract, but because the alternative is a stranger's first click reaching a
+ * venue — and a desk that does that has no way to earn the trust it just spent.
+ *
+ * The hint is shown once and then never again. A permanent banner explaining the mode to
+ * somebody who has been trading for a month is noise, and noise on this strip is how the
+ * strip itself stops being read.
+ *
+ * @param {object} [state] - engine state.
+ * @returns {{mode: string, hint: boolean}} what boot decided.
+ */
+export function applyFirstRunMode(state = appState) {
+  const first = isFirstRun(state)
+  if (first) setValue(PATHS.trade.mode, 'paper')
+  setValue(PATHS.ui.paperHint, first)
+
+  return { mode: first ? 'paper' : String(state?.trade?.mode ?? 'paper'), hint: first }
+}
+
+/**
+ * Dismiss the first-run hint for good.
+ *
+ * @returns {boolean} true.
+ */
+export function dismissPaperHint() {
+  setValue(PATHS.ui.paperHint, false)
+  // Recorded in settings, which is the only persisted branch — a hint that came back on
+  // every reload would be a hint nobody reads by the third time.
+  setValue(PATHS.settings.modeChosen, true)
+
+  return true
+}
+
+/**
  * Apply a mode the URL asked for, before anything binds.
  *
  * @param {string} search - `location.search`.
@@ -173,6 +224,9 @@ export function registerModeActions() {
   registerAction(ACTIONS.trade.holdReset, beginPaperReset, {
     description: 'Hold to wipe the practice account',
   })
+  registerAction(ACTIONS.trade.dismissHint, () => dismissPaperHint(), {
+    description: 'Dismiss the paper-trading intro hint',
+  })
 
   return [
     ACTIONS.trade.setMode,
@@ -180,5 +234,6 @@ export function registerModeActions() {
     ACTIONS.trade.releaseLive,
     ACTIONS.trade.resetPaper,
     ACTIONS.trade.holdReset,
+    ACTIONS.trade.dismissHint,
   ]
 }
