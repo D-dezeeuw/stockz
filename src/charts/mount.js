@@ -138,7 +138,23 @@ export function mountCandleChart(canvas, options = {}) {
  * @returns {{loop: object, draw: Function, dispose: () => void}} the mounted chart.
  */
 export function startChart(draw, options = {}) {
-  const { canvas, raf, size, symbol = '' } = options
+  const { canvas, raf, size, symbol = '', scheduler = null, id = symbol, priority } = options
+
+  // Two ways to run: standalone (its own dirty-flag loop) or on the shared scheduler,
+  // which is what the dashboard uses so forty sparklines cannot outvote the price chart.
+  if (scheduler) {
+    const render = () => draw(canvas?.getContext?.('2d') ?? null, size?.() ?? {})
+    const unregister = scheduler.register(id, render, { priority })
+    const stops = [
+      unregister,
+      markOnTick(symbol, { markDirty: () => scheduler.markDirty(id) }),
+      repaintOnTheme({ markDirty: () => scheduler.markDirty(id) }),
+    ]
+    scheduler.markDirty(id)
+
+    return { loop: scheduler, draw, dispose: () => stops.forEach((stop) => stop()) }
+  }
+
   const loop = createRenderLoop(draw, { canvas, raf, size })
   const stops = [markOnTick(symbol, loop), repaintOnTheme(loop)]
   loop.start()

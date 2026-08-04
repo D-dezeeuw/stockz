@@ -2194,16 +2194,16 @@
 **What:** 60fps when the market moves, zero CPU when it does not - the laptop stays cool between bursts.
 **How:** One shared requestAnimationFrame scheduler with per-surface dirty flags that fully stops when nothing is dirty.
 
-- [ ] **T13.9.1 - Branch render loop work** - What: The frame engine rebuilt without breaking charts. How: git checkout -b feature/13-9-render-loop from main.
-- [ ] **T13.9.2 - Build createRenderLoop** - What: A single frame heartbeat for all charts. How: src/charts/loop.js exposing register(surface, draw), markDirty(id), start, and stop.
-- [ ] **T13.9.3 - Implement auto-stop on idle** - What: True zero work when the market is quiet. How: shouldStop fn triggering cancelAnimationFrame when a frame finds no dirty surfaces; markDirty restarts.
-- [ ] **T13.9.4 - Implement mark coalescing** - What: A tick storm still draws once per frame. How: coalesceMarks fn folding repeated markDirty calls into one Set drained each frame.
-- [ ] **T13.9.5 - Implement the frame budget guard** - What: Priority charts never janked by minor layers. How: overBudget fn on performance.now() deltas deferring low-priority draws past 8ms.
-- [ ] **T13.9.6 - Pause on hidden tabs** - What: A backgrounded terminal costs nothing. How: visibilitychange listener stopping the loop on document.hidden and resuming with a full redraw.
-- [ ] **T13.9.7 - Migrate renderers onto the loop** - What: All chart layers share one heartbeat. How: Register tick line, candles, crosshair, markers, and levels with the scheduler and delete their ad-hoc rAF calls.
-- [ ] **T13.9.8 - Add the debug fps overlay** - What: Frame health visible while building. How: fps and dirty-count readout behind data-if debugCharts, cross-checked with spektrum/devtools.
-- [ ] **T13.9.9 - Write single unit tests for loop fns** - What: Idle-stop and budget logic locked. How: One Vitest test each for shouldStop, coalesceMarks, and overBudget, run individually via vitest run -t.
-- [ ] **T13.9.10 - Verify and merge the render loop** - What: Measurably idle CPU with a quiet feed. How: Confirm zero rAF callbacks while idle in DevTools performance capture, then merge feature/13-9-render-loop into main.
+- [x] **T13.9.1 - Branch render loop work** - What: The frame engine rebuilt without breaking charts. How: git checkout -b feature/13-9-render-loop from main.
+- [x] **T13.9.2 - Build createRenderLoop** - What: A single frame heartbeat for all charts. How: src/charts/loop.js exposing register(surface, draw), markDirty(id), start, and stop.
+- [x] **T13.9.3 - Implement auto-stop on idle** - What: True zero work when the market is quiet. How: shouldStop fn triggering cancelAnimationFrame when a frame finds no dirty surfaces; markDirty restarts.
+- [x] **T13.9.4 - Implement mark coalescing** - What: A tick storm still draws once per frame. How: coalesceMarks fn folding repeated markDirty calls into one Set drained each frame.
+- [x] **T13.9.5 - Implement the frame budget guard** - What: Priority charts never janked by minor layers. How: overBudget fn on performance.now() deltas deferring low-priority draws past 8ms.
+- [x] **T13.9.6 - Pause on hidden tabs** - What: A backgrounded terminal costs nothing. How: visibilitychange listener stopping the loop on document.hidden and resuming with a full redraw.
+- [x] **T13.9.7 - Migrate renderers onto the loop** - What: All chart layers share one heartbeat. How: Register tick line, candles, crosshair, markers, and levels with the scheduler and delete their ad-hoc rAF calls.
+- [x] **T13.9.8 - Add the debug fps overlay** - What: Frame health visible while building. How: fps and dirty-count readout behind data-if debugCharts, cross-checked with spektrum/devtools.
+- [x] **T13.9.9 - Write single unit tests for loop fns** - What: Idle-stop and budget logic locked. How: One Vitest test each for shouldStop, coalesceMarks, and overBudget, run individually via vitest run -t.
+- [x] **T13.9.10 - Verify and merge the render loop** - What: Measurably idle CPU with a quiet feed. How: Confirm zero rAF callbacks while idle in DevTools performance capture, then merge feature/13-9-render-loop into main.
 
 ### F13.10 - Sparkline Mini Renderer
 

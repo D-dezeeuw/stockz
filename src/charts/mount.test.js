@@ -3,6 +3,7 @@ import { describe, it, expect, beforeEach } from 'vitest'
 import { tickWindow, markOnTick, mountTickChart, mountCandleChart, startChart } from './mount.js'
 import { publishTick, resetBus } from '../pipeline/bus.js'
 import { addTrade, resetCandles } from '../pipeline/candles.js'
+import { createScheduler } from './loop.js'
 
 beforeEach(() => {
   resetBus()
@@ -175,5 +176,24 @@ describe('startChart', () => {
     publishTick({ symbol: 'X', px: 1, ts: 1, venue: 'okx' })
     expect(chart.loop.frame()).toBe(false)
     expect(drawn).toHaveLength(1)
+
+    // Handed a shared scheduler, the chart registers on it instead of holding its own
+    // frame — so forty sparklines cannot outvote the price chart for a frame.
+    const sharedFrames = []
+    const scheduler = createScheduler({ raf: (fn) => sharedFrames.push(fn), clock: () => 0 })
+    const shared = startChart(
+      (_ctx, size) => drawn.push(size),
+      { scheduler, id: 'chart-1', priority: 'high', symbol: 'X', size: () => ({ width: 1, height: 1 }) },
+    )
+
+    expect(scheduler.stats().surfaces).toBe(1)
+    sharedFrames.shift()()
+    expect(drawn).toHaveLength(2)
+
+    publishTick({ symbol: 'X', px: 2, ts: 2, venue: 'okx' })
+    expect(scheduler.stats().pending).toBe(1)
+
+    shared.dispose()
+    expect(scheduler.stats().surfaces).toBe(0)
   })
 })
