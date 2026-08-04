@@ -22,6 +22,7 @@ describe('describeStrategies', () => {
       'momentum-burst',
       'vwap-revert',
       'spread-capture',
+      'book-imbalance',
       'composite',
     ])
     expect(BUILTIN_STRATEGIES).toContain(noopStrategy)

@@ -3450,16 +3450,16 @@
 **What:** The user trades with the loaded side: entries when bid/ask depth imbalance tips hard and holds.
 **How:** Depth-imbalance and microprice defineFns over top-N book levels with a persistence filter before trigger().
 
-- [ ] **T21.4.1 - Branch and scaffold imbalance module** - What: A dedicated branch for the depth-signal strategy. How: git checkout -b feature/f21-4-book-imbalance; create src/strategies/bookImbalance.js.
-- [ ] **T21.4.2 - Build depthImbalance fn** - What: One number for which side of the book is loaded. How: Implement depthImbalance(bids, asks, levelsN) computing (bidVol-askVol)/(bidVol+askVol) over top N levels.
-- [ ] **T21.4.3 - Build microPrice fn** - What: A volume-weighted mid that leads the last trade. How: Implement microPrice(bestBid, bestAsk, bidSize, askSize) as the size-weighted midpoint.
-- [ ] **T21.4.4 - Build imbalancePersist fn** - What: No flicker trades: the ratio must hold for M consecutive updates. How: Implement imbalancePersist(state, ratio, threshold, persistM) tracking a streak counter.
-- [ ] **T21.4.5 - Build imbalanceSignal fn** - What: The combined entry call: persistent imbalance plus microprice drift agreement. How: Implement imbalanceSignal(persistOk, ratio, microDrift) returning long, short or null.
-- [ ] **T21.4.6 - Wire into engine** - What: Signals stream live from every book update. How: addSystem() on the phase-14 depth channel chaining the fns and emitting trigger('strategy:signal').
-- [ ] **T21.4.7 - Build flipExit fn** - What: Positions close when the book turns or the tick target hits. How: Implement flipExit(position, ratio, targetTicks) wired into the engine exit hook.
-- [ ] **T21.4.8 - Params and ratio gauge** - What: levelsN, threshold and persistM tunable with the live ratio visible as a bar. How: setValue params plus a hand-rolled canvas mini-bar in the strategy row painting the ratio green/orange.
-- [ ] **T21.4.9 - Write single unit tests** - What: Depth math pinned down per fn. How: One Vitest test each for depthImbalance, microPrice, imbalancePersist, imbalanceSignal and flipExit; targeted runs.
-- [ ] **T21.4.10 - Verify on depth replay and merge** - What: Signal quality checked against recorded books. How: Replay an IndexedDB depth recording, compare fires against expected imbalance episodes, ESLint, merge.
+- [x] **T21.4.1 - Branch and scaffold imbalance module** - What: A dedicated branch for the depth-signal strategy. How: git checkout -b feature/f21-4-book-imbalance; create src/strategies/bookImbalance.js.
+- [x] **T21.4.2 - Build depthImbalance fn** - What: One number for which side of the book is loaded. How: Implement depthImbalance(bids, asks, levelsN) computing (bidVol-askVol)/(bidVol+askVol) over top N levels.
+- [x] **T21.4.3 - Build microPrice fn** - What: A volume-weighted mid that leads the last trade. How: Implement microPrice(bestBid, bestAsk, bidSize, askSize) as the size-weighted midpoint.
+- [x] **T21.4.4 - Build imbalancePersist fn** - What: No flicker trades: the ratio must hold for M consecutive updates. How: Implement imbalancePersist(state, ratio, threshold, persistM) tracking a streak counter.
+- [x] **T21.4.5 - Build imbalanceSignal fn** - What: The combined entry call: persistent imbalance plus microprice drift agreement. How: Implement imbalanceSignal(persistOk, ratio, microDrift) returning long, short or null.
+- [x] **T21.4.6 - Wire into engine** - What: Signals stream live from every book update. How: addSystem() on the phase-14 depth channel chaining the fns and emitting trigger('strategy:signal').
+- [x] **T21.4.7 - Build flipExit fn** - What: Positions close when the book turns or the tick target hits. How: Implement flipExit(position, ratio, targetTicks) wired into the engine exit hook.
+- [x] **T21.4.8 - Params and ratio gauge** - What: levelsN, threshold and persistM tunable with the live ratio visible as a bar. How: setValue params plus a hand-rolled canvas mini-bar in the strategy row painting the ratio green/orange.
+- [x] **T21.4.9 - Write single unit tests** - What: Depth math pinned down per fn. How: One Vitest test each for depthImbalance, microPrice, imbalancePersist, imbalanceSignal and flipExit; targeted runs.
+- [x] **T21.4.10 - Verify on depth replay and merge** - What: Signal quality checked against recorded books. How: Replay an IndexedDB depth recording, compare fires against expected imbalance episodes, ESLint, merge.
 
 ### F21.5 - Tape Pressure Shift
 
