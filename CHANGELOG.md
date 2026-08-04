@@ -12,6 +12,20 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ### Added
 
+- **Browser notification bridge** — the output for the trader who has tabbed away; toasts and
+  sounds both assume the page is in front of somebody, and this is the only channel that
+  reaches them when it is not. Two rules keep it from being the thing that makes people
+  uninstall trading software. **Permission is asked on an explicit click, never on load** — a
+  page that fires the browser prompt in its first second gets "block" from most people, and
+  that answer is permanent and silent; the desk asks once the trader has said they want this,
+  at which point they say yes. And **native only when the tab is hidden**, because a native
+  notification for something already on screen is a duplicate that steals focus, and the
+  foreground belongs to the toast. Notifications are tagged per instrument so a second alert
+  on the same symbol replaces the first — a trader who tabs back finds one current
+  notification rather than forty stale ones — and clicking focuses the tab *and* jumps to
+  that instrument, which is what makes it a shortcut instead of an interruption. Info-level
+  pings are off by default; that is how a trading app ends up permanently blocked. Denied or
+  unsupported is not a failure state: the alert was already going to a toast.
 - **WebAudio alert sound pack** — the eye is on the tape, which makes sound the only channel
   that reaches a trader who is not looking: the most valuable output on the desk and the
   easiest to ruin. The pack is built around one rule — **the sounds must be distinguishable

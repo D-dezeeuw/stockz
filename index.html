@@ -624,6 +624,13 @@
           <input type="checkbox" data-model="settings.soundEnabled">
           <span class="label">Sounds</span>
         </label>
+        <!-- Asked on a click, never on load: a page that fires the browser prompt in its
+             first second gets "block" from most people, permanently and silently. -->
+        <div class="field field--row" data-if="ui.notifyPermission === 'default'">
+          <button type="button" class="chip" data-action="click"
+                  data-fn="alerts.enableNative">enable desktop notifications</button>
+        </div>
+        <p class="label" data-if="ui.notifyPermission === 'denied'">desktop notifications blocked — alerts stay in toasts</p>
         <label class="field">
           <span class="label">Cue volume</span>
           <input type="range" min="0" max="1" step="0.05" data-model="settings.volume">

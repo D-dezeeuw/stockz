@@ -3665,16 +3665,16 @@
 **What:** Alerts reach the user even with the tab hidden: native OS notifications with a clean toast fallback.
 **How:** Notification.requestPermission on explicit opt-in, sendNotification fn gated by document.hidden, fallback route on deny.
 
-- [ ] **T22.7.1 - Branch and scaffold notification bridge** - What: A branch for native OS notifications. How: git checkout -b feature/f22-7-native-notify; create src/alerts/notify.js.
-- [ ] **T22.7.2 - Build permissionState fn** - What: The current Notification permission always mirrored in app state. How: Implement permissionState() reading Notification.permission into state via setValue on load and change.
-- [ ] **T22.7.3 - Opt-in permission flow** - What: Permission requested only on an explicit user click, never on load. How: An enable button with data-action calling Notification.requestPermission and updating state on grant or deny.
-- [ ] **T22.7.4 - Build sendNotification fn** - What: Clean native notifications with instrument context, no stacking spam. How: Implement sendNotification with title, body and tag using tag-based replacement per instrument.
-- [ ] **T22.7.5 - Build visibilityGate fn** - What: Native pings only when the tab is hidden; toasts own the foreground. How: Implement visibilityGate(docHidden, severity) deciding native versus toast from document.hidden.
-- [ ] **T22.7.6 - Build fallbackRoute fn** - What: Denied or unsupported browsers still see everything via toasts. How: Implement fallbackRoute(permission, alert) rerouting to enqueueToast with a fallback badge.
-- [ ] **T22.7.7 - Click-to-focus wiring** - What: Clicking a notification lands the user on the right instrument block. How: notification.onclick calling window.focus() and emitting a data-intent style jump to the instrument.
-- [ ] **T22.7.8 - Severity settings UI** - What: Native notifications switchable per severity level. How: A checkbox matrix bound via data-model writing alerts.native.enabled per severity in state.
-- [ ] **T22.7.9 - Write single unit tests** - What: Bridge logic proven with a mocked Notification API. How: One Vitest test each for permissionState, sendNotification, visibilityGate and fallbackRoute; vitest -t runs.
-- [ ] **T22.7.10 - Verify hidden-tab delivery and merge** - What: A backgrounded tab still taps the shoulder. How: Hide the tab, fire a test alert, confirm the OS notification and click-focus, ESLint, merge.
+- [x] **T22.7.1 - Branch and scaffold notification bridge** - What: A branch for native OS notifications. How: git checkout -b feature/f22-7-native-notify; create src/alerts/notify.js.
+- [x] **T22.7.2 - Build permissionState fn** - What: The current Notification permission always mirrored in app state. How: Implement permissionState() reading Notification.permission into state via setValue on load and change.
+- [x] **T22.7.3 - Opt-in permission flow** - What: Permission requested only on an explicit user click, never on load. How: An enable button with data-action calling Notification.requestPermission and updating state on grant or deny.
+- [x] **T22.7.4 - Build sendNotification fn** - What: Clean native notifications with instrument context, no stacking spam. How: Implement sendNotification with title, body and tag using tag-based replacement per instrument.
+- [x] **T22.7.5 - Build visibilityGate fn** - What: Native pings only when the tab is hidden; toasts own the foreground. How: Implement visibilityGate(docHidden, severity) deciding native versus toast from document.hidden.
+- [x] **T22.7.6 - Build fallbackRoute fn** - What: Denied or unsupported browsers still see everything via toasts. How: Implement fallbackRoute(permission, alert) rerouting to enqueueToast with a fallback badge.
+- [x] **T22.7.7 - Click-to-focus wiring** - What: Clicking a notification lands the user on the right instrument block. How: notification.onclick calling window.focus() and emitting a data-intent style jump to the instrument.
+- [x] **T22.7.8 - Severity settings UI** - What: Native notifications switchable per severity level. How: A checkbox matrix bound via data-model writing alerts.native.enabled per severity in state.
+- [x] **T22.7.9 - Write single unit tests** - What: Bridge logic proven with a mocked Notification API. How: One Vitest test each for permissionState, sendNotification, visibilityGate and fallbackRoute; vitest -t runs.
+- [x] **T22.7.10 - Verify hidden-tab delivery and merge** - What: A backgrounded tab still taps the shoulder. How: Hide the tab, fire a test alert, confirm the OS notification and click-focus, ESLint, merge.
 
 ### F22.8 - Mute & Do-Not-Disturb
 
