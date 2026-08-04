@@ -145,3 +145,9 @@ body,
 .toast.is-paused {
   border-style: dashed;
 }
+
+/* A silenced desk says so in the header. Orange rather than hidden: the one thing worse
+   than a noisy desk is a quiet one nobody meant to silence. */
+.icon-btn.is-silenced {
+  color: var(--orange);
+}

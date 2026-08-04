@@ -18,6 +18,7 @@ import { tickStrategies } from '../../strategy/registry.js'
 import { evaluateAlerts, publishAlertChips } from '../../alerts/price.js'
 import { flushAlerts } from '../../alerts/bus.js'
 import { checkHealth, venueTransition } from '../../alerts/health.js'
+import { refreshDnd, expireSnooze } from '../../alerts/dnd.js'
 import { evictStale } from '../../exec/latency.js'
 import { setValue, appState } from '../../app/engine.js'
 import { PATHS } from '../../state/paths.js'
@@ -164,6 +165,11 @@ export function flushFeed(focus, options = {}) {
   // Published once per frame like everything else: an alert stack that re-rendered on every
   // emission would be the one part of the desk that ignores the rAF budget.
   flushAlerts()
+  // The snooze expires on the pump rather than on a timer: a tab that was backgrounded
+  // through its own expiry must come back un-silenced, not still counting down.
+  const wall = Date.now()
+  expireSnooze(wall)
+  refreshDnd(wall)
   flushQuality(spreadBps())
   // Swept on the same frame: an order whose ack never came would otherwise sit in the
   // latency map for the life of the session.

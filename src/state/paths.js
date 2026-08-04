@@ -80,6 +80,7 @@ export const PATHS = Object.freeze({
     alertToggles: 'ui.alertToggles',
     audioReady: 'ui.audioReady',
     notifyPermission: 'ui.notifyPermission',
+    dnd: 'ui.dnd',
     captureFor: 'ui.captureFor',
     capturePreview: 'ui.capturePreview',
   }),
@@ -119,6 +120,9 @@ export const PATHS = Object.freeze({
     strategyStats: 'settings.strategyStats',
     alerts: 'settings.alerts',
     alertToggles: 'settings.alertToggles',
+    dnd: 'settings.dnd',
+    snoozeUntil: 'settings.snoozeUntil',
+    bypassCritical: 'settings.bypassCritical',
     chords: 'settings.chords',
   }),
   market: Object.freeze({

@@ -2,6 +2,7 @@ import { appState, setValue } from '../app/engine.js'
 import { PATHS } from '../state/paths.js'
 import { makeAudioContext } from '../ticket/feedback.js'
 import { alertEnabled } from './bus.js'
+import { mayInterrupt } from './dnd.js'
 
 /**
  * The alert sound pack.
@@ -188,6 +189,7 @@ export function unlockAudio(scope = globalThis) {
 export function soundAlert(alert, options = {}) {
   const name = soundForAlert(alert)
   if (!name) return ''
+  if (!mayInterrupt(alert, Number(options.now) || Date.now())) return ''
   // Sound has its own mute group. A trader who wants the toast but not the noise is the
   // common case in an office, and forcing one to imply the other loses them both.
   if (!alertEnabled('sound', String(alert?.severity ?? 'info'))) return ''

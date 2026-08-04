@@ -12,6 +12,19 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ### Added
 
+- **Mute and do-not-disturb** — a trader takes a call, sits in an office, or steps away. One
+  switch silences every output, and it has to be *one* switch rather than three: a desk where
+  the toasts stopped but the sounds did not is a desk somebody swears at. The rule that makes
+  it trustworthy is that **the log is never gated** — silence means "do not interrupt me", not
+  "do not tell me", and a trader who mutes for ten minutes must be able to see everything that
+  happened, or muting becomes something they are afraid to do, and a mute nobody dares use
+  protects nobody. **Errors pierce DND by default**, because "I muted my desk and missed a
+  reject" is a real way to lose money and a mute that could do that is one nobody switches on
+  — turning that bypass off is available and is a choice. Snooze exists alongside the toggle
+  because the honest state is usually "not now" rather than "not ever": a permanent mute
+  switched on for a phone call is a permanent mute that stays on until something expensive
+  happens. It expires on the frame pump rather than on a timer, so a backgrounded tab comes
+  back un-silenced instead of still counting down.
 - **Browser notification bridge** — the output for the trader who has tabbed away; toasts and
   sounds both assume the page is in front of somebody, and this is the only channel that
   reaches them when it is not. Two rules keep it from being the thing that makes people

@@ -3,6 +3,7 @@ import { PATHS } from '../state/paths.js'
 import { registerAction } from '../actions/registry.js'
 import { ACTIONS } from '../actions/names.js'
 import { alertEnabled } from './bus.js'
+import { mayInterrupt } from './dnd.js'
 
 /**
  * Native OS notifications.
@@ -137,6 +138,7 @@ export function sendNotification(alert, options = {}) {
 export function routeNative(alert, options = {}) {
   const scope = options.scope ?? globalThis
   const hidden = options.hidden ?? scope?.document?.hidden === true
+  if (!mayInterrupt(alert, Number(options.now) || Date.now())) return ''
   if (!visibilityGate(hidden, alert?.severity)) return ''
 
   // Denied or unsupported is not a failure: the alert is already going to a toast, which

@@ -27,6 +27,7 @@ import { publishToggles } from '../alerts/signals.js'
 import { registerToastActions, wireAlertToasts } from '../ui/toast.js'
 import { wireAlertSounds, unlockAudio } from '../alerts/sounds.js'
 import { registerNotifyActions, wireNativeAlerts, permissionState } from '../alerts/notify.js'
+import { registerDndActions, refreshDnd } from '../alerts/dnd.js'
 import { onAlert } from '../alerts/bus.js'
 import { knownStrategies } from '../strategy/registry.js'
 import { connectFeeds } from './feeds.js'
@@ -105,8 +106,10 @@ export function bootstrap(options = {}) {
   // never silently fails and looks broken.
   unlockAudio()
   registerNotifyActions()
+  registerDndActions()
   wireNativeAlerts(onAlert)
   permissionState()
+  refreshDnd(Date.now())
   // After the strategies register, so every one of them gets a mute switch.
   publishToggles(knownStrategies())
   registerTicketActions()

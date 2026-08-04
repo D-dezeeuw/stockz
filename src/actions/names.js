@@ -39,6 +39,8 @@ export const ACTIONS = Object.freeze({
     toggle: 'alerts.toggle',
     testSound: 'alerts.testSound',
     enableNative: 'alerts.enableNative',
+    toggleDnd: 'alerts.toggleDnd',
+    snooze: 'alerts.snooze',
   }),
   book: Object.freeze({
     prefill: 'book.prefill',
