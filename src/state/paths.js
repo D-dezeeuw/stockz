@@ -153,6 +153,8 @@ export const PATHS = Object.freeze({
     // the only persisted branch, and assumptions that reset on reload are assumptions
     // nobody tunes twice.
     paperStartBalance: 'settings.paperStartBalance',
+    paperLatencyMs: 'settings.paperLatencyMs',
+    paperLatencyJitter: 'settings.paperLatencyJitter',
     btSpreadBps: 'settings.btSpreadBps',
     btLatencyMs: 'settings.btLatencyMs',
     btSlippageBps: 'settings.btSlippageBps',
