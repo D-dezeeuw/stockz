@@ -25,6 +25,8 @@ import { registerStrategyActions } from '../strategy/registry.js'
 import { registerAlertActions } from '../alerts/price.js'
 import { publishToggles } from '../alerts/signals.js'
 import { registerToastActions, wireAlertToasts } from '../ui/toast.js'
+import { wireAlertSounds, unlockAudio } from '../alerts/sounds.js'
+import { onAlert } from '../alerts/bus.js'
 import { knownStrategies } from '../strategy/registry.js'
 import { connectFeeds } from './feeds.js'
 import { registerTicketActions } from '../ticket/actions.js'
@@ -97,6 +99,10 @@ export function bootstrap(options = {}) {
   registerAlertActions()
   registerToastActions()
   wireAlertToasts()
+  wireAlertSounds(onAlert)
+  // Browsers refuse audio before a gesture; unlocking on the first click means the desk
+  // never silently fails and looks broken.
+  unlockAudio()
   // After the strategies register, so every one of them gets a mute switch.
   publishToggles(knownStrategies())
   registerTicketActions()

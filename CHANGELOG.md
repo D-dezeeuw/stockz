@@ -12,6 +12,19 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ### Added
 
+- **WebAudio alert sound pack** — the eye is on the tape, which makes sound the only channel
+  that reaches a trader who is not looking: the most valuable output on the desk and the
+  easiest to ruin. The pack is built around one rule — **the sounds must be distinguishable
+  without being learned**. A rising interval for a buy and the same interval falling for a
+  sell is a mapping nobody has to memorise, because it is the one the words already imply;
+  the error buzz is low and rough where everything else is high and clean, so it cannot be
+  mistaken for a fill at the edge of hearing. Every tone ramps its envelope down, since a
+  hard stop on a raw oscillator clicks and a hundred clicks an hour is fatiguing rather than
+  informative. Audio unlocks on the **first gesture** — pointer or key, whichever comes first
+  — because browsers refuse to play before one and a desk that silently fails looks broken.
+  The AudioContext is shared with the phase-15 order cues (browsers cap how many a page may
+  create) and sound has its own mute tier, because wanting the toast without the noise is the
+  common case in an office and forcing one to imply the other loses both.
 - **Severity toasts, fed from the alert bus** — the toast stack the desk has had since phase 2
   now takes every bus alert through **one subscription**, which is the whole reason the bus
   exists: a new alert type must not need a new wire into every output. Repeats **coalesce

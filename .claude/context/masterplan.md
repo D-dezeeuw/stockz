@@ -3649,16 +3649,16 @@
 **What:** The user identifies buy, sell, alert and error events by ear without looking away from the tape.
 **How:** WebAudio oscillator-plus-envelope synth fns per event, AudioContext unlocked on first gesture, volumes in settings.
 
-- [ ] **T22.6.1 - Branch and scaffold sound module** - What: A branch for the audio layer with a lazy context. How: git checkout -b feature/f22-6-sounds; create src/alerts/sounds.js with a getAudioCtx() lazy factory.
-- [ ] **T22.6.2 - Build unlockAudio wiring** - What: Sound works after the first user gesture, per browser policy. How: A once-listener on click and keydown calling AudioContext.resume() and flagging audio.ready in state.
-- [ ] **T22.6.3 - Build synthBuy fn** - What: A rising two-tone blip that unmistakably means buy fill. How: Implement synthBuy(ctx, gain) with two OscillatorNodes and a short GainNode envelope.
-- [ ] **T22.6.4 - Build synthSell fn** - What: A falling two-tone blip for sell fills, mirror of buy. How: Implement synthSell(ctx, gain) descending the same interval with matching envelope timing.
-- [ ] **T22.6.5 - Build synthAlert and synthError fns** - What: A double ping for alerts and a low buzz for errors, unmissably distinct. How: Implement synthAlert with two short sine pings and synthError with a sawtooth low buzz, both enveloped.
-- [ ] **T22.6.6 - Build playSound dispatcher fn** - What: One call routes any event type to the right sound at the right volume. How: Implement playSound(type) mapping to synth fns with per-type and master gain from settings state.
-- [ ] **T22.6.7 - Wire event sounds** - What: Fills, signals, alerts and errors each audible instantly. How: watch() on alert:fired and order events calling playSound(type), gated by the F22.8 silence check.
-- [ ] **T22.6.8 - Volume settings UI** - What: Master and per-sound volume sliders plus test buttons. How: Range inputs bound via data-model and data-action test buttons triggering each synth once.
-- [ ] **T22.6.9 - Write single unit tests** - What: Dispatcher and synth parameter tables each proven once. How: One Vitest test per fn (getAudioCtx, synthBuy, synthSell, synthAlert, synthError, playSound) with a mocked AudioContext.
-- [ ] **T22.6.10 - Verify audio latency and merge** - What: Sounds land under 50ms after events across Chrome and Firefox. How: Measure event-to-sound delay with performance.now logs, tighten envelopes, ESLint, merge.
+- [x] **T22.6.1 - Branch and scaffold sound module** - What: A branch for the audio layer with a lazy context. How: git checkout -b feature/f22-6-sounds; create src/alerts/sounds.js with a getAudioCtx() lazy factory.
+- [x] **T22.6.2 - Build unlockAudio wiring** - What: Sound works after the first user gesture, per browser policy. How: A once-listener on click and keydown calling AudioContext.resume() and flagging audio.ready in state.
+- [x] **T22.6.3 - Build synthBuy fn** - What: A rising two-tone blip that unmistakably means buy fill. How: Implement synthBuy(ctx, gain) with two OscillatorNodes and a short GainNode envelope.
+- [x] **T22.6.4 - Build synthSell fn** - What: A falling two-tone blip for sell fills, mirror of buy. How: Implement synthSell(ctx, gain) descending the same interval with matching envelope timing.
+- [x] **T22.6.5 - Build synthAlert and synthError fns** - What: A double ping for alerts and a low buzz for errors, unmissably distinct. How: Implement synthAlert with two short sine pings and synthError with a sawtooth low buzz, both enveloped.
+- [x] **T22.6.6 - Build playSound dispatcher fn** - What: One call routes any event type to the right sound at the right volume. How: Implement playSound(type) mapping to synth fns with per-type and master gain from settings state.
+- [x] **T22.6.7 - Wire event sounds** - What: Fills, signals, alerts and errors each audible instantly. How: watch() on alert:fired and order events calling playSound(type), gated by the F22.8 silence check.
+- [x] **T22.6.8 - Volume settings UI** - What: Master and per-sound volume sliders plus test buttons. How: Range inputs bound via data-model and data-action test buttons triggering each synth once.
+- [x] **T22.6.9 - Write single unit tests** - What: Dispatcher and synth parameter tables each proven once. How: One Vitest test per fn (getAudioCtx, synthBuy, synthSell, synthAlert, synthError, playSound) with a mocked AudioContext.
+- [x] **T22.6.10 - Verify audio latency and merge** - What: Sounds land under 50ms after events across Chrome and Firefox. How: Measure event-to-sound delay with performance.now logs, tighten envelopes, ESLint, merge.
 
 ### F22.7 - Browser Notification Bridge
 

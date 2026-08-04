@@ -37,6 +37,7 @@ export const ACTIONS = Object.freeze({
     update: 'alerts.update',
     remove: 'alerts.remove',
     toggle: 'alerts.toggle',
+    testSound: 'alerts.testSound',
   }),
   book: Object.freeze({
     prefill: 'book.prefill',
