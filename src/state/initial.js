@@ -58,6 +58,8 @@ export function initialState(overrides = {}) {
     [PATHS.ui.pnlPulse]: '',
     [PATHS.ui.pnlPulseAt]: 0,
     [PATHS.ui.rtt]: { worst: { venue: '', ms: -1, tier: 'unknown' } },
+    [PATHS.ui.slippage]: { last: 0, avg: 0, p95: 0, worst: null, count: 0 },
+    [PATHS.ui.spreadAlert]: false,
     [PATHS.ui.hud]: {
       latencyMs: 0,
       latencyGrade: 'warn',

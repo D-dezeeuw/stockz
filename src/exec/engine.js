@@ -8,6 +8,7 @@ import { ingestOrderEvents } from '../ticket/lifecycle.js'
 import { issueId, claimId, resetIds } from './ids.js'
 import { stampLatency, resetLatency } from './latency.js'
 import { ingestFill } from '../positions/store.js'
+import { captureIntent, scoreFill } from '../hud/quality.js'
 import { createLogger } from '../utils/log.js'
 
 const log = createLogger('exec')
@@ -129,7 +130,8 @@ export async function submit(input, deps = {}) {
   const { now = () => Date.now(), clock = monotonic } = deps
   const at = now()
 
-  const { ok, intent, reason } = prepare(input)
+  const market = deskMarket()
+  const { ok, intent, reason } = prepare(input, market)
   if (!ok) return { ok: false, clientId: '', reason }
 
   const clientId = intent.clientId || issueId(at)
@@ -146,6 +148,13 @@ export async function submit(input, deps = {}) {
   publish([{ clOrdId: clientId, instId: intent.instrument, side: intent.side, sz: String(intent.size), px: intent.price ? String(intent.price) : '', state: 'pending', ts: at }])
 
   stampLatency(clientId, 'submit', clock())
+  // The price aimed at, captured at submit: without it there is nothing to compare the
+  // fill against, and slippage becomes unmeasurable after the fact.
+  captureIntent(clientId, {
+    price: intent.price || Number(market.mid) || 0,
+    side: intent.side,
+    instrument: intent.instrument,
+  })
 
   const result = await adapterFor(intent.venue).submit({ ...intent, clientId })
   stampLatency(clientId, 'ack', clock())
@@ -182,6 +191,13 @@ export function apply(clientId, state, detail = {}) {
     // against.
     const justFilled = Number(detail.filled ?? order.size) - Number(order.filled || 0)
     if (justFilled > 0) {
+      scoreFill({
+        clientId: id,
+        px: Number(detail.avgPx) || order.price,
+        instrument: order.instrument,
+        ts: Number(detail.ts) || order.ts,
+      })
+
       ingestFill({
         venue: order.venue,
         instrument: order.instrument,

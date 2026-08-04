@@ -327,9 +327,14 @@
                 <span class="hud__value">{{ui.hud.latencyLabel}}</span>
                 <span class="hud__label">submit → ack · p95 {{ui.hud.latencyP95Label}}</span>
               </div>
-              <div class="hud__tile">
+              <div class="hud__tile" :class="ui.spreadAlert ? 'hud__tile hud__tile--alert' : 'hud__tile'">
                 <span class="hud__value">{{ui.hud.spreadLabel}}</span>
-                <span class="hud__label">spread</span>
+                <span class="hud__label">spread · limit {{settings.spreadLimitBps}}bp</span>
+              </div>
+              <!-- What the fills actually cost: positive is always worse. -->
+              <div class="hud__tile">
+                <span class="hud__value">{{ui.slippage.avg}}bp</span>
+                <span class="hud__label">slippage · worst {{ui.slippage.worst ? ui.slippage.worst.bps : 0}}bp</span>
               </div>
               <div class="hud__tile">
                 <span class="hud__value">{{ui.hud.tradesLabel}}</span>

@@ -65,6 +65,8 @@ export const PATHS = Object.freeze({
     pnlPulseAt: 'ui.pnlPulseAt',
     hud: 'ui.hud',
     rtt: 'ui.rtt',
+    slippage: 'ui.slippage',
+    spreadAlert: 'ui.spreadAlert',
     captureFor: 'ui.captureFor',
     capturePreview: 'ui.capturePreview',
   }),
@@ -93,6 +95,7 @@ export const PATHS = Object.freeze({
     maxBurst: 'settings.maxBurst',
     maxDeviationBps: 'settings.maxDeviationBps',
     sessionStartUtc: 'settings.sessionStartUtc',
+    spreadLimitBps: 'settings.spreadLimitBps',
     chords: 'settings.chords',
   }),
   market: Object.freeze({
