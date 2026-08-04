@@ -294,6 +294,22 @@
       </section>
     </main>
 
+    <!-- Hotkey cheat sheet. Grouped by action namespace, which is how the desk is
+         already organised — one mental model, not two. -->
+    <div class="modal" data-if="ui.modal === 'keys-help'" role="dialog" aria-label="Hotkeys">
+      <div class="modal__card">
+        <p class="block__state-title">hotkeys</p>
+        <div class="keysheet" data-each="row in ui.chordSheet">
+          <div class="keysheet__row">
+            <kbd class="keysheet__chord">{{row.key}}</kbd>
+            <span class="keysheet__label">{{row.label}}</span>
+          </div>
+        </div>
+        <button type="button" class="chip" data-action="click" data-fn="ui.toggleOverlay"
+                data-modal="">close</button>
+      </div>
+    </div>
+
     <!-- Key modal. Inputs are plain DOM, never data-model: a credential bound to state
          would land in history and every journal export. -->
     <div class="modal" data-if="ui.modal === 'keys'" role="dialog" aria-label="API keys">

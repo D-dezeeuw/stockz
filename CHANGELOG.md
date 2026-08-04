@@ -10,6 +10,17 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ## [Unreleased]
 
+### Added
+
+- **Hotkeys** — on a scalping desk the mouse is a latency tax, so every action is a chord
+  away, dispatched through the *same* action the buttons use rather than a second
+  implementation that would drift. Chords are built from `event.code`, the physical key,
+  so a binding survives a layout switch. An unbound chord is left to the browser —
+  otherwise the desk breaks refresh, devtools and find-in-page — and typing in a field is
+  typing, except for Escape, which always reaches the desk so nobody gets stuck in an
+  input. B/S trade, F and Escape flatten, digits size, arrows walk the price, and `?`
+  shows a cheat sheet rendered from the bindings that are actually live. (F16.1, F16.2)
+
 ## [0.15.0] — 2026-08-04 — Phase 15: Rapid Order Entry
 
 Intent to live order in one click. The ticket, its price modes and sizing, the arm gate,

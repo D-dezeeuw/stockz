@@ -1,5 +1,6 @@
 import { setValue, bindDOM, run, tick, checkpoint, engineInfo } from './engine.js'
 import { initialState } from '../state/initial.js'
+import { PATHS } from '../state/paths.js'
 import { registerCoreActions, actionNames, dispatchAction } from '../actions/registry.js'
 import { ACTIONS } from '../actions/names.js'
 import { registerDerived } from '../state/derived.js'
@@ -26,6 +27,8 @@ import { registerSubmitAction } from '../ticket/submit.js'
 import { sendOrder } from '../ticket/send.js'
 import { registerShortcutActions } from '../ticket/shortcuts.js'
 import { registerIntentAction } from '../ticket/intent.js'
+import { applyDefaultBindings } from '../keys/defaults.js'
+import { mountKeymap } from '../keys/keymap.js'
 import { appVersion } from './version.js'
 
 /**
@@ -91,9 +94,14 @@ export function bootstrap(options = {}) {
   seedBlocks()
   seedLists()
 
+  // Bindings after every action is registered, so a chord can never point at a name
+  // that does not exist yet.
+  applyDefaultBindings(state[PATHS.settings.chords] ?? {})
+
   const cleanup = bindDOM(doc)
   tick()
   observeLayout({ doc })
+  const unkey = mountKeymap(doc?.defaultView ?? globalThis.window)
   revealApp(doc)
   checkpoint('boot', { version: appVersion() })
 
@@ -107,7 +115,16 @@ export function bootstrap(options = {}) {
 
   if (autoRun) run()
 
-  return { paths: Object.keys(state), actions: actionNames(), derived, cleanup, feeds }
+  return {
+    paths: Object.keys(state),
+    actions: actionNames(),
+    derived,
+    cleanup: () => {
+      unkey()
+      cleanup?.()
+    },
+    feeds,
+  }
 }
 
 /**

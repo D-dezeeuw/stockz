@@ -56,6 +56,7 @@ export const PATHS = Object.freeze({
     density: 'ui.density',
     keysPresent: 'ui.keysPresent',
     candleInterval: 'ui.candleInterval',
+    chordSheet: 'ui.chordSheet',
   }),
   settings: Object.freeze({
     theme: 'settings.theme',
@@ -80,6 +81,7 @@ export const PATHS = Object.freeze({
     qtyPresets: 'settings.qtyPresets',
     volume: 'settings.volume',
     maxBurst: 'settings.maxBurst',
+    chords: 'settings.chords',
   }),
   market: Object.freeze({
     venues: 'market.venues',
