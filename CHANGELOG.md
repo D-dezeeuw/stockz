@@ -10,6 +10,8 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ## [Unreleased]
 
+## [0.27.0] - 2026-08-04 — Market Replay & Backtesting
+
 ### Added
 
 - **F27.5 — headless backtest runner.** Score a strategy against a recording in seconds

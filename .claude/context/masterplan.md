@@ -4468,96 +4468,96 @@
 **What:** Score a strategy against a recording in seconds without rendering a single pixel.
 **How:** Run the phase 20 strategy engine over recorded ticks inside a Worker at maximum speed using an isolated headless Spektrum run() instance.
 
-- [ ] **T27.5.1 - Runner feature branch** - What: Backtest engine developed off main. How: git switch -c feature/backtest-runner from main.
-- [ ] **T27.5.2 - Backtest orchestrator** - What: One function call turns recording plus strategy into a result. How: runBacktest({recordingId, strategyId, params}) coordinating worker start, streaming, and result collection.
-- [ ] **T27.5.3 - Worker harness** - What: Full-speed crunching that leaves the desk perfectly responsive. How: backtest-worker.js streams chunks from IndexedDB and drives the strategy loop tick by tick.
-- [ ] **T27.5.4 - Headless state sandbox** - What: Backtests can never touch or dirty live desk state. How: Instantiate an isolated Spektrum state container with run() inside the worker per backtest.
-- [ ] **T27.5.5 - Signal capture** - What: Every strategy entry and exit recorded with its exact tick. How: collectSignals() appending {side, price, ts, reason} entries emitted by the strategy engine hooks.
-- [ ] **T27.5.6 - Progress reporting** - What: Long runs show live percent complete, not a frozen spinner. How: Worker posts progress messages throttled to 10 per second, bound to a progress bar via setValue.
-- [ ] **T27.5.7 - Cancel support** - What: Abort a misconfigured run instantly without leaks. How: cancelBacktest() signals the worker via postMessage and terminates after a clean chunk boundary.
-- [ ] **T27.5.8 - Backtest launcher block** - What: Pick recording, strategy, and params, hit run. How: Grid block with data-model selects and data-action="startBacktest", styled in the terminal aesthetic.
-- [ ] **T27.5.9 - Runner unit tests** - What: Orchestration functions each covered exactly once. How: One Vitest test per fn (runBacktest, collectSignals, cancelBacktest) run via vitest run -t per function.
-- [ ] **T27.5.10 - Runner merge** - What: Headless backtesting available on main. How: ESLint plus targeted Vitest green, merge feature/backtest-runner into main.
+- [x] **T27.5.1 - Runner feature branch** - What: Backtest engine developed off main. How: git switch -c feature/backtest-runner from main.
+- [x] **T27.5.2 - Backtest orchestrator** - What: One function call turns recording plus strategy into a result. How: runBacktest({recordingId, strategyId, params}) coordinating worker start, streaming, and result collection.
+- [x] **T27.5.3 - Worker harness** - What: Full-speed crunching that leaves the desk perfectly responsive. How: backtest-worker.js streams chunks from IndexedDB and drives the strategy loop tick by tick.
+- [x] **T27.5.4 - Headless state sandbox** - What: Backtests can never touch or dirty live desk state. How: Instantiate an isolated Spektrum state container with run() inside the worker per backtest.
+- [x] **T27.5.5 - Signal capture** - What: Every strategy entry and exit recorded with its exact tick. How: collectSignals() appending {side, price, ts, reason} entries emitted by the strategy engine hooks.
+- [x] **T27.5.6 - Progress reporting** - What: Long runs show live percent complete, not a frozen spinner. How: Worker posts progress messages throttled to 10 per second, bound to a progress bar via setValue.
+- [x] **T27.5.7 - Cancel support** - What: Abort a misconfigured run instantly without leaks. How: cancelBacktest() signals the worker via postMessage and terminates after a clean chunk boundary.
+- [x] **T27.5.8 - Backtest launcher block** - What: Pick recording, strategy, and params, hit run. How: Grid block with data-model selects and data-action="startBacktest", styled in the terminal aesthetic.
+- [x] **T27.5.9 - Runner unit tests** - What: Orchestration functions each covered exactly once. How: One Vitest test per fn (runBacktest, collectSignals, cancelBacktest) run via vitest run -t per function.
+- [x] **T27.5.10 - Runner merge** - What: Headless backtesting available on main. How: ESLint plus targeted Vitest green, merge feature/backtest-runner into main.
 
 ### F27.6 - Sim Fill Model
 
 **What:** Fills that behave like a real venue - spread paid, latency felt, fees charged - so backtest PnL is honest.
 **How:** Pure fill functions applying configurable spread, slippage, latency, and fee assumptions to strategy orders inside the backtest worker.
 
-- [ ] **T27.6.1 - Fill model branch** - What: Fill math developed in isolation. How: git switch -c feature/sim-fill-model from main.
-- [ ] **T27.6.2 - Market fill function** - What: Simulated market orders pay the spread like real ones. How: simMarketFill() filling at the opposing best price plus configured slippage bps.
-- [ ] **T27.6.3 - Limit fill function** - What: Simulated limits only fill when the tape actually trades through them. How: simLimitFill() matching when a replayed print crosses the limit price.
-- [ ] **T27.6.4 - Latency application** - What: Orders arrive late like they would over the wire. How: applyLatency() delaying order arrival by configured ms and filling against the tick current at arrival.
-- [ ] **T27.6.5 - Size-scaled slippage** - What: Big clips cost more, exactly as in thin books. How: slippageForSize() mapping order size to extra bps via a configurable piecewise curve.
-- [ ] **T27.6.6 - Fee model** - What: Net PnL includes what the venue would actually charge. How: simFees() applying taker/maker bps with OKX v5 and EToro fee presets selectable per run.
-- [ ] **T27.6.7 - Fill assumptions config** - What: Assumptions are explicit, tunable, and remembered. How: Spread, latency, slippage, and fee settings block persisted via spektrum/persist under backtest.fillConfig.
-- [ ] **T27.6.8 - Runner wiring** - What: Every strategy order in a backtest routes through the honest fill math. How: backtest-worker routes order intents through simMarketFill/simLimitFill with applyLatency and simFees composed.
-- [ ] **T27.6.9 - Fill model unit tests** - What: Each pure fill fn pinned by exactly one test. How: One Vitest test per fn (simMarketFill, simLimitFill, applyLatency, slippageForSize, simFees) via vitest run -t.
-- [ ] **T27.6.10 - Fill model merge** - What: Honest fills become the backtest default. How: Lint plus targeted tests green, merge feature/sim-fill-model into main.
+- [x] **T27.6.1 - Fill model branch** - What: Fill math developed in isolation. How: git switch -c feature/sim-fill-model from main.
+- [x] **T27.6.2 - Market fill function** - What: Simulated market orders pay the spread like real ones. How: simMarketFill() filling at the opposing best price plus configured slippage bps.
+- [x] **T27.6.3 - Limit fill function** - What: Simulated limits only fill when the tape actually trades through them. How: simLimitFill() matching when a replayed print crosses the limit price.
+- [x] **T27.6.4 - Latency application** - What: Orders arrive late like they would over the wire. How: applyLatency() delaying order arrival by configured ms and filling against the tick current at arrival.
+- [x] **T27.6.5 - Size-scaled slippage** - What: Big clips cost more, exactly as in thin books. How: slippageForSize() mapping order size to extra bps via a configurable piecewise curve.
+- [x] **T27.6.6 - Fee model** - What: Net PnL includes what the venue would actually charge. How: simFees() applying taker/maker bps with OKX v5 and EToro fee presets selectable per run.
+- [x] **T27.6.7 - Fill assumptions config** - What: Assumptions are explicit, tunable, and remembered. How: Spread, latency, slippage, and fee settings block persisted via spektrum/persist under backtest.fillConfig.
+- [x] **T27.6.8 - Runner wiring** - What: Every strategy order in a backtest routes through the honest fill math. How: backtest-worker routes order intents through simMarketFill/simLimitFill with applyLatency and simFees composed.
+- [x] **T27.6.9 - Fill model unit tests** - What: Each pure fill fn pinned by exactly one test. How: One Vitest test per fn (simMarketFill, simLimitFill, applyLatency, slippageForSize, simFees) via vitest run -t.
+- [x] **T27.6.10 - Fill model merge** - What: Honest fills become the backtest default. How: Lint plus targeted tests green, merge feature/sim-fill-model into main.
 
 ### F27.7 - Backtest Results Report
 
 **What:** One glance tells whether the strategy earns: trade list, PnL, expectancy, win rate, and max drawdown with an equity curve.
 **How:** Compute statistics from sim fills with pure functions and render a report block with a hand-rolled canvas equity chart.
 
-- [ ] **T27.7.1 - Report feature branch** - What: Reporting built off main. How: git switch -c feature/backtest-report from main.
-- [ ] **T27.7.2 - Trade pairing** - What: Raw fills become readable round-trip trades. How: buildTradeList() pairing entry and exit fills into trades with side, duration, and net PnL.
-- [ ] **T27.7.3 - Expectancy stats** - What: The single number scalpers care about: expected PnL per trade. How: computeExpectancy() deriving win rate, average win/loss, and expectancy from the trade list.
-- [ ] **T27.7.4 - Drawdown calculation** - What: Worst-case pain quantified before real money feels it. How: computeDrawdown() tracking running equity peak-to-trough maximum drawdown.
-- [ ] **T27.7.5 - Equity series** - What: The shape of the run, plottable at any resolution. How: equityCurve() producing a cumulative PnL series downsampled to a target point count.
-- [ ] **T27.7.6 - Report block layout** - What: Headline stats readable in one second. How: Stat tiles for trades, net PnL, expectancy, win %, and max DD in a uniform grid block with design tokens.
-- [ ] **T27.7.7 - Canvas equity chart** - What: The equity curve drawn fast and on-brand. How: Hand-rolled canvas renderer painting the curve green above zero and orange below with a zero axis line.
-- [ ] **T27.7.8 - Report export** - What: Results shareable outside the app in one click. How: copyReportJson() serializing the result object to the clipboard via navigator.clipboard.writeText.
-- [ ] **T27.7.9 - Report unit tests** - What: Every stat function pinned by its single test. How: One Vitest test per fn (buildTradeList, computeExpectancy, computeDrawdown, equityCurve, copyReportJson) via vitest run -t.
-- [ ] **T27.7.10 - Report merge** - What: Result reporting live on main. How: ESLint plus targeted Vitest green, merge feature/backtest-report into main.
+- [x] **T27.7.1 - Report feature branch** - What: Reporting built off main. How: git switch -c feature/backtest-report from main.
+- [x] **T27.7.2 - Trade pairing** - What: Raw fills become readable round-trip trades. How: buildTradeList() pairing entry and exit fills into trades with side, duration, and net PnL.
+- [x] **T27.7.3 - Expectancy stats** - What: The single number scalpers care about: expected PnL per trade. How: computeExpectancy() deriving win rate, average win/loss, and expectancy from the trade list.
+- [x] **T27.7.4 - Drawdown calculation** - What: Worst-case pain quantified before real money feels it. How: computeDrawdown() tracking running equity peak-to-trough maximum drawdown.
+- [x] **T27.7.5 - Equity series** - What: The shape of the run, plottable at any resolution. How: equityCurve() producing a cumulative PnL series downsampled to a target point count.
+- [x] **T27.7.6 - Report block layout** - What: Headline stats readable in one second. How: Stat tiles for trades, net PnL, expectancy, win %, and max DD in a uniform grid block with design tokens.
+- [x] **T27.7.7 - Canvas equity chart** - What: The equity curve drawn fast and on-brand. How: Hand-rolled canvas renderer painting the curve green above zero and orange below with a zero axis line.
+- [x] **T27.7.8 - Report export** - What: Results shareable outside the app in one click. How: copyReportJson() serializing the result object to the clipboard via navigator.clipboard.writeText.
+- [x] **T27.7.9 - Report unit tests** - What: Every stat function pinned by its single test. How: One Vitest test per fn (buildTradeList, computeExpectancy, computeDrawdown, equityCurve, copyReportJson) via vitest run -t.
+- [x] **T27.7.10 - Report merge** - What: Result reporting live on main. How: ESLint plus targeted Vitest green, merge feature/backtest-report into main.
 
 ### F27.8 - Parameter Sweep
 
 **What:** Find the sweet spot: run a whole grid of strategy parameter combos and instantly see which ones print.
 **How:** Expand a parameter grid, queue backtests across a Worker pool, and tabulate per-combo results in a live sortable table.
 
-- [ ] **T27.8.1 - Sweep feature branch** - What: Sweep machinery built in isolation. How: git switch -c feature/param-sweep from main.
-- [ ] **T27.8.2 - Grid expansion** - What: Ranges become an explicit list of every combo to test. How: expandParamGrid() computing the cartesian product of per-param value ranges with a combo cap.
-- [ ] **T27.8.3 - Sweep queue** - What: Combos run automatically start to finish with visible progress. How: runSweep() feeding combos to the backtest worker with a completed/total counter via setValue.
-- [ ] **T27.8.4 - Worker pool concurrency** - What: Sweeps finish minutes faster on multicore machines. How: Pool sized by navigator.hardwareConcurrency runs combos in parallel backtest workers.
-- [ ] **T27.8.5 - Live results state** - What: Rows appear the moment each combo finishes, not at the end. How: addValue('sweep.results', row) per completion streaming into the bound table.
-- [ ] **T27.8.6 - Results table block** - What: Instantly sort combos by what matters. How: data-each table sortable by net PnL, expectancy, and drawdown via computed('sweep.view').
-- [ ] **T27.8.7 - Heat coloring** - What: Winners and losers visible without reading a number. How: Cell backgrounds on a green-to-orange scale from normalized PnL via computed style bindings.
-- [ ] **T27.8.8 - Apply best combo** - What: The winning params flow into the live strategy in one click. How: applyComboParams() writing the selected row's params into strategy settings via setValue, wired data-action.
-- [ ] **T27.8.9 - Sweep unit tests** - What: Grid and apply functions each verified once. How: One Vitest test per fn (expandParamGrid, runSweep, applyComboParams) run via vitest run -t per function.
-- [ ] **T27.8.10 - Sweep merge** - What: Parameter optimization ships. How: Lint plus targeted tests green, merge feature/param-sweep into main.
+- [x] **T27.8.1 - Sweep feature branch** - What: Sweep machinery built in isolation. How: git switch -c feature/param-sweep from main.
+- [x] **T27.8.2 - Grid expansion** - What: Ranges become an explicit list of every combo to test. How: expandParamGrid() computing the cartesian product of per-param value ranges with a combo cap.
+- [x] **T27.8.3 - Sweep queue** - What: Combos run automatically start to finish with visible progress. How: runSweep() feeding combos to the backtest worker with a completed/total counter via setValue.
+- [x] **T27.8.4 - Worker pool concurrency** - What: Sweeps finish minutes faster on multicore machines. How: Pool sized by navigator.hardwareConcurrency runs combos in parallel backtest workers.
+- [x] **T27.8.5 - Live results state** - What: Rows appear the moment each combo finishes, not at the end. How: addValue('sweep.results', row) per completion streaming into the bound table.
+- [x] **T27.8.6 - Results table block** - What: Instantly sort combos by what matters. How: data-each table sortable by net PnL, expectancy, and drawdown via computed('sweep.view').
+- [x] **T27.8.7 - Heat coloring** - What: Winners and losers visible without reading a number. How: Cell backgrounds on a green-to-orange scale from normalized PnL via computed style bindings.
+- [x] **T27.8.8 - Apply best combo** - What: The winning params flow into the live strategy in one click. How: applyComboParams() writing the selected row's params into strategy settings via setValue, wired data-action.
+- [x] **T27.8.9 - Sweep unit tests** - What: Grid and apply functions each verified once. How: One Vitest test per fn (expandParamGrid, runSweep, applyComboParams) run via vitest run -t per function.
+- [x] **T27.8.10 - Sweep merge** - What: Parameter optimization ships. How: Lint plus targeted tests green, merge feature/param-sweep into main.
 
 ### F27.9 - Run Comparison
 
 **What:** Two runs side by side - instantly see which strategy or parameter set behaved better and where.
 **How:** Archive finished runs to IndexedDB and render pinned pairs in twin columns with overlaid canvas equity curves and stat deltas.
 
-- [ ] **T27.9.1 - Compare feature branch** - What: Comparison view built off main. How: git switch -c feature/run-compare from main.
-- [ ] **T27.9.2 - Run archive** - What: Finished backtests survive reloads for later study. How: saveRunResult() persisting result objects into an IndexedDB runs store with strategy, params, and seed.
-- [ ] **T27.9.3 - Run listing** - What: Every archived run browsable with headline stats. How: listRuns() querying the runs store into a data-each picker sorted by finish time.
-- [ ] **T27.9.4 - Pin to compare** - What: Any two runs snap into the comparison slots. How: pinRun() writing run ids into compare.slots state via data-action, second pin replacing the oldest.
-- [ ] **T27.9.5 - Stat deltas** - What: The differences computed for you: PnL, expectancy, drawdown gaps. How: diffRunStats() producing signed deltas between slot A and slot B stat sets.
-- [ ] **T27.9.6 - Twin column layout** - What: Mirrored reports readable as one comparison. How: Two stat columns with delta badges colored green for better and orange for worse, in a uniform grid block.
-- [ ] **T27.9.7 - Overlay equity chart** - What: Both equity curves on one time axis tell the story instantly. How: Canvas renderer drawing both curves in distinct hues with a compact legend and shared scale.
-- [ ] **T27.9.8 - Slot management** - What: Clear or swap comparisons without friction. How: clearSlot() actions plus an empty-slot hint styled in muted terminal green.
-- [ ] **T27.9.9 - Compare unit tests** - What: Archive and diff functions each pinned once. How: One Vitest test per fn (saveRunResult, listRuns, pinRun, diffRunStats, clearSlot) via vitest run -t.
-- [ ] **T27.9.10 - Compare merge** - What: Side-by-side analysis on main. How: ESLint plus targeted Vitest green, merge feature/run-compare into main.
+- [x] **T27.9.1 - Compare feature branch** - What: Comparison view built off main. How: git switch -c feature/run-compare from main.
+- [x] **T27.9.2 - Run archive** - What: Finished backtests survive reloads for later study. How: saveRunResult() persisting result objects into an IndexedDB runs store with strategy, params, and seed.
+- [x] **T27.9.3 - Run listing** - What: Every archived run browsable with headline stats. How: listRuns() querying the runs store into a data-each picker sorted by finish time.
+- [x] **T27.9.4 - Pin to compare** - What: Any two runs snap into the comparison slots. How: pinRun() writing run ids into compare.slots state via data-action, second pin replacing the oldest.
+- [x] **T27.9.5 - Stat deltas** - What: The differences computed for you: PnL, expectancy, drawdown gaps. How: diffRunStats() producing signed deltas between slot A and slot B stat sets.
+- [x] **T27.9.6 - Twin column layout** - What: Mirrored reports readable as one comparison. How: Two stat columns with delta badges colored green for better and orange for worse, in a uniform grid block.
+- [x] **T27.9.7 - Overlay equity chart** - What: Both equity curves on one time axis tell the story instantly. How: Canvas renderer drawing both curves in distinct hues with a compact legend and shared scale.
+- [x] **T27.9.8 - Slot management** - What: Clear or swap comparisons without friction. How: clearSlot() actions plus an empty-slot hint styled in muted terminal green.
+- [x] **T27.9.9 - Compare unit tests** - What: Archive and diff functions each pinned once. How: One Vitest test per fn (saveRunResult, listRuns, pinRun, diffRunStats, clearSlot) via vitest run -t.
+- [x] **T27.9.10 - Compare merge** - What: Side-by-side analysis on main. How: ESLint plus targeted Vitest green, merge feature/run-compare into main.
 
 ### F27.10 - Deterministic Replay Harness
 
 **What:** Same recording, same params, same seed, same result - every backtest reproducible to the tick.
 **How:** A seeded PRNG behind all sim randomness plus Spektrum checkpoint/serialize snapshots hashed to verify byte-identical outcomes.
 
-- [ ] **T27.10.1 - Determinism branch** - What: Reproducibility work isolated. How: git switch -c feature/replay-determinism from main.
-- [ ] **T27.10.2 - Seeded PRNG** - What: All simulated randomness becomes replayable. How: createSeededRng() implementing mulberry32; slippage jitter and latency jitter route through it exclusively.
-- [ ] **T27.10.3 - Seed plumbing** - What: Every run records its seed and can be rerun identically. How: Seed stored in run config, displayed in the report, with a rerun-with-seed data-action.
-- [ ] **T27.10.4 - End-state snapshot** - What: A run's final state captured for exact comparison. How: Spektrum checkpoint() plus serialize() on the headless container at backtest completion.
-- [ ] **T27.10.5 - Result hashing** - What: Two runs comparable with a single string equality. How: hashRunResult() canonicalizing the fill log JSON key order and hashing with a small FNV-1a implementation.
-- [ ] **T27.10.6 - Determinism verifier** - What: Proof on screen that the sim is deterministic. How: verifyDeterminism() running one backtest twice and comparing hashes, surfaced as a green DETERMINISTIC badge.
-- [ ] **T27.10.7 - Stable money math** - What: PnL that never drifts by float error between runs. How: roundToTick() and fixed-decimal accumulation helpers used across fill and stat functions.
-- [ ] **T27.10.8 - Regression fixture** - What: A tiny known-good recording guards the pipeline forever. How: Commit a small JSON tick fixture and a stored expected hash loaded by the verifier's test.
-- [ ] **T27.10.9 - Harness unit tests** - What: RNG, hash, and verifier functions each covered exactly once. How: One Vitest test per fn (createSeededRng, hashRunResult, verifyDeterminism, roundToTick) via vitest run -t.
-- [ ] **T27.10.10 - Determinism merge** - What: Reproducible backtesting guaranteed on main. How: Lint plus targeted tests green, merge feature/replay-determinism into main.
+- [x] **T27.10.1 - Determinism branch** - What: Reproducibility work isolated. How: git switch -c feature/replay-determinism from main.
+- [x] **T27.10.2 - Seeded PRNG** - What: All simulated randomness becomes replayable. How: createSeededRng() implementing mulberry32; slippage jitter and latency jitter route through it exclusively.
+- [x] **T27.10.3 - Seed plumbing** - What: Every run records its seed and can be rerun identically. How: Seed stored in run config, displayed in the report, with a rerun-with-seed data-action.
+- [x] **T27.10.4 - End-state snapshot** - What: A run's final state captured for exact comparison. How: Spektrum checkpoint() plus serialize() on the headless container at backtest completion.
+- [x] **T27.10.5 - Result hashing** - What: Two runs comparable with a single string equality. How: hashRunResult() canonicalizing the fill log JSON key order and hashing with a small FNV-1a implementation.
+- [x] **T27.10.6 - Determinism verifier** - What: Proof on screen that the sim is deterministic. How: verifyDeterminism() running one backtest twice and comparing hashes, surfaced as a green DETERMINISTIC badge.
+- [x] **T27.10.7 - Stable money math** - What: PnL that never drifts by float error between runs. How: roundToTick() and fixed-decimal accumulation helpers used across fill and stat functions.
+- [x] **T27.10.8 - Regression fixture** - What: A tiny known-good recording guards the pipeline forever. How: Commit a small JSON tick fixture and a stored expected hash loaded by the verifier's test.
+- [x] **T27.10.9 - Harness unit tests** - What: RNG, hash, and verifier functions each covered exactly once. How: One Vitest test per fn (createSeededRng, hashRunResult, verifyDeterminism, roundToTick) via vitest run -t.
+- [x] **T27.10.10 - Determinism merge** - What: Reproducible backtesting guaranteed on main. How: Lint plus targeted tests green, merge feature/replay-determinism into main.
 
 ---
 
