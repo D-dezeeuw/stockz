@@ -36,6 +36,19 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
   a trader who was up two thousand and gave back fifteen hundred sees a drawdown even though
   they never went red. The crosshair snaps to a trade rather than interpolating: an equity
   read between two trades is one that never existed.
+- **The hour that costs the money** — almost every trader has one that quietly gives back
+  everything the rest of the day earns, and almost none of them can name it. It is invisible
+  in a P&L, invisible in a win rate, and completely obvious in a seven-by-twenty-four grid.
+  Hours are **local**, unlike the journal's UTC day rows, and the difference is the point:
+  "do I trade badly after lunch" is a question about the trader's own body clock, not about an
+  exchange's session boundary. **An empty cell never looks like a break-even one** — zero P&L
+  and no trades are completely different facts, one saying "this hour does not work" and the
+  other "you have never tried", and a diverging scale renders both as the neutral midpoint
+  unless something is done about it. Untraded hours get their own flat treatment and are
+  excluded from the scale entirely, so an absence cannot change how a real number is coloured.
+  The scale is symmetric around zero, or a good week's losses would look mild purely because
+  the wins were bigger. The best and worst hours are named in words underneath, because that
+  is the sentence somebody actually wants told to them.
 
 ## [0.25.0] — 2026-08-04 — Phase 25: Trade Journal & Time-Travel Audit
 

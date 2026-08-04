@@ -4269,16 +4269,16 @@
 **What:** A weekday-by-hour heatmap of net PnL revealing exactly when the user makes and loses money, so trading hours can be chosen on evidence.
 **How:** bucketByHour() aggregation plus a diverging green/orange color scale rendered as a canvas cell grid with hover stats and a legend.
 
-- [ ] **T26.3.1 - Cut heatmap branch** - What: Heatmap work isolated from main. How: git checkout -b feature/f26.3-hour-heatmap from main.
-- [ ] **T26.3.2 - Implement bucketByHour()** - What: PnL and trade counts folded into 7x24 time cells. How: Pure bucketByHour(trades) in src/analytics/heatmap.js keying weekday and local hour of closeTs, summing netPnl and count.
-- [ ] **T26.3.3 - Implement the diverging color scale** - What: Profit and loss intensity readable at a glance. How: cellColor(value, maxAbs) interpolating from orange through neutral to green symmetrically around zero using the palette custom properties.
-- [ ] **T26.3.4 - Render the cell grid** - What: The full week of hours in one compact canvas. How: drawHeatmap(ctx, buckets, size) painting devicePixelRatio-scaled cells with weekday row labels and hour column labels.
-- [ ] **T26.3.5 - Add cell hover stats** - What: Exact PnL, trade count and win rate per hour on demand. How: pointermove hit-testing cell coordinates and rendering a positioned tooltip div bound through Spektrum setValue.
-- [ ] **T26.3.6 - Distinguish empty from break-even cells** - What: No-data hours never masquerade as flat performance. How: Paint zero-trade cells with a hatched neutral fill distinct from the zero-PnL midpoint color.
-- [ ] **T26.3.7 - Draw the legend** - What: The color-to-PnL mapping self-explanatory. How: Horizontal gradient bar under the grid with min, zero and max labels rendered in the same canvas pass.
-- [ ] **T26.3.8 - Wire live updates** - What: Today's cells shift as scalps close. How: Spektrum watch on period-filtered trades re-running bucketByHour and scheduling drawHeatmap on requestAnimationFrame.
-- [ ] **T26.3.9 - Write single unit tests for heatmap fns** - What: bucketByHour and cellColor each proven by one test. How: One Vitest test per function in heatmap.test.js with cross-midnight fixtures, run via vitest run -t.
-- [ ] **T26.3.10 - Verify and merge heatmap** - What: The heatmap lands green with truthful cells. How: Run targeted tests, verify a known fixture pattern renders in the expected cells in-browser, merge to main.
+- [x] **T26.3.1 - Cut heatmap branch** - What: Heatmap work isolated from main. How: git checkout -b feature/f26.3-hour-heatmap from main.
+- [x] **T26.3.2 - Implement bucketByHour()** - What: PnL and trade counts folded into 7x24 time cells. How: Pure bucketByHour(trades) in src/analytics/heatmap.js keying weekday and local hour of closeTs, summing netPnl and count.
+- [x] **T26.3.3 - Implement the diverging color scale** - What: Profit and loss intensity readable at a glance. How: cellColor(value, maxAbs) interpolating from orange through neutral to green symmetrically around zero using the palette custom properties.
+- [x] **T26.3.4 - Render the cell grid** - What: The full week of hours in one compact canvas. How: drawHeatmap(ctx, buckets, size) painting devicePixelRatio-scaled cells with weekday row labels and hour column labels.
+- [x] **T26.3.5 - Add cell hover stats** - What: Exact PnL, trade count and win rate per hour on demand. How: pointermove hit-testing cell coordinates and rendering a positioned tooltip div bound through Spektrum setValue.
+- [x] **T26.3.6 - Distinguish empty from break-even cells** - What: No-data hours never masquerade as flat performance. How: Paint zero-trade cells with a hatched neutral fill distinct from the zero-PnL midpoint color.
+- [x] **T26.3.7 - Draw the legend** - What: The color-to-PnL mapping self-explanatory. How: Horizontal gradient bar under the grid with min, zero and max labels rendered in the same canvas pass.
+- [x] **T26.3.8 - Wire live updates** - What: Today's cells shift as scalps close. How: Spektrum watch on period-filtered trades re-running bucketByHour and scheduling drawHeatmap on requestAnimationFrame.
+- [x] **T26.3.9 - Write single unit tests for heatmap fns** - What: bucketByHour and cellColor each proven by one test. How: One Vitest test per function in heatmap.test.js with cross-midnight fixtures, run via vitest run -t.
+- [x] **T26.3.10 - Verify and merge heatmap** - What: The heatmap lands green with truthful cells. How: Run targeted tests, verify a known fixture pattern renders in the expected cells in-browser, merge to main.
 
 ### F26.4 - PnL by Instrument Ranking
 

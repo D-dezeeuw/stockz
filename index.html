@@ -512,6 +512,17 @@
               <canvas id="equity-canvas" class="equity-chart__canvas"></canvas>
               <span class="equity-chart__dd label">max drawdown {{fmt.signed(analytics.drawdown.maxDrawdown)}}</span>
             </div>
+            <!-- Almost every trader has an hour that quietly costs them everything the rest
+                 of the day earns, and almost none can name it. Invisible in a P&L, invisible
+                 in a win rate, completely obvious in a seven-by-twenty-four grid. Local
+                 hours, not UTC: this is a question about a body clock. -->
+            <div class="hours" data-if="block.id === 'analytics'">
+              <canvas id="hours-canvas" class="hours__canvas"></canvas>
+              <p class="hours__extremes label" data-if="analytics.hourExtremes.best">
+                best {{analytics.hourExtremes.best.label}} {{fmt.signed(analytics.hourExtremes.best.net)}}
+                · worst {{analytics.hourExtremes.worst.label}} {{fmt.signed(analytics.hourExtremes.worst.net)}}
+              </p>
+            </div>
             <!-- An alert set in under three seconds: level, direction, done. -->
             <div class="alerts" data-if="block.id === 'watchlist'">
               <form class="alerts__form" data-action="submit" data-fn="alerts.create"
