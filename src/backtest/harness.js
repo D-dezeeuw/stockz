@@ -1,5 +1,13 @@
 import { createStrategyContext, toSignal } from '../strategy/contract.js'
 import { createSandbox, invokeStrategy } from './sandbox.js'
+import {
+  resolveFillConfig,
+  orderFromSignal,
+  applyLatency,
+  simMarketFill,
+  simLimitFill,
+  simFees,
+} from './fills.js'
 
 /**
  * The tick driver — a recording in, a signal log out, as fast as the CPU allows.
@@ -84,19 +92,63 @@ export function progressReporter(emit, options = {}) {
 }
 
 /**
+ * Fill whatever has arrived by this tick, leaving the rest in flight.
+ *
+ * Orders in flight are checked against *every* tick, not only the one that matches their
+ * arrival stamp: a recording is an irregular clock, and an order that arrives between two
+ * prints must fill on the next one rather than never.
+ *
+ * @param {object[]} pending - orders in flight; not mutated.
+ * @param {object} tick - the tick now playing.
+ * @param {object} config - the resolved fill assumptions.
+ * @returns {{fills: object[], pending: object[]}} what filled and what is still out.
+ */
+export function drainPending(pending, tick, config) {
+  const queue = Array.isArray(pending) ? pending : []
+  const at = Number(tick?.ts) || 0
+  const fills = []
+  const still = []
+
+  for (const order of queue) {
+    if (Number(order?.arrivesAt) > at) {
+      still.push(order)
+      continue
+    }
+
+    const fill = order?.type === 'limit' ? simLimitFill(order, tick, config) : simMarketFill(order, tick, config)
+    if (!fill.filled) {
+      // A market order that could not price is dead; a limit the tape has not reached yet
+      // is still working, and dropping it would score a passive strategy as if it had
+      // cancelled every quote it ever posted.
+      if (order?.type === 'limit') still.push(order)
+      continue
+    }
+
+    const fee = simFees(fill, config)
+    fills.push({ ...fill, fee: fee.amount, feeBps: fee.bps, reason: String(order?.reason ?? '') })
+  }
+
+  return { fills, pending: still }
+}
+
+/**
  * Run one strategy over one recording's ticks.
  *
  * @param {{ticks?: object[], strategy?: object, params?: object, instrument?: string,
- *   onProgress?: Function, cancelled?: () => boolean, now?: () => number,
- *   everyMs?: number}} [options] - the run.
- * @returns {{signals: object[], played: number, total: number, errors: number,
- *   cancelled: boolean, instrument: string, state: object, elapsedMs: number}} the result.
+ *   fillConfig?: object, onProgress?: Function, cancelled?: () => boolean,
+ *   now?: () => number, everyMs?: number}} [options] - the run.
+ * @returns {{signals: object[], fills: object[], played: number, total: number,
+ *   errors: number, cancelled: boolean, instrument: string, fillConfig: object,
+ *   state: object, elapsedMs: number}} the result.
  */
 export function driveBacktest(options = {}) {
   const now = typeof options.now === 'function' ? options.now : () => Date.now()
   const cancelled = typeof options.cancelled === 'function' ? options.cancelled : () => false
   const strategy = options.strategy
   const instrument = String(options.instrument ?? '')
+  // The instrument decides spot versus swap on the fee card, so it is folded in here
+  // rather than left to whoever remembered to pass it.
+  const fillConfig = resolveFillConfig({ instrument, ...(options.fillConfig ?? {}) })
 
   const all = Array.isArray(options.ticks) ? options.ticks : []
   // One instrument per run. A recording holds every symbol the desk was watching, and a
@@ -109,6 +161,8 @@ export function driveBacktest(options = {}) {
   const report = progressReporter(options.onProgress, { now, everyMs: options.everyMs })
 
   const signals = []
+  const fills = []
+  let pending = []
   let errors = 0
   let played = 0
   let stopped = false
@@ -131,20 +185,45 @@ export function driveBacktest(options = {}) {
     }
 
     const at = Number(tick?.ts) || 0
+
+    // Arrivals are settled *before* the strategy sees the tick. An order sent last tick
+    // reaches the venue at a price the strategy has not reacted to yet, and settling it
+    // afterwards would fill it against a book the strategy had already moved on from.
+    const drained = drainPending(pending, tick, fillConfig)
+    pending = drained.pending
+    fills.push(...drained.fills)
+
     const outcome = invokeStrategy(strategy, 'onTick', context(at), tick)
     if (!outcome.ok) errors += 1
-    else collectSignals(signals, outcome.value, tick)
+    else {
+      const before = signals.length
+      collectSignals(signals, outcome.value, tick)
+      // Only a signal that actually landed becomes an order — `collectSignals` already
+      // dropped the silence, and re-deciding that here would be two definitions of
+      // "the strategy said something".
+      if (signals.length > before) {
+        const order = orderFromSignal(signals.at(-1), fillConfig)
+        if (order) pending.push(applyLatency(order, fillConfig))
+      }
+    }
 
     played += 1
-    report({ played, total: ticks.length, signals: signals.length })
+    report({ played, total: ticks.length, signals: signals.length, fills: fills.length })
   }
 
-  report({ played, total: ticks.length, signals: signals.length }, true)
+  report({ played, total: ticks.length, signals: signals.length, fills: fills.length }, true)
   sandbox.set('run.signals', signals.length)
+  sandbox.set('run.fills', fills.length)
   sandbox.set('run.errors', errors)
 
   return {
     signals,
+    fills,
+    // Orders still in flight when the tape ran out. Reported rather than force-filled: a
+    // limit that never came is a trade that never happened, and filling it at the end
+    // would credit the strategy with the one fill it demonstrably did not get.
+    unfilled: pending.length,
+    fillConfig,
     played,
     total: ticks.length,
     errors,

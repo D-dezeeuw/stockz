@@ -146,6 +146,15 @@ export const PATHS = Object.freeze({
     alertToggles: 'settings.alertToggles',
     autopilot: 'settings.autopilot',
     marketMode: 'settings.marketMode',
+    // Backtest fill assumptions. Here rather than under `backtest.*` because settings is
+    // the only persisted branch, and assumptions that reset on reload are assumptions
+    // nobody tunes twice.
+    btSpreadBps: 'settings.btSpreadBps',
+    btLatencyMs: 'settings.btLatencyMs',
+    btSlippageBps: 'settings.btSlippageBps',
+    btSize: 'settings.btSize',
+    btOrderType: 'settings.btOrderType',
+    btVenue: 'settings.btVenue',
     botArmed: 'settings.botArmed',
     botSize: 'settings.botSize',
     botStrategies: 'settings.botStrategies',
@@ -282,6 +291,9 @@ export const PATHS = Object.freeze({
     progress: 'backtest.progress',
     strategies: 'backtest.strategies',
     recordings: 'backtest.recordings',
+    // The fill assumptions in force, derived from the persisted settings so a run and the
+    // drawer can never disagree about what was assumed.
+    fillConfig: 'backtest.fillConfig',
     // The last finished run, the always-shaped readout of it, and why the last one did
     // not finish. The summary exists because a template cannot read through a null result.
     result: 'backtest.result',

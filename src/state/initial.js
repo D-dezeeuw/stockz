@@ -225,6 +225,7 @@ export function initialState(overrides = {}) {
     [PATHS.backtest.progress]: { running: false, runId: '', played: 0, total: 0, pct: 0, signals: 0 },
     [PATHS.backtest.strategies]: [],
     [PATHS.backtest.recordings]: [],
+    [PATHS.backtest.fillConfig]: {},
     [PATHS.backtest.result]: null,
     [PATHS.backtest.summary]: {
       ran: false,
@@ -233,9 +234,13 @@ export function initialState(overrides = {}) {
       signals: 0,
       buys: 0,
       sells: 0,
+      fills: 0,
+      unfilled: 0,
+      fees: 0,
       played: 0,
       errors: 0,
       elapsed: '—',
+      assumptions: '—',
     },
     [PATHS.backtest.error]: '',
 

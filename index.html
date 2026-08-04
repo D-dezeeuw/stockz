@@ -1011,11 +1011,20 @@
               <p class="label backtest__error" data-if="backtest.error">{{backtest.error}}</p>
               <div class="backtest__stats" data-if="backtest.summary.ran">
                 <span class="backtest__stat"><b class="num">{{backtest.summary.signals}}</b> signals</span>
+                <!-- Fills beside signals, never instead of them. A strategy that signalled
+                     ninety times and filled four did not trade ninety times, and a report
+                     showing only signals would say it did. -->
+                <span class="backtest__stat"><b class="num">{{backtest.summary.fills}}</b> fills</span>
                 <span class="backtest__stat"><b class="num">{{backtest.summary.buys}}</b> buy</span>
                 <span class="backtest__stat"><b class="num">{{backtest.summary.sells}}</b> sell</span>
+                <span class="backtest__stat"><b class="num">{{backtest.summary.fees}}</b> fees</span>
                 <span class="backtest__stat"><b class="num">{{backtest.summary.played}}</b> ticks</span>
                 <span class="backtest__stat"><b class="num">{{backtest.summary.elapsed}}</b></span>
               </div>
+              <!-- The assumptions on the same readout as the numbers they produced: a
+                   backtest whose fill model is off screen is a number nobody can argue
+                   with after the fact. -->
+              <p class="label backtest__assume" data-if="backtest.summary.ran">assumed {{backtest.summary.assumptions}}</p>
               <p class="label" data-if="!backtest.summary.ran">no run yet · record a session first</p>
             </div>
             <p class="label" data-if="block.id !== 'book' &amp;&amp; block.id !== 'tape' &amp;&amp; block.id !== 'ticket' &amp;&amp; block.id !== 'positions' &amp;&amp; block.id !== 'hud' &amp;&amp; block.id !== 'strategies' &amp;&amp; block.id !== 'scoreboard' &amp;&amp; block.id !== 'alerts' &amp;&amp; block.id !== 'bot' &amp;&amp; block.id !== 'backtest'">ready</p>

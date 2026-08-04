@@ -5,6 +5,7 @@ import {
   progressPercent,
   backtestSummary,
   backtestRecordingOptions,
+  fillConfigFromSettings,
   publishBacktest,
   backtestRunId,
   spawnBacktestWorker,
@@ -100,6 +101,9 @@ describe('backtestSummary', () => {
       errors: 1,
       elapsedMs: 12,
       signals: [{ side: 'buy' }, { side: 'buy' }, { side: 'sell' }],
+      fills: [{ side: 'buy', fee: 0.25 }, { side: 'sell', fee: 0.25 }],
+      unfilled: 1,
+      fillConfig: { latencyMs: 40, slippageBps: 1, orderType: 'market' },
     })
 
     // Split by side, because a strategy that only ever emitted buys is broken and the
@@ -111,9 +115,15 @@ describe('backtestSummary', () => {
       signals: 3,
       buys: 2,
       sells: 1,
+      // Fills beside signals, never instead of them: a strategy that signalled three
+      // times and filled twice did not trade three times.
+      fills: 2,
+      unfilled: 1,
+      fees: 0.5,
       played: 3,
       errors: 1,
       elapsed: '12ms',
+      assumptions: '40ms · 1bp · market',
     })
 
     // Always shaped: a template cannot read through a null result, and a block that
@@ -125,9 +135,13 @@ describe('backtestSummary', () => {
       signals: 0,
       buys: 0,
       sells: 0,
+      fills: 0,
+      unfilled: 0,
+      fees: 0,
       played: 0,
       errors: 0,
       elapsed: '—',
+      assumptions: '—',
     })
   })
 })
@@ -144,6 +158,26 @@ describe('backtestRecordingOptions', () => {
     // container and repeats its first child — a select cannot hold both.
     expect(backtestRecordingOptions([])).toEqual([{ id: '', name: 'no recordings yet' }])
     expect(backtestRecordingOptions(null)).toEqual([{ id: '', name: 'no recordings yet' }])
+  })
+})
+
+describe('fillConfigFromSettings', () => {
+  it('reads the assumptions off the drawer so a run and the screen cannot disagree', () => {
+    // Nothing set yet is the defaults, not an empty config the fill functions would
+    // divide by.
+    expect(fillConfigFromSettings({})).toMatchObject({
+      spreadBps: 2,
+      latencyMs: 40,
+      slippageBps: 1,
+      orderType: 'market',
+      venue: 'okx',
+    })
+
+    expect(
+      fillConfigFromSettings({
+        settings: { btLatencyMs: 120, btSlippageBps: 3, btOrderType: 'limit', btVenue: 'etoro', btSize: 5 },
+      }),
+    ).toMatchObject({ latencyMs: 120, slippageBps: 3, orderType: 'limit', venue: 'etoro', size: 5 })
   })
 })
 

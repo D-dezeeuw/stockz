@@ -195,6 +195,60 @@ export const SETTINGS_SCHEMA = Object.freeze([
     default: 1,
   },
   {
+    key: 'btSpreadBps',
+    group: 'backtest',
+    label: 'Backtest: assumed spread (bps) when a tick has no book',
+    kind: 'number',
+    min: 0,
+    step: 0.1,
+    default: 2,
+  },
+  {
+    key: 'btLatencyMs',
+    group: 'backtest',
+    // Deliberately not zero. A zero-latency backtest is a time machine, and every
+    // strategy is profitable in one.
+    label: 'Backtest: order latency (ms)',
+    kind: 'number',
+    min: 0,
+    step: 1,
+    default: 40,
+  },
+  {
+    key: 'btSlippageBps',
+    group: 'backtest',
+    label: 'Backtest: taker slippage (bps)',
+    kind: 'number',
+    min: 0,
+    step: 0.1,
+    default: 1,
+  },
+  {
+    key: 'btSize',
+    group: 'backtest',
+    label: 'Backtest: clip size',
+    kind: 'number',
+    min: 0.00000001,
+    step: 0.01,
+    default: 1,
+  },
+  {
+    key: 'btOrderType',
+    group: 'backtest',
+    label: 'Backtest: order type',
+    kind: 'select',
+    options: ['market', 'limit'],
+    default: 'market',
+  },
+  {
+    key: 'btVenue',
+    group: 'backtest',
+    label: 'Backtest: fee schedule',
+    kind: 'select',
+    options: ['okx', 'etoro'],
+    default: 'okx',
+  },
+  {
     key: 'marketMode',
     group: 'risk',
     label: 'Market mode (sets the order rate)',
@@ -419,7 +473,7 @@ export function transientSettings() {
 }
 
 /** The drawer's sections, in order. */
-export const SETTINGS_GROUPS = Object.freeze(['appearance', 'trading', 'risk', 'instruments'])
+export const SETTINGS_GROUPS = Object.freeze(['appearance', 'trading', 'risk', 'instruments', 'backtest'])
 
 /**
  * The complete default settings object.

@@ -6,6 +6,7 @@ import { pushToast } from '../ui/toast.js'
 import { setBlockStatus, BLOCK_STATUS } from '../blocks/registry.js'
 import { findBacktestStrategy, backtestStrategyOptions } from './strategies.js'
 import { runRequest } from './worker.js'
+import { resolveFillConfig } from './fills.js'
 import { createLogger } from '../utils/log.js'
 
 /**
@@ -74,6 +75,8 @@ export function progressPercent(played, total) {
  */
 export function backtestSummary(result) {
   const signals = Array.isArray(result?.signals) ? result.signals : []
+  const fills = Array.isArray(result?.fills) ? result.fills : []
+  const fees = fills.reduce((sum, fill) => sum + (Number(fill?.fee) || 0), 0)
 
   return {
     ran: Boolean(result),
@@ -84,9 +87,19 @@ export function backtestSummary(result) {
     // and the total alone hides it completely.
     buys: signals.filter((s) => s?.side === 'buy').length,
     sells: signals.filter((s) => s?.side === 'sell').length,
+    // Fills, separately from signals. The gap between the two is the whole point of the
+    // fill model: a strategy that signalled ninety times and filled four is not a strategy
+    // that traded ninety times, and a report showing only signals would say it was.
+    fills: fills.length,
+    unfilled: Number(result?.unfilled) || 0,
+    fees: Number(fees.toFixed(6)),
     played: Number(result?.played) || 0,
     errors: Number(result?.errors) || 0,
     elapsed: result ? `${Number(result.elapsedMs) || 0}ms` : '—',
+    // The assumptions, on the same readout as the numbers they produced.
+    assumptions: result
+      ? `${Number(result.fillConfig?.latencyMs) || 0}ms · ${Number(result.fillConfig?.slippageBps) || 0}bp · ${String(result.fillConfig?.orderType ?? 'market')}`
+      : '—',
   }
 }
 
@@ -109,6 +122,29 @@ export function backtestRecordingOptions(library) {
   }))
 
   return [{ id: '', name: rows.length > 0 ? 'pick a recording…' : 'no recordings yet' }, ...rows]
+}
+
+/**
+ * The fill assumptions the drawer currently describes.
+ *
+ * Read from settings rather than kept beside them, so the numbers a run used and the
+ * numbers on screen can never disagree — and because settings is the only persisted
+ * branch, the assumptions survive a reload without a second storage path.
+ *
+ * @param {object} [state] - engine state.
+ * @returns {object} the resolved fill config.
+ */
+export function fillConfigFromSettings(state = appState) {
+  const s = state?.settings ?? {}
+
+  return resolveFillConfig({
+    spreadBps: s.btSpreadBps,
+    latencyMs: s.btLatencyMs,
+    slippageBps: s.btSlippageBps,
+    size: s.btSize,
+    orderType: s.btOrderType,
+    venue: s.btVenue,
+  })
 }
 
 /**
@@ -188,7 +224,12 @@ export function runBacktest(config = {}, deps = {}) {
     strategyId,
     instrument: String(config.instrument ?? ''),
     params: config.params ?? {},
+    // Snapshotted at launch rather than read inside the worker: a run is scored against
+    // the assumptions that were on screen when it started, even if the drawer moves while
+    // it crunches.
+    fillConfig: config.fillConfig ?? fillConfigFromSettings(),
   }
+  setValue(PATHS.backtest.fillConfig, request.fillConfig)
 
   setValue(PATHS.backtest.error, '')
   setValue(PATHS.backtest.result, null)
