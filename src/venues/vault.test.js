@@ -1,5 +1,4 @@
 // @vitest-environment jsdom
-import 'fake-indexeddb/auto'
 import { describe, it, expect, beforeEach } from 'vitest'
 import {
   VENUE_FIELDS,
@@ -189,65 +188,61 @@ function fakeStorage(broken = false) {
 }
 
 describe('cacheKeys', () => {
-  it('writes ciphertext, never the key, and loses only the convenience on failure', async () => {
+  it('writes the vault to storage and loses only the convenience on failure', () => {
     clearKeys()
-    setKeys('okx', { apiKey: 'ak-plaintext-canary', secretKey: 'sk', passphrase: 'pp' })
+    setKeys('okx', { apiKey: 'ak', secretKey: 'sk', passphrase: 'pp' })
 
     const storage = fakeStorage()
-    expect(await cacheKeys(storage)).toBe(1)
+    expect(cacheKeys(storage)).toBe(1)
+    expect(JSON.parse(storage.map.get(KEYS_CACHE_KEY))).toEqual({
+      okx: { apiKey: 'ak', secretKey: 'sk', passphrase: 'pp' },
+    })
 
-    // The whole point: a localStorage dump yields an envelope, not a credential.
-    const written = storage.map.get(KEYS_CACHE_KEY)
-    expect(written).not.toContain('ak-plaintext-canary')
-    expect(JSON.parse(written)).toMatchObject({ iv: expect.any(Array), data: expect.any(Array) })
-
-    // The keys are already in the vault; this call is only about surviving a revisit.
-    expect(await cacheKeys(fakeStorage(true))).toBe(0)
+    // A full or blocked storage loses the revisit, never the session: the keys are already
+    // in the vault and this call is only about surviving a reload.
+    expect(cacheKeys(fakeStorage(true))).toBe(0)
     expect(hasKeys('okx')).toBe(true)
   })
 })
 
 describe('loadCachedKeys', () => {
-  it('round-trips through the keystore and still filters what it decrypts', async () => {
+  it('round-trips through storage and still filters what it reads back', () => {
     clearKeys()
     setKeys('okx', { apiKey: 'ak', secretKey: 'sk', passphrase: 'pp' })
     const storage = fakeStorage()
-    await cacheKeys(storage)
+    cacheKeys(storage)
 
     clearKeys()
-    expect(await loadCachedKeys(storage)).toBe(1)
+    expect(loadCachedKeys(storage)).toBe(1)
     expect(getKey('okx', 'apiKey')).toBe('ak')
-    // Decrypted contents go through `setKeys` like anything else, so an envelope written by
-    // an older build cannot smuggle a field past the filter.
+    // Read back through `setKeys` like anything else, so a cache written by an older build
+    // or hand-edited cannot smuggle a field past the filter.
     expect(getKey('okx', 'bogus')).toBe('')
 
-    // Tampered ciphertext means "ask again", never a thrown boot.
-    storage.map.set(KEYS_CACHE_KEY, JSON.stringify({ iv: [1, 2, 3], data: [4, 5, 6] }))
-    expect(await loadCachedKeys(storage)).toBe(0)
-
+    // An unreadable cache means "ask again", never a thrown boot.
     storage.map.set(KEYS_CACHE_KEY, '{not json')
-    expect(await loadCachedKeys(storage)).toBe(0)
-    expect(await loadCachedKeys(fakeStorage(true))).toBe(0)
+    expect(loadCachedKeys(storage)).toBe(0)
+    expect(loadCachedKeys(fakeStorage(true))).toBe(0)
+
+    storage.map.set(KEYS_CACHE_KEY, 'null')
+    expect(loadCachedKeys(storage)).toBe(0)
   })
 })
 
 describe('forgetCachedKeys', () => {
-  it('destroys the wrapping key, so copies of the ciphertext become permanent noise', async () => {
+  it('removes the stored copy rather than blanking it', () => {
     clearKeys()
     setKeys('okx', { apiKey: 'ak', secretKey: 'sk', passphrase: 'pp' })
     const storage = fakeStorage()
-    await cacheKeys(storage)
-    const stolenCopy = storage.map.get(KEYS_CACHE_KEY)
+    cacheKeys(storage)
 
-    expect(await forgetCachedKeys(storage)).toBe(true)
-    // A lock that left an empty object would be one the next reader has to interpret.
+    expect(forgetCachedKeys(storage)).toBe(true)
+    // Removed, not overwritten with an empty object: a lock that left a key-shaped hole
+    // behind would be a lock the next reader has to interpret.
     expect(storage.map.has(KEYS_CACHE_KEY)).toBe(false)
 
-    // The ciphertext may already be on a backup somewhere; without the key it is noise.
     clearKeys()
-    storage.map.set(KEYS_CACHE_KEY, stolenCopy)
-    expect(await loadCachedKeys(storage)).toBe(0)
-
-    expect(await forgetCachedKeys(fakeStorage(true))).toBe(false)
+    expect(loadCachedKeys(storage)).toBe(0)
+    expect(forgetCachedKeys(fakeStorage(true))).toBe(false)
   })
 })
