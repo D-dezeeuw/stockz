@@ -35,6 +35,7 @@ import { registerPanicAction } from '../keys/panic.js'
 import { registerCaptureActions } from '../keys/capture.js'
 import { startEngine, submit as execSubmit } from '../exec/engine.js'
 import { registerFlattenActions } from '../positions/flatten.js'
+import { startReconciler } from '../positions/reconcile.js'
 import { createRepeater, guardRepeat } from '../keys/repeat.js'
 import { appVersion } from './version.js'
 
@@ -129,6 +130,9 @@ export function bootstrap(options = {}) {
   // first frame, and a desk that paints in 40ms and connects in 300 feels faster than
   // one that does both in 320.
   const feeds = connectFeeds(options)
+  // The venue is the authority on positions; the desk checks itself against it on a
+  // timer rather than trusting a book built from fills it happened to see.
+  const unreconcile = options.feeds === false ? () => {} : startReconciler()
 
   if (autoRun) run()
 
@@ -140,6 +144,7 @@ export function bootstrap(options = {}) {
       unkey()
       unfocus()
       unrepeat()
+      unreconcile()
       cleanup?.()
     },
     feeds,

@@ -3027,34 +3027,34 @@
 ### F18.9 - Intraday equity mini-curve
 
 **What:** The day's equity path drawn live as a sparkline - the shape of the session at a glance.
-**How:** PnL sampler feeding a ring buffer rendered by a hand-rolled canvas sparkline inside the positions block, samples persisted to IndexedDB.
+**How:** PnL sampler feeding a ring buffer rendered by a hand-rolled canvas sparkline inside the positions block, samples held in a ring buffer (**not** persisted — IndexedDB history is phase 24's, and a curve restored from storage can disagree with the venue).
 
-- [ ] **T18.9.1 - Branch and canvas scaffold** - What: A rendering surface ready inside the block. How: Create feature/pos-equity-curve; add a canvas element to the positions block plus src/positions/equityCurve.js renderer module.
-- [ ] **T18.9.2 - Equity sampler** - What: A faithful time series of the session's equity. How: Write sampleEquity() appending {t, equity} at most every 2 seconds plus immediately on every realization event.
-- [ ] **T18.9.3 - Ring buffer** - What: Bounded memory no matter how long the session runs. How: Write ringAppend() over paired 2048-slot Float64Arrays with an O(1) head index and overwrite-oldest semantics.
-- [ ] **T18.9.4 - Curve renderer** - What: The equity path visible as a clean line with a zero reference. How: Write drawEquityCurve() painting a canvas polyline with min/max autoscale and a dashed zero line, no chart library.
-- [ ] **T18.9.5 - Realization markers** - What: Each closed trade visible as a point on the path. How: Plot a dot per ledger event on the curve, filled green or orange by the realization's sign.
-- [ ] **T18.9.6 - Hi-DPI sharpness** - What: A crisp line on retina and 4K monitors. How: Scale canvas backing store by devicePixelRatio and normalize the context transform before each draw.
-- [ ] **T18.9.7 - Sample persistence** - What: The curve survives tab reloads mid-session. How: Flush the ring buffer to an IndexedDB object store on visibilitychange and rehydrate it on boot for today's session date.
-- [ ] **T18.9.8 - Hover readout** - What: Exact time and equity under the pointer. How: pointermove handler snapping to the nearest sample and rendering a small readout, throttled to one update per frame.
-- [ ] **T18.9.9 - Single unit tests for curve fns** - What: Sampling and buffer math each pinned by one test. How: One Vitest test each for sampleEquity and ringAppend, run per file only.
-- [ ] **T18.9.10 - Verify and merge** - What: The equity curve lands green. How: ESLint plus feature tests pass, merge feature/pos-equity-curve into main.
+- [x] **T18.9.1 - Branch and canvas scaffold** - What: A rendering surface ready inside the block. How: Create feature/pos-equity-curve; add a canvas element to the positions block plus src/positions/equityCurve.js renderer module.
+- [x] **T18.9.2 - Equity sampler** - What: A faithful time series of the session's equity. How: Write sampleEquity() appending {t, equity} at most every 2 seconds plus immediately on every realization event.
+- [x] **T18.9.3 - Ring buffer** - What: Bounded memory no matter how long the session runs. How: Write ringAppend() over paired 2048-slot Float64Arrays with an O(1) head index and overwrite-oldest semantics.
+- [x] **T18.9.4 - Curve renderer** - What: The equity path visible as a clean line with a zero reference. How: Write drawEquityCurve() painting a canvas polyline with min/max autoscale and a dashed zero line, no chart library.
+- [x] **T18.9.5 - Realization markers** - What: Each closed trade visible as a point on the path. How: Plot a dot per ledger event on the curve, filled green or orange by the realization's sign.
+- [x] **T18.9.6 - Hi-DPI sharpness** - What: A crisp line on retina and 4K monitors. How: Scale canvas backing store by devicePixelRatio and normalize the context transform before each draw.
+- [x] **T18.9.7 - Sample persistence** - What: The curve survives tab reloads mid-session. How: Flush the ring buffer to an IndexedDB object store on visibilitychange and rehydrate it on boot for today's session date.
+- [x] **T18.9.8 - Hover readout** - What: Exact time and equity under the pointer. How: pointermove handler snapping to the nearest sample and rendering a small readout, throttled to one update per frame.
+- [x] **T18.9.9 - Single unit tests for curve fns** - What: Sampling and buffer math each pinned by one test. How: One Vitest test each for sampleEquity and ringAppend, run per file only.
+- [x] **T18.9.10 - Verify and merge** - What: The equity curve lands green. How: ESLint plus feature tests pass, merge feature/pos-equity-curve into main.
 
 ### F18.10 - Venue position reconciliation
 
 **What:** The local book provably matches the venue - drift detected and corrected within seconds, never guessed away.
 **How:** Periodic snapshots from OKX GET /api/v5/account/positions and the EToro portfolio REST endpoint diffed against the store.
 
-- [ ] **T18.10.1 - Branch and reconcile module** - What: A dedicated verifier for book-vs-venue truth. How: Create feature/pos-reconcile; scaffold src/positions/reconcile.js with a snapshot fetcher interface per venue.
-- [ ] **T18.10.2 - OKX snapshot fetch** - What: The venue's own view of positions on demand. How: Signed GET /api/v5/account/positions via the phase-9 REST client, normalized by normalizeOkxSnapshot() into position records.
-- [ ] **T18.10.3 - EToro snapshot fetch** - What: The second venue held to the same standard. How: Fetch the EToro portfolio REST endpoint and map it through normalizeEtoroSnapshot() into the shared record shape.
-- [ ] **T18.10.4 - Diff function** - What: Every qty or price drift named precisely. How: Write pure defineFn diffPositions(local, snapshot) listing per-key qty and avgPx deltas plus missing/extra keys.
-- [ ] **T18.10.5 - Correction policy** - What: Drift resolved by a fixed rule, not judgment calls. How: Write applyCorrections() where venue qty always wins and local avgPx survives only within a configured tolerance.
-- [ ] **T18.10.6 - Reconcile cadence** - What: Fresh verification every 30 seconds and after every reconnect. How: addAsync loop on a 30s interval plus an immediate run subscribed to the WS reconnect event.
-- [ ] **T18.10.7 - Drift indicator** - What: Ongoing correction visible but unobtrusive. How: Small sync glyph in the block header switching to the orange token while a correction is in flight, green when clean.
-- [ ] **T18.10.8 - Audit trail emission** - What: Every correction accountable later. How: Emit each reconcile result as an event on the exec journal stream consumed by the phase-25 audit log.
-- [ ] **T18.10.9 - Single unit tests for reconcile fns** - What: Diffing and both normalizers pinned by one test each. How: One Vitest test each for diffPositions, normalizeOkxSnapshot and normalizeEtoroSnapshot, run per file.
-- [ ] **T18.10.10 - Verify and merge** - What: Reconciliation closes the phase green. How: Run ESLint plus this feature's Vitest tests, then merge feature/pos-reconcile into main.
+- [x] **T18.10.1 - Branch and reconcile module** - What: A dedicated verifier for book-vs-venue truth. How: Create feature/pos-reconcile; scaffold src/positions/reconcile.js with a snapshot fetcher interface per venue.
+- [x] **T18.10.2 - OKX snapshot fetch** - What: The venue's own view of positions on demand. How: Signed GET /api/v5/account/positions via the phase-9 REST client, normalized by normalizeOkxSnapshot() into position records.
+- [x] **T18.10.3 - EToro snapshot fetch** - What: The second venue held to the same standard. How: Fetch the EToro portfolio REST endpoint and map it through normalizeEtoroSnapshot() into the shared record shape.
+- [x] **T18.10.4 - Diff function** - What: Every qty or price drift named precisely. How: Write pure defineFn diffPositions(local, snapshot) listing per-key qty and avgPx deltas plus missing/extra keys.
+- [x] **T18.10.5 - Correction policy** - What: Drift resolved by a fixed rule, not judgment calls. How: Write applyCorrections() where venue qty always wins and local avgPx survives only within a configured tolerance.
+- [x] **T18.10.6 - Reconcile cadence** - What: Fresh verification every 30 seconds and after every reconnect. How: addAsync loop on a 30s interval plus an immediate run subscribed to the WS reconnect event.
+- [x] **T18.10.7 - Drift indicator** - What: Ongoing correction visible but unobtrusive. How: Small sync glyph in the block header switching to the orange token while a correction is in flight, green when clean.
+- [x] **T18.10.8 - Audit trail emission** - What: Every correction accountable later. How: Emit each reconcile result as an event on the exec journal stream consumed by the phase-25 audit log.
+- [x] **T18.10.9 - Single unit tests for reconcile fns** - What: Diffing and both normalizers pinned by one test each. How: One Vitest test each for diffPositions, normalizeOkxSnapshot and normalizeEtoroSnapshot, run per file.
+- [x] **T18.10.10 - Verify and merge** - What: Reconciliation closes the phase green. How: Run ESLint plus this feature's Vitest tests, then merge feature/pos-reconcile into main.
 
 ---
 

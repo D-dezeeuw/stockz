@@ -8,6 +8,7 @@ import { setBookStatus, scheduleResync } from '../../book/integrity.js'
 import { splitSymbol } from '../../lists/ops.js'
 import { markPosition, flushPositions, positionKey } from '../../positions/store.js'
 import { refreshDayPnl, expirePulse } from '../../positions/header.js'
+import { sample as sampleEquity } from '../../positions/equity.js'
 import { setValue, appState } from '../../app/engine.js'
 import { PATHS } from '../../state/paths.js'
 
@@ -112,8 +113,12 @@ export function flushFeed(focus, options = {}) {
   const bid = Number(book?.bids?.[0]?.[0]) || 0
   const ask = Number(book?.asks?.[0]?.[0]) || 0
   if (bid > 0 && ask > 0) markPosition(positionKey('okx', instId), (bid + ask) / 2)
-  if (flushPositions()) refreshDayPnl({ now: Number(book?.ts) || 0 })
-  expirePulse(Number(book?.ts) || 0)
+  const at = Number(book?.ts) || 0
+  if (flushPositions()) refreshDayPnl({ now: at })
+  expirePulse(at)
+  // Sampled on the same frame but paced by its own clock: the curve is a shape, not a
+  // recording of every tick.
+  sampleEquity(Number(appState.trade?.dayTotal) || 0, at)
   // Read from the store, not from state: the flush above is queued for this frame, so
   // `appState` still holds the previous book and the gauge would lag by one frame.
   if (wrote) updateImbalance(bookFor(instId), options)

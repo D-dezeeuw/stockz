@@ -10,8 +10,26 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ## [Unreleased]
 
+## [0.18.0] — 2026-08-04 — Phase 18: Positions & Live PnL
+
+Exact exposure and profit, live to the tick: a position book fed by fills and marked at
+what it could be closed at, weighted average entry, through-zero flips, a day ledger net
+of fees, one-click flatten, a header P&L that pulses, an equity curve, and reconciliation
+against the venue that always wins.
+
 ### Added
 
+- **Intraday equity curve** — a day's net is one number and it hides everything: whether
+  the session was a steady grind or one lucky trade on a losing morning, whether the
+  drawdown came before or after the peak. Sampled on its own clock rather than on every
+  mark, and drawdown is measured from the *running* peak — measuring from the end would
+  report zero on a day that recovered, when the worst moment still happened. (F18.9)
+- **Venue reconciliation** — the local book is built from fills the desk happened to see,
+  and a dropped socket, another session, or a venue-side liquidation all produce a book
+  that is confidently wrong. Drift is never averaged or waited out: the venue's number
+  replaces the local one and the difference is reported. A failed snapshot changes
+  nothing at all, because treating "I could not ask" as "there is nothing there" would
+  flatten the book on every network hiccup. (F18.10)
 - **Day P&L in the header** — realised plus floating, always in view, because a trader
   deciding whether to take the next trade without knowing whether the day is green is
   answering a different question than they think. Either half alone lies: realised-only
@@ -762,7 +780,8 @@ with a test policy and a live URL.
   literal `APP_VERSION` (a JSON import is bundler-only), guarded by a test that fails if
   it drifts from `package.json`; static assets moved from `public/` to the repo root.
 
-[Unreleased]: https://github.com/D-dezeeuw/stockz/compare/v0.17.0...HEAD
+[Unreleased]: https://github.com/D-dezeeuw/stockz/compare/v0.18.0...HEAD
+[0.18.0]: https://github.com/D-dezeeuw/stockz/compare/v0.17.0...v0.18.0
 [0.17.0]: https://github.com/D-dezeeuw/stockz/compare/v0.16.0...v0.17.0
 [0.16.0]: https://github.com/D-dezeeuw/stockz/compare/v0.15.0...v0.16.0
 [0.15.0]: https://github.com/D-dezeeuw/stockz/compare/v0.14.0...v0.15.0
