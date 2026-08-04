@@ -1139,7 +1139,42 @@
                         data-if="backtest.slots.length > 0">clear slots</button>
               </div>
             </div>
-            <p class="label" data-if="block.id !== 'book' &amp;&amp; block.id !== 'tape' &amp;&amp; block.id !== 'ticket' &amp;&amp; block.id !== 'positions' &amp;&amp; block.id !== 'hud' &amp;&amp; block.id !== 'strategies' &amp;&amp; block.id !== 'scoreboard' &amp;&amp; block.id !== 'alerts' &amp;&amp; block.id !== 'bot' &amp;&amp; block.id !== 'backtest'">ready</p>
+            <!-- Cash, equity, exposure. The three numbers that decide whether a session
+                 was survivable, not just profitable — and equity breathes between trades,
+                 which is the whole difference between a balance and a position. -->
+            <div class="paper-acct" data-if="block.id === 'paper'">
+              <div class="bt-tiles">
+                <div class="bt-tile">
+                  <span class="bt-tile__value">{{trade.paperAccount.equityLabel}}</span>
+                  <span class="bt-tile__label">equity</span>
+                </div>
+                <div class="bt-tile">
+                  <span class="bt-tile__value">{{trade.paperAccount.balanceLabel}}</span>
+                  <span class="bt-tile__label">cash</span>
+                </div>
+                <div class="bt-tile" :class="trade.paperAccount.sessionPnl >= 0 ? 'bt-tile bt-tile--up' : 'bt-tile bt-tile--down'">
+                  <span class="bt-tile__value">{{trade.paperAccount.sessionLabel}}</span>
+                  <span class="bt-tile__label">session</span>
+                </div>
+                <div class="bt-tile">
+                  <span class="bt-tile__value">{{trade.paperAccount.exposureLabel}}</span>
+                  <span class="bt-tile__label">exposure</span>
+                </div>
+              </div>
+              <!-- Working paper orders, with the queue that explains why one at the touch
+                   has not filled — otherwise the most confusing thing this block shows. -->
+              <div class="paper-rest" data-each="trade.paperResting" data-as="o">
+                <div class="paper-rest__row">
+                  <span class="paper-rest__side" :class="'paper-rest__side paper-rest__side--' + o.side">{{o.side}}</span>
+                  <span class="num">{{o.price}}</span>
+                  <span class="num">{{o.remaining}}</span>
+                  <span class="label num">q {{o.queue}}</span>
+                </div>
+              </div>
+              <p class="label" data-if="trade.paperResting.length === 0">no working paper orders</p>
+              <button type="button" class="chip" data-action="click" data-fn="trade.resetPaper">reset account</button>
+            </div>
+            <p class="label" data-if="block.id !== 'book' &amp;&amp; block.id !== 'tape' &amp;&amp; block.id !== 'ticket' &amp;&amp; block.id !== 'positions' &amp;&amp; block.id !== 'hud' &amp;&amp; block.id !== 'strategies' &amp;&amp; block.id !== 'scoreboard' &amp;&amp; block.id !== 'alerts' &amp;&amp; block.id !== 'bot' &amp;&amp; block.id !== 'backtest' &amp;&amp; block.id !== 'paper'">ready</p>
           </div>
         </div>
       </section>

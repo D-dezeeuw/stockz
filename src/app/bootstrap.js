@@ -62,6 +62,7 @@ import { setLevelSink } from '../strategy/builtin/range-fade.js'
 import { syncOkxClock } from '../venues/okx/clock.js'
 import { registerModeActions, applyModeParam } from '../exec/mode.js'
 import { startPaperBook } from '../exec/paper/engine.js'
+import { startPaperAccount } from '../exec/paper/account.js'
 import { startHistogram } from '../analytics/holdtime.js'
 import { startStreakStrip } from '../analytics/streaks.js'
 import { startFeeBars } from '../analytics/fees.js'
@@ -207,6 +208,7 @@ export function bootstrap(options = {}) {
   // The paper book works itself down off the same tape the desk renders, so a resting
   // paper order fills when the market actually trades through it.
   if (options.feeds !== false) startPaperBook()
+  startPaperAccount()
   registerBacktestActions()
   registerBacktestReportActions()
   registerSweepActions()

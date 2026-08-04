@@ -195,6 +195,15 @@ export const SETTINGS_SCHEMA = Object.freeze([
     default: 1,
   },
   {
+    key: 'paperStartBalance',
+    group: 'trading',
+    label: 'Practice account starting stake',
+    kind: 'number',
+    min: 1,
+    step: 100,
+    default: 10000,
+  },
+  {
     key: 'btSpreadBps',
     group: 'backtest',
     label: 'Backtest: assumed spread (bps) when a tick has no book',

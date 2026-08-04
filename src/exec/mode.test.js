@@ -173,8 +173,18 @@ describe('resetMode', () => {
 })
 
 describe('registerModeActions', () => {
-  it('binds the switch and both halves of the hold', () => {
-    expect(registerModeActions()).toEqual(['trade.setMode', 'trade.holdLive', 'trade.releaseLive'])
-    expect(actionNames().sort()).toEqual(['trade.holdLive', 'trade.releaseLive', 'trade.setMode'])
+  it('binds the switch, both halves of the hold, and the account reset', () => {
+    expect(registerModeActions()).toEqual([
+      'trade.setMode',
+      'trade.holdLive',
+      'trade.releaseLive',
+      'trade.resetPaper',
+    ])
+    expect(actionNames().sort()).toEqual([
+      'trade.holdLive',
+      'trade.releaseLive',
+      'trade.resetPaper',
+      'trade.setMode',
+    ])
   })
 })

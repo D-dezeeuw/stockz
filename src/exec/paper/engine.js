@@ -3,6 +3,7 @@ import { PATHS } from '../../state/paths.js'
 import { onTick } from '../../pipeline/bus.js'
 import { ingestFill } from '../../positions/store.js'
 import { createLogger } from '../../utils/log.js'
+import { bookPaperFill } from './account.js'
 import {
   queuePosition,
   insertResting,
@@ -128,6 +129,9 @@ export function workPrint(print) {
         ts: fill.ts,
         paper: true,
       })
+      // The practice balance moves on the same call that books the position, so the two
+      // can never disagree about whether a fill happened.
+      bookPaperFill({ ...fill, qty: fill.size, px: fill.price, paper: true })
     }
     log.info(`${fills.length} paper fill(s) on ${symbol}`)
     publishResting()

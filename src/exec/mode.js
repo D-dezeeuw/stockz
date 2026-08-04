@@ -4,6 +4,7 @@ import { registerAction } from '../actions/registry.js'
 import { ACTIONS } from '../actions/names.js'
 import { pushToast } from '../ui/toast.js'
 import { keyPresence } from '../venues/vault.js'
+import { resetPaperAccount } from './paper/account.js'
 import { createLogger } from '../utils/log.js'
 
 /**
@@ -208,6 +209,14 @@ export function registerModeActions() {
   registerAction(ACTIONS.trade.setMode, setTradeMode, { description: 'Switch between paper and live' })
   registerAction(ACTIONS.trade.holdLive, beginGoLive, { description: 'Hold to go live' })
   registerAction(ACTIONS.trade.releaseLive, cancelGoLive, { description: 'Release the go-live hold' })
+  registerAction(ACTIONS.trade.resetPaper, resetPaperAccount, {
+    description: 'Reset the practice account to its starting stake',
+  })
 
-  return [ACTIONS.trade.setMode, ACTIONS.trade.holdLive, ACTIONS.trade.releaseLive]
+  return [
+    ACTIONS.trade.setMode,
+    ACTIONS.trade.holdLive,
+    ACTIONS.trade.releaseLive,
+    ACTIONS.trade.resetPaper,
+  ]
 }
