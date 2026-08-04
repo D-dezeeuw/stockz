@@ -3068,16 +3068,16 @@
 **What:** A dependable numeric backbone so every HUD readout updates instantly and accurately.
 **How:** Pure ES module of ring-buffer and rolling-window math wired into a hud.* Spektrum state slice driven by a 250ms clock system.
 
-- [ ] **T19.1.1 - Cut feature branch** - What: Isolated workspace for the metrics core. How: git checkout -b feature/f19.1-hud-metrics-core from a freshly pulled main.
-- [ ] **T19.1.2 - Scaffold metrics module** - What: One home for all HUD math. How: Create src/hud/metrics-core.js as a vanilla ES module exporting createRing(capacity) with push/toArray/size.
-- [ ] **T19.1.3 - Rolling mean and EWMA fns** - What: Smooth readouts instead of jumpy numbers. How: Implement rollingMean(ring) and ewma(prev, x, alpha) as pure allocation-free fns.
-- [ ] **T19.1.4 - Percentile fn** - What: p50/p95 tail views for latency tiles. How: Implement percentile(ring, p) over a sorted copy, returning NaN on an empty buffer.
-- [ ] **T19.1.5 - Display formatter fns** - What: Readable ms, bps and compact numbers across the HUD. How: Implement formatMs, formatBps and formatCompact returning fixed-width strings for terminal alignment.
-- [ ] **T19.1.6 - Register hud state slice** - What: A single reactive source every tile reads from. How: setValue('hud', defaults) in src/hud/hud-state.js and export slice key constants for other features.
-- [ ] **T19.1.7 - HUD clock system** - What: A steady heartbeat all session metrics derive from. How: addSystem hudClock using addAsync to fire trigger('hud:tick') every 250ms and store hud.now from performance.now().
-- [ ] **T19.1.8 - HUD block shell markup** - What: The HUD appears as a standard same-size block in the dashboard grid. How: Add hud-block partial with a {{hud.now}} smoke binding plus data-cloak and mount it via the grid shell.
-- [ ] **T19.1.9 - Single unit tests for core fns** - What: Proof each math fn is correct in isolation. How: One Vitest test per fn in metrics-core.test.js, each run via npx vitest run -t "<fnName>".
-- [ ] **T19.1.10 - Merge core to main** - What: Metrics backbone available to every later HUD feature. How: Run ESLint and the targeted Vitest filters, then merge feature/f19.1 into main.
+- [x] **T19.1.1 - Cut feature branch** - What: Isolated workspace for the metrics core. How: git checkout -b feature/f19.1-hud-metrics-core from a freshly pulled main.
+- [x] **T19.1.2 - Scaffold metrics module** - What: One home for all HUD math. How: Create src/hud/metrics-core.js as a vanilla ES module exporting createRing(capacity) with push/toArray/size.
+- [x] **T19.1.3 - Rolling mean and EWMA fns** - What: Smooth readouts instead of jumpy numbers. How: Implement rollingMean(ring) and ewma(prev, x, alpha) as pure allocation-free fns.
+- [x] **T19.1.4 - Percentile fn** - What: p50/p95 tail views for latency tiles. How: Implement percentile(ring, p) over a sorted copy, returning NaN on an empty buffer.
+- [x] **T19.1.5 - Display formatter fns** - What: Readable ms, bps and compact numbers across the HUD. How: Implement formatMs, formatBps and formatCompact returning fixed-width strings for terminal alignment.
+- [x] **T19.1.6 - Register hud state slice** - What: A single reactive source every tile reads from. How: setValue('hud', defaults) in src/hud/hud-state.js and export slice key constants for other features.
+- [x] **T19.1.7 - HUD clock system** - What: A steady heartbeat all session metrics derive from. How: addSystem hudClock using addAsync to fire trigger('hud:tick') every 250ms and store hud.now from performance.now().
+- [x] **T19.1.8 - HUD block shell markup** - What: The HUD appears as a standard same-size block in the dashboard grid. How: Add hud-block partial with a {{hud.now}} smoke binding plus data-cloak and mount it via the grid shell.
+- [x] **T19.1.9 - Single unit tests for core fns** - What: Proof each math fn is correct in isolation. How: One Vitest test per fn in metrics-core.test.js, each run via npx vitest run -t "<fnName>".
+- [x] **T19.1.10 - Merge core to main** - What: Metrics backbone available to every later HUD feature. How: Run ESLint and the targeted Vitest filters, then merge feature/f19.1 into main.
 
 ### F19.2 - Venue ping RTT monitor
 

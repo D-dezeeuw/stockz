@@ -63,6 +63,7 @@ export const PATHS = Object.freeze({
     scope: 'ui.scope',
     pnlPulse: 'ui.pnlPulse',
     pnlPulseAt: 'ui.pnlPulseAt',
+    hud: 'ui.hud',
     captureFor: 'ui.captureFor',
     capturePreview: 'ui.capturePreview',
   }),

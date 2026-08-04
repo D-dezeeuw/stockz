@@ -10,6 +10,18 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ## [Unreleased]
 
+### Added
+
+- **Scalper HUD** — vital signs rather than analysis: submit→ack latency with its p95,
+  spread in basis points, trades per minute, win rate and gross exposure. Every tile is
+  derived from something the desk already recorded, not measured afresh. Spread is in bps
+  because a two-tick spread means something different on every instrument and bps is what
+  a scalper compares against their own edge; pace is per *minute* because a desk built for
+  trades-per-hour has to be able to watch overtrading go wrong. Latency is graded in three
+  states, not a gradient — the question is "can I trust the fast path right now", which has
+  three answers — and every label is pre-formatted to a fixed width, since a row of numbers
+  that reflows as it changes is a row nobody can scan. (F19.1)
+
 ## [0.18.0] — 2026-08-04 — Phase 18: Positions & Live PnL
 
 Exact exposure and profit, live to the tick: a position book fed by fills and marked at
