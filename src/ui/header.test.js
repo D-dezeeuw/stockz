@@ -8,6 +8,7 @@ import {
   venueLeds,
   sessionClock,
   toggleOverlay,
+  svgAttr,
   registerHeaderActions,
 } from './header.js'
 import { appState, setValue, tick, resetState } from '../app/engine.js'
@@ -95,9 +96,34 @@ describe('toggleOverlay', () => {
   })
 })
 
+describe('svgAttr', () => {
+  it('writes a state value onto the element attribute and ignores unusable bindings', () => {
+    const el = document.createElementNS('http://www.w3.org/2000/svg', 'polyline')
+    const state = { trade: { equityPath: '0,10 5,4' } }
+
+    expect(svgAttr(state, { el, id: 'trade.equityPath', attr: 'points' })).toBe('0,10 5,4')
+    expect(el.getAttribute('points')).toBe('0,10 5,4')
+
+    // Default attribute is points, and a path that resolves to nothing writes empty
+    // rather than the string 'undefined'.
+    expect(svgAttr(state, { el, id: 'trade.missing.deep' })).toBe('')
+    expect(el.getAttribute('points')).toBe('')
+
+    // No element or no path means there is nothing to write - never throw, because a
+    // throw here aborts Spektrum's bind walk and takes the whole desk down with it.
+    expect(svgAttr(state, { id: 'trade.equityPath' })).toBe('')
+    expect(svgAttr(state, { el })).toBe('')
+    expect(svgAttr(state)).toBe('')
+  })
+})
+
 describe('registerHeaderActions', () => {
   it('registers nav and overlay actions so HTML and hotkeys can drive the header', () => {
-    expect(registerHeaderActions()).toEqual([ACTIONS.ui.setSection, ACTIONS.ui.toggleOverlay])
+    expect(registerHeaderActions()).toEqual([
+      ACTIONS.ui.setSection,
+      ACTIONS.ui.toggleOverlay,
+      ACTIONS.ui.svgAttr,
+    ])
     expect(actionNames()).toContain('ui.setSection')
 
     dispatchAction(ACTIONS.ui.setSection, { section: 'analytics' })

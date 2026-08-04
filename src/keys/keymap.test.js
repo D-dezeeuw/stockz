@@ -72,6 +72,33 @@ describe('resolveKey', () => {
     expect(resolveKey('KeyZ')).toBeNull()
     expect(resolveKey(null)).toBeNull()
   })
+
+  it('lets a modal scope keep every chord except the ones that must always work', () => {
+    registerBinding('KeyB', 'ticket.submit')
+    registerBinding('Escape', 'keys.panic')
+    registerBinding('ctrl+shift+KeyK', 'breaker.kill')
+    registerBinding('Enter', 'ui.paletteRun', { scope: 'modal:palette' })
+
+    const inPalette = ['modal:palette']
+
+    // The modal owns its own chords and swallows the desk's - that is what makes typing
+    // in the palette safe.
+    expect(resolveKey('Enter', inPalette).action).toBe('ui.paletteRun')
+    expect(resolveKey('KeyB', inPalette)).toBeNull()
+
+    // But never the way out, and never the kill switch: a scope that swallows Escape is
+    // a scope nothing can leave.
+    expect(resolveKey('Escape', inPalette).action).toBe('keys.panic')
+    expect(resolveKey('ctrl+shift+KeyK', inPalette).action).toBe('breaker.kill')
+
+    // A modal binding for an always-on chord still wins over the global one.
+    registerBinding('Escape', 'ui.palette', { scope: 'modal:palette' })
+    expect(resolveKey('Escape', inPalette).action).toBe('ui.palette')
+
+    // And a disabled global is still no binding, always-on or not.
+    registerBinding('Escape', 'noop.noop', { scope: 'modal:other', enabled: false })
+    expect(resolveKey('ctrl+shift+KeyK', ['modal:other']).action).toBe('breaker.kill')
+  })
 })
 
 describe('allBindings', () => {

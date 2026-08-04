@@ -53,10 +53,61 @@ export function registerAction(name, fn, meta) {
     throw new Error(`action "${name}" is already registered`)
   }
 
-  defineFn(name, fn, meta)
+  // Registered through an adapter, never raw. Spektrum calls a `data-fn` handler as
+  // `(element, state, delta, value, event, scope)` — the ELEMENT first, not state — while
+  // every action here is written `(state, payload)`. Handing it the raw function meant the
+  // element landed in `state` and the whole state object landed in `payload`, so every
+  // parameter read (`payload.modal`, `payload.section`, `payload.side`) came back undefined
+  // and the action quietly did nothing. That is why no button on this desk worked in a
+  // browser while every test passed: the tests call `dispatchAction` directly, so both
+  // sides agreed with each other and neither agreed with the engine.
+  defineFn(name, (...args) => fn(appState, domPayload(...args)), meta)
   handlers.set(name, fn)
   registered.push(name)
   return name
+}
+
+/**
+ * Build our `payload` from what Spektrum hands a DOM handler.
+ *
+ * The element is the parameter carrier: `data-modal="keys"` is `payload.modal`, exactly as
+ * a caller of `dispatchAction` would pass it. A form submit adds its named fields, and a
+ * single input adds its own value, so `keys.submit` sees the same shape either way.
+ *
+ * @param {Element} el - the bound element.
+ * @param {object} _state - engine state (already read from the live tree).
+ * @param {object} _delta - the pending delta.
+ * @param {unknown} value - `data-value`, pre-parsed by the engine.
+ * @param {Event} [ev] - the DOM event.
+ * @returns {object} the payload.
+ */
+export function domPayload(el, _state, _delta, value, ev) {
+  // Not a DOM call at all — `dispatchAction` and the bot runner pass a payload straight
+  // through, and must keep working unchanged.
+  if (!el || typeof el !== 'object' || !('dataset' in el)) return el ?? {}
+
+  const payload = { ...el.dataset }
+  // The engine's own attributes are plumbing, not parameters.
+  delete payload.action
+  delete payload.fn
+
+  // A form submit carries its named fields. This is what the key modal sends.
+  for (const field of ev?.target?.elements ?? []) {
+    if (field?.name) payload[field.name] = field.type === 'checkbox' ? field.checked : field.value
+  }
+
+  // A single bound control carries its own value: an input's text, a checkbox's state.
+  // The element itself, for the rare binding that must reach the DOM — an SVG geometry
+  // attribute cannot go through `:attr`, because Spektrum assigns non-kebab names as
+  // properties and SVG geometry properties are read-only.
+  payload.el = el
+  if (ev) payload.event = ev
+
+  if (el.type === 'checkbox') payload.value = el.checked
+  else if (typeof el.value === 'string' && el.value !== '') payload.value = el.value
+  if (value !== undefined) payload.value = value
+
+  return payload
 }
 
 /**

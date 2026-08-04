@@ -47,6 +47,39 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ### Fixed
 
+- **Nothing on the desk responded to a click, and most of it never rendered.** Three
+  independent breaks in how the HTML talks to Spektrum, each fatal on its own, all invisible
+  to the entire test suite:
+  - Every action was a no-op. Spektrum invokes a `data-fn` handler as
+    `(element, state, delta, value, event, scope)` — the **element** first — while every
+    action here is written `(state, payload)`. So the element landed in `state`, the state
+    object landed in `payload`, and every parameter read (`payload.modal`, `payload.section`,
+    `payload.side`) came back `undefined`. All 104 actions ran and quietly did nothing. They
+    are now registered through a `domPayload` adapter that turns what the engine hands a
+    handler into the payload actions expect: `data-*` become parameters, a form submit
+    contributes its named fields, a bound control contributes its own value.
+  - All 37 `data-each` bindings used Vue's `"item in list"` syntax. Spektrum takes the array
+    path alone plus a separate `data-as` alias, so every one of them resolved to nothing and
+    emptied its container — the grid rendered **zero** blocks.
+  - `:points` on the equity sparkline threw on every bind. Spektrum assigns any non-kebab
+    attribute name as a *property*, and SVG geometry properties are read-only. The throw
+    aborted the bind walk, which left the whole desk unbound and invisible. Geometry now goes
+    through a `ui.svgAttr` subscription that calls `setAttribute` properly.
+
+  The suite passed all the way through because its tests call `dispatchAction(name, payload)`
+  with this codebase's own convention: both sides of every test agreed with each other, and
+  neither agreed with the engine. Found by driving a real browser against the static page
+  Pages actually serves, which is now the only thing that can catch this class of defect.
+- **The command palette could not be closed.** A modal's scope chain deliberately stops at
+  the modal so the letters typed into the palette cannot fire trades — but that also swallowed
+  `Escape`, which is bound globally, so the palette trapped the keyboard with no bound way
+  out. `ALWAYS_ON` already declared `Escape` and the kill chord unswallowable; only
+  `isTypingTarget` honoured it. `resolveKey` now honours it too: those two chords fall through
+  to global from any scope, so a modal can always be left and the desk can always be stopped.
+- **The hotkey sheet button opened nothing.** It set `ui.modal` to `hotkeys` while the overlay
+  and the keyboard binding both use `keys-help`.
+- **Three forms reloaded the page on submit.** `data-action="submit"` without `.prevent` lets
+  the browser navigate, which throws away the session.
 - **The key modal never saved anything.** A form submit delivers its named inputs *flat* on
   the payload; `submitKeys` read `payload.fields`, found nothing, and stored an empty object.
   Every key ever typed into that modal was dropped on the floor. Its test passed throughout

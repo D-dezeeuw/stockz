@@ -105,9 +105,20 @@ export function resolveKey(chord, chain = scopeChain()) {
 
   // Nearest scope first, stopping at the first hit: a modal's binding beats a block's,
   // which beats the global layout.
-  for (const scope of Array.isArray(chain) && chain.length ? chain : ['global']) {
+  const scopes = Array.isArray(chain) && chain.length ? chain : ['global']
+  for (const scope of scopes) {
     const found = bindings.get(registryKey(key, scope))
     if (found?.enabled) return found
+  }
+
+  // A modal's chain deliberately stops at the modal, so the letters typed into the
+  // palette cannot fire trades. But the way *out* must survive that: a scope that
+  // swallows Escape is a scope nothing can leave, and one that swallows the kill chord
+  // is a desk that cannot be stopped while a modal happens to be open. These two fall
+  // through to global from anywhere — the same contract isTypingTarget already keeps.
+  if (ALWAYS_ON.includes(key) && !scopes.includes('global')) {
+    const global = bindings.get(registryKey(key, 'global'))
+    if (global?.enabled) return global
   }
 
   return null

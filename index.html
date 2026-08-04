@@ -111,7 +111,7 @@
       <!-- How much room is left, in three dots. A number would be more precise and worse:
            precision is what you read once you have decided to look, and these have to work
            when nobody is looking at them. One click lands on the limit behind the light. -->
-      <span class="breaker-leds" data-each="led in breaker.leds">
+      <span class="breaker-leds" data-each="breaker.leds" data-as="led">
         <button type="button" class="breaker-led" data-action="click" data-fn="ui.toggleOverlay"
                 data-modal="settings" :title="led.title" :aria-label="led.title">
           <i :class="'led breaker-led__dot breaker-led__dot--' + led.state"></i>
@@ -133,7 +133,7 @@
       </button>
       <span class="label nowrap" data-if="ui.dnd.countdown">{{ui.dnd.countdown}}</span>
       <button type="button" class="icon-btn" data-action="click" data-fn="ui.toggleOverlay"
-              data-modal="hotkeys" aria-label="Keyboard shortcuts">
+              data-modal="keys-help" aria-label="Keyboard shortcuts">
         <svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M1 3 H15 V13 H1 Z M2.6 4.6 V11.4 H13.4 V4.6 Z M4 6 H6 V7.4 H4 Z M7 6 H9 V7.4 H7 Z M10 6 H12 V7.4 H10 Z M4 8.6 H12 V10 H4 Z"/></svg>
       </button>
       <!-- The way in. The modal has existed since phase 7 with nothing but a close button
@@ -178,14 +178,14 @@
       </button>
       <!-- Anything the flatten has not finished closing. Red until empty, because a wipe
            that half-worked and looked finished is worse than one that visibly failed. -->
-      <span class="pending" data-each="inst in breaker.flattenPending">
+      <span class="pending" data-each="breaker.flattenPending" data-as="inst">
         <b class="pending__inst">{{inst}}</b>
       </span>
     </header>
 
     <!-- The grid: every cell identical in size, driven entirely by the block registry.
          data-each binds the CONTAINER, and its first child is the repeated template. -->
-    <main class="app-grid" data-each="block in settings.blocks">
+    <main class="app-grid" data-each="settings.blocks" data-as="block">
       <section class="block" :data-block-id="block.id"
                :class="block.status === 'error' ? 'block has-error' : 'block'" tabindex="0">
         <div class="block__bar">
@@ -234,7 +234,7 @@
                 <span class="gauge__seg gauge__seg--ask" :style="'width:' + market.imbalance.askPct + '%'"></span>
                 <span class="gauge__label">{{market.imbalance.label}}</span>
               </div>
-              <div class="ladder__side ladder__side--ask" data-each="row in market.ladder.asks">
+              <div class="ladder__side ladder__side--ask" data-each="market.ladder.asks" data-as="row">
                 <div class="ladder__row ladder__row--ask" :style="'--bar:' + row.pct + '%'"
                      data-action="click" data-fn="ticket.intent" data-column="ask"
                      :data-price="row.px">
@@ -250,7 +250,7 @@
                       data-side="bid" :data-price="market.ladder.spread ? market.ladder.spread.mid : 0">{{market.ladder.spread ? market.ladder.spread.midLabel : '—'}}</span>
                 <span class="ladder__ticks">{{market.ladder.spread ? market.ladder.spread.spreadLabel : '—'}}</span>
               </div>
-              <div class="ladder__side ladder__side--bid" data-each="row in market.ladder.bids">
+              <div class="ladder__side ladder__side--bid" data-each="market.ladder.bids" data-as="row">
                 <div class="ladder__row ladder__row--bid" :style="'--bar:' + row.pct + '%'"
                      data-action="click" data-fn="ticket.intent" data-column="bid"
                      :data-price="row.px">
@@ -274,7 +274,7 @@
             <div class="tape" data-if="block.id === 'tape'" data-ref="tapeScroller">
               <div class="tape__spacer" :style="'height:' + market.tapeWindow.topPad + 'px'"></div>
             </div>
-            <div class="tape__rows" data-if="block.id === 'tape'" data-each="print in market.tape">
+            <div class="tape__rows" data-if="block.id === 'tape'" data-each="market.tape" data-as="print">
               <div class="tape__row" :class="print.whale ? print.cls + ' tape__row--whale' : print.cls">
                 <span class="tape__time">{{print.timeLabel}}</span>
                 <span class="tape__price">{{print.priceLabel}}</span>
@@ -372,9 +372,10 @@
               <!-- The session's shape: a day's net hides whether it was a grind or one
                    lucky trade on a losing morning. -->
               <svg class="equity" viewBox="0 0 120 28" preserveAspectRatio="none" aria-hidden="true">
-                <polyline class="equity__line" :points="trade.equityPath" fill="none" />
+                <polyline class="equity__line" fill="none" data-action="cycle"
+                          data-id="trade.equityPath" data-fn="ui.svgAttr" data-attr="points" />
               </svg>
-              <div class="positions__rows" data-each="p in trade.positions">
+              <div class="positions__rows" data-each="trade.positions" data-as="p">
                 <div class="positions__row" :class="'positions__row positions__row--' + p.side">
                   <span class="positions__inst">{{p.instrument}}</span>
                   <span class="positions__qty">{{p.qty}}</span>
@@ -396,7 +397,7 @@
             <div class="journal__filters" data-if="block.id === 'journal'">
               <select data-action="change" data-fn="journal.filter" data-key="instrument">
                 <option value="">all instruments</option>
-                <option data-each="inst in journal.instruments" :value="inst">{{inst}}</option>
+                <option data-each="journal.instruments" data-as="inst" :value="inst">{{inst}}</option>
               </select>
               <button type="button" class="chip" data-action="click" data-fn="journal.filter"
                       data-key="outcome" data-value="wins"
@@ -415,7 +416,7 @@
               <span class="label" data-if="journal.hidden > 0">{{journal.hidden}} hidden</span>
             </div>
             <div class="journal__tagbar" data-if="block.id === 'journal'"
-                 data-each="tag in journal.tagCatalog">
+                 data-each="journal.tagCatalog" data-as="tag">
               <button type="button" class="chip journal__tagfilter" data-action="click"
                       data-fn="journal.filter" data-key="tag" :data-value="tag"
                       :class="journal.filters.tag === tag ? 'chip chip--on' : 'chip'">{{tag}}</button>
@@ -423,7 +424,7 @@
             <!-- The day's line. Hundreds of rows produce exactly one question worth asking
                  at the close — was today good, and why — and that is answered by a line, not
                  a list. Today stays pinned at the top while the scalping is happening. -->
-            <div class="journal__days" data-if="block.id === 'journal'" data-each="d in journal.days">
+            <div class="journal__days" data-if="block.id === 'journal'" data-each="journal.days" data-as="d">
               <button type="button" data-action="click" data-fn="journal.toggleDay" :data-day="d.day"
                       :class="'journal__day' + (d.today ? ' journal__day--today' : '') + (d.net >= 0 ? ' journal__day--up' : ' journal__day--down')"
                       :title="'gross ' + d.gross + ' · fees ' + d.fees + ' · avg hold ' + d.avgHold + 'ms · best ' + d.maxWin + ' · worst ' + d.maxLoss">
@@ -434,7 +435,7 @@
                 <span class="journal__daynet tnum">{{fmt.signed(d.net)}}</span>
               </button>
             </div>
-            <div class="journal" data-if="block.id === 'journal'" data-each="t in journal.filtered">
+            <div class="journal" data-if="block.id === 'journal'" data-each="journal.filtered" data-as="t">
               <div class="journal__row" :class="t.net >= 0 ? 'journal__row journal__row--up' : 'journal__row journal__row--down'">
                 <span class="journal__inst">{{t.instrument}}</span>
                 <span class="journal__side">{{t.side}}</span>
@@ -450,7 +451,7 @@
                         data-fn="journal.editNote" :data-id="t.id"
                         :class="t.annotated ? 'journal__annotate is-on' : 'journal__annotate'"
                         aria-label="Note and tags">✎</button>
-                <span class="journal__tags" data-each="tag in t.tags">
+                <span class="journal__tags" data-each="t.tags" data-as="tag">
                   <button type="button" class="chip journal__tag" data-action="click"
                           data-fn="journal.removeTag" :data-id="t.id" :data-tag="tag">{{tag}}</button>
                 </span>
@@ -475,7 +476,7 @@
             <!-- Every closed scalp drops a labelled pin. One click stands in the moment it
                  finished; the way back is always on screen while you are away from live. -->
             <div class="journal__pins" data-if="block.id === 'journal'"
-                 data-each="pin in journal.checkpoints">
+                 data-each="journal.checkpoints" data-as="pin">
               <button type="button" class="chip journal__pin" data-action="click"
                       data-fn="journal.jump" :data-id="pin.tradeId">↺ {{pin.label}}</button>
             </div>
@@ -492,7 +493,7 @@
               <input type="text" class="field__input" list="journal-tags"
                      placeholder="tag and press enter" data-action="change"
                      data-fn="journal.addTag" :data-id="journal.editing">
-              <datalist id="journal-tags" data-each="tag in journal.tagCatalog">
+              <datalist id="journal-tags" data-each="journal.tagCatalog" data-as="tag">
                 <option :value="tag"></option>
               </datalist>
               <textarea class="field__input journal__note" rows="2" placeholder="why did I take this?"
@@ -504,7 +505,7 @@
                  on the day with a profit factor of 1.02 has had a good day and does not have
                  an edge, and those call for completely different next weeks. Empty reads "—",
                  never zero: a desk that has not traded has no win rate. -->
-            <div class="kpis" data-if="block.id === 'analytics'" data-each="k in analytics.kpis">
+            <div class="kpis" data-if="block.id === 'analytics'" data-each="analytics.kpis" data-as="k">
               <div class="kpi" :class="'kpi kpi--' + k.tone">
                 <span class="kpi__value">{{k.value}}</span>
                 <span class="kpi__label">{{k.label}}</span>
@@ -535,7 +536,7 @@
                  the list nobody wants to look at and everybody should. DOM rows rather than
                  a canvas chart, for the same reason the ladder is: they are click targets,
                  and one click lands on that instrument's trades in the journal. -->
-            <div class="ranking" data-if="block.id === 'analytics'" data-each="r in analytics.ranking">
+            <div class="ranking" data-if="block.id === 'analytics'" data-each="analytics.ranking" data-as="r">
               <button type="button" data-action="click" data-fn="analytics.pickInstrument"
                       :data-instrument="r.instrument" :data-other="r.other"
                       :class="'ranking__row ranking__row--' + r.tone">
@@ -576,7 +577,7 @@
               <span class="fees__ratio" :class="'fees__ratio fees__ratio--' + analytics.fees.tone">{{analytics.fees.ratioLabel}}</span>
               <span class="label">of gross eaten by fees · {{analytics.fees.fees}} on {{analytics.fees.gross}}</span>
               <canvas id="fees-canvas" class="fees__bars"></canvas>
-              <span class="fees__venue label" data-each="v in analytics.venueFees">{{v.venue}} {{v.fees}} ({{v.fills}} fills)</span>
+              <span class="fees__venue label" data-each="analytics.venueFees" data-as="v">{{v.venue}} {{v.fees}} ({{v.fills}} fills)</span>
             </div>
             <!-- The equity curve shows where the money went; this shows how it felt. The
                  question that decides whether a strategy is survivable is not "does it make
@@ -589,7 +590,7 @@
             </div>
             <!-- An alert set in under three seconds: level, direction, done. -->
             <div class="alerts" data-if="block.id === 'watchlist'">
-              <form class="alerts__form" data-action="submit" data-fn="alerts.create"
+              <form class="alerts__form" data-action="submit.prevent" data-fn="alerts.create"
                     :data-instrument="market.focus">
                 <input type="number" name="price" class="field__input" placeholder="level"
                        step="any" data-model="ui.alertDraft">
@@ -600,7 +601,7 @@
                 </select>
                 <button type="submit" class="chip">alert</button>
               </form>
-              <div class="alerts__chips" data-each="chip in ui.alertChips">
+              <div class="alerts__chips" data-each="ui.alertChips" data-as="chip">
                 <span class="chip" :class="'chip alerts__chip alerts__chip--' + chip.tone"
                       :title="chip.note">
                   {{chip.label}}
@@ -626,7 +627,7 @@
             <!-- One row instead of nine tiles, ordered worst-first: in a strip this dense
                  a fixed order buries the one reading that matters behind seven that are
                  fine. Exactly one representation is mounted at a time. -->
-            <div class="hud-strip" data-if="block.id === 'hud' &amp;&amp; settings.compactHud" data-each="cell in ui.hudRow">
+            <div class="hud-strip" data-if="block.id === 'hud' &amp;&amp; settings.compactHud" data-each="ui.hudRow" data-as="cell">
               <span class="hud-strip__cell" :class="'hud-strip__cell hud-strip__cell--' + cell.tone">
                 <b>{{cell.label}}</b>
                 <span>{{cell.value}}</span>
@@ -710,7 +711,7 @@
                    hand-written markup, half the strategies ship without it and get tuned
                    by editing source. Values route through one action rather than through a
                    dynamic data-model, so every write is coerced against the schema. -->
-              <div class="runs__params" data-each="field in ui.strategyForm">
+              <div class="runs__params" data-each="ui.strategyForm" data-as="field">
                 <label class="runs__param">
                   <span class="label">{{field.label}}</span>
                   <input type="number" data-if="field.kind === 'number'" :value="field.value"
@@ -726,14 +727,14 @@
                   <select data-if="field.kind === 'select'"
                           data-action="change" data-fn="strategy.setParam"
                           :data-strategy="field.strategyId" :data-param="field.key"
-                          data-each="opt in field.options">
+                          data-each="field.options" data-as="opt">
                     <option :value="opt" :selected="opt === field.value">{{opt}}</option>
                   </select>
                 </label>
               </div>
               <!-- The blend recipe. Sliders renormalise against each other, so moving one
                    moves the rest and the whole editor is republished on every input. -->
-              <div class="runs__weights" data-if="ui.compositeWeights.length > 0" data-each="w in ui.compositeWeights">
+              <div class="runs__weights" data-if="ui.compositeWeights.length > 0" data-each="ui.compositeWeights" data-as="w">
                 <label class="runs__weight">
                   <span class="label truncate">{{w.name}} · {{w.instrument}}</span>
                   <input type="range" min="0" max="100" step="5" :value="w.pct"
@@ -743,7 +744,7 @@
               </div>
               <!-- Benched runs. Visible and reversible: a strategy that vanished silently
                    would look exactly like one with nothing to say. -->
-              <div class="runs__rows runs__rows--benched" data-each="bad in strategy.quarantined">
+              <div class="runs__rows runs__rows--benched" data-each="strategy.quarantined" data-as="bad">
                 <div class="runs__row runs__row--benched">
                   <span class="runs__name">{{bad.strategyId}}</span>
                   <span class="runs__instrument">{{bad.instrument}}</span>
@@ -752,7 +753,7 @@
                           :data-key="bad.key">resume</button>
                 </div>
               </div>
-              <div class="runs__rows" data-each="run in strategy.running">
+              <div class="runs__rows" data-each="strategy.running" data-as="run">
                 <div class="runs__row">
                   <span class="runs__name">{{run.name}}</span>
                   <span class="runs__instrument">{{run.instrument}}</span>
@@ -760,7 +761,7 @@
                        have drifted from the pack that was picked. -->
                   <select class="chip runs__preset" :class="run.dirty ? 'chip runs__preset is-dirty' : 'chip runs__preset'"
                           data-action="change" data-fn="strategy.setPreset"
-                          :data-strategy="run.strategyId" data-each="p in run.names">
+                          :data-strategy="run.strategyId" data-each="run.names" data-as="p">
                     <option :value="p" :selected="p === run.active">{{p}}</option>
                   </select>
                   <!-- Glyph, strength bar and the reason as a tooltip: a chip that says
@@ -784,7 +785,7 @@
                           :data-key="run.key">stop</button>
                   <!-- The last few calls in context: the question after a bad trade is not
                        what the strategy is saying now but what it was saying then. -->
-                  <div class="runs__recent" data-each="past in run.recent">
+                  <div class="runs__recent" data-each="run.recent" data-as="past">
                     <span class="runs__past" :class="'runs__past runs__past--' + past.action"
                           :title="past.reason">{{past.action}}</span>
                   </div>
@@ -795,7 +796,7 @@
                  I turn off" is the question this block exists to answer. -->
             <div class="score" data-if="block.id === 'scoreboard'">
               <p class="label" data-if="strategy.scoreboard.length === 0">no closes yet</p>
-              <div class="score__rows" data-each="s in strategy.scoreboard">
+              <div class="score__rows" data-each="strategy.scoreboard" data-as="s">
                 <div class="score__row" :class="'score__row score__row--' + s.tone">
                   <span class="score__name truncate">{{s.strategyId}}</span>
                   <span class="score__net num">{{s.netLabel}}</span>
@@ -809,14 +810,14 @@
             <!-- The tail: newest first, filterable, read after the fact. A trader watching
                  the alert log instead of the tape is doing the wrong thing. -->
             <div class="alog" data-if="block.id === 'alerts'">
-              <div class="alog__chips" data-each="chip in ui.alertPanel.chips">
+              <div class="alog__chips" data-each="ui.alertPanel.chips" data-as="chip">
                 <button type="button" class="chip"
                         :class="chip.active ? 'chip is-active' : 'chip'"
                         data-action="click" data-fn="alerts.filterLog"
                         :data-kind="chip.kind" :data-value="chip.value">{{chip.label}} {{chip.count}}</button>
               </div>
               <p class="label" data-if="ui.alertPanel.rows.length === 0">nothing yet</p>
-              <div class="alog__rows" data-each="row in ui.alertPanel.rows">
+              <div class="alog__rows" data-each="ui.alertPanel.rows" data-as="row">
                 <div class="alog__row" :class="'alog__row alog__row--' + row.severity"
                      data-action="click" data-fn="alerts.jumpTo" :data-instrument="row.instrument">
                   <span class="alog__time num">{{row.time}}</span>
@@ -856,12 +857,12 @@
                         data-fn="bot.resetSession">reset session</button>
               </div>
               <p class="label">{{bot.session.signals}} signals · {{bot.session.orders}} sent · {{bot.session.dry}} dry · {{bot.session.blocked}} blocked</p>
-              <p class="label bot__cooldown" data-if="bot.capped.length > 0" data-each="c in bot.capped">
+              <p class="label bot__cooldown" data-if="bot.capped.length > 0" data-each="bot.capped" data-as="c">
                 <span>{{c.instrument}} at cap {{c.cap}}</span>
               </p>
               <!-- Every decision with its reason: "why did it not take that" must be
                    answerable without a debugger. -->
-              <div class="bot__rows" data-each="d in bot.decisions">
+              <div class="bot__rows" data-each="bot.decisions" data-as="d">
                 <div class="bot__row" :class="d.taken ? 'bot__row is-taken' : 'bot__row'">
                   <span class="bot__strategy truncate">{{d.strategy}}</span>
                   <span class="bot__action">{{d.action}}</span>
@@ -881,7 +882,7 @@
       <div class="modal__card palette">
         <input class="palette__input" type="text" placeholder="run a command…"
                data-action="input" data-fn="ui.paletteSearch" autocomplete="off">
-        <ul class="palette__rows" data-each="row in ui.paletteRows">
+        <ul class="palette__rows" data-each="ui.paletteRows" data-as="row">
           <li class="palette__row">
             <span class="palette__label">{{row.label}}</span>
             <kbd class="keysheet__chord" data-if="row.chord">{{row.chord}}</kbd>
@@ -895,7 +896,7 @@
     <div class="modal" data-if="ui.modal === 'keys-help'" role="dialog" aria-label="Hotkeys">
       <div class="modal__card">
         <p class="block__state-title">hotkeys</p>
-        <div class="keysheet" data-each="row in ui.chordSheet">
+        <div class="keysheet" data-each="ui.chordSheet" data-as="row">
           <div class="keysheet__row">
             <!-- Click the chord to rebind it: press the keys, Enter saves. Typing a
                  chord as text is a thing nobody gets right. -->
@@ -925,7 +926,7 @@
         <p class="label">Both optional — the desk runs in paper mode without either. Add a
           venue when you want to trade it live.</p>
 
-        <form class="keys__venue" data-action="submit" data-fn="keys.submit" data-venue="okx">
+        <form class="keys__venue" data-action="submit.prevent" data-fn="keys.submit" data-venue="okx">
           <p class="keys__head">
             <span class="keys__name">okx</span>
             <!-- Presence, so opening this does not show three empty boxes to somebody who is
@@ -941,7 +942,7 @@
           <button type="submit" class="btn">save okx</button>
         </form>
 
-        <form class="keys__venue" data-action="submit" data-fn="keys.submit" data-venue="etoro">
+        <form class="keys__venue" data-action="submit.prevent" data-fn="keys.submit" data-venue="etoro">
           <p class="keys__head">
             <span class="keys__name">etoro</span>
             <span :class="ui.keysPresent.etoro ? 'keys__state keys__state--on' : 'keys__state'">{{ui.keysPresent.etoro ? '● connected' : '○ not set'}}</span>
@@ -1046,7 +1047,7 @@
         <!-- The limits as the breaker itself sees them, after validation. A field the
              trader typed a word into reads as its default here rather than silently
              disabling the check, which is the difference between a limit and a suggestion. -->
-        <div class="breaker-limits" data-each="row in breaker.limits">
+        <div class="breaker-limits" data-each="breaker.limits" data-as="row">
           <span class="breaker-limits__row">
             <b>{{row.label}}</b>
             <span class="num">{{row.now}} / {{row.off ? 'off' : row.limit}}</span>
@@ -1060,7 +1061,7 @@
           <button type="button" class="chip" data-action="click"
                   data-fn="breaker.copyLog">copy</button>
         </div>
-        <div class="breaker-log scroll-y" data-each="entry in breaker.log">
+        <div class="breaker-log scroll-y" data-each="breaker.log" data-as="entry">
           <div class="breaker-log__row">
             <span class="label num">{{entry.ts}}</span>
             <span class="breaker-log__what">{{entry.label}}</span>
@@ -1142,7 +1143,7 @@
         </label>
         <!-- One mute per strategy. A trader who has never opened this drawer is still told
              when a strategy fires; opting out is the decision, opting in should not be. -->
-        <div class="fields" data-each="t in ui.alertToggles">
+        <div class="fields" data-each="ui.alertToggles" data-as="t">
           <label class="field field--row">
             <input type="checkbox" :checked="t.enabled" data-action="change"
                    data-fn="alerts.toggle" :data-group="t.group" :data-key="t.key">
@@ -1155,7 +1156,7 @@
     </aside>
 
     <!-- Toasts float above the grid. -->
-    <ul class="toasts" data-each="toast in ui.toasts">
+    <ul class="toasts" data-each="ui.toasts" data-as="toast">
       <!-- Reading a toast stops its clock; a message that vanishes mid-word is worse than
            one that never appeared. -->
       <li :class="toast.paused ? 'toast is-paused toast--' + toast.level : 'toast toast--' + toast.level"

@@ -56,6 +56,7 @@ describe('allActionNames', () => {
       'ui.setSection',
       'ui.toggleOverlay',
       'ui.setTheme',
+      'ui.svgAttr',
       'ui.setCandleInterval',
       'ui.palette',
       'ui.paletteSearch',
