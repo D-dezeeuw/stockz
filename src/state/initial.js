@@ -92,6 +92,7 @@ export function initialState(overrides = {}) {
     [PATHS.ui.alertDirection]: 'either',
     [PATHS.ui.alertChips]: [],
     [PATHS.ui.alertToggles]: [],
+    [PATHS.ui.audioReady]: false,
     [PATHS.ui.hud]: {
       latencyMs: 0,
       latencyGrade: 'warn',

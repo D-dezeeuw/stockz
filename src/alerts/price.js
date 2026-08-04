@@ -3,6 +3,7 @@ import { PATHS } from '../state/paths.js'
 import { registerAction } from '../actions/registry.js'
 import { ACTIONS } from '../actions/names.js'
 import { setAlertToggle } from './signals.js'
+import { playSound } from './sounds.js'
 
 /**
  * Price-cross alerts.
@@ -288,6 +289,9 @@ export function registerAlertActions() {
   registerAction(ACTIONS.alerts.toggle, (_state, payload) =>
     setAlertToggle(payload?.group, payload?.key, payload?.checked ?? payload?.value !== 'false'),
   )
+  // A test button, because a volume slider nobody can hear the effect of is a slider
+  // nobody moves.
+  registerAction(ACTIONS.alerts.testSound, (_state, payload) => playSound(payload?.sound))
 
   return ACTIONS.alerts.create
 }

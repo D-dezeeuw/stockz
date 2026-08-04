@@ -56,6 +56,7 @@ describe('allActionNames', () => {
       'alerts.update',
       'alerts.remove',
       'alerts.toggle',
+      'alerts.testSound',
       'book.prefill',
       'book.setGroup',
       'book.setFloor',

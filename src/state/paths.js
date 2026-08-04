@@ -78,6 +78,7 @@ export const PATHS = Object.freeze({
     alertDirection: 'ui.alertDirection',
     alertChips: 'ui.alertChips',
     alertToggles: 'ui.alertToggles',
+    audioReady: 'ui.audioReady',
     captureFor: 'ui.captureFor',
     capturePreview: 'ui.capturePreview',
   }),
