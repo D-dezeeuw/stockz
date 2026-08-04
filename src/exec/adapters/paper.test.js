@@ -2,11 +2,13 @@ import { describe, it, expect, beforeEach } from 'vitest'
 import { PAPER_CAPABILITIES, paperFillPrice, createPaperAdapter } from './paper.js'
 import { isAdapter } from './contract.js'
 import { resetState } from '../../app/engine.js'
+import { restingOrders, resetPaperBook } from '../paper/engine.js'
 
 const BOOK = { bid: 99, ask: 101, mid: 100 }
 
 beforeEach(() => {
   resetState()
+  resetPaperBook()
 })
 
 describe('paperFillPrice', () => {
@@ -51,7 +53,22 @@ describe('createPaperAdapter', () => {
       reason: 'no_market',
     })
 
-    // Nothing rests, so a cancel has nothing to chase.
-    expect(await adapter.cancel({ clientId: 'p1' })).toEqual({ ok: true })
+    // Limits rest rather than filling on submit: the hardest thing about a resting order
+    // is that the market has to come to you *and* trade through everyone already there,
+    // and an instant fill at your own price is a cheat code, not practice.
+    const rested = await adapter.submit({
+      clientId: 'p3',
+      type: 'limit',
+      side: 'buy',
+      size: 1,
+      price: 99,
+      instrument: 'BTC-USDT',
+    })
+    expect(rested.order).toMatchObject({ state: 'working', resting: true, filled: 0 })
+    expect(restingOrders().map((o) => o.id)).toContain('p3')
+
+    // So a cancel now has something real to catch — and reports honestly when it does not.
+    expect(await adapter.cancel({ clientId: 'p3' })).toEqual({ ok: true })
+    expect(await adapter.cancel({ clientId: 'p3' })).toMatchObject({ ok: false, reason: 'not_found' })
   })
 })

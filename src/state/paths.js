@@ -212,6 +212,8 @@ export const PATHS = Object.freeze({
     // How far through the press-and-hold that goes live. Filled from the timer rather than
     // by CSS, so the ring shows the progress actually being kept.
     holdPct: 'trade.holdPct',
+    // The paper book's resting orders, mirrored out of the module that owns them.
+    paperResting: 'trade.paperResting',
     orders: 'trade.orders',
     positions: 'trade.positions',
     dayPnl: 'trade.dayPnl',

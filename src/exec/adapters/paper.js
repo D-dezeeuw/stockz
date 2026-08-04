@@ -1,5 +1,6 @@
 import { appState } from '../../app/engine.js'
 import { capabilityFor, capabilityFlags } from '../capabilities.js'
+import { restOrder, cancelPaperOrder } from '../paper/engine.js'
 
 /**
  * The paper adapter — the desk trading against itself.
@@ -15,10 +16,16 @@ import { capabilityFor, capabilityFlags } from '../capabilities.js'
  * engine picks it up in `adapterFor`, ahead of the real venue, so every order — ticket,
  * hotkey, bot, flatten — takes this path or none.
  *
- * Fills are deliberately optimistic but not free: a market order crosses the spread, a
- * limit order fills at its price. Simulating queue position or partial fills would invent
- * detail nobody should trust; the honest claim is "this is what you would have paid at the
- * top of book", and the journal marks every one of them paper.
+ * A market order crosses the spread — the whole cost a scalper is fighting, and reporting
+ * the mid would make every strategy look half a spread better than it is.
+ *
+ * A limit order **rests**. It used to fill instantly at its own price, which is not
+ * practice but a cheat code: the hardest thing about resting an order is that the market
+ * has to come to you *and* trade through everyone already there. The queue model lives in
+ * `../paper/`, and every fill it produces goes out through the same `ingestFill` door live
+ * fills use — so positions, P&L and the journal cannot tell the two apart except by the
+ * `paper` flag, which is the point. Practice has to exercise the code that runs with money
+ * on it.
  */
 
 /** Paper can do whatever the venue being simulated can. */
@@ -70,6 +77,21 @@ export function createPaperAdapter(deps = {}) {
 
     async submit(intent) {
       const clientId = String(intent?.clientId ?? '')
+
+      // A limit order joins the queue rather than filling on submit. It comes back
+      // `working`, not `filled` — the tape decides the rest.
+      if (intent?.type !== 'market' && Number(intent?.price) > 0) {
+        const rested = restOrder({ ...intent, clientId })
+        if (!rested) {
+          return { ok: false, reason: 'no_price', message: 'limit needs a price', clientId }
+        }
+        return {
+          ok: true,
+          clientId,
+          order: { state: 'working', avgPx: 0, filled: 0, resting: true, paper: true },
+        }
+      }
+
       const price = paperFillPrice(intent, market())
 
       // Unfillable rather than silently filled at zero: a paper fill at no price would
@@ -85,10 +107,13 @@ export function createPaperAdapter(deps = {}) {
       }
     },
 
-    async cancel() {
-      // Nothing rests: a paper order is filled or refused on submit, so a cancel has
-      // nothing to chase and says so rather than pretending to have caught something.
-      return { ok: true }
+    async cancel(order) {
+      // Limits do rest now, so a cancel has something real to catch. Reporting `ok` for an
+      // id that was not there would let a stuck order look cancelled.
+      const id = String(order?.clientId ?? order?.id ?? '')
+      const removed = cancelPaperOrder(id)
+
+      return removed ? { ok: true } : { ok: false, reason: 'not_found', message: 'no such paper order' }
     },
   }
 }
