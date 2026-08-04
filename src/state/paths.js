@@ -308,6 +308,10 @@ export const PATHS = Object.freeze({
     sweepRows: 'backtest.sweepRows',
     sweepView: 'backtest.sweepView',
     sweepSort: 'backtest.sweepSort',
+    // Archived runs, which two are pinned, and the comparison of the pair.
+    runs: 'backtest.runs',
+    slots: 'backtest.slots',
+    compare: 'backtest.compare',
     // The last finished run, the always-shaped readout of it, and why the last one did
     // not finish. The summary exists because a template cannot read through a null result.
     result: 'backtest.result',

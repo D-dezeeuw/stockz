@@ -6,6 +6,8 @@ import { pushToast } from '../ui/toast.js'
 import { drawEquity } from '../analytics/equity.js'
 import { sizeCanvas } from '../charts/canvas.js'
 import { summariseRun } from './stats.js'
+import { saveRunResult } from './archive.js'
+import { refreshRuns } from './compare.js'
 
 /**
  * The backtest report: does this strategy earn?
@@ -87,6 +89,13 @@ export function refreshReport(result) {
   setValue(PATHS.backtest.stats, stats)
   setValue(PATHS.backtest.tiles, reportTiles(stats))
   setValue(PATHS.backtest.curve, stats.curve)
+
+  // Archived as it lands, not on a button. The run somebody wants to compare against is
+  // always the one they did twenty minutes ago, and asking them to have saved it in
+  // advance is asking them to have known.
+  saveRunResult(stats, { id: result.runId, at: result.at, seed: result.seed })
+    .then((record) => (record ? refreshRuns() : null))
+    .catch(() => null)
 
   return stats
 }

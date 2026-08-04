@@ -1074,6 +1074,34 @@
                   </div>
                 </div>
               </div>
+              <!-- The question a backtest raises is never "is this good" but "is this
+                   *better*, and better than what". Two archived runs snap into slots. -->
+              <div class="runs-archive" data-if="backtest.runs.length > 0">
+                <div class="runs-archive__rows" data-each="backtest.runs" data-as="run">
+                  <button type="button" class="runs-archive__row"
+                          :class="backtest.slots.indexOf(run.id) >= 0 ? 'runs-archive__row is-pinned' : 'runs-archive__row'"
+                          data-action="click" data-fn="backtest.pin" :data-id="run.id">
+                    <span class="truncate">{{run.label}}</span>
+                    <span class="num">{{run.net}}</span>
+                    <span class="num">{{run.trades}}</span>
+                  </button>
+                </div>
+                <p class="label" data-if="backtest.compare.hint">{{backtest.compare.hint}}</p>
+                <!-- Both curves on one axis with a shared scale: two curves auto-scaled to
+                     their own ranges look identical whatever they earned, which is exactly
+                     backwards for the one question being asked. -->
+                <canvas id="compare-canvas" class="bt-chart" data-if="backtest.compare.diffs.length > 0"></canvas>
+                <div class="cmp" data-if="backtest.compare.diffs.length > 0" data-each="backtest.compare.diffs" data-as="d">
+                  <div class="cmp__row">
+                    <span class="cmp__label label">{{d.label}}</span>
+                    <span class="cmp__a num">{{d.a}}</span>
+                    <span class="cmp__b num">{{d.b}}</span>
+                    <span class="cmp__delta num" :class="'cmp__delta cmp__delta--' + d.tone">{{d.delta}}</span>
+                  </div>
+                </div>
+                <button type="button" class="chip" data-action="click" data-fn="backtest.clearSlots"
+                        data-if="backtest.slots.length > 0">clear slots</button>
+              </div>
             </div>
             <p class="label" data-if="block.id !== 'book' &amp;&amp; block.id !== 'tape' &amp;&amp; block.id !== 'ticket' &amp;&amp; block.id !== 'positions' &amp;&amp; block.id !== 'hud' &amp;&amp; block.id !== 'strategies' &amp;&amp; block.id !== 'scoreboard' &amp;&amp; block.id !== 'alerts' &amp;&amp; block.id !== 'bot' &amp;&amp; block.id !== 'backtest'">ready</p>
           </div>

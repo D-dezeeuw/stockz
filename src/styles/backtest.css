@@ -193,3 +193,66 @@
 .sweep__cell {
   min-inline-size: 0;
 }
+
+/*
+ * The run archive and the comparison.
+ *
+ * Rows are buttons because every one of them is a pin, and a pinned row is outlined rather
+ * than filled — a fill would fight the sweep table's heat gradient two blocks up, and two
+ * different meanings for "coloured background" in one block is one too many.
+ */
+.runs-archive {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-1);
+  min-block-size: 0;
+  font-size: var(--fs-0);
+}
+
+.runs-archive__rows {
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  max-block-size: 6rem;
+  min-block-size: 0;
+}
+
+.runs-archive__row {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: var(--sp-1);
+  padding: 2px var(--sp-1);
+  border: 1px solid transparent;
+  background: none;
+  color: var(--ink);
+  font: inherit;
+  font-variant-numeric: tabular-nums;
+  text-align: start;
+  cursor: pointer;
+}
+
+.runs-archive__row:hover {
+  border-color: var(--line);
+}
+
+.runs-archive__row.is-pinned {
+  border-color: var(--green);
+  color: var(--green);
+}
+
+.cmp {
+  display: flex;
+  flex-direction: column;
+  font-variant-numeric: tabular-nums;
+}
+
+.cmp__row {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr 1fr 1fr;
+  gap: var(--sp-1);
+  align-items: baseline;
+}
+
+.cmp__delta--up { color: var(--green); }
+.cmp__delta--down { color: var(--orange); }
+.cmp__delta--flat { color: var(--ink-muted); }

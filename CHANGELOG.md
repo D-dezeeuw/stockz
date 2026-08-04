@@ -45,6 +45,13 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
   its params to the live strategy, merged onto whatever was tuned by hand rather than
   replacing it.
 
+- **F27.9 — run comparison.** Finished backtests archive themselves to IndexedDB as they
+  land — the run you want to compare against is always the one from twenty minutes ago, and
+  asking you to have saved it is asking you to have known. Any two snap into slots, their
+  stats sit in mirrored columns with signed deltas already computed and coloured by which
+  direction is good for *that* stat, and both equity curves go on one axis with a **shared
+  scale**: two curves auto-scaled to their own ranges look identical whatever they earned.
+
 ### Fixed
 
 - **Two `data-each` bindings rendered nothing and warned on every frame.** Spektrum binds
