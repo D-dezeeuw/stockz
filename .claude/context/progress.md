@@ -5,11 +5,49 @@ in `masterplan.md`, and knows where the project stands. Rewritten at every phase
 
 ---
 
-## Status: Phase 17 closed (v0.17.0) · Phase 18 next
+## Status: Phase 18 closed (v0.18.0) · Phase 19 next
 
 **Live:** https://d-dezeeuw.github.io/stockz/ (Pages serves `main` root — pushing is deploying)
-**Tests:** 546, one per function, all passing individually. Every gated file >80% branches.
+**Tests:** 603, one per function, all passing individually. Every gated file >80% branches.
 **Branch model:** everything merges to `main`; no feature branches outstanding.
+
+## Phase 18 — Positions & Live PnL (closed)
+
+| Feature | What now exists | Where |
+| --- | --- | --- |
+| F18.2 | `makePosition`, `sideOf`, `avgEntryAfterAdd`, `realizedFrom`, `splitFlipFill`, `applyFill`, `unrealizedPnl` | `src/positions/math.js` |
+| F18.1 | `positionKey`, `positionFor`, `upsertPosition`, `ingestFill`, `markPosition`, `openPositions`, `grossExposure`, `pnlTotals`, `flushPositions` | `src/positions/store.js` |
+| F18.3 | `midFor`, `multiplierFor`, `floatingPnl`, `toAccountCcy`, `fmtPnl`, `pnlClass`, `priceBook` | `src/positions/pnl.js` |
+| F18.4 | `parseFee`, `appendRealization`, `netRealized`, `sessionKey`, `rolloverIfNewSession`, `flushLedger` | `src/positions/ledger.js` |
+| F18.5, F18.6 | `closeIntent`, `flattenOne`, `flattenAll`, `registerFlattenActions`, `hasExposure` | `src/positions/flatten.js` |
+| F18.7, F18.8 | `dayPnl`, `pnlDirection`, `compactPnl`, `refreshDayPnl`, `expirePulse` | `src/positions/header.js` |
+| F18.9 | `sample`, `curve`, `curveStats`, `curveRatios`, `curvePath` | `src/positions/equity.js` |
+| F18.10 | `diffPositions`, `adoptVenueTruth`, `reconcile`, `startReconciler` | `src/positions/reconcile.js` |
+
+**Positions apply synchronously, unlike every other hot store here.** An order list a
+frame behind is cosmetic; a position a frame behind is a risk number someone may size
+against. Only the *publish* is batched.
+
+**The venue always wins.** `reconcile()` runs every 30s and replaces local numbers
+outright — no averaging, no waiting to see if it settles. A failed snapshot changes
+nothing, because "I could not ask" is not "there is nothing there".
+
+**Two pieces of arithmetic carry the phase**: weighted average entry (overwriting with
+the last fill price is silent and wrong from fill two onward) and through-zero flips
+(one fill that is really a close plus an open, with the P&L booked between them).
+
+New state: `trade.positions`, `trade.pnl`, `trade.ledger`, `trade.score`,
+`trade.dayTotal`, `trade.dayLabel`, `trade.equityPath`, `ui.pnlPulse`, `market.tickSize`,
+`market.lotSize`, `market.instrumentMeta`. New settings: `sessionStartUtc`.
+
+**Deferred in phase 18:** T18.1.7 position rehydration and T18.4.6 ledger persistence
+(only `settings.*` persists by design, and a *stale* position restored from storage is a
+risk number that may be wrong — the venue snapshot is the honest source, which is what
+F18.10 does).
+
+**Process note:** F18.7 was merged with the coverage gate red on `live.js` (58% functions)
+and fixed immediately after in `fix(f18.7)`. Same failure mode as F2.6 — the gate output
+must be *read*, not just run.
 
 ## Phase 17 — Order Types & Execution Engine (closed)
 
@@ -333,21 +371,15 @@ go stale, and faults that reach the trader instead of the console.
 | F2.9 | `pushToast`, `dismissToast`, `expireToasts`, `describeEngineError`, `wireEngineErrors` | `src/ui/toast.js` |
 | F2.10 | `collectExpressions`, `renderPrecompileModule`, `cspMeta`, `npm run build:csp` | `src/app/csp.js`, `docs/csp.md` |
 
-## Next up: Phase 18 — Positions & Live PnL
+## Next up: Phase 19
 
-First feature **F18.1** (positions store core). Exact exposure and P&L to the tick, fed
-by execution fills and live marks, with one-tap flatten.
+Read the phase's own section in `masterplan.md` — the plan is authoritative, and the
+"next up" guesses written at earlier closes have been wrong twice.
 
-- **Fills already flow**: `exec/engine.js` `apply()` publishes every transition, and
-  `ticket/lifecycle.js` holds the order list. Positions derive from those fills plus the
-  mark, so nothing new needs to reach the venue.
-- `trade.positions` already exists and `trade.exposure` is already a computed over it
-  (`state/derived.js`) — the store is what has been missing, not the wiring.
-- Flatten is `orders.cancelAll` plus a reduce-only market close per position; the
-  reduce-only flag and the guard path both exist (`exec/guard.js`, `makeIntent`).
-- **Average entry is the trap**: a partial fill at a new price changes the average, and
-  the naive version (overwriting entry with the last fill price) silently misstates every
-  P&L that follows.
+- Everything an order needs now exists: `exec/engine.js` is the one door, `positions/`
+  knows exposure and P&L, `keys/` reaches every action, and the feed is live.
+- The recurring trap remains **`setValue` lands next tick** (fold locally, write once)
+  and **object writes merge** (`clearedMap` is the pattern for clearing one).
 
 ### Still outstanding across phases
 *(none — the boot-time feed gap recorded here through phase 13 was closed in phase 14;
