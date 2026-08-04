@@ -110,6 +110,15 @@ export const SETTINGS_SCHEMA = Object.freeze([
     default: 0.4,
   },
   {
+    key: 'whaleMultiplier',
+    group: 'instruments',
+    label: 'Whale size multiplier',
+    kind: 'number',
+    min: 1,
+    step: 0.5,
+    default: 4,
+  },
+  {
     key: 'favourites',
     group: 'instruments',
     label: 'Favourite instruments',

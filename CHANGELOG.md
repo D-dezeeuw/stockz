@@ -12,6 +12,12 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ### Added
 
+- **Whale highlight** — "big" is meaningless as an absolute (5 BTC is a whale, 5 DOGE is
+  dust), so the baseline is a rolling *median* of recent print sizes: session-adaptive,
+  and median rather than mean precisely so one 400-lot print cannot redefine normal for
+  the next two hundred. Per-instrument multipliers, a bounded event feed carrying the
+  "6× normal" ratio an alert wants to quote, and a single-cycle pulse — a permanently
+  glowing row is one the eye learns to ignore. (F14.5)
 - **Imbalance gauge** — bid/ask pressure as one number, smoothed by an EMA because the
   raw reading swings from +0.4 to −0.2 and back on a single cancelled order, and a
   flickering gauge invites acting on noise. Depth is selectable (5/10/20) since the touch
