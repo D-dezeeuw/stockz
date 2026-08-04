@@ -3999,16 +3999,16 @@
 **What:** Tiny header LEDs show breaker health at a glance - green fine, orange near limit, red tripped.
 **How:** A Spektrum computed derives an LED state per breaker from percent-of-limit values, bound to dots in the phase-5 header via :class.
 
-- [ ] **T24.7.1 - Branch breaker leds** - What: Isolated work on the LEDs. How: git checkout -b feature/f24.7-breaker-leds from an up-to-date main.
-- [ ] **T24.7.2 - LED derivation fn** - What: One pure mapping from numbers to light colors. How: Implement ledStateFor(pct, tripped) returning 'ok', 'warn' or 'tripped', wrapped in a computed breaker.leds list.
-- [ ] **T24.7.3 - LED markup** - What: Three dots live beside the theme toggle. How: Render a data-each over breaker.leds in the phase-5 header right cluster with :class binding the state.
-- [ ] **T24.7.4 - Warn threshold** - What: Orange arrives with room to react. How: Fix the warn boundary at 80% of the daily-loss and streak limits as an exported constant, no extra setting.
-- [ ] **T24.7.5 - LED styling** - What: Lights that fit the money-hacker terminal. How: Style dots with phase-3 CSS custom properties, a soft glow, day/night variants and an @keyframes red blink when tripped.
-- [ ] **T24.7.6 - Native tooltips** - What: Exact numbers on hover with zero widget cost. How: Bind :title per dot showing current value versus limit, relying on the native browser tooltip.
-- [ ] **T24.7.7 - Click to settings** - What: One click jumps from light to limit. How: Add data-action on each dot navigating to the breaker section of the phase-7 settings panel.
-- [ ] **T24.7.8 - Reduced motion respect** - What: No blink for motion-sensitive traders. How: Wrap the blink animation in a prefers-reduced-motion: no-preference media query, falling back to solid red.
-- [ ] **T24.7.9 - Single unit test for led fn** - What: The derivation proven once. How: One Vitest test for ledStateFor covering ok, warn and tripped boundaries via npx vitest run -t ledStateFor.
-- [ ] **T24.7.10 - Merge breaker leds** - What: The LEDs land on main. How: Green targeted test plus ESLint, merge feature/f24.7-breaker-leds into main, delete the branch.
+- [x] **T24.7.1 - Branch breaker leds** - What: Isolated work on the LEDs. How: git checkout -b feature/f24.7-breaker-leds from an up-to-date main.
+- [x] **T24.7.2 - LED derivation fn** - What: One pure mapping from numbers to light colors. How: Implement ledStateFor(pct, tripped) returning 'ok', 'warn' or 'tripped', wrapped in a computed breaker.leds list.
+- [x] **T24.7.3 - LED markup** - What: Three dots live beside the theme toggle. How: Render a data-each over breaker.leds in the phase-5 header right cluster with :class binding the state.
+- [x] **T24.7.4 - Warn threshold** - What: Orange arrives with room to react. How: Fix the warn boundary at 80% of the daily-loss and streak limits as an exported constant, no extra setting.
+- [x] **T24.7.5 - LED styling** - What: Lights that fit the money-hacker terminal. How: Style dots with phase-3 CSS custom properties, a soft glow, day/night variants and an @keyframes red blink when tripped.
+- [x] **T24.7.6 - Native tooltips** - What: Exact numbers on hover with zero widget cost. How: Bind :title per dot showing current value versus limit, relying on the native browser tooltip.
+- [x] **T24.7.7 - Click to settings** - What: One click jumps from light to limit. How: Add data-action on each dot navigating to the breaker section of the phase-7 settings panel.
+- [x] **T24.7.8 - Reduced motion respect** - What: No blink for motion-sensitive traders. How: Wrap the blink animation in a prefers-reduced-motion: no-preference media query, falling back to solid red.
+- [x] **T24.7.9 - Single unit test for led fn** - What: The derivation proven once. How: One Vitest test for ledStateFor covering ok, warn and tripped boundaries via npx vitest run -t ledStateFor.
+- [x] **T24.7.10 - Merge breaker leds** - What: The LEDs land on main. How: Green targeted test plus ESLint, merge feature/f24.7-breaker-leds into main, delete the branch.
 
 ### F24.8 - Deliberate quick re-arm flow
 
