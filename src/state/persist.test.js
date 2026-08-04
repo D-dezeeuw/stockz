@@ -103,7 +103,7 @@ describe('restoreSettings', () => {
 })
 
 describe('persistSettings', () => {
-  it('writes through to storage whenever a setting changes', () => {
+  it('writes through on *any* setting, not just the two it used to watch', () => {
     const storage = fakeStorage()
     persistSettings(storage)
 
@@ -113,6 +113,23 @@ describe('persistSettings', () => {
     const written = JSON.parse(storage.dump()[STORAGE_KEY])
     expect(written.version).toBe(SETTINGS_VERSION)
     expect(written.settings.theme).toBe('day')
+
+    // This watched `theme` and `blocks` alone, so a change to anything else was written to
+    // state, rendered, and then lost on reload — the market mode, the bot's caps, the
+    // backtest assumptions, the practice stake, all of them.
+    setValue(PATHS.settings.marketMode, 'quiet')
+    tick()
+    expect(JSON.parse(storage.dump()[STORAGE_KEY]).settings.marketMode).toBe('quiet')
+
+    setValue(PATHS.settings.paperStartBalance, 250)
+    tick()
+    expect(JSON.parse(storage.dump()[STORAGE_KEY]).settings.paperStartBalance).toBe(250)
+
+    // Derived from PATHS.settings rather than listed, so a setting added later persists by
+    // existing rather than by somebody remembering to add it here.
+    setValue(PATHS.settings.modeChosen, true)
+    tick()
+    expect(JSON.parse(storage.dump()[STORAGE_KEY]).settings.modeChosen).toBe(true)
   })
 })
 
