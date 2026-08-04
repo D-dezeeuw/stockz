@@ -40,6 +40,7 @@
   <link rel="stylesheet" href="./src/styles/accents.css">
   <link rel="stylesheet" href="./src/styles/status.css">
   <link rel="stylesheet" href="./src/styles/states.css">
+  <link rel="stylesheet" href="./src/styles/ladder.css">
   <link rel="stylesheet" href="./src/styles/utilities.css">
 
   <!-- The UI engine, straight from the CDN. Pinned to an exact version: the live page
@@ -146,7 +147,33 @@
             <span>{{block.error}}</span>
           </div>
           <div data-if="block.status === 'ready'">
-            <p class="label">ready</p>
+            <!-- The ladder block. Rows are DOM, not canvas: they are click targets for
+                 the order ticket, and a canvas row cannot be one. -->
+            <div class="ladder" data-if="block.id === 'ladder'">
+              <div class="ladder__side ladder__side--ask" data-each="row in market.ladder.asks">
+                <div class="ladder__row ladder__row--ask" :style="'--bar:' + row.pct + '%'"
+                     data-action="click" data-fn="book.prefill" data-side="sell">
+                  <span class="ladder__price">{{row.priceLabel}}</span>
+                  <span class="ladder__size">{{row.sizeLabel}}</span>
+                  <span class="ladder__total">{{row.total}}</span>
+                </div>
+              </div>
+              <div class="ladder__spread"
+                   :class="market.ladder.spread &amp;&amp; market.ladder.spread.crossed
+                     ? 'ladder__spread ladder__spread--crossed' : 'ladder__spread'">
+                <span class="ladder__mid">{{market.ladder.spread ? market.ladder.spread.midLabel : '—'}}</span>
+                <span class="ladder__ticks">{{market.ladder.spread ? market.ladder.spread.spreadLabel : '—'}}</span>
+              </div>
+              <div class="ladder__side ladder__side--bid" data-each="row in market.ladder.bids">
+                <div class="ladder__row ladder__row--bid" :style="'--bar:' + row.pct + '%'"
+                     data-action="click" data-fn="book.prefill" data-side="buy">
+                  <span class="ladder__price">{{row.priceLabel}}</span>
+                  <span class="ladder__size">{{row.sizeLabel}}</span>
+                  <span class="ladder__total">{{row.total}}</span>
+                </div>
+              </div>
+            </div>
+            <p class="label" data-if="block.id !== 'ladder'">ready</p>
           </div>
         </div>
       </section>

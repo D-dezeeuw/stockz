@@ -10,6 +10,16 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ## [Unreleased]
 
+### Added
+
+- **Depth ladder** — bid/ask levels with proportional size bars, cumulative size (what a
+  sweep through a level would actually cost), and a spread row quoting the cost in
+  *ticks*, the unit that decides whether a scalp clears its own cost. Both sides share
+  one scale so a 10-lot bid and a 10-lot ask draw the same width, and the whole view
+  derives from a single book snapshot — three separate computeds could each land on a
+  different frame and show a spread that never existed. A crossed book is flagged, not
+  averaged. (F14.1)
+
 ## [0.13.0] — 2026-08-04 — Phase 13: Micro-Charts & Sparklines
 
 Price action at tick resolution in every block: the raw wiggle, micro-candles with
