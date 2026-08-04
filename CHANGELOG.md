@@ -12,6 +12,14 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ### Added
 
+- **Book integrity & resync hardening** — a depth feed does not fail loudly: the socket
+  stays open, the frames stop, and the ladder shows its last book indefinitely, looking
+  exactly like a quiet market. So the book now carries an explicit status. Deltas
+  arriving mid-resync cannot talk it back into `live` — only a fresh snapshot can — and
+  while it is degraded the ladder dims and click-to-trade refuses, because a click on a
+  stale ladder is a click on a price that may no longer exist. Resubscribes back off
+  exponentially with jitter, so clients that dropped in one outage do not re-create it by
+  reconnecting together. (F14.10)
 - **Windowed tape rendering** — the DOM holds the rows on screen plus overscan, with
   spacers standing in for the rest so the scrollbar still reflects the whole tape, and
   arriving prints buffer and drain once per frame rather than writing state a thousand

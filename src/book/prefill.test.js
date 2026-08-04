@@ -55,6 +55,7 @@ describe('registerPrefillActions', () => {
     expect(name).toBe('book.prefill')
 
     setValue('settings.defaultSize', 0.25)
+    setValue('market.bookStatus', 'live')
     tick()
 
     expect(dispatchAction(name, { price: 100.5, side: 'ask', tickSize: 0.1 })).toBe(true)
@@ -76,6 +77,14 @@ describe('registerPrefillActions', () => {
 
     // A click with no price leaves the ticket exactly as it was.
     expect(dispatchAction(name, {})).toBe(false)
+    tick()
+    expect(appState.trade.ticketPrice).toBe(99)
+
+    // A stale or resyncing ladder shows prices that may no longer exist, so a click on
+    // it must not reach the ticket at all.
+    setValue('market.bookStatus', 'resyncing')
+    tick()
+    expect(dispatchAction(name, { price: 50, side: 'bid' })).toBe(false)
     tick()
     expect(appState.trade.ticketPrice).toBe(99)
   })

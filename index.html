@@ -149,7 +149,12 @@
           <div data-if="block.status === 'ready'">
             <!-- The ladder block. Rows are DOM, not canvas: they are click targets for
                  the order ticket, and a canvas row cannot be one. -->
-            <div class="ladder" data-if="block.id === 'ladder'">
+            <div class="ladder" data-if="block.id === 'ladder'"
+                 :class="market.bookStatus === 'live' ? 'ladder' : 'ladder ladder--degraded'">
+              <!-- Book health on the ladder itself: a frozen book looks exactly like a
+                   quiet market, which is the dangerous state. -->
+              <span class="chip chip--warn" data-if="market.bookStatus === 'stale'">STALE</span>
+              <span class="chip chip--warn" data-if="market.bookStatus === 'resyncing'">RESYNC</span>
               <!-- Granularity: whole multiples of the tick, so no bucket boundary ever
                    lands between two quotable prices. -->
               <div class="ladder__groups">

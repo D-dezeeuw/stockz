@@ -3,6 +3,7 @@ import { PATHS } from '../state/paths.js'
 import { registerAction } from '../actions/registry.js'
 import { ACTIONS } from '../actions/names.js'
 import { roundToTick } from '../utils/math.js'
+import { canTradeBook } from './integrity.js'
 
 /**
  * Click-to-trade prefill.
@@ -60,6 +61,10 @@ export function ticketFromClick(click) {
  */
 export function registerPrefillActions() {
   registerAction(ACTIONS.book.prefill, (_state, payload) => {
+    // An O(1) check before anything else: a click on a stale ladder is a click on a
+    // price that may no longer exist, and the ticket must not carry it.
+    if (payload?.force !== true && !canTradeBook(appState.market?.bookStatus)) return false
+
     const ticket = ticketFromClick({
       price: payload?.price ?? payload?.px,
       column: payload?.side ?? payload?.column,
