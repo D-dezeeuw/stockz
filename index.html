@@ -944,8 +944,10 @@
         <label class="field field--row">
           <input type="checkbox" data-action="change" data-fn="keys.remember"
                  :checked="settings.rememberCredentials">
-          <span class="label">Remember on this browser — survives a reload, and anything
-                running on this origin can read them. Off by default.</span>
+          <span class="label">Remember on this browser — encrypted with a key the page
+                cannot read, so a copied browser profile or a glance at devtools yields
+                ciphertext. Script running on this origin can still use it; scope the key
+                at the venue (trade-only, IP allowlist) for the risk that actually matters.</span>
         </label>
         <p class="label">Or open the desk with
           <code>?okxKey=…&amp;okxSecret=…&amp;okxPass=…</code> — the params are read once and
