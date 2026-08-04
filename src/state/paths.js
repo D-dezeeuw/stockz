@@ -33,6 +33,7 @@ export const NAMESPACES = Object.freeze([
   'bot',
   'breaker',
   'journal',
+  'replay',
 ])
 
 /** Namespaces that survive a reload (written to localStorage by spektrum/persist). */
@@ -234,6 +235,15 @@ export const PATHS = Object.freeze({
     lastRearm: 'breaker.lastRearm',
     log: 'breaker.log',
     limits: 'breaker.limits',
+  }),
+  replay: Object.freeze({
+    active: 'replay.active',
+    cursor: 'replay.cursor',
+    total: 'replay.total',
+    trade: 'replay.trade',
+    speed: 'replay.speed',
+    label: 'replay.label',
+    error: 'replay.error',
   }),
   journal: Object.freeze({
     trades: 'journal.trades',

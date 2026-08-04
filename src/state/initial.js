@@ -223,6 +223,15 @@ export function initialState(overrides = {}) {
     [PATHS.breaker.log]: [],
     [PATHS.breaker.limits]: [],
 
+    // replay
+    [PATHS.replay.active]: false,
+    [PATHS.replay.cursor]: 0,
+    [PATHS.replay.total]: 0,
+    [PATHS.replay.trade]: null,
+    [PATHS.replay.speed]: 1,
+    [PATHS.replay.label]: '',
+    [PATHS.replay.error]: '',
+
     // journal
     [PATHS.journal.trades]: [],
     [PATHS.journal.count]: 0,
