@@ -72,3 +72,19 @@
 [data-cloak] {
   visibility: hidden;
 }
+
+/*
+ * Present to assistive tech and to the file picker, absent to the eye. Used for the native
+ * file input behind a styled label: `display: none` would take it out of the accessibility
+ * tree along with the keyboard, and the import control has to be reachable without a mouse.
+ */
+.visually-hidden {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

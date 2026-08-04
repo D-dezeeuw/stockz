@@ -113,6 +113,46 @@
   font-size: var(--fs-0);
 }
 
+.journal__import {
+  cursor: pointer;
+}
+
+.journal__error {
+  margin: 0;
+  color: var(--orange);
+  font-size: var(--fs-0);
+}
+
+/*
+ * The transport. Fixed at the foot of the screen because it is the one control that must be
+ * reachable from anywhere in a session you are standing inside, and loud because a desk in
+ * replay looks identical to a live one until you notice this bar.
+ */
+.transport {
+  position: fixed;
+  inset-block-end: 0;
+  inset-inline: 0;
+  z-index: 45;
+  display: flex;
+  gap: var(--sp-2);
+  align-items: center;
+  padding: var(--sp-1) var(--sp-3);
+  border-block-start: 1px solid var(--orange);
+  background: var(--bg-raised);
+}
+
+.transport__badge {
+  color: var(--orange);
+  font-size: var(--fs-1);
+  letter-spacing: 0.16em;
+}
+
+.transport__scrub {
+  flex: 1;
+  min-inline-size: 6rem;
+  accent-color: var(--orange);
+}
+
 .journal__pins {
   display: flex;
   flex-wrap: wrap;

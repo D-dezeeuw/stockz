@@ -63,6 +63,13 @@ export const ACTIONS = Object.freeze({
     live: 'journal.live',
     export: 'journal.export',
   }),
+  replay: Object.freeze({
+    step: 'replay.step',
+    seek: 'replay.seek',
+    speed: 'replay.speed',
+    exit: 'replay.exit',
+    import: 'replay.import',
+  }),
   bot: Object.freeze({
     toggleArm: 'bot.toggleArm',
     setAuto: 'bot.setAuto',

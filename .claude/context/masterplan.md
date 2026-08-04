@@ -4150,16 +4150,16 @@
 **What:** Any exported session loads back in and replays step by step, letting the user re-live and dissect a past trading day.
 **How:** File picker plus drag-drop importing validated JSON into Spektrum replay() with play, pause, step and speed controls in a replay bar.
 
-- [ ] **T25.6.1 - Cut import branch** - What: Replay work isolated from main. How: git checkout -b feature/f25.6-session-import from main.
-- [ ] **T25.6.2 - Build the import entry points** - What: Sessions load via a file picker or dropping a file on the journal. How: Hidden file input plus dragover/drop handlers on the journal block reading the file with FileReader, gunzipping .gz via DecompressionStream.
-- [ ] **T25.6.3 - Implement validateSession()** - What: Corrupt or incompatible files are rejected with a clear reason. How: validateSession(json) in src/journal/import.js checking schemaVersion, required envelope keys and trade array shape, returning ok or an error string.
-- [ ] **T25.6.4 - Load into the replay harness** - What: An imported session becomes a navigable timeline. How: Feed the validated payload into Spektrum replay() initialized paused at step zero, tracking position in state.replay.cursor.
-- [ ] **T25.6.5 - Enforce replay-only mode** - What: No live order can ever fire while browsing a past session. How: setValue('replay.active', true) on import and gate every venue-facing data-intent and action behind that flag.
-- [ ] **T25.6.6 - Build transport controls** - What: Play, pause, step forward, step back and speed at the user's fingertips. How: Replay bar component with data-action buttons calling defineFn transport fns that advance replay() and a speed multiplier select.
-- [ ] **T25.6.7 - Add the progress scrubber** - What: Jump anywhere in the session by dragging. How: Range input bound with data-model to replay.cursor that seeks replay() to the chosen step on input, showing step count and timestamp.
-- [ ] **T25.6.8 - Implement exit-to-live** - What: Leaving replay cleanly restores the live desk. How: defineFn exitReplay() that discards replay state, replay()s to the pre-import live checkpoint and clears replay.active.
-- [ ] **T25.6.9 - Write single unit tests for import fns** - What: validateSession and the transport step fn each proven once. How: One Vitest test per function in import.test.js with valid and broken fixtures, run via vitest run -t.
-- [ ] **T25.6.10 - Verify and merge import** - What: Import and replay reach main green. How: Run targeted tests, round-trip an export through import and scrub it fully, then merge the feature branch.
+- [x] **T25.6.1 - Cut import branch** - What: Replay work isolated from main. How: git checkout -b feature/f25.6-session-import from main.
+- [x] **T25.6.2 - Build the import entry points** - What: Sessions load via a file picker or dropping a file on the journal. How: Hidden file input plus dragover/drop handlers on the journal block reading the file with FileReader, gunzipping .gz via DecompressionStream.
+- [x] **T25.6.3 - Implement validateSession()** - What: Corrupt or incompatible files are rejected with a clear reason. How: validateSession(json) in src/journal/import.js checking schemaVersion, required envelope keys and trade array shape, returning ok or an error string.
+- [x] **T25.6.4 - Load into the replay harness** - What: An imported session becomes a navigable timeline. How: Feed the validated payload into Spektrum replay() initialized paused at step zero, tracking position in state.replay.cursor.
+- [x] **T25.6.5 - Enforce replay-only mode** - What: No live order can ever fire while browsing a past session. How: setValue('replay.active', true) on import and gate every venue-facing data-intent and action behind that flag.
+- [x] **T25.6.6 - Build transport controls** - What: Play, pause, step forward, step back and speed at the user's fingertips. How: Replay bar component with data-action buttons calling defineFn transport fns that advance replay() and a speed multiplier select.
+- [x] **T25.6.7 - Add the progress scrubber** - What: Jump anywhere in the session by dragging. How: Range input bound with data-model to replay.cursor that seeks replay() to the chosen step on input, showing step count and timestamp.
+- [x] **T25.6.8 - Implement exit-to-live** - What: Leaving replay cleanly restores the live desk. How: defineFn exitReplay() that discards replay state, replay()s to the pre-import live checkpoint and clears replay.active.
+- [x] **T25.6.9 - Write single unit tests for import fns** - What: validateSession and the transport step fn each proven once. How: One Vitest test per function in import.test.js with valid and broken fixtures, run via vitest run -t.
+- [x] **T25.6.10 - Verify and merge import** - What: Import and replay reach main green. How: Run targeted tests, round-trip an export through import and scrub it fully, then merge the feature branch.
 
 ### F25.7 - Journal Block with Filters
 

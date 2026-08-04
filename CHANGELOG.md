@@ -83,6 +83,20 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
   immediately: a held one keeps the whole session's JSON alive for the life of the tab. A
   serialize failure exports the journal alone rather than nothing, since the trades are the
   part nobody can reconstruct and the state tree is the part nobody needs to.
+- **Import a session and walk through it** — and the single rule the feature lives or dies by:
+  **a replayed session can never send an order.** A trader scrubbing through yesterday
+  afternoon is looking at prices that are not real and positions that are not held, so one
+  working buy button there is not a bug — it is a market order at a price that stopped
+  existing hours ago. The gate is a hard predicate on the one path every order takes, raised
+  *before* the payload lands rather than after, because one frame of a live ticket over
+  replayed prices is one frame too many. The live head is pinned before the import, so leaving
+  is always possible: a trader who loaded a file and could not get back to their desk has lost
+  the desk. A file from a newer build is refused by name rather than half-read, since a
+  session loaded by something that does not understand half its keys replays a day that never
+  happened. The transport steps rather than scrubs a timeline, because the question is never
+  "what happened" but "what did I see at the moment I clicked"; it clamps at both ends rather
+  than wrapping, and the speed snaps to the offered set with ties going to the slower option —
+  being asked to keep up is the failure mode here.
 
 ## [0.24.0] — 2026-08-04 — Phase 24: Circuit Breakers & Risk Kill Switch
 

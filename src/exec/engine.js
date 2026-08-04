@@ -12,6 +12,7 @@ import { captureIntent, scoreFill } from '../hud/quality.js'
 import { recordFee } from '../hud/fees.js'
 import { routeExecAlert } from '../alerts/exec.js'
 import { dailyLossCheck, orderChecks, breakerRejection, isExit, TRIP } from '../breakers/index.js'
+import { liveOnly } from '../journal/import.js'
 import { createLogger } from '../utils/log.js'
 
 const log = createLogger('exec')
@@ -132,6 +133,11 @@ export async function submit(input, deps = {}) {
   // is how a session that crosses a clock adjustment reports negative latencies.
   const { now = () => Date.now(), clock = monotonic } = deps
   const at = now()
+
+  // The replay gate, before anything else. A trader scrubbing through yesterday is looking
+  // at prices that are not real and positions that are not held; an order sent from inside
+  // one is a market order at a price that stopped existing hours ago.
+  if (!liveOnly()) return { ok: false, clientId: '', reason: 'viewing history' }
 
   const market = deskMarket()
   const { ok, intent, reason } = prepare(input, market)

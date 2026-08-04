@@ -26,6 +26,7 @@ import { registerLogActions as registerBreakerLogActions } from '../breakers/log
 import { registerTagActions } from '../journal/tags.js'
 import { registerCheckpointActions } from '../journal/checkpoints.js'
 import { registerExportActions } from '../journal/export.js'
+import { registerImportActions } from '../journal/import.js'
 import { registerStrategyActions } from '../strategy/registry.js'
 import { registerTicketActions } from '../ticket/actions.js'
 import { registerSizingActions } from '../ticket/sizing.js'
@@ -89,6 +90,11 @@ describe('allActionNames', () => {
       'journal.jump',
       'journal.live',
       'journal.export',
+      'replay.step',
+      'replay.seek',
+      'replay.speed',
+      'replay.exit',
+      'replay.import',
       'bot.toggleArm',
       'bot.setAuto',
       'bot.disableAll',
@@ -159,6 +165,7 @@ describe('allActionNames', () => {
     registerTagActions()
     registerCheckpointActions()
     registerExportActions()
+    registerImportActions()
     registerStrategyActions()
     registerTicketActions()
     registerSizingActions()
