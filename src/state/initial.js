@@ -86,6 +86,7 @@ export function initialState(overrides = {}) {
       tone: 'ok',
     },
     [PATHS.ui.hudRow]: [],
+    [PATHS.ui.strategyForm]: [],
     [PATHS.ui.hud]: {
       latencyMs: 0,
       latencyGrade: 'warn',
@@ -110,6 +111,7 @@ export function initialState(overrides = {}) {
     ),
     [PATHS.settings.presets]: {},
     [PATHS.settings.priceGroups]: {},
+    [PATHS.settings.strategyParams]: {},
     [PATHS.settings.tapeFloors]: {},
     [PATHS.settings.chords]: {},
     [PATHS.settings.watchlists]: [],

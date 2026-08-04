@@ -43,6 +43,7 @@ describe('allActionNames', () => {
       'ui.paletteRun',
       'ui.toggleCompactHud',
       'strategy.stop',
+      'strategy.setParam',
       'book.prefill',
       'book.setGroup',
       'book.setFloor',

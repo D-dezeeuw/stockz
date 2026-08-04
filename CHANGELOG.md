@@ -12,6 +12,16 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ### Added
 
+- **Auto-built strategy tuning** — an author declares `{kind, min, max, step, default}` per
+  param and **the form builds itself**; no strategy ever ships its own settings UI, because
+  the moment tuning needs hand-written markup half of them ship without it and get tuned by
+  editing source. Every value is coerced against the schema on the way *in* — a number
+  input hands back a string, a saved preset can be years old, and a param that reaches a
+  strategy as `"20"` or as `NaN` is a position sized wrong. Numbers snap to their step
+  *relative to min*, so a step of 5 on a floor of 2 offers 2/7/12 rather than 0/5/10. A
+  change applies **within the tick and re-runs `init`**, since a threshold computed from a
+  lookback at start would otherwise outlive the form that changed it, and a tuning behind a
+  restart button is one nobody uses mid-session — the only time it matters.
 - **Strategy registry and run lifecycle** — a strategy is *registered* once and **run**
   many times, one run per instrument, each with its own params, its own init state and its
   own tick subscription. Keeping those two ideas apart is what lets the same idea sit on

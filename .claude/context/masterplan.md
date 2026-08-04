@@ -3267,16 +3267,16 @@
 **What:** Tune any strategy from an auto-built settings form, no hand-made UI per strategy ever.
 **How:** Param schema entries {name,type,min,max,step,default} rendered by data-each into inputs with data-model two-way binding and persisted values.
 
-- [ ] **T20.3.1 - Start params branch** - What: Clean slate for schema plumbing. How: git checkout -b feature/f20.3-param-schema from main.
-- [ ] **T20.3.2 - validateParamSchema fn** - What: Malformed schemas rejected before they reach the UI. How: Pure fn checking name uniqueness, type membership and min/max/step sanity, throwing per field.
-- [ ] **T20.3.3 - defaultsFromSchema fn** - What: Every strategy starts with sane values. How: Pure fn folding schema entries into a defaults object used at first start.
-- [ ] **T20.3.4 - coerceParam fn** - What: User input can never smuggle bad types into a strategy. How: Pure fn casting, clamping to min/max and snapping to step per schema entry.
-- [ ] **T20.3.5 - fieldDescriptor fn** - What: Schema entries become renderable field specs. How: Pure fn mapping each entry to input type, label and binding path for the form template.
-- [ ] **T20.3.6 - Settings form template** - What: A form appears for any strategy automatically. How: data-each over descriptors emitting number/select/checkbox inputs bound with data-model to strategy param paths.
-- [ ] **T20.3.7 - Param persistence** - What: Tuned values survive reloads per strategy. How: Sync strategy.params.<id> slices through spektrum/persist to localStorage.
-- [ ] **T20.3.8 - Live re-init on change** - What: Tweaks apply within one tick, no restart button. How: watch() on each running strategy's param slice re-running init with coerced values.
-- [ ] **T20.3.9 - Single tests for param fns** - What: Validation, defaults, coercion and mapping proven separately. How: One Vitest test per fn with edge-value fixtures, run via npx vitest run -t names.
-- [ ] **T20.3.10 - Merge param system** - What: Zero-effort strategy tuning live. How: Green lint plus targeted runs, merge feature/f20.3 into main.
+- [x] **T20.3.1 - Start params branch** - What: Clean slate for schema plumbing. How: git checkout -b feature/f20.3-param-schema from main.
+- [x] **T20.3.2 - validateParamSchema fn** - What: Malformed schemas rejected before they reach the UI. How: Pure fn checking name uniqueness, type membership and min/max/step sanity, throwing per field.
+- [x] **T20.3.3 - defaultsFromSchema fn** - What: Every strategy starts with sane values. How: Pure fn folding schema entries into a defaults object used at first start.
+- [x] **T20.3.4 - coerceParam fn** - What: User input can never smuggle bad types into a strategy. How: Pure fn casting, clamping to min/max and snapping to step per schema entry.
+- [x] **T20.3.5 - fieldDescriptor fn** - What: Schema entries become renderable field specs. How: Pure fn mapping each entry to input type, label and binding path for the form template.
+- [x] **T20.3.6 - Settings form template** - What: A form appears for any strategy automatically. How: data-each over descriptors emitting number/select/checkbox inputs bound with data-model to strategy param paths.
+- [x] **T20.3.7 - Param persistence** - What: Tuned values survive reloads per strategy. How: Sync strategy.params.<id> slices through spektrum/persist to localStorage.
+- [x] **T20.3.8 - Live re-init on change** - What: Tweaks apply within one tick, no restart button. How: watch() on each running strategy's param slice re-running init with coerced values.
+- [x] **T20.3.9 - Single tests for param fns** - What: Validation, defaults, coercion and mapping proven separately. How: One Vitest test per fn with edge-value fixtures, run via npx vitest run -t names.
+- [x] **T20.3.10 - Merge param system** - What: Zero-effort strategy tuning live. How: Green lint plus targeted runs, merge feature/f20.3 into main.
 
 ### F20.4 - Signal shape and normalization
 

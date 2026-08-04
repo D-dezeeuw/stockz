@@ -70,6 +70,7 @@ export const PATHS = Object.freeze({
     session: 'ui.session',
     fees: 'ui.fees',
     hudRow: 'ui.hudRow',
+    strategyForm: 'ui.strategyForm',
     captureFor: 'ui.captureFor',
     capturePreview: 'ui.capturePreview',
   }),
@@ -101,6 +102,7 @@ export const PATHS = Object.freeze({
     spreadLimitBps: 'settings.spreadLimitBps',
     tradesPerHourTarget: 'settings.tradesPerHourTarget',
     compactHud: 'settings.compactHud',
+    strategyParams: 'settings.strategyParams',
     chords: 'settings.chords',
   }),
   market: Object.freeze({
