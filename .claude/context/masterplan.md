@@ -2146,16 +2146,16 @@
 **What:** Your buy and sell fills drawn on the chart exactly where they happened - instant execution feedback.
 **How:** Map the phase 18 executions store to triangle markers via the scale fns, with clustering and hover hit-testing.
 
-- [ ] **T13.6.1 - Branch fill marker work** - What: Execution overlays developed in isolation. How: git checkout -b feature/13-6-fill-markers from main.
-- [ ] **T13.6.2 - Build the fills adapter** - What: Chart-ready marker data per instrument. How: Spektrum computed mapping the executions store into ts/px/side/size marker records.
-- [ ] **T13.6.3 - Implement layoutMarkers** - What: Markers placed at exact trade coordinates. How: Pure fn projecting records through timeToX/priceToY and dropping fills outside the window.
-- [ ] **T13.6.4 - Draw triangle glyphs** - What: Buys and sells distinguishable in a blink. How: Path2D up-triangles in green below buy fills, down-triangles in orange above sell fills.
-- [ ] **T13.6.5 - Implement clusterFills** - What: Rapid-fire scalps stay readable, never a smear. How: Pure fn merging markers closer than 8px into one glyph carrying a count.
-- [ ] **T13.6.6 - Implement hitTestMarker** - What: Hover a fill to inspect price, size, and time. How: Distance-check fn against laid-out markers feeding details into the crosshair readout.
-- [ ] **T13.6.7 - Watch executions for dirty marks** - What: New fills appear the moment they print. How: Spektrum watch on the fills store marking the marker overlay dirty.
-- [ ] **T13.6.8 - Style cluster badges** - What: Fill counts readable at a glance. How: Mini pill badges using the palette marker role with theme-aware contrast.
-- [ ] **T13.6.9 - Write single unit tests for marker fns** - What: Clustering and hit-testing locked. How: One Vitest test each for clusterFills and hitTestMarker, run individually via vitest run -t.
-- [ ] **T13.6.10 - Verify and merge fill markers** - What: Every scalp visible on the wiggle it caught. How: Targeted tests green with simulated fills, then merge feature/13-6-fill-markers into main.
+- [x] **T13.6.1 - Branch fill marker work** - What: Execution overlays developed in isolation. How: git checkout -b feature/13-6-fill-markers from main.
+- [x] **T13.6.2 - Build the fills adapter** - What: Chart-ready marker data per instrument. How: Spektrum computed mapping the executions store into ts/px/side/size marker records.
+- [x] **T13.6.3 - Implement layoutMarkers** - What: Markers placed at exact trade coordinates. How: Pure fn projecting records through timeToX/priceToY and dropping fills outside the window.
+- [x] **T13.6.4 - Draw triangle glyphs** - What: Buys and sells distinguishable in a blink. How: Path2D up-triangles in green below buy fills, down-triangles in orange above sell fills.
+- [x] **T13.6.5 - Implement clusterFills** - What: Rapid-fire scalps stay readable, never a smear. How: Pure fn merging markers closer than 8px into one glyph carrying a count.
+- [x] **T13.6.6 - Implement hitTestMarker** - What: Hover a fill to inspect price, size, and time. How: Distance-check fn against laid-out markers feeding details into the crosshair readout.
+- [x] **T13.6.7 - Watch executions for dirty marks** - What: New fills appear the moment they print. How: Spektrum watch on the fills store marking the marker overlay dirty.
+- [x] **T13.6.8 - Style cluster badges** - What: Fill counts readable at a glance. How: Mini pill badges using the palette marker role with theme-aware contrast.
+- [x] **T13.6.9 - Write single unit tests for marker fns** - What: Clustering and hit-testing locked. How: One Vitest test each for clusterFills and hitTestMarker, run individually via vitest run -t.
+- [x] **T13.6.10 - Verify and merge fill markers** - What: Every scalp visible on the wiggle it caught. How: Targeted tests green with simulated fills, then merge feature/13-6-fill-markers into main.
 
 ### F13.7 - Price Level Lines
 
