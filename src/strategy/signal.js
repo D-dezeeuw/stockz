@@ -1,6 +1,7 @@
 import { setValue, appState } from '../app/engine.js'
 import { PATHS } from '../state/paths.js'
 import { toSignal } from './contract.js'
+import { appendSignal } from './history.js'
 
 /**
  * The one dialect every strategy speaks.
@@ -115,6 +116,10 @@ export function flatten(signal, now) {
 export function publishSignal(runKey, signal) {
   const key = String(runKey ?? '')
   if (!key) return signal
+
+  // Remembered on the same call that publishes it: a history appended from a second place
+  // would eventually miss an emission path nobody thought to update.
+  appendSignal(key, signal)
 
   setValue(PATHS.strategy.signals, {
     ...(appState.strategy?.signals ?? {}),

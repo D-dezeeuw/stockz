@@ -10,6 +10,7 @@ import { normalizeSignal, publishSignal, sweepSignals, signalChip } from './sign
 import { sessionKey } from '../positions/ledger.js'
 import { measureTick, recordCost, shouldRunTick, DEFAULT_BUDGET_MS } from './budget.js'
 import { recordResult, release, resetSandbox, isQuarantined } from './sandbox.js'
+import { snapshotRing, resetHistory } from './history.js'
 
 /**
  * Who is registered, and what is running where.
@@ -207,6 +208,9 @@ export function publishRunning() {
     costMs: Number((Number(run.costMs) || 0).toFixed(2)),
     stride: run.stride,
     throttled: run.throttled === true,
+    // The last few calls, so a decision can be read in context without opening the
+    // journal.
+    recent: snapshotRing(run.key, 5).slice().reverse(),
   }))
 
   setValue(PATHS.strategy.running, rows)
@@ -223,6 +227,7 @@ export function resetStrategies() {
   runs.clear()
   known.clear()
   resetSandbox()
+  resetHistory()
   sessionDay = ''
   return true
 }
