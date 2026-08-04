@@ -317,10 +317,17 @@
         <p class="block__state-title">hotkeys</p>
         <div class="keysheet" data-each="row in ui.chordSheet">
           <div class="keysheet__row">
-            <kbd class="keysheet__chord">{{row.key}}</kbd>
+            <!-- Click the chord to rebind it: press the keys, Enter saves. Typing a
+                 chord as text is a thing nobody gets right. -->
+            <button type="button" class="keysheet__chord" data-action="click"
+                    data-fn="keys.capture" :data-action-name="row.action"
+                    :class="ui.captureFor === row.action
+                      ? 'keysheet__chord keysheet__chord--recording' : 'keysheet__chord'">{{ui.captureFor === row.action &amp;&amp; ui.capturePreview ? ui.capturePreview.label : row.key}}</button>
             <span class="keysheet__label">{{row.label}}</span>
           </div>
         </div>
+        <p class="ticket__reject" data-if="ui.capturePreview &amp;&amp; ui.capturePreview.reason">{{ui.capturePreview.reason}}</p>
+        <button type="button" class="chip" data-action="click" data-fn="keys.resetBindings">reset to defaults</button>
         <button type="button" class="chip" data-action="click" data-fn="ui.toggleOverlay"
                 data-modal="">close</button>
       </div>

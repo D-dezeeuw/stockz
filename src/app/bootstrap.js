@@ -33,6 +33,7 @@ import { registerBindingActions } from '../keys/overrides.js'
 import { registerPaletteActions } from '../keys/palette.js'
 import { trackBlockFocus } from '../keys/scopes.js'
 import { registerPanicAction } from '../keys/panic.js'
+import { registerCaptureActions } from '../keys/capture.js'
 import { createRepeater, guardRepeat } from '../keys/repeat.js'
 import { appVersion } from './version.js'
 
@@ -93,6 +94,7 @@ export function bootstrap(options = {}) {
   registerBindingActions()
   registerPaletteActions()
   registerPanicAction()
+  registerCaptureActions()
   adoptKeys()
   applyTheme(doc?.documentElement?.getAttribute?.('data-theme') || preferredTheme(), doc)
   const derived = registerDerived()

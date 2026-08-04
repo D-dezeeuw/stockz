@@ -10,8 +10,20 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ## [Unreleased]
 
+## [0.16.0] — 2026-08-04 — Phase 16: Hotkeys & Command Palette
+
+Hands never leave the keyboard: a scoped keymap over the desk's own actions, a stock
+scalper layout, live rebinding by pressing the keys, a Ctrl+K palette that teaches its
+own shortcuts, hold-to-repeat price walking, and a double-Escape panic exit.
+
 ### Added
 
+- **Rebind by doing** — click a chord on the cheat sheet, press the keys, Enter saves.
+  Typing a chord as text is a thing nobody gets right, and it makes the trader translate
+  from what their fingers do into a spelling. The conflict check runs *while* recording,
+  so "is this key free?" is answered before the commitment rather than after, and nothing
+  commits until Enter — a chord that saved on the first press could never be corrected.
+  (F16.10)
 - **Hold-to-repeat nudge** — hold an arrow and the price walks, accelerating from one
   step per 350ms down to 40ms, so a tap is exactly one tick and a hold covers real
   distance. Only allow-listed actions may repeat: a stuck key repeating *submit* would be
@@ -636,7 +648,8 @@ with a test policy and a live URL.
   literal `APP_VERSION` (a JSON import is bundler-only), guarded by a test that fails if
   it drifts from `package.json`; static assets moved from `public/` to the repo root.
 
-[Unreleased]: https://github.com/D-dezeeuw/stockz/compare/v0.15.0...HEAD
+[Unreleased]: https://github.com/D-dezeeuw/stockz/compare/v0.16.0...HEAD
+[0.16.0]: https://github.com/D-dezeeuw/stockz/compare/v0.15.0...v0.16.0
 [0.15.0]: https://github.com/D-dezeeuw/stockz/compare/v0.14.0...v0.15.0
 [0.14.0]: https://github.com/D-dezeeuw/stockz/compare/v0.13.0...v0.14.0
 [0.13.0]: https://github.com/D-dezeeuw/stockz/compare/v0.12.0...v0.13.0

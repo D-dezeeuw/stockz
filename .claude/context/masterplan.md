@@ -2711,16 +2711,16 @@
 **What:** Rebind by doing - click a field, press the keys, done.
 **How:** Reusable capture element recording the next chord via normalizeChord() with live conflict checks and a save or cancel flow.
 
-- [ ] **T16.10.1 - Capture branch** - What: Final branch closing out the phase. How: Branch feature/f16-10-capture from main.
-- [ ] **T16.10.2 - Component scaffold** - What: A drop-in rebind control. How: src/keys/capture.js template with a data-ref field and a capture.recording state key.
-- [ ] **T16.10.3 - Recording mode** - What: Press the keys, see the chord. How: Click-to-record swallows the next keydown and previews it live via {{capture.preview}}.
-- [ ] **T16.10.4 - acceptChord() rules** - What: Only valid chords can be saved. How: Reject bare modifiers and RESERVED_CHORDS before the chord reaches applyOverride.
-- [ ] **T16.10.5 - Live conflict preview** - What: Clashes visible before saving. How: Run findConflicts() during recording and surface the F16.4 banner inline.
-- [ ] **T16.10.6 - Save and cancel flow** - What: Commit or back out cleanly. How: Enter saves through applyOverride(); Escape aborts and restores the previous chord.
-- [ ] **T16.10.7 - Settings row integration** - What: Rebinding lives where keys are listed. How: Mount one capture component per row of the F16.3 bindings list.
-- [ ] **T16.10.8 - Capture styling** - What: Recording state impossible to miss. How: Orange glow on the armed field and kbd-chip rendering of the saved chord.
-- [ ] **T16.10.9 - Single test acceptChord** - What: Validation rules pinned down. How: One Vitest test over modifier-only and reserved cases via vitest -t acceptChord.
-- [ ] **T16.10.10 - Merge capture** - What: Complete rebinding UX on main. How: Lint plus targeted test green, merge feature/f16-10-capture.
+- [x] **T16.10.1 - Capture branch** - What: Final branch closing out the phase. How: Branch feature/f16-10-capture from main.
+- [x] **T16.10.2 - Component scaffold** - What: A drop-in rebind control. How: src/keys/capture.js template with a data-ref field and a capture.recording state key.
+- [x] **T16.10.3 - Recording mode** - What: Press the keys, see the chord. How: Click-to-record swallows the next keydown and previews it live via {{capture.preview}}.
+- [x] **T16.10.4 - acceptChord() rules** - What: Only valid chords can be saved. How: Reject bare modifiers and RESERVED_CHORDS before the chord reaches applyOverride.
+- [x] **T16.10.5 - Live conflict preview** - What: Clashes visible before saving. How: Run findConflicts() during recording and surface the F16.4 banner inline.
+- [x] **T16.10.6 - Save and cancel flow** - What: Commit or back out cleanly. How: Enter saves through applyOverride(); Escape aborts and restores the previous chord.
+- [x] **T16.10.7 - Settings row integration** - What: Rebinding lives where keys are listed. How: Mount one capture component per row of the F16.3 bindings list.
+- [x] **T16.10.8 - Capture styling** - What: Recording state impossible to miss. How: Orange glow on the armed field and kbd-chip rendering of the saved chord.
+- [x] **T16.10.9 - Single test acceptChord** - What: Validation rules pinned down. How: One Vitest test over modifier-only and reserved cases via vitest -t acceptChord.
+- [x] **T16.10.10 - Merge capture** - What: Complete rebinding UX on main. How: Lint plus targeted test green, merge feature/f16-10-capture.
 
 ---
 
