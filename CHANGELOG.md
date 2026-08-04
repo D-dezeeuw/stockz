@@ -10,6 +10,24 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ## [Unreleased]
 
+### Added
+
+- **Momentum burst breakout** — a scalper's momentum, which is not "price went up over five
+  minutes" but "the tape just got fast". Tick **velocity** leads price on a burst, because
+  the flurry of orders arrives before the level breaks; by the time a five-minute candle
+  says momentum, the move is over and the scalper is providing the exit liquidity. The
+  trigger is always a multiple of **this instrument's own recent baseline**, never an
+  absolute rate — twenty prints a second is frantic on a mid-cap and asleep on BTC at the
+  open — and the baseline moves deliberately slowly, since one that chased the burst would
+  erase the very spike it exists to detect. Fast **and going nowhere** is refused outright:
+  that is a two-sided fight, not a breakout, and it is the most expensive thing on the board
+  to trade because both sides are there in size. The exit takes the time stop
+  unconditionally, because a burst that has not paid within a few seconds was not a burst,
+  and the trade held "just a bit longer" is where the day's losses are made.
+- **A mutable scratchpad on the strategy context** (`ctx.state`) — the context stays frozen,
+  but a strategy keeping a ring buffer or a running baseline now has somewhere to put it
+  that costs no per-tick allocation and that two runs on two instruments do not share.
+
 ## [0.20.0] — 2026-08-04 — Phase 20: Strategy Engine Core
 
 The desk can now hold an opinion. A plug-in contract with a context that reaches nothing
