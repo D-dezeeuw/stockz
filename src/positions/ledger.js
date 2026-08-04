@@ -1,6 +1,7 @@
 import { setValue, appState } from '../app/engine.js'
 import { attributeClose } from '../strategy/scoreboard.js'
 import { onFillClosed } from '../bot/throttle.js'
+import { onRealizedFill } from '../breakers/position.js'
 import { PATHS } from '../state/paths.js'
 
 /**
@@ -71,6 +72,10 @@ export function appendRealization(event) {
   // And into the bot's loss streak. Consecutive realised losses is the signal that a
   // strategy has stopped matching the market, which is a different claim from drawdown.
   onFillClosed(entries[entries.length - 1].amount, entries[entries.length - 1].ts)
+  // And into the breaker's own streak. Separate from the bot's: the bot benches itself,
+  // the desk pauses everything, and a trader clicking by hand is subject to the second
+  // even when the first is not running.
+  onRealizedFill(entries[entries.length - 1].amount)
 
   return entries
 }

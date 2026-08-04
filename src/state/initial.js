@@ -211,6 +211,11 @@ export function initialState(overrides = {}) {
     [PATHS.breaker.values]: {},
     [PATHS.breaker.dayPnl]: 0,
     [PATHS.breaker.dailyPct]: 0,
+    [PATHS.breaker.paused]: false,
+    [PATHS.breaker.lossStreak]: 0,
+    [PATHS.breaker.lastBlock]: null,
+    [PATHS.breaker.blocked]: 0,
+    [PATHS.breaker.killLatencyMs]: 0,
 
     // alerts
     [PATHS.alerts.fired]: null,

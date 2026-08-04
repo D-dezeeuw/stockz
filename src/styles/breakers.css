@@ -1,0 +1,161 @@
+/*
+ * The circuit breakers, made visible.
+ *
+ * Three states get a look of their own, and the difference between them is the whole
+ * point: KILLED means the desk stopped itself and nothing will go out until somebody
+ * says so; PAUSED means entries are refused but exits are not; BLOCKED means one order
+ * was refused and everything else is untouched. Three severities that look alike would
+ * be worse than not showing them at all — a trader would learn to read orange as "some
+ * breaker thing" and stop distinguishing the one that ended their day.
+ *
+ * All three borrow the hot orange rather than the desk green. Green is the colour of
+ * things working.
+ */
+
+/* The always-there kill button. Sized past the 44px guideline in both axes: this is the
+   one control that gets hit under stress, one-handed, without aiming. */
+.kill {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 1px;
+  align-items: center;
+  justify-content: center;
+  min-inline-size: 4.5rem;
+  min-block-size: 44px;
+  padding: 0 var(--sp-3);
+  border: 1px solid var(--orange-hot);
+  border-radius: var(--radius-1);
+  background: color-mix(in srgb, var(--orange-hot) 14%, transparent);
+  color: var(--orange-hot);
+  font-family: var(--font-mono);
+  font-size: var(--fs-1);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  cursor: pointer;
+}
+
+.kill:hover {
+  background: color-mix(in srgb, var(--orange-hot) 26%, transparent);
+}
+
+/* No transition on :active. A control whose whole promise is "faster than thinking"
+   must not spend 120ms easing into its pressed state. */
+.kill:active {
+  background: var(--orange-hot);
+  color: var(--ink-inverse);
+}
+
+.kill:focus-visible {
+  outline: 2px solid var(--orange-hot);
+  outline-offset: 2px;
+}
+
+/* Tripped: the button becomes the notice, and the notice is the re-arm. One element,
+   because a separate banner and a separate button is two things to find. */
+.kill--tripped {
+  border-color: var(--orange-hot);
+  background: var(--orange-hot);
+  color: var(--ink-inverse);
+  animation: kill-alarm 1.1s ease-in-out infinite;
+}
+
+.kill__why {
+  max-inline-size: 11rem;
+  font-size: var(--fs-0);
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  opacity: 0.85;
+}
+
+@keyframes kill-alarm {
+  0%,
+  100% {
+    box-shadow: 0 0 6px color-mix(in srgb, var(--orange-hot) 40%, transparent);
+  }
+  50% {
+    box-shadow: 0 0 18px color-mix(in srgb, var(--orange-hot) 85%, transparent);
+  }
+}
+
+/* The pause stamp. Across the vitals, not inside them. */
+.paused {
+  display: flex;
+  gap: var(--sp-2);
+  align-items: center;
+  padding: var(--sp-1) var(--sp-2);
+  border: 1px solid var(--orange);
+  border-radius: var(--radius-1);
+  background: color-mix(in srgb, var(--orange) 12%, transparent);
+}
+
+.paused__stamp {
+  color: var(--orange);
+  font-size: var(--fs-1);
+  font-weight: 700;
+  letter-spacing: 0.16em;
+}
+
+.paused__why {
+  flex: 1;
+  color: var(--ink-muted);
+  font-size: var(--fs-0);
+  min-inline-size: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/*
+ * A blocked order. Twin animations under alternating class names: an animation on an
+ * element that only changed its text never replays, so a second block against the same
+ * cap would land silently — which is precisely the case where a trader needs telling
+ * that the desk meant it the first time.
+ */
+.ticket__block {
+  margin: 0;
+  padding: var(--sp-1) var(--sp-2);
+  border-left: 3px solid var(--orange);
+  color: var(--orange);
+  font-size: var(--fs-0);
+  letter-spacing: 0.04em;
+}
+
+.ticket__block--0 {
+  animation: block-flash-a 420ms ease-out;
+}
+
+.ticket__block--1 {
+  animation: block-flash-b 420ms ease-out;
+}
+
+@keyframes block-flash-a {
+  from {
+    background: var(--orange);
+    color: var(--ink-inverse);
+  }
+  to {
+    background: transparent;
+    color: var(--orange);
+  }
+}
+
+@keyframes block-flash-b {
+  from {
+    background: var(--orange);
+    color: var(--ink-inverse);
+  }
+  to {
+    background: transparent;
+    color: var(--orange);
+  }
+}
+
+/* Reduced motion loses the pulse, never the colour: the state must still be readable
+   for somebody who cannot have things flashing at them. */
+@media (prefers-reduced-motion: reduce) {
+  .kill--tripped,
+  .ticket__block--0,
+  .ticket__block--1 {
+    animation: none;
+  }
+}

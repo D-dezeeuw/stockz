@@ -27,6 +27,9 @@ export const DEFAULT_BINDINGS = Object.freeze([
   // Shift+A, not A: the bot's arm and the ticket's arm are different switches, and a chord
   // one keystroke away from the manual arm would eventually be pressed by mistake.
   { chord: 'shift+KeyA', action: ACTIONS.bot.toggleArm, payload: {}, label: 'arm / disarm auto-trading' },
+  // The one chord that must fire with an input focused, which is why it takes three keys:
+  // an emergency control that a stray keypress could hit is its own emergency.
+  { chord: 'ctrl+shift+KeyK', action: ACTIONS.breaker.kill, payload: { source: 'hotkey' }, label: 'KILL — halt everything' },
   { chord: 'KeyR', action: ACTIONS.ticket.repeatLast, payload: {}, label: 'repeat last order' },
   { chord: 'Digit1', action: ACTIONS.ticket.setSize, payload: { preset: 0.25 }, label: 'size ¼' },
   { chord: 'Digit2', action: ACTIONS.ticket.setSize, payload: { preset: 0.5 }, label: 'size ½' },

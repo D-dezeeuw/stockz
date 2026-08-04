@@ -20,6 +20,7 @@ import { registerLogActions } from '../alerts/log.js'
 import { registerPersistActions } from '../alerts/persist.js'
 import { registerBotActions } from '../bot/runner.js'
 import { registerSessionActions } from '../bot/session.js'
+import { registerKillActions } from '../breakers/kill.js'
 import { registerStrategyActions } from '../strategy/registry.js'
 import { registerTicketActions } from '../ticket/actions.js'
 import { registerSizingActions } from '../ticket/sizing.js'
@@ -71,6 +72,8 @@ describe('allActionNames', () => {
       'alerts.jumpTo',
       'alerts.export',
       'alerts.import',
+      'breaker.kill',
+      'breaker.rearm',
       'bot.toggleArm',
       'bot.setAuto',
       'bot.disableAll',
@@ -135,6 +138,7 @@ describe('allActionNames', () => {
     registerPersistActions()
     registerBotActions()
     registerSessionActions()
+    registerKillActions()
     registerStrategyActions()
     registerTicketActions()
     registerSizingActions()

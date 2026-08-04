@@ -231,6 +231,15 @@ export const SETTINGS_SCHEMA = Object.freeze([
     default: true,
   },
   {
+    key: 'maxConsecLosses',
+    group: 'risk',
+    label: 'Pause after N losses (0 = off)',
+    kind: 'number',
+    min: 0,
+    step: 1,
+    default: 5,
+  },
+  {
     key: 'compactHud',
     group: 'appearance',
     label: 'Compact HUD row',

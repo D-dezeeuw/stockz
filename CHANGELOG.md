@@ -30,6 +30,25 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
   already-computed number. On a trip the bot is killed **first and synchronously**: anything
   that queued the disarm would leave a window for one more order, and "one more" is the order
   the breaker existed to prevent.
+- **Position cap, loss-streak pause and the kill switch** — three guards at three severities,
+  and keeping them distinct is the whole design. A size past the per-instrument cap is
+  **blocked**: one order refused, the desk untouched. A fat-fingered quantity should not cancel
+  every working order and flatten the book — the cure would be worse than the mistake, and a
+  safety feature that punishes typos is one traders route around. A run of realised losses
+  **pauses**: no new entries, exits always allowed, because trading through a bad run is what
+  turns a bad hour into a bad week while a trader who cannot close what they hold is trapped by
+  their own net. The kill switch **halts**: one press, no confirmation, cancel then flatten in
+  that order — cancelling first removes the working orders that could fill *while* the flatten
+  goes out, and flatten-first leaves a resting bid to fill behind the close and open a fresh
+  position created by the safety mechanism itself. Both venue calls are dispatched, never
+  awaited: a kill switch whose speed depends on the venue that is probably the reason it was
+  pressed is not a kill switch. Exits are exempt from every one of them, checked before the cap
+  and by sign rather than by flag. The button lives permanently in the header past the 44px hit
+  guideline, the chord is Ctrl+Shift+K and reaches the desk from inside a focused field — an
+  emergency arriving mid-keystroke is the emergency — and three keys rather than one because a
+  control a stray press can hit is its own emergency. Press-to-cancel latency is recorded, the
+  ticket flashes the refusal under alternating class names so a second identical block still
+  replays, and the saves counter says whether the cap is doing anything or just sitting there.
 
 ## [0.23.0] — 2026-08-04 — Phase 23: Auto-Trade Bot Runner
 

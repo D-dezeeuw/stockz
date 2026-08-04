@@ -128,6 +128,16 @@ export function clearBindings() {
 }
 
 /**
+ * The chords a focused field never gets to swallow.
+ *
+ * Escape, because it is how a trader leaves a field they opened by accident, and trapping
+ * it inside the field is how people get stuck. The kill chord, because an emergency that
+ * arrives while somebody is halfway through typing a limit price is the emergency — a
+ * kill switch that needs you to click away first is not one.
+ */
+export const ALWAYS_ON = Object.freeze(['Escape', 'ctrl+shift+KeyK'])
+
+/**
  * Whether a key event should be ignored because the trader is typing.
  *
  * @param {EventTarget} target - the event's target.
@@ -140,9 +150,7 @@ export function isTypingTarget(target, chord = '') {
   const typing = editable || tag === 'input' || tag === 'textarea' || tag === 'select'
   if (!typing) return false
 
-  // Escape always reaches the desk: it is how a trader leaves a field they opened by
-  // accident, and trapping it inside the field is how people get stuck.
-  return chord !== 'Escape'
+  return !ALWAYS_ON.includes(chord)
 }
 
 /**
