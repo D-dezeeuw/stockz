@@ -95,6 +95,11 @@ so one number configured half a breaker.
   block flash alternates class names on the block counter to force a restart.
 - **A `0` sentinel collides with a monotonic clock.** `holdFrom` is `null` for "no press",
   because `performance.now()` reads near zero early in a page's life.
+- **Tag pushes do not work through this environment's git proxy.** `git push --tags` fails
+  with "the remote end hung up unexpectedly" and `git ls-remote --tags origin` shows the
+  remote has no tags at all — no earlier phase managed one either. The release is cut in
+  `CHANGELOG.md`, `package.json` and `src/app/version.js`, which is what the version test
+  and the live page read. Do not spend a phase close retrying this.
 - **Vitest `-t` matches substrings** — expect reporter noise from sibling names.
 - **`spektrum-devtools` throws one unhandled `reading 'length'` error during
   `bootstrap.test.js`** in jsdom. Pre-existing, unrelated to any phase's changes, and does not
