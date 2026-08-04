@@ -624,6 +624,21 @@
           <input type="checkbox" data-model="settings.soundEnabled">
           <span class="label">Sounds</span>
         </label>
+        <label class="field field--row">
+          <input type="checkbox" :checked="settings.alertToggles.exec ? settings.alertToggles.exec.fill !== false : true"
+                 data-action="change" data-fn="alerts.toggle" data-group="exec" data-key="fill">
+          <span class="label">alert on fills</span>
+        </label>
+        <label class="field field--row">
+          <input type="checkbox" :checked="settings.alertToggles.exec ? settings.alertToggles.exec.reject !== false : true"
+                 data-action="change" data-fn="alerts.toggle" data-group="exec" data-key="reject">
+          <span class="label">alert on rejects</span>
+        </label>
+        <label class="field field--row">
+          <input type="checkbox" :checked="settings.alertToggles.exec ? settings.alertToggles.exec.cancel !== false : true"
+                 data-action="change" data-fn="alerts.toggle" data-group="exec" data-key="cancel">
+          <span class="label">alert on cancels</span>
+        </label>
         <!-- One mute per strategy. A trader who has never opened this drawer is still told
              when a strategy fires; opting out is the decision, opting in should not be. -->
         <div class="fields" data-each="t in ui.alertToggles">

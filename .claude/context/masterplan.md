@@ -3601,16 +3601,16 @@
 **What:** The user gets instant certainty on orders: fills, partials, rejects and cancels announced as they land.
 **How:** watch() on phase-17 order lifecycle events mapped to severity-tagged alerts, OKX reject codes translated to plain text.
 
-- [ ] **T22.3.1 - Branch and scaffold exec alerts** - What: A separate branch for order-event notifications. How: git checkout -b feature/f22-3-exec-alerts; create src/alerts/execAlerts.js.
-- [ ] **T22.3.2 - Build mapOrderEvent fn** - What: Order lifecycle events become concise readable alerts. How: Implement mapOrderEvent(event) formatting fill, partial, reject and cancel with instrument, side, qty and price.
-- [ ] **T22.3.3 - Build execSeverity fn** - What: Fills feel good, rejects scream: correct severity per event type. How: Implement execSeverity(type) mapping fill to success, partial and cancel to info, reject to error.
-- [ ] **T22.3.4 - Build parseRejectReason fn** - What: OKX reject codes translated into plain trader language. How: Implement parseRejectReason(sCode, sMsg) with a lookup table of common OKX v5 error codes.
-- [ ] **T22.3.5 - Wire order event watch** - What: Every execution event alerts within a frame of arrival. How: watch() on the phase-17 order lifecycle channel piping through the mappers into trigger('alert:fired').
-- [ ] **T22.3.6 - Build coalescePartials fn** - What: A burst of partial fills reads as one clean alert. How: Implement coalescePartials(state, event, windowMs) merging partials per order id inside the window.
-- [ ] **T22.3.7 - Route with per-type toggles** - What: Fill, reject and cancel alerts individually switchable per channel. How: Gate routing to toast, sound and native paths by an alerts.exec.enabled map read from state.
-- [ ] **T22.3.8 - Exec toggle settings UI** - What: Event-type switches next to the other alert settings. How: Checkbox rows bound via data-model writing the exec enabled map in state.
-- [ ] **T22.3.9 - Write single unit tests** - What: Each exec fn pinned by one test. How: One Vitest test each for mapOrderEvent, execSeverity, parseRejectReason and coalescePartials; vitest -t runs.
-- [ ] **T22.3.10 - Verify with simulated order and merge** - What: A test order's full lifecycle narrated correctly. How: Place an order with the OKX x-simulated-trading demo flag, watch fill and cancel alerts, ESLint, merge.
+- [x] **T22.3.1 - Branch and scaffold exec alerts** - What: A separate branch for order-event notifications. How: git checkout -b feature/f22-3-exec-alerts; create src/alerts/execAlerts.js.
+- [x] **T22.3.2 - Build mapOrderEvent fn** - What: Order lifecycle events become concise readable alerts. How: Implement mapOrderEvent(event) formatting fill, partial, reject and cancel with instrument, side, qty and price.
+- [x] **T22.3.3 - Build execSeverity fn** - What: Fills feel good, rejects scream: correct severity per event type. How: Implement execSeverity(type) mapping fill to success, partial and cancel to info, reject to error.
+- [x] **T22.3.4 - Build parseRejectReason fn** - What: OKX reject codes translated into plain trader language. How: Implement parseRejectReason(sCode, sMsg) with a lookup table of common OKX v5 error codes.
+- [x] **T22.3.5 - Wire order event watch** - What: Every execution event alerts within a frame of arrival. How: watch() on the phase-17 order lifecycle channel piping through the mappers into trigger('alert:fired').
+- [x] **T22.3.6 - Build coalescePartials fn** - What: A burst of partial fills reads as one clean alert. How: Implement coalescePartials(state, event, windowMs) merging partials per order id inside the window.
+- [x] **T22.3.7 - Route with per-type toggles** - What: Fill, reject and cancel alerts individually switchable per channel. How: Gate routing to toast, sound and native paths by an alerts.exec.enabled map read from state.
+- [x] **T22.3.8 - Exec toggle settings UI** - What: Event-type switches next to the other alert settings. How: Checkbox rows bound via data-model writing the exec enabled map in state.
+- [x] **T22.3.9 - Write single unit tests** - What: Each exec fn pinned by one test. How: One Vitest test each for mapOrderEvent, execSeverity, parseRejectReason and coalescePartials; vitest -t runs.
+- [x] **T22.3.10 - Verify with simulated order and merge** - What: A test order's full lifecycle narrated correctly. How: Place an order with the OKX x-simulated-trading demo flag, watch fill and cancel alerts, ESLint, merge.
 
 ### F22.4 - Feed & Spread Health Warnings
 

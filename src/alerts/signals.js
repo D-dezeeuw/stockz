@@ -63,6 +63,7 @@ export function mapSignalToAlert(signal, strategy = {}) {
     key: `signal|${id}|${instrument}|${action}`,
     source: 'signal',
     strategyId: id,
+    kind: action,
     severity: signalSeverity(signal),
     // The reason travels with it: an alert that says "sell" and nothing else cannot be
     // judged, and the trader has about a second to judge it.

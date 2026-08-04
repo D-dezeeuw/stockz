@@ -10,6 +10,7 @@ import { stampLatency, resetLatency } from './latency.js'
 import { ingestFill } from '../positions/store.js'
 import { captureIntent, scoreFill } from '../hud/quality.js'
 import { recordFee } from '../hud/fees.js'
+import { routeExecAlert } from '../alerts/exec.js'
 import { createLogger } from '../utils/log.js'
 
 const log = createLogger('exec')
@@ -229,6 +230,21 @@ export function apply(clientId, state, detail = {}) {
     ts: Number(detail.ts) || order.ts,
     ...(detail.reason ? { reason: String(detail.reason) } : {}),
   }
+
+  // Announced from the one place every lifecycle transition passes. A scalper clicks and
+  // looks away; the worst state on a fast desk is not knowing whether the order went,
+  // because the trader who is unsure clicks again and now there are two.
+  routeExecAlert({
+    type: next,
+    clientId: id,
+    instrument: order.instrument,
+    side: order.side,
+    qty: Number(detail.filled ?? updated.filled) || 0,
+    px: Number(detail.avgPx) || order.price,
+    sCode: detail.sCode,
+    sMsg: detail.reason,
+    ts: Number(detail.ts) || order.ts,
+  })
 
   // A settled order leaves the live map: it cannot change again, and keeping every order
   // of a session in memory is how a long session slows down.
