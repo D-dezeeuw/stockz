@@ -10,6 +10,12 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ## [Unreleased]
 
+## [0.19.0] — 2026-08-04 — Phase 19: Latency & Metrics HUD
+
+The desk now measures itself: venue round-trip, submit→ack latency, live spread,
+per-fill slippage, session pace and streak, traded size and the fees eating it — nine
+vitals that collapse into a single severity-ordered row when the screen is needed.
+
 ### Added
 
 - **Compact HUD row** — nine vitals in a single block row, so the HUD stops competing with
@@ -845,7 +851,8 @@ with a test policy and a live URL.
   literal `APP_VERSION` (a JSON import is bundler-only), guarded by a test that fails if
   it drifts from `package.json`; static assets moved from `public/` to the repo root.
 
-[Unreleased]: https://github.com/D-dezeeuw/stockz/compare/v0.18.0...HEAD
+[Unreleased]: https://github.com/D-dezeeuw/stockz/compare/v0.19.0...HEAD
+[0.19.0]: https://github.com/D-dezeeuw/stockz/compare/v0.18.0...v0.19.0
 [0.18.0]: https://github.com/D-dezeeuw/stockz/compare/v0.17.0...v0.18.0
 [0.17.0]: https://github.com/D-dezeeuw/stockz/compare/v0.16.0...v0.17.0
 [0.16.0]: https://github.com/D-dezeeuw/stockz/compare/v0.15.0...v0.16.0

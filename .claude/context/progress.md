@@ -5,11 +5,52 @@ in `masterplan.md`, and knows where the project stands. Rewritten at every phase
 
 ---
 
-## Status: Phase 18 closed (v0.18.0) · Phase 19 next
+## Status: Phase 19 closed (v0.19.0) · Phase 20 next
 
 **Live:** https://d-dezeeuw.github.io/stockz/ (Pages serves `main` root — pushing is deploying)
-**Tests:** 603, one per function, all passing individually. Every gated file >80% branches.
+**Tests:** 658, one per function, all passing individually. Every gated file >80% branches.
 **Branch model:** everything merges to `main`; no feature branches outstanding.
+
+## Phase 19 — Latency & Metrics HUD (closed)
+
+| Feature | What now exists | Where |
+| --- | --- | --- |
+| F19.1 | `rollingMean`, `ewma`, `percentile`, `ratePerMinute`, `formatMs`, `formatBps`, `formatCompact`, `gradeLatency` | `src/hud/metrics.js` |
+| F19.3, F19.4 | `spreadBps`, `sessionPace`, `winRate`, `readHud`, `refreshHud`, `resetHud` | `src/hud/state.js` |
+| F19.2 | `classifyRtt`, `pingOkx`, `probeEtoro`, `recordRtt`, `worstRtt`, `flushRtt`, `nextProbeDelay`, `startProbe`, `resetRtt` | `src/hud/rtt.js` |
+| F19.5 | `captureIntent`, `slippageBps`, `trackWorst`, `scoreFill`, `slippageStats`, `spreadBreached`, `flushQuality`, `resetQuality` | `src/hud/quality.js` |
+| F19.6–F19.8 | `tradesPerHour`, `paceState`, `paceRatio`, `currentStreak`, `streakTone`, `dayVolume`, `refreshSession` | `src/hud/session.js` |
+| F19.9 | `scheduleFor`, `feeForFill`, `addFee`, `burnRate`, `feesVsPnl`, `recordFee`, `flushFees`, `resetFees` | `src/hud/fees.js` |
+| F19.10 | `severityRank`, `abbreviate`, `compactMetrics`, `orderMetrics`, `refreshCompact`, `toggleCompact`, `registerCompactActions` | `src/hud/compact.js` |
+
+**Every HUD number is derived, never re-recorded.** Pace, streak, volume and fees all read
+`positions/ledger.js`; the compact strip reads what the tiles published. A second tally of
+the same event is a second thing that can be wrong, and the ledger already owns the
+session roll.
+
+**Three refusals worth keeping.** Slippage does not score a fill with no captured intent
+(zero is a *perfect* fill, not an unmeasured one). RTT reports "never measured" as its own
+tier, not as slow — a desk starting its session must not look broken. The burn rate is
+floored at five minutes, because extrapolating an hour from ninety seconds prints a
+four-figure number off two trades and the tile stops being read.
+
+**Fees: what the venue billed outranks what the desk estimated.** `FEE_SCHEDULE` (OKX spot
+8/10bp, perps 2/5bp, EToro ~1%) is only for fills nobody has been charged for yet, and an
+unknown venue prices as OKX rather than as free — a zero-fee estimate is the one error
+that makes a losing strategy look profitable.
+
+The HUD is pumped from `flushFeed` in `src/venues/okx/live.js`: `refreshHud` →
+`refreshSession` → `flushFees` → `refreshCompact` (compact only). The strip trails the
+tiles by one frame by construction, since it re-reads state that lands next tick.
+
+New state: `ui.hud`, `ui.rtt`, `ui.slippage`, `ui.spreadAlert`, `ui.session`, `ui.fees`,
+`ui.hudRow`. New settings: `spreadLimitBps`, `tradesPerHourTarget`, `compactHud`. New
+action: `ui.toggleCompactHud`.
+
+**Deferred in phase 19:** none. T19.8.4–T19.8.6 (dayKey / midnight roll / persisted
+accumulators) are satisfied by the ledger's existing `sessionKey` + `rolloverIfNewSession`
+rather than by a second set of counters — persisting them waits on the phase 24 store,
+like every other non-`settings.*` slice.
 
 ## Phase 18 — Positions & Live PnL (closed)
 
@@ -371,13 +412,14 @@ go stale, and faults that reach the trader instead of the console.
 | F2.9 | `pushToast`, `dismissToast`, `expireToasts`, `describeEngineError`, `wireEngineErrors` | `src/ui/toast.js` |
 | F2.10 | `collectExpressions`, `renderPrecompileModule`, `cspMeta`, `npm run build:csp` | `src/app/csp.js`, `docs/csp.md` |
 
-## Next up: Phase 19
+## Next up: Phase 20
 
 Read the phase's own section in `masterplan.md` — the plan is authoritative, and the
 "next up" guesses written at earlier closes have been wrong twice.
 
-- Everything an order needs now exists: `exec/engine.js` is the one door, `positions/`
-  knows exposure and P&L, `keys/` reaches every action, and the feed is live.
+- The desk trades and now measures itself: `exec/engine.js` is the one door orders pass,
+  `positions/` knows exposure and P&L, `hud/` knows what it costs and how fast it is,
+  `keys/` reaches every action, and the feed is live.
 - The recurring trap remains **`setValue` lands next tick** (fold locally, write once)
   and **object writes merge** (`clearedMap` is the pattern for clearing one).
 
