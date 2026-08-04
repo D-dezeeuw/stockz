@@ -152,6 +152,7 @@ export const PATHS = Object.freeze({
     // Backtest fill assumptions. Here rather than under `backtest.*` because settings is
     // the only persisted branch, and assumptions that reset on reload are assumptions
     // nobody tunes twice.
+    paperStartBalance: 'settings.paperStartBalance',
     btSpreadBps: 'settings.btSpreadBps',
     btLatencyMs: 'settings.btLatencyMs',
     btSlippageBps: 'settings.btSlippageBps',
@@ -214,6 +215,10 @@ export const PATHS = Object.freeze({
     holdPct: 'trade.holdPct',
     // The paper book's resting orders, mirrored out of the module that owns them.
     paperResting: 'trade.paperResting',
+    // The practice account, kept separate from the live P&L: both feed the ledger, and an
+    // equity curve that silently mixed them is the most confidently wrong chart possible.
+    paperBalance: 'trade.paperBalance',
+    paperAccount: 'trade.paperAccount',
     orders: 'trade.orders',
     positions: 'trade.positions',
     dayPnl: 'trade.dayPnl',

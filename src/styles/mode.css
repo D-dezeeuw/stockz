@@ -88,3 +88,31 @@
     display: none;
   }
 }
+
+/* The practice account: tiles reuse the backtest tile shell, and the working orders read
+   as a dense list with the queue that explains each one. */
+.paper-acct {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-1);
+  min-block-size: 0;
+}
+
+.paper-rest {
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  min-block-size: 0;
+  font-size: var(--fs-0);
+  font-variant-numeric: tabular-nums;
+}
+
+.paper-rest__row {
+  display: grid;
+  grid-template-columns: auto 1fr 1fr 1fr;
+  gap: var(--sp-1);
+  align-items: baseline;
+}
+
+.paper-rest__side--buy { color: var(--green); }
+.paper-rest__side--sell { color: var(--orange); }
