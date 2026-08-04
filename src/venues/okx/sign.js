@@ -1,4 +1,5 @@
 import { getKey } from '../vault.js'
+import { okxNow } from './clock.js'
 
 /**
  * OKX request signing.
@@ -88,9 +89,11 @@ export async function signRequest(req) {
 
   if (!apiKey || !secret || !passphrase) return {}
 
-  // Now, never the epoch: OKX rejects a timestamp more than 30 seconds off its own clock,
-  // and a signature dated 1970 fails as a 401 that looks like a rejected key.
-  const ts = okxTimestamp(req.ts ?? Date.now())
+  // The *venue's* now, never the epoch and never the raw browser clock. OKX rejects a
+  // timestamp more than 30 seconds off its own, and it rejects it as a 401 indistinguishable
+  // from a bad key — so a signature dated 1970, or one from a laptop that drifted while
+  // asleep, both fail the same way and neither says why.
+  const ts = okxTimestamp(req.ts ?? okxNow())
   const sign = await hmacSha256(
     prehashString({ ts, method: req.method, path: req.path, body: req.body }),
     secret,

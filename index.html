@@ -400,9 +400,10 @@
                  every fomo tag, every loser on this instrument — so the block is a filter
                  first and a list second. Every chip is its own off switch. -->
             <div class="journal__filters" data-if="block.id === 'journal'">
-              <select data-action="change" data-fn="journal.filter" data-key="instrument">
-                <option value="">all instruments</option>
-                <option data-each="journal.instruments" data-as="inst" :value="inst">{{inst}}</option>
+              <select data-action="change" data-fn="journal.filter" data-key="instrument"
+                      data-each="journal.instruments" data-as="inst">
+                <option :value="inst.id"
+                        :selected="inst.id === journal.filters.instrument">{{inst.name}}</option>
               </select>
               <button type="button" class="chip" data-action="click" data-fn="journal.filter"
                       data-key="outcome" data-value="wins"
@@ -658,7 +659,11 @@
               <span class="fees__ratio" :class="'fees__ratio fees__ratio--' + analytics.fees.tone">{{analytics.fees.ratioLabel}}</span>
               <span class="label">of gross eaten by fees · {{analytics.fees.fees}} on {{analytics.fees.gross}}</span>
               <canvas id="fees-canvas" class="fees__bars"></canvas>
-              <span class="fees__venue label" data-each="analytics.venueFees" data-as="v">{{v.venue}} {{v.fees}} ({{v.fills}} fills)</span>
+              <!-- The repeated node is the inner span; `data-each` binds the container and
+                   clones its first element child, so a text-only body renders nothing. -->
+              <div class="fees__venues" data-each="analytics.venueFees" data-as="v">
+                <span class="fees__venue label">{{v.venue}} {{v.fees}} ({{v.fills}} fills)</span>
+              </div>
             </div>
             <!-- The equity curve shows where the money went; this shows how it felt. The
                  question that decides whether a strategy is survivable is not "does it make
@@ -1351,7 +1356,11 @@
     </ul>
 
     <footer class="app-footer">
-      <span class="footer__brand">© <strong>Neko Media</strong> · v{{app.version}}</span>
+      <!-- Release *and* build. The version only moves when a phase closes, so between
+           closes it cannot answer "am I looking at the fix I just pushed" — the build
+           stamp changes every deploy and does. -->
+      <span class="footer__brand">© <strong>Neko Media</strong> · v{{app.version}}
+        <span class="footer__build" :title="'build ' + app.build">build {{app.build}}</span></span>
       <nav class="footer__links">
         <a class="footer__link" href="https://www.linkedin.com/in/dannydezeeuw/"
            target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">

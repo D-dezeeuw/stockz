@@ -98,6 +98,14 @@
   color: var(--ink-muted);
 }
 
+/* Dimmer than the release number and monospaced: it is a fingerprint to compare, not a
+   thing to read. */
+.footer__build {
+  margin-inline-start: var(--sp-1);
+  color: var(--ink-faint);
+  font-variant-numeric: tabular-nums;
+}
+
 .footer__brand strong {
   color: var(--green);
   font-weight: var(--fw-bold);

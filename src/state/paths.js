@@ -49,6 +49,9 @@ export const PATHS = Object.freeze({
   app: Object.freeze({
     name: 'app.name',
     version: 'app.version',
+    // Which deploy, as opposed to which release: the version only moves when a phase
+    // closes, and "am I looking at the fix yet" needs a number that changes every push.
+    build: 'app.build',
     engine: 'app.engine',
     bootedAt: 'app.bootedAt',
     clock: 'app.clock',

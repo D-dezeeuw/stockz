@@ -104,7 +104,12 @@ export function journalInstruments(trades) {
   )
   seen.delete('')
 
-  return [...seen].sort()
+  // The "all instruments" row is *data*, not a literal `<option>` beside the bound ones.
+  // Spektrum's `data-each` binds the container and clones its first **element** child, so a
+  // select cannot hold both a hand-written option and a repeated list — and putting
+  // `data-each` on the option itself, which is what this used to do, warns
+  // "needs an element child to clone" and renders nothing at all.
+  return [{ id: '', name: 'all instruments' }, ...[...seen].sort().map((id) => ({ id, name: id }))]
 }
 
 /**

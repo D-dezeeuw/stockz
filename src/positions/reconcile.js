@@ -5,6 +5,15 @@ import { createLogger } from '../utils/log.js'
 
 const log = createLogger('reconcile')
 
+/** The last failure reported, so a repeating one is said once rather than every poll. */
+let lastFailure = ''
+
+/** Forget the last reported failure (tests, and a key change). */
+export function resetReconciler() {
+  lastFailure = ''
+  return true
+}
+
 /**
  * Reconciliation.
  *
@@ -121,7 +130,20 @@ export async function reconcile(deps = {}) {
   const snapshot = await fetch().catch((error) => ({ ok: false, error }))
   // A failed snapshot changes nothing. Treating "I could not ask" as "there is nothing
   // there" would flatten the book on every network hiccup.
-  if (!snapshot?.ok) return { ok: false, corrected: 0, reason: 'snapshot failed' }
+  if (!snapshot?.ok) {
+    const reason = String(snapshot?.error ?? 'snapshot failed')
+    // Said out loud, and said *once*. This runs every thirty seconds, so repeating the
+    // toast would bury the desk — but staying silent is how a valid key with a skewed
+    // clock produced nothing but raw 401s in the console and no explanation anywhere.
+    if (reason !== lastFailure) {
+      lastFailure = reason
+      log.warn(`snapshot failed: ${reason}`)
+      pushToast(`${venue}: ${reason}`, 'warn', now())
+    }
+
+    return { ok: false, corrected: 0, reason }
+  }
+  lastFailure = ''
 
   const diff = diffPositions(openPositions(), snapshot.positions, venue)
   const corrected = adoptVenueTruth(diff, snapshot.positions, venue)

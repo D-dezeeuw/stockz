@@ -22,10 +22,11 @@
     "test:fn": "vitest run -t",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "deploy": "git push origin main && bash scripts/verify-pages.sh",
+    "deploy": "bash scripts/stamp-build.sh && git push origin main && bash scripts/verify-pages.sh",
     "check:secrets": "bash scripts/check-secrets.sh",
     "verify:pages": "bash scripts/verify-pages.sh",
-    "build:csp": "node scripts/compile-templates.mjs && vite build"
+    "build:csp": "node scripts/compile-templates.mjs && vite build",
+    "stamp": "bash scripts/stamp-build.sh"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

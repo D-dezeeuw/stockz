@@ -1,4 +1,5 @@
 import { APP_VERSION } from '../app/version.js'
+import { buildStamp } from '../app/build.js'
 import { PATHS } from './paths.js'
 import { defaultSettings } from './settings-schema.js'
 
@@ -29,6 +30,7 @@ export function initialState(overrides = {}) {
     // identity
     [PATHS.app.name]: 'STOCKZ',
     [PATHS.app.version]: version,
+    [PATHS.app.build]: buildStamp(),
     [PATHS.app.engine]: engine,
     [PATHS.app.bootedAt]: ts,
     [PATHS.app.clock]: '',

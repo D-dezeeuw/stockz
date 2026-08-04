@@ -56,6 +56,7 @@ import { registerLibraryActions, refreshLibrary } from '../playback/library.js'
 import { registerPlayerActions } from '../playback/player.js'
 import { registerBacktestActions } from '../backtest/runner.js'
 import { setLevelSink } from '../strategy/builtin/range-fade.js'
+import { syncOkxClock } from '../venues/okx/clock.js'
 import { startHistogram } from '../analytics/holdtime.js'
 import { startStreakStrip } from '../analytics/streaks.js'
 import { startFeeBars } from '../analytics/fees.js'
@@ -197,6 +198,11 @@ export function bootstrap(options = {}) {
   // The one strategy with something to show gets its sink here rather than importing the
   // engine itself — see the note in range-fade.js.
   setLevelSink((rows) => setValue(PATHS.market.levels, rows))
+  // Measured before the first signed call, not after it. OKX refuses a timestamp more than
+  // thirty seconds off its own clock and refuses it as a 401 that reads exactly like a bad
+  // key, so a drifted machine would otherwise spend the session being told its valid
+  // credentials were rejected.
+  if (options.feeds !== false) syncOkxClock()
   startHistogram()
   startStreakStrip()
   startFeeBars()
