@@ -300,3 +300,40 @@
     display: none;
   }
 }
+
+/*
+ * The record toggle.
+ *
+ * An unmissable dot, because a desk that is quietly recording and a desk that is not look
+ * identical otherwise - and finding out you were not recording is always retrospective.
+ */
+.rec {
+  display: flex;
+  flex: 0 0 auto;
+  margin-block-end: var(--sp-1);
+}
+
+.chip--rec {
+  border-color: var(--orange);
+  color: var(--orange);
+}
+
+.rec__dot {
+  display: inline-block;
+  inline-size: 0.5rem;
+  block-size: 0.5rem;
+  margin-inline-end: var(--sp-1);
+  border-radius: 50%;
+  background: var(--orange);
+  animation: rec-pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes rec-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.25; }
+}
+
+/* A pulse that never stops is a distraction on a desk read for hours. */
+@media (prefers-reduced-motion: reduce) {
+  .rec__dot { animation: none; }
+}

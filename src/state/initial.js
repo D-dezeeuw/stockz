@@ -232,6 +232,8 @@ export function initialState(overrides = {}) {
     [PATHS.replay.trade]: null,
     [PATHS.replay.speed]: 1,
     [PATHS.replay.label]: '',
+    [PATHS.replay.recording]: null,
+    [PATHS.replay.sessions]: [],
     [PATHS.replay.error]: '',
 
     // analytics

@@ -524,6 +524,16 @@
                       data-period="all"
                       :class="analytics.period === 'all' ? 'chip chip--on' : 'chip'">all</button>
             </div>
+            <!-- REC. The market worth studying is never the one in front of you - it is
+                 the fifteen minutes that already went wrong, and without a recording those
+                 minutes are gone the moment the tape scrolls. -->
+            <div class="rec" data-if="block.id === 'journal'">
+              <button type="button" class="chip" data-action="click" data-fn="replay.record"
+                      :class="replay.recording ? 'chip chip--rec' : 'chip'">
+                <span class="rec__dot" data-if="replay.recording"></span>
+                {{replay.recording ? 'recording…' : 'record'}}
+              </button>
+            </div>
             <div class="period__out" data-if="block.id === 'analytics'">
               <button type="button" class="chip" data-action="click" data-fn="analytics.exportJson">json</button>
               <button type="button" class="chip" data-action="click" data-fn="analytics.copySummary">copy</button>

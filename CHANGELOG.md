@@ -10,6 +10,23 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ## [Unreleased]
 
+### Added
+
+- **F27.1 — the tick recorder.** Capture what actually happened so it can be replayed
+  later: the market worth studying is never the one in front of you, it is the fifteen
+  minutes that already went wrong, and without a recording those minutes are gone the
+  moment the tape scrolls. Ticks buffer in memory and flush in batches — every 500 ticks or
+  every two seconds, whichever comes first — because an IndexedDB transaction per tick
+  would sit on the hot path of every message from every feed, which is the one place on
+  this desk that cannot afford one. The count stops a burst growing the buffer without
+  bound; the timer stops a quiet market losing its tail to a closed tab. Recordings live in
+  two IndexedDB stores: one self-describing row per session so the picker can list them
+  without reading a tick, and chunks keyed by `[sessionId, seq]` so a replay can stream one
+  session in order. Deleting a session takes its chunks in the same transaction — leaving
+  them would fill the origin's quota with data nothing can ever reach. Every call resolves
+  rather than rejects: a browser with IndexedDB disabled should cost the trader the
+  recorder, never the desk.
+
 ## [0.26.0] — 2026-08-04 — Phase 26: Analytics & Performance Dashboard
 
 Ten features: KPI tiles, the equity curve, the hour heatmap, instrument ranking, hold-time
