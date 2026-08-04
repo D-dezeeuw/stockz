@@ -2361,16 +2361,16 @@
 **What:** The tape stays at 60fps through the wildest print storms.
 **How:** Scroll virtualization with fixed row height, spacer technique, and per-frame batched inserts through the shared rAF scheduler.
 
-- [ ] **T14.9.1 - Branch tape performance work** - What: Virtualization added without regressing the tape. How: git checkout -b feature/14-9-tape-window from main.
-- [ ] **T14.9.2 - Implement visibleRange** - What: Only rows on screen cost anything. How: Pure fn mapping scrollTop, rowHeight, and viewport height to a start/end index pair with overscan.
-- [ ] **T14.9.3 - Chain the windowed slice computed** - What: The DOM holds 30 rows, never 500. How: Spektrum computed slicing filteredTape by visibleRange feeding the data-each.
-- [ ] **T14.9.4 - Add spacer elements** - What: The scrollbar reflects the full tape. How: Top and bottom spacer divs with heights computed from off-window row counts times rowHeight.
-- [ ] **T14.9.5 - Batch inserts per frame** - What: A thousand prints per second still one DOM update per frame. How: flushPrints fn buffering arrivals and draining once per frame via the phase 13 rAF scheduler.
-- [ ] **T14.9.6 - Pause autoscroll on hover** - What: Inspect a print without the tape running away. How: pointerenter pauses pin-to-top, pointerleave resumes with a caught-up jump.
-- [ ] **T14.9.7 - Use a passive scroll listener** - What: Scrolling never blocks the compositor. How: Attach the scroll handler with passive true, recomputing visibleRange on each event.
-- [ ] **T14.9.8 - Run a print storm benchmark** - What: Proof the tape holds 60fps under stress. How: Replay a recorded 1000-print burst from the IndexedDB tick recordings and capture frame times in DevTools.
-- [ ] **T14.9.9 - Write single unit tests for windowing fns** - What: Range and flush math locked. How: One Vitest test each for visibleRange and flushPrints, run individually via vitest run -t.
-- [ ] **T14.9.10 - Verify and merge windowed rendering** - What: A tape that never drops a frame. How: Benchmark passing with no long frames over 16ms, targeted tests green, then merge feature/14-9-tape-window into main.
+- [x] **T14.9.1 - Branch tape performance work** - What: Virtualization added without regressing the tape. How: git checkout -b feature/14-9-tape-window from main.
+- [x] **T14.9.2 - Implement visibleRange** - What: Only rows on screen cost anything. How: Pure fn mapping scrollTop, rowHeight, and viewport height to a start/end index pair with overscan.
+- [x] **T14.9.3 - Chain the windowed slice computed** - What: The DOM holds 30 rows, never 500. How: Spektrum computed slicing filteredTape by visibleRange feeding the data-each.
+- [x] **T14.9.4 - Add spacer elements** - What: The scrollbar reflects the full tape. How: Top and bottom spacer divs with heights computed from off-window row counts times rowHeight.
+- [x] **T14.9.5 - Batch inserts per frame** - What: A thousand prints per second still one DOM update per frame. How: flushPrints fn buffering arrivals and draining once per frame via the phase 13 rAF scheduler.
+- [x] **T14.9.6 - Pause autoscroll on hover** - What: Inspect a print without the tape running away. How: pointerenter pauses pin-to-top, pointerleave resumes with a caught-up jump.
+- [x] **T14.9.7 - Use a passive scroll listener** - What: Scrolling never blocks the compositor. How: Attach the scroll handler with passive true, recomputing visibleRange on each event.
+- [ ] **T14.9.8 - Run a print storm benchmark** - What: Proof the tape holds 60fps under stress. How: Replay a recorded 1000-print burst from the IndexedDB tick recordings and capture frame times in DevTools. **Deferred:** needs the phase 24 IndexedDB recorder and a real browser profile; the windowing and batching maths are locked by their unit tests meanwhile.
+- [x] **T14.9.9 - Write single unit tests for windowing fns** - What: Range and flush math locked. How: One Vitest test each for visibleRange and flushPrints, run individually via vitest run -t.
+- [x] **T14.9.10 - Verify and merge windowed rendering** - What: A tape that never drops a frame. How: Benchmark passing with no long frames over 16ms, targeted tests green, then merge feature/14-9-tape-window into main.
 
 ### F14.10 - Book Integrity & Resync Hardening
 

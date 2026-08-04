@@ -89,6 +89,7 @@ export const PATHS = Object.freeze({
     ladder: 'market.ladder',
     tape: 'market.tape',
     tapeHidden: 'market.tapeHidden',
+    tapeWindow: 'market.tapeWindow',
     imbalance: 'market.imbalance',
     whales: 'market.whales',
     whaleCount: 'market.whaleCount',

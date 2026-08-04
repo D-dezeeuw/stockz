@@ -73,6 +73,7 @@ export function initialState(overrides = {}) {
     [PATHS.market.ladder]: { bids: [], asks: [], spread: null },
     [PATHS.market.tape]: [],
     [PATHS.market.tapeHidden]: 0,
+    [PATHS.market.tapeWindow]: { start: 0, end: 40, topPad: 0, bottomPad: 0, autoscroll: true },
     [PATHS.market.whales]: [],
     [PATHS.market.whaleCount]: 0,
     [PATHS.market.imbalance]: { raw: 0, value: 0, bidPct: 50, askPct: 50, side: 'flat', hot: false, label: '0%' },

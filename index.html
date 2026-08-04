@@ -203,13 +203,18 @@
                       data-min-size="10000">10K</button>
               <span class="tape__hidden" data-if="market.tapeHidden > 0">{{market.tapeHidden}} hidden</span>
             </div>
-            <div class="tape" data-if="block.id === 'tape'" data-each="print in market.tape">
+            <div class="tape" data-if="block.id === 'tape'" data-ref="tapeScroller">
+              <div class="tape__spacer" :style="'height:' + market.tapeWindow.topPad + 'px'"></div>
+            </div>
+            <div class="tape__rows" data-if="block.id === 'tape'" data-each="print in market.tape">
               <div class="tape__row" :class="print.whale ? print.cls + ' tape__row--whale' : print.cls">
                 <span class="tape__time">{{print.timeLabel}}</span>
                 <span class="tape__price">{{print.priceLabel}}</span>
                 <span class="tape__size">{{print.sizeLabel}}</span>
               </div>
             </div>
+            <div class="tape__spacer" data-if="block.id === 'tape'"
+                 :style="'height:' + market.tapeWindow.bottomPad + 'px'"></div>
             <p class="label" data-if="block.id !== 'ladder' &amp;&amp; block.id !== 'tape'">ready</p>
           </div>
         </div>

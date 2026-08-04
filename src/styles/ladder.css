@@ -293,3 +293,18 @@
   font-size: var(--font-size-xs, 0.6875rem);
   font-variant-numeric: tabular-nums;
 }
+
+/* Spacers stand in for the rows not in the DOM, so the scrollbar reflects the whole
+   tape rather than the thirty rows currently rendered. */
+.tape__spacer {
+  flex: 0 0 auto;
+}
+
+.tape__rows {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
