@@ -1321,6 +1321,17 @@
           <span class="label">These are OKX <b>demo trading</b> keys</span>
         </label>
 
+        <!-- What the venue itself said about those keys. Every private OKX call
+             authenticates by header, so a key OKX does not recognise comes back as a bare
+             401 from whichever poller fired first — five different causes wearing one
+             appearance. The preflight spends one deliberate request to tell them apart, and
+             this is where the answer lands: the next move, not the status code. -->
+        <p class="keys__check" data-if="ui.keyCheck.reason"
+           :class="{'is-ok': ui.keyCheck.ok, 'is-bad': !ui.keyCheck.ok}">
+          <span class="keys__check-reason">{{ui.keyCheck.reason}}</span>
+          <span class="keys__check-fix" data-if="ui.keyCheck.fix">{{ui.keyCheck.fix}}</span>
+        </p>
+
         <!-- The one switch on this desk that decides whether money is real. Deliberately
              here, next to the keys, because it is the same decision: these credentials do
              nothing until this is ticked. -->

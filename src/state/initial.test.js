@@ -35,13 +35,18 @@ describe('initialState', () => {
     expect(state['app.version']).toBe(APP_VERSION)
 
     // Credentials must never appear in state (it is serialized into history and journal
-    // exports). Presence booleans are explicitly fine: ui.keysPresent says WHETHER a key
-    // exists, never what it is — the vault holds the values, outside the reactive tree.
+    // exports). Two exemptions, both facts *about* a key rather than any part of one:
+    // `ui.keysPresent` says WHETHER a key exists, and `ui.keyCheck` says what the venue
+    // replied when asked about it. The vault holds the values, outside the reactive tree.
+    const allowed = new Set(['ui.keysPresent', 'ui.keyCheck'])
     const credentialish = Object.keys(state).filter(
-      (path) => /key|secret|passphrase|token/i.test(path) && path !== 'ui.keysPresent',
+      (path) => /key|secret|passphrase|token/i.test(path) && !allowed.has(path),
     )
     expect(credentialish).toEqual([])
     expect(state['ui.keysPresent']).toEqual({ okx: false, etoro: false })
+    // Four prose fields and nothing that could hold a secret, checked shape-first so a later
+    // edit cannot widen this into somewhere a key would fit.
+    expect(Object.keys(state['ui.keyCheck']).sort()).toEqual(['code', 'fix', 'ok', 'reason'])
 
     // Overrides win, and each call is an independent tree.
     const custom = initialState({ version: '9.9.9', engine: '1.1.0', ts: 1234 })

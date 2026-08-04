@@ -74,6 +74,7 @@ export const PATHS = Object.freeze({
     columns: 'ui.columns',
     density: 'ui.density',
     keysPresent: 'ui.keysPresent',
+    keyCheck: 'ui.keyCheck',
     candleInterval: 'ui.candleInterval',
     chordSheet: 'ui.chordSheet',
     paletteQuery: 'ui.paletteQuery',

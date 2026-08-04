@@ -52,6 +52,8 @@ export function initialState(overrides = {}) {
     [PATHS.ui.density]: 'compact',
     // presence booleans only - actual credentials live in the vault, never in state
     [PATHS.ui.keysPresent]: { okx: false, etoro: false },
+    // what the venue said about those keys - prose only, and never the key itself
+    [PATHS.ui.keyCheck]: { ok: false, code: '', reason: '', fix: '' },
     [PATHS.ui.candleInterval]: '1s',
     [PATHS.ui.chordSheet]: [],
     [PATHS.ui.paletteQuery]: '',

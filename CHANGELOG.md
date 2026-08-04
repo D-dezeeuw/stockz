@@ -12,6 +12,16 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ### Fixed
 
+- **The OKX `401` now names its own cause.** Every private OKX call authenticates by
+  header, so a key the venue does not recognise arrives as a bare `401` from whichever
+  poller fired first — five different causes wearing one appearance. A preflight spends one
+  deliberate signed call to `/api/v5/account/config` at boot and reports the *next move*
+  ("tick OKX demo trading", "the secret does not match the key", "the key has no trade
+  permission") in the key modal and a toast, instead of leaving a status code in the
+  console.
+- **REST signed against the browser clock, not the venue's.** `okxRequest` defaulted its
+  timestamp to `Date.now()`, which meant the drift measured against OKX at boot was taken
+  and then thrown away on every single REST call — the one path it existed to correct.
 - **OKX "API key doesn't exist" (50119).** OKX keeps demo and live keys in separate
   universes, so a demo key sent to the live endpoint is not rejected as *wrong* — the venue
   reports it does not exist, which reads as a deleted key and sends people off to

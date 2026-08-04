@@ -288,6 +288,37 @@
   overflow-x: auto;
 }
 
+/*
+ * The venue's own verdict on the keys.
+ *
+ * Two lines, weighted apart on purpose: the reason is what happened and the fix is what to
+ * do, and a trader staring at a dead desk needs the second one to be the loud one.
+ */
+.keys__check {
+  display: grid;
+  gap: var(--sp-1);
+  padding: var(--sp-2);
+  border-inline-start: 2px solid var(--orange);
+  background: var(--bg-1);
+  font-size: var(--fs-0);
+}
+
+.keys__check.is-ok {
+  border-inline-start-color: var(--green);
+}
+
+.keys__check-reason {
+  color: var(--ink-muted);
+}
+
+.keys__check.is-ok .keys__check-reason {
+  color: var(--green);
+}
+
+.keys__check-fix {
+  color: var(--ink);
+}
+
 /* The live/paper line, which decides whether money is real. */
 .keys__mode {
   color: var(--ink-muted);

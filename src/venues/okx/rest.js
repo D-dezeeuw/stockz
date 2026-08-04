@@ -1,5 +1,6 @@
 import { signRequest } from './sign.js'
 import { mapError, mapOrder, mapPosition } from './map.js'
+import { okxNow } from './clock.js'
 import { createLogger } from '../../utils/log.js'
 
 /**
@@ -77,19 +78,22 @@ export function resetRateLimits() {
  * says nothing — an order rejected for insufficient balance arrives as a success.
  *
  * @param {object} body - parsed response body.
- * @returns {{ok: boolean, data: unknown[], error?: string}} the outcome.
+ * @returns {{ok: boolean, code: string, data: unknown[], error?: string}} the outcome.
  */
 export function readEnvelope(body) {
   const code = String(body?.code ?? '')
   const data = Array.isArray(body?.data) ? body.data : []
 
-  if (code === '0') return { ok: true, data }
+  if (code === '0') return { ok: true, code, data }
 
   // A per-item failure carries its own code; surface that rather than the envelope's.
   const first = data[0]
   const detail = first?.sCode && first.sCode !== '0' ? { code: first.sCode, msg: first.sMsg } : body
 
-  return { ok: false, data, error: mapError(detail) }
+  // The raw code travels with the mapped message. A caller that only wants to *say* what
+  // went wrong reads `error`; the key preflight has to *branch* on which failure it was,
+  // and matching on prose would break the first time a message is reworded.
+  return { ok: false, code: String(detail?.code ?? code), data, error: mapError(detail) }
 }
 
 /**
@@ -100,26 +104,30 @@ export function readEnvelope(body) {
  * @returns {Promise<{ok: boolean, data?: unknown[], error?: string}>} the outcome.
  */
 export async function okxRequest(req) {
-  // `ts` defaults to *now*, not to zero. OKX rejects any request whose timestamp is more
-  // than 30 seconds from its own clock, so a default of 0 signs every unparameterised call
-  // as 1970 and gets a flat 401 that reads exactly like a bad API key. It also fed the rate
-  // limiter, which saw every call land at the same instant.
+  // `ts` defaults to the *venue's* now, not to zero and not to the raw browser clock. OKX
+  // rejects any request whose timestamp is more than 30 seconds from its own clock, so a
+  // default of 0 signs every unparameterised call as 1970 and gets a flat 401 that reads
+  // exactly like a bad API key. `okxNow()` rather than `Date.now()` for the same reason
+  // one step further out: the desk measures its drift against OKX at boot precisely so it
+  // can sign against the venue, and defaulting to `Date.now()` here handed `signRequest` a
+  // timestamp it would never correct — the measurement was taken and then thrown away on
+  // every single REST call.
   const {
     method = 'GET',
     path,
     body,
-    ts = Date.now(),
+    ts = okxNow(),
     fetch: fetchImpl = globalThis.fetch,
     subtle,
   } = req
 
   if (!withinRateLimit(path, ts)) {
-    return { ok: false, error: 'Rate limit reached for this endpoint — slow down' }
+    return { ok: false, code: '', error: 'Rate limit reached for this endpoint — slow down' }
   }
 
   const headers = await signRequest({ ts, method, path, body, subtle })
   if (Object.keys(headers).length === 0) {
-    return { ok: false, error: 'No OKX credentials — add keys to trade' }
+    return { ok: false, code: '', error: 'No OKX credentials — add keys to trade' }
   }
 
   recordCall(path, ts)
@@ -137,7 +145,7 @@ export async function okxRequest(req) {
     // order went.
     const message = err?.message ?? String(err)
     log.warn(`request failed: ${message}`)
-    return { ok: false, error: `OKX unreachable: ${message}` }
+    return { ok: false, code: '', error: `OKX unreachable: ${message}` }
   }
 }
 

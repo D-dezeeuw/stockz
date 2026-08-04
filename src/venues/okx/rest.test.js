@@ -69,6 +69,7 @@ describe('readEnvelope', () => {
   it('reads OKX business failures that arrive as HTTP success', () => {
     expect(readEnvelope({ code: '0', data: [{ ordId: '1' }] })).toEqual({
       ok: true,
+      code: '0',
       data: [{ ordId: '1' }],
     })
 
@@ -79,9 +80,16 @@ describe('readEnvelope', () => {
     })
     expect(rejected.ok).toBe(false)
     expect(rejected.error).toMatch(/Insufficient balance/)
+    // The per-item code travels out with the message, so a caller that must *branch* on the
+    // failure is not left matching on prose.
+    expect(rejected.code).toBe('51008')
+    // The per-item code travels out with the message, so a caller that must *branch* on the
+    // failure is not left matching on prose.
+    expect(rejected.code).toBe('51008')
 
     const envelopeError = readEnvelope({ code: '50011', msg: 'too many requests', data: [] })
     expect(envelopeError.error).toMatch(/Rate limited/)
+    expect(envelopeError.code).toBe('50011')
     expect(readEnvelope({}).ok).toBe(false)
   })
 })
@@ -91,6 +99,7 @@ describe('okxRequest', () => {
     // Without credentials it refuses rather than sending an unsigned request.
     expect(await okxRequest({ path: '/api/v5/account/balance' })).toEqual({
       ok: false,
+      code: '',
       error: 'No OKX credentials — add keys to trade',
     })
 
@@ -103,7 +112,7 @@ describe('okxRequest', () => {
       subtle: webcrypto.subtle,
     })
 
-    expect(ok).toEqual({ ok: true, data: [{ bal: '1' }] })
+    expect(ok).toEqual({ ok: true, code: '0', data: [{ bal: '1' }] })
     expect(calls[0].url).toBe(`${OKX_REST_BASE}/api/v5/account/balance`)
     expect(calls[0].init.headers['OK-ACCESS-KEY']).toBe('ak')
 

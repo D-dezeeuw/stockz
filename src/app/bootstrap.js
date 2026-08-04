@@ -60,6 +60,7 @@ import { registerSweepActions } from '../backtest/sweep.js'
 import { registerCompareActions, startCompareChart, refreshRuns } from '../backtest/compare.js'
 import { setLevelSink } from '../strategy/builtin/range-fade.js'
 import { syncOkxClock } from '../venues/okx/clock.js'
+import { runKeyPreflight } from '../venues/okx/preflight.js'
 import { registerModeActions, applyModeParam, applyFirstRunMode } from '../exec/mode.js'
 import { startPaperBook } from '../exec/paper/engine.js'
 import { startPaperAccount } from '../exec/paper/account.js'
@@ -229,7 +230,14 @@ export function bootstrap(options = {}) {
   // thirty seconds off its own clock and refuses it as a 401 that reads exactly like a bad
   // key, so a drifted machine would otherwise spend the session being told its valid
   // credentials were rejected.
-  if (options.feeds !== false) syncOkxClock()
+  if (options.feeds !== false) {
+    // Chained, not fired alongside: the preflight is a *signed* call, so running it before
+    // the drift measurement lands would sign it with the clock the sync exists to correct —
+    // and a preflight that reports a clock error it caused itself is worse than none.
+    // Keys are adopted further down this same synchronous run, so they are in the vault long
+    // before this promise resolves.
+    syncOkxClock().then(() => runKeyPreflight()).catch(() => {})
+  }
   startHistogram()
   startStreakStrip()
   startFeeBars()
