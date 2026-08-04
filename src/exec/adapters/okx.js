@@ -1,6 +1,7 @@
 import { placeOrder, cancelOrder } from '../../venues/okx/rest.js'
 import { hasKeys } from '../../venues/vault.js'
 import { normalizeReject } from '../types.js'
+import { capabilityFor, capabilityFlags } from '../capabilities.js'
 
 /**
  * The OKX adapter.
@@ -10,16 +11,13 @@ import { normalizeReject } from '../types.js'
  * time-in-force: there is no separate tif field, so `ioc` is an `ordType` of its own.
  */
 
-/** What OKX can do, as far as the desk uses it. */
-export const OKX_CAPABILITIES = Object.freeze([
-  'market',
-  'limit',
-  'post_only',
-  'ioc',
-  'fok',
-  'reduce_only',
-  'batch_cancel',
-])
+/**
+ * What OKX can do, derived from the capability record rather than restated.
+ *
+ * Two hand-written lists would drift, and the drift shows up as a ticket offering a
+ * control the adapter then refuses — which reads to the trader as the desk being broken.
+ */
+export const OKX_CAPABILITIES = Object.freeze(capabilityFlags(capabilityFor('okx', 'SWAP-SWAP')))
 
 /**
  * The OKX `ordType` for an intent.

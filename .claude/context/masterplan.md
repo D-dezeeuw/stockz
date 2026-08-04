@@ -2766,48 +2766,48 @@
 **What:** Scalper TIFs on tap - take-what's-there IOC, all-or-nothing FOK, maker-only post-only - selectable per ticket.
 **How:** TIF composer mapping to OKX ordType ioc/fok/post_only with graceful client-side downgrade where EToro lacks native support.
 
-- [ ] **T17.3.1 - Branch and TIF constants** - What: A single source of truth for TIF values. How: Create feature/exec-tif; add TIF enum {GTC, IOC, FOK, POST_ONLY} to types.js with per-venue support notes.
-- [ ] **T17.3.2 - TIF composer function** - What: TIF merged into any intent without special cases. How: defineFn applyTif(intent, tif) validating price presence for post-only and returning a new intent object.
-- [ ] **T17.3.3 - OKX TIF mapping** - What: Native venue TIF used wherever it exists. How: Extend buildOkxOrder() to emit ordType ioc, fok or post_only from the intent's tif field.
-- [ ] **T17.3.4 - EToro TIF downgrade** - What: TIF semantics preserved even where EToro has no native flag. How: Write downgradeTif() converting IOC/FOK to limit-plus-cancel-timer emulation and marking the ack as emulated.
-- [ ] **T17.3.5 - IOC remainder handling** - What: Unfilled IOC remainders vanish from the working list instantly. How: Parse the OKX ack's filled/canceled split into partial-then-canceled store transitions with one exec:update.
-- [ ] **T17.3.6 - Post-only reject path** - What: A crossing post-only fails loud and fast, not silently. How: Map the OKX post-only reject sCode to a 'would-cross' reason and flash the ticket price field via a CSS class toggle.
-- [ ] **T17.3.7 - TIF selector control** - What: TIF switched in one click mid-flow. How: Segmented control in the ticket bound with data-model="ticket.tif", active segment styled with the orange accent token.
-- [ ] **T17.3.8 - Capability-gated TIF buttons** - What: Only TIFs the venue supports are ever shown. How: Wrap each segment in data-if bindings against the F17.4 capability computed so dead options never render.
-- [ ] **T17.3.9 - Single unit tests for TIF fns** - What: TIF logic pinned by one test per function. How: One Vitest test each for applyTif and downgradeTif, executed with per-file test targeting only.
-- [ ] **T17.3.10 - Verify and merge** - What: TIF feature lands green. How: Run ESLint and the feature's Vitest tests, then merge feature/exec-tif into main.
+- [x] **T17.3.1 - Branch and TIF constants** - What: A single source of truth for TIF values. How: Create feature/exec-tif; add TIF enum {GTC, IOC, FOK, POST_ONLY} to types.js with per-venue support notes.
+- [x] **T17.3.2 - TIF composer function** - What: TIF merged into any intent without special cases. How: defineFn applyTif(intent, tif) validating price presence for post-only and returning a new intent object.
+- [x] **T17.3.3 - OKX TIF mapping** - What: Native venue TIF used wherever it exists. How: Extend buildOkxOrder() to emit ordType ioc, fok or post_only from the intent's tif field.
+- [x] **T17.3.4 - EToro TIF downgrade** - What: TIF semantics preserved even where EToro has no native flag. How: Write downgradeTif() converting IOC/FOK to limit-plus-cancel-timer emulation and marking the ack as emulated.
+- [x] **T17.3.5 - IOC remainder handling** - What: Unfilled IOC remainders vanish from the working list instantly. How: Parse the OKX ack's filled/canceled split into partial-then-canceled store transitions with one exec:update.
+- [x] **T17.3.6 - Post-only reject path** - What: A crossing post-only fails loud and fast, not silently. How: Map the OKX post-only reject sCode to a 'would-cross' reason and flash the ticket price field via a CSS class toggle.
+- [x] **T17.3.7 - TIF selector control** - What: TIF switched in one click mid-flow. How: Segmented control in the ticket bound with data-model="ticket.tif", active segment styled with the orange accent token.
+- [x] **T17.3.8 - Capability-gated TIF buttons** - What: Only TIFs the venue supports are ever shown. How: Wrap each segment in data-if bindings against the F17.4 capability computed so dead options never render.
+- [x] **T17.3.9 - Single unit tests for TIF fns** - What: TIF logic pinned by one test per function. How: One Vitest test each for applyTif and downgradeTif, executed with per-file test targeting only.
+- [x] **T17.3.10 - Verify and merge** - What: TIF feature lands green. How: Run ESLint and the feature's Vitest tests, then merge feature/exec-tif into main.
 
 ### F17.4 - Venue capability map
 
 **What:** The ticket only ever offers what the venue can actually do - zero dead buttons, zero venue trivia to memorize.
 **How:** Static capability records for OKX v5 and EToro exposed as a Spektrum computed feeding data-if bindings in ticket and settings.
 
-- [ ] **T17.4.1 - Branch and capabilities module** - What: One file that answers 'can this venue do X'. How: Create feature/exec-capability-map; add src/exec/capabilities.js exporting per-venue capability records.
-- [ ] **T17.4.2 - OKX capability record** - What: Accurate OKX feature coverage. How: Declare supported order types, TIFs, amend, attachAlgoOrds brackets and algo trailing per the OKX v5 API docs.
-- [ ] **T17.4.3 - EToro capability record** - What: Honest EToro coverage including emulations. How: Declare the EToro REST supported set with explicit emulated:true flags for IOC/FOK/OCO/trailing.
-- [ ] **T17.4.4 - Capability lookup function** - What: One O(1) call resolves venue plus instrument quirks. How: defineFn capabilityFor(venue, instrument) merging the venue record with per-instrument overrides (e.g. spot vs swap).
-- [ ] **T17.4.5 - Reactive caps computed** - What: The UI re-gates itself the instant venue or instrument changes. How: computed('exec.caps') deriving from the ticket's selected venue/instrument state values.
-- [ ] **T17.4.6 - data-if gating in the ticket** - What: Unsupported controls never render at all. How: Wrap TIF, bracket and trailing controls in data-if="caps.postOnly"-style bindings across the ticket template.
-- [ ] **T17.4.7 - Emulation badges** - What: Instant awareness when the engine, not the venue, runs a feature. How: Render a small 'EMU' tag via {{caps.oco.emulated}} interpolation styled with the orange token.
-- [ ] **T17.4.8 - Capability matrix in settings** - What: Full venue comparison available on demand. How: Read-only matrix grid in the settings modal iterating both records with data-each rows.
-- [ ] **T17.4.9 - Single unit test for capabilityFor** - What: The lookup's merge logic locked down. How: One Vitest test for capabilityFor covering venue defaults plus an instrument override, run against only that file.
-- [ ] **T17.4.10 - Verify and merge** - What: Capability map lands proven. How: ESLint plus the feature's test green, merge feature/exec-capability-map into main.
+- [x] **T17.4.1 - Branch and capabilities module** - What: One file that answers 'can this venue do X'. How: Create feature/exec-capability-map; add src/exec/capabilities.js exporting per-venue capability records.
+- [x] **T17.4.2 - OKX capability record** - What: Accurate OKX feature coverage. How: Declare supported order types, TIFs, amend, attachAlgoOrds brackets and algo trailing per the OKX v5 API docs.
+- [x] **T17.4.3 - EToro capability record** - What: Honest EToro coverage including emulations. How: Declare the EToro REST supported set with explicit emulated:true flags for IOC/FOK/OCO/trailing.
+- [x] **T17.4.4 - Capability lookup function** - What: One O(1) call resolves venue plus instrument quirks. How: defineFn capabilityFor(venue, instrument) merging the venue record with per-instrument overrides (e.g. spot vs swap).
+- [x] **T17.4.5 - Reactive caps computed** - What: The UI re-gates itself the instant venue or instrument changes. How: computed('exec.caps') deriving from the ticket's selected venue/instrument state values.
+- [x] **T17.4.6 - data-if gating in the ticket** - What: Unsupported controls never render at all. How: Wrap TIF, bracket and trailing controls in data-if="caps.postOnly"-style bindings across the ticket template.
+- [x] **T17.4.7 - Emulation badges** - What: Instant awareness when the engine, not the venue, runs a feature. How: Render a small 'EMU' tag via {{caps.oco.emulated}} interpolation styled with the orange token.
+- [x] **T17.4.8 - Capability matrix in settings** - What: Full venue comparison available on demand. How: Read-only matrix grid in the settings modal iterating both records with data-each rows.
+- [x] **T17.4.9 - Single unit test for capabilityFor** - What: The lookup's merge logic locked down. How: One Vitest test for capabilityFor covering venue defaults plus an instrument override, run against only that file.
+- [x] **T17.4.10 - Verify and merge** - What: Capability map lands proven. How: ESLint plus the feature's test green, merge feature/exec-capability-map into main.
 
 ### F17.5 - Bracket intent: entry + TP + SL in one action
 
 **What:** One click arms entry, take-profit and stop-loss together - the full scalp expressed in a single gesture.
 **How:** makeBracket() expanding one intent into three linked orders; native OKX attachAlgoOrds where possible, client-managed legs on EToro.
 
-- [ ] **T17.5.1 - Branch and bracket types** - What: Linked-order data model ready for expansion logic. How: Create feature/exec-bracket; add bracket record with parentId/legIds linkage fields to types.js.
-- [ ] **T17.5.2 - Bracket expansion function** - What: Entry plus offsets becomes three consistent orders. How: defineFn makeBracket(intent, tpTicks, slTicks) returning entry, TP and SL intents sharing a bracket id.
-- [ ] **T17.5.3 - Tick offset pricing** - What: TP/SL prices exact to the instrument grid. How: Write offsetsFromTicks() converting tick offsets to absolute prices using instrument tickSz, side-aware for shorts.
-- [ ] **T17.5.4 - OKX native bracket path** - What: Venue-held TP/SL that survives a dropped browser tab. How: Attach TP and SL via attachAlgoOrds on the entry order inside buildOkxOrder when caps allow.
-- [ ] **T17.5.5 - Client-leg path for EToro** - What: Brackets work identically where the venue has none. How: Submit TP and SL legs from the engine on the entry's fill event, flagged emulated in the store.
-- [ ] **T17.5.6 - Linkage in the orders store** - What: Cancel the parent, the legs die too. How: Record parent/leg relations in exec.orders and cascade cancels through the adapter on parent cancel.
-- [ ] **T17.5.7 - Ticket bracket controls** - What: TP/SL set in ticks without leaving the keyboard flow. How: Tick stepper inputs bound with data-model="ticket.tpTicks"/"ticket.slTicks", armed state styled green.
-- [ ] **T17.5.8 - Fill-triggered leg arming** - What: Client legs live within one event of the entry fill. How: watch() the entry order's fill transition and submit both legs inside the same callback, no timers.
-- [ ] **T17.5.9 - Single unit tests for bracket fns** - What: Expansion and pricing math pinned. How: One Vitest test each for makeBracket and offsetsFromTicks, run individually via path targeting.
-- [ ] **T17.5.10 - Verify and merge** - What: Brackets land only when green. How: ESLint plus feature tests pass, merge feature/exec-bracket into main.
+- [x] **T17.5.1 - Branch and bracket types** - What: Linked-order data model ready for expansion logic. How: Create feature/exec-bracket; add bracket record with parentId/legIds linkage fields to types.js.
+- [x] **T17.5.2 - Bracket expansion function** - What: Entry plus offsets becomes three consistent orders. How: defineFn makeBracket(intent, tpTicks, slTicks) returning entry, TP and SL intents sharing a bracket id.
+- [x] **T17.5.3 - Tick offset pricing** - What: TP/SL prices exact to the instrument grid. How: Write offsetsFromTicks() converting tick offsets to absolute prices using instrument tickSz, side-aware for shorts.
+- [x] **T17.5.4 - OKX native bracket path** - What: Venue-held TP/SL that survives a dropped browser tab. How: Attach TP and SL via attachAlgoOrds on the entry order inside buildOkxOrder when caps allow.
+- [x] **T17.5.5 - Client-leg path for EToro** - What: Brackets work identically where the venue has none. How: Submit TP and SL legs from the engine on the entry's fill event, flagged emulated in the store.
+- [x] **T17.5.6 - Linkage in the orders store** - What: Cancel the parent, the legs die too. How: Record parent/leg relations in exec.orders and cascade cancels through the adapter on parent cancel.
+- [x] **T17.5.7 - Ticket bracket controls** - What: TP/SL set in ticks without leaving the keyboard flow. How: Tick stepper inputs bound with data-model="ticket.tpTicks"/"ticket.slTicks", armed state styled green.
+- [x] **T17.5.8 - Fill-triggered leg arming** - What: Client legs live within one event of the entry fill. How: watch() the entry order's fill transition and submit both legs inside the same callback, no timers.
+- [x] **T17.5.9 - Single unit tests for bracket fns** - What: Expansion and pricing math pinned. How: One Vitest test each for makeBracket and offsetsFromTicks, run individually via path targeting.
+- [x] **T17.5.10 - Verify and merge** - What: Brackets land only when green. How: ESLint plus feature tests pass, merge feature/exec-bracket into main.
 
 ### F17.6 - Client-side OCO emulation
 

@@ -12,6 +12,24 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ### Added
 
+- **Time-in-force** — IOC, FOK and post-only, each expressing a different intolerance
+  (of leftovers, of partial size, of paying the spread) and each costing money in a way
+  that is hard to see afterwards when it is wrong. Where a venue lacks one the engine can
+  emulate it, but never sells the emulation as the real thing: emulated IOC is a resting
+  limit plus a cancel, which is live for a round trip and can fill where the venue's own
+  IOC would not. Post-only is *not* emulated at all — there is no way to ask a venue to
+  refuse a crossing order afterwards, and a silent fallback pays exactly the taker fee
+  the trader was avoiding. A partially filled IOC stays two events, because collapsing it
+  to "cancelled" loses the fill. (F17.3)
+- **Venue capability map** — the ticket only offers what the venue can honour, and the
+  adapter's flag list is *derived* from the same record rather than restated, so the two
+  cannot drift into a ticket offering what the adapter then refuses. Anything the engine
+  runs rather than the venue is badged as emulated. (F17.4)
+- **Brackets** — entry, take-profit and stop as one gesture, which is what makes the stop
+  actually exist: the exits are the decisions that get skipped when the market is moving.
+  Legs are reduce-only by construction so one firing alone can never open a new position,
+  and they are linked — a take-profit that filled while its stop stayed live would leave
+  the trader short a position they had already closed. (F17.5)
 - **Execution engine** — one door every order goes through, so something true can be said
   about *all* of them: validated before the network, given a client id, its rejection
   normalised into one vocabulary, its state moved only through legal transitions. Venue
