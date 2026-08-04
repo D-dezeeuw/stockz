@@ -228,6 +228,9 @@ export function initialState(overrides = {}) {
     [PATHS.backtest.strategies]: [],
     [PATHS.backtest.recordings]: [],
     [PATHS.backtest.fillConfig]: {},
+    [PATHS.backtest.stats]: null,
+    [PATHS.backtest.tiles]: [],
+    [PATHS.backtest.curve]: [],
     [PATHS.backtest.result]: null,
     [PATHS.backtest.summary]: {
       ran: false,

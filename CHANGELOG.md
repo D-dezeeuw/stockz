@@ -28,6 +28,14 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
   maker/taker card is charged. Every assumption is configurable, persisted, snapshotted at
   launch, and shown on the same readout as the numbers it produced.
 
+- **F27.7 — backtest results report.** Fills are paired FIFO into round-trip trades, and
+  every statistic comes from those: expectancy, win rate, average win and loss, profit
+  factor, and the worst peak-to-trough with how long it lasted. Six tiles lay the argument
+  out in order — is there a sample, did it earn, does it earn *per trade*, how did that
+  feel, would the trader still have been there — over a canvas equity curve that reuses the
+  analytics renderer rather than growing a second one. One click copies the whole result,
+  trade list included, so whoever receives it can check it.
+
 ### Fixed
 
 - **Two `data-each` bindings rendered nothing and warned on every frame.** Spektrum binds

@@ -101,6 +101,7 @@ export const ACTIONS = Object.freeze({
     start: 'backtest.start',
     cancel: 'backtest.cancel',
     configure: 'backtest.configure',
+    copyReport: 'backtest.copyReport',
   }),
   bot: Object.freeze({
     toggleArm: 'bot.toggleArm',

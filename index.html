@@ -1031,6 +1031,19 @@
                    with after the fact. -->
               <p class="label backtest__assume" data-if="backtest.summary.ran">assumed {{backtest.summary.assumptions}}</p>
               <p class="label" data-if="!backtest.summary.ran">no run yet · record a session first</p>
+              <!-- Five numbers in a fixed order, because the order is the argument: is
+                   there a sample, did it earn, does it earn *per trade*, how does that
+                   feel, and would the trader still have been there at the end. -->
+              <div class="bt-tiles" data-if="backtest.summary.ran" data-each="backtest.tiles" data-as="t">
+                <div class="bt-tile" :class="'bt-tile bt-tile--' + t.tone">
+                  <span class="bt-tile__value">{{t.value}}</span>
+                  <span class="bt-tile__label">{{t.label}}</span>
+                </div>
+              </div>
+              <canvas id="backtest-canvas" class="bt-chart" data-if="backtest.summary.ran"></canvas>
+              <div class="backtest__out" data-if="backtest.summary.ran">
+                <button type="button" class="chip" data-action="click" data-fn="backtest.copyReport">copy json</button>
+              </div>
             </div>
             <p class="label" data-if="block.id !== 'book' &amp;&amp; block.id !== 'tape' &amp;&amp; block.id !== 'ticket' &amp;&amp; block.id !== 'positions' &amp;&amp; block.id !== 'hud' &amp;&amp; block.id !== 'strategies' &amp;&amp; block.id !== 'scoreboard' &amp;&amp; block.id !== 'alerts' &amp;&amp; block.id !== 'bot' &amp;&amp; block.id !== 'backtest'">ready</p>
           </div>
