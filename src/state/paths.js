@@ -67,6 +67,7 @@ export const PATHS = Object.freeze({
     rtt: 'ui.rtt',
     slippage: 'ui.slippage',
     spreadAlert: 'ui.spreadAlert',
+    session: 'ui.session',
     captureFor: 'ui.captureFor',
     capturePreview: 'ui.capturePreview',
   }),
@@ -96,6 +97,7 @@ export const PATHS = Object.freeze({
     maxDeviationBps: 'settings.maxDeviationBps',
     sessionStartUtc: 'settings.sessionStartUtc',
     spreadLimitBps: 'settings.spreadLimitBps',
+    tradesPerHourTarget: 'settings.tradesPerHourTarget',
     chords: 'settings.chords',
   }),
   market: Object.freeze({

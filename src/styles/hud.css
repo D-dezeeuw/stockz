@@ -55,6 +55,81 @@
 }
 
 /*
+ * Pace and streak. On-target and neutral are deliberately unstyled: a HUD where every
+ * tile is coloured is one where colour has stopped meaning anything, so only the two
+ * readings worth interrupting for get a colour.
+ */
+.hud__tile--pace-over .hud__value,
+.hud__tile--streak-cold .hud__value {
+  color: var(--orange);
+}
+
+.hud__tile--pace-under .hud__value {
+  color: var(--ink-muted);
+}
+
+.hud__tile--streak-hot .hud__value {
+  color: var(--green);
+}
+
+/* Three losses in a row earns a border, not just a colour — it is the one reading on
+   this row that is about the trader rather than the market. */
+.hud__tile--streak-cold {
+  border-color: var(--orange);
+}
+
+/* The pulse fires because the class itself is new: crossing into hot or cold announces
+   itself once, then the tile goes quiet and stays readable. */
+.hud__tile--streak-hot,
+.hud__tile--streak-cold {
+  animation: streak-pulse 600ms ease-out 1;
+}
+
+@keyframes streak-pulse {
+  0% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(1.04);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* The pace meter: peripheral vision reads the bar, the eye reads the number. */
+.hud__meter {
+  display: block;
+  height: 2px;
+  margin-top: 0.25rem;
+  background: var(--line);
+  overflow: hidden;
+}
+
+.hud__meter i {
+  display: block;
+  height: 100%;
+  width: 0;
+  background: var(--green);
+  transition: width 120ms linear;
+}
+
+.hud__tile--pace-over .hud__meter i {
+  background: var(--orange);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hud__tile--streak-hot,
+  .hud__tile--streak-cold {
+    animation: none;
+  }
+
+  .hud__meter i {
+    transition: none;
+  }
+}
+
+/*
  * Venue LEDs. Colour carries the reading before the number does, which is the point of
  * having them — a glance answers "is it me or is it them" without reading milliseconds.
  */

@@ -12,6 +12,18 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ### Added
 
+- **Session tiles: pace, streak and traded size** — three readings a scalper takes on
+  themselves rather than on the market. Pace is **extrapolated from a sliding hour, not
+  counted since the open**: ten trades in the last ten minutes is a pace of sixty an hour,
+  and that is the number that says whether the current rhythm is sustainable — a
+  since-open count says only what already happened. It is banded ±25% against a persisted
+  target, because a tile that cries off-target at every wobble is a tile that stops being
+  read. The streak tile is the least obvious and the most useful of the three: losing
+  streaks are where discipline goes, and the trade after three losses is the one taken too
+  big and too early to get it back — so cold earns a colour, a border and a one-shot pulse
+  where on-target and neutral stay deliberately unstyled. A scratch **breaks** a streak
+  without starting one. All three read the realisation ledger rather than keeping their
+  own tallies, so the day-roll they already inherit is the only one there is.
 - **Slippage per fill** — the cost a scalper cannot see without measuring: a two-tick edge
   taken at one tick of slippage is half a strategy, and nothing on screen says so unless
   something keeps score. **Positive always means worse**, whichever side was traded — a

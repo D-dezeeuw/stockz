@@ -3148,48 +3148,48 @@
 **What:** A live pace figure against your target clip so you know if you are grinding or drifting.
 **How:** Sliding 60-minute window over execution timestamps with an extrapolated hourly rate and a persisted target.
 
-- [ ] **T19.6.1 - Create pace branch** - What: Room to build the pace math alone. How: git checkout -b feature/f19.6-trade-pace from an updated main.
-- [ ] **T19.6.2 - recordTrade fn** - What: Every fill counts toward pace instantly. How: Append the fill timestamp into a dedicated ring on each execution stream event.
-- [ ] **T19.6.3 - pruneWindow fn** - What: Only the last hour ever counts. How: Pure fn evicting timestamps older than 60 minutes, invoked from the hud:tick system.
-- [ ] **T19.6.4 - pacePerHour fn** - What: The honest trades-per-hour figure. How: Pure fn extrapolating window count over elapsed window span, clamping the first minutes of a session.
-- [ ] **T19.6.5 - Pace target setting** - What: Your desired clip survives reloads. How: hud.paceTarget persisted through spektrum/persist with a default of 20 trades per hour.
-- [ ] **T19.6.6 - paceRatio computed** - What: One ratio drives color and meter width. How: Spektrum computed dividing live pace by target, exposed as hud.paceRatio.
-- [ ] **T19.6.7 - Pace tile markup** - What: Current pace and target side by side. How: Bind {{pace}} of {{target}} in the HUD block with a data-ref hook for the meter element.
-- [ ] **T19.6.8 - CSS pace meter** - What: A filling bar shows clip at peripheral-vision speed. How: Width-bound gradient bar styled via :style from hud.paceRatio, capped and colored past 100 percent.
-- [ ] **T19.6.9 - Single tests per pace fn** - What: Recording, pruning and extrapolation proven separately. How: One Vitest test per fn using fixed timestamp fixtures, each run with its own -t filter.
-- [ ] **T19.6.10 - Merge pace counter** - What: Session tempo tracking live on main. How: Lint plus targeted Vitest filters, then merge the branch.
+- [x] **T19.6.1 - Create pace branch** - What: Room to build the pace math alone. How: git checkout -b feature/f19.6-trade-pace from an updated main.
+- [x] **T19.6.2 - recordTrade fn** - What: Every fill counts toward pace instantly. How: Append the fill timestamp into a dedicated ring on each execution stream event.
+- [x] **T19.6.3 - pruneWindow fn** - What: Only the last hour ever counts. How: Pure fn evicting timestamps older than 60 minutes, invoked from the hud:tick system.
+- [x] **T19.6.4 - pacePerHour fn** - What: The honest trades-per-hour figure. How: Pure fn extrapolating window count over elapsed window span, clamping the first minutes of a session.
+- [x] **T19.6.5 - Pace target setting** - What: Your desired clip survives reloads. How: hud.paceTarget persisted through spektrum/persist with a default of 20 trades per hour.
+- [x] **T19.6.6 - paceRatio computed** - What: One ratio drives color and meter width. How: Spektrum computed dividing live pace by target, exposed as hud.paceRatio.
+- [x] **T19.6.7 - Pace tile markup** - What: Current pace and target side by side. How: Bind {{pace}} of {{target}} in the HUD block with a data-ref hook for the meter element.
+- [x] **T19.6.8 - CSS pace meter** - What: A filling bar shows clip at peripheral-vision speed. How: Width-bound gradient bar styled via :style from hud.paceRatio, capped and colored past 100 percent.
+- [x] **T19.6.9 - Single tests per pace fn** - What: Recording, pruning and extrapolation proven separately. How: One Vitest test per fn using fixed timestamp fixtures, each run with its own -t filter.
+- [x] **T19.6.10 - Merge pace counter** - What: Session tempo tracking live on main. How: Lint plus targeted Vitest filters, then merge the branch.
 
 ### F19.7 - Win/loss streak indicator
 
 **What:** An instant hot/cold read on your current streak so you know when you are in sync or tilting.
 **How:** Classify each closed trade from realized PnL, run a streak reducer, and tier the result into flame/ice HUD states.
 
-- [ ] **T19.7.1 - Fork streak branch** - What: Isolated build of the streak logic. How: Branch feature/f19.7-streak from main and outline the module in the first commit.
-- [ ] **T19.7.2 - classifyTrade fn** - What: Every closed trade becomes win, loss or scratch. How: Pure fn mapping realized PnL to 1, -1 or 0 with a configurable scratch band in bps.
-- [ ] **T19.7.3 - updateStreak reducer fn** - What: The running streak is always current. How: Pure reducer extending the streak on same-sign results and resetting on flips, ignoring scratches.
-- [ ] **T19.7.4 - streakTier fn** - What: Hot and cold states without reading numbers. How: Pure fn mapping streak to cold/cool/neutral/warm/hot at -3, -1, +1 and +3 boundaries.
-- [ ] **T19.7.5 - Session tally fn** - What: Day totals of wins and losses beside the streak. How: tallyResult(prev, r) reducer keeping win/loss/scratch counts since session start.
-- [ ] **T19.7.6 - Wire closed-trade feed** - What: Streak updates the moment a position closes. How: Subscribe to the positions layer close events and pipe realized PnL through the classify and reduce chain into hud state.
-- [ ] **T19.7.7 - Streak tile markup** - What: Streak count, tier glyph and W/L record in one tile. How: Bind values in the HUD block with data-if switching flame and ice glyphs per tier.
-- [ ] **T19.7.8 - Tier change pulse** - What: Going hot or cold announces itself. How: watch() on the tier value adding a one-shot CSS pulse animation class on transitions.
-- [ ] **T19.7.9 - Single tests per streak fn** - What: Classifier, reducer, tiering and tally each proven alone. How: One Vitest test per fn with mixed PnL sequences, run individually via -t.
-- [ ] **T19.7.10 - Merge streak indicator** - What: Hot/cold awareness shipped. How: Green lint and per-fn test runs, then merge feature/f19.7 to main.
+- [x] **T19.7.1 - Fork streak branch** - What: Isolated build of the streak logic. How: Branch feature/f19.7-streak from main and outline the module in the first commit.
+- [x] **T19.7.2 - classifyTrade fn** - What: Every closed trade becomes win, loss or scratch. How: Pure fn mapping realized PnL to 1, -1 or 0 with a configurable scratch band in bps.
+- [x] **T19.7.3 - updateStreak reducer fn** - What: The running streak is always current. How: Pure reducer extending the streak on same-sign results and resetting on flips, ignoring scratches.
+- [x] **T19.7.4 - streakTier fn** - What: Hot and cold states without reading numbers. How: Pure fn mapping streak to cold/cool/neutral/warm/hot at -3, -1, +1 and +3 boundaries.
+- [x] **T19.7.5 - Session tally fn** - What: Day totals of wins and losses beside the streak. How: tallyResult(prev, r) reducer keeping win/loss/scratch counts since session start.
+- [x] **T19.7.6 - Wire closed-trade feed** - What: Streak updates the moment a position closes. How: Subscribe to the positions layer close events and pipe realized PnL through the classify and reduce chain into hud state.
+- [x] **T19.7.7 - Streak tile markup** - What: Streak count, tier glyph and W/L record in one tile. How: Bind values in the HUD block with data-if switching flame and ice glyphs per tier.
+- [x] **T19.7.8 - Tier change pulse** - What: Going hot or cold announces itself. How: watch() on the tier value adding a one-shot CSS pulse animation class on transitions.
+- [x] **T19.7.9 - Single tests per streak fn** - What: Classifier, reducer, tiering and tally each proven alone. How: One Vitest test per fn with mixed PnL sequences, run individually via -t.
+- [x] **T19.7.10 - Merge streak indicator** - What: Hot/cold awareness shipped. How: Green lint and per-fn test runs, then merge feature/f19.7 to main.
 
 ### F19.8 - Volume and turnover today
 
 **What:** Running contracts traded and notional turnover since midnight so your day's size is never a guess.
 **How:** Accumulate fill qty and qty*price with a local-midnight day-roll reset, persisted via spektrum/persist across reloads.
 
-- [ ] **T19.8.1 - Begin volume branch** - What: Clean slate for the accumulators. How: git checkout -b feature/f19.8-volume-turnover from main.
-- [ ] **T19.8.2 - notional fn** - What: Consistent money value per fill. How: Pure fn qty * price with contract multiplier support for OKX swap instruments.
-- [ ] **T19.8.3 - accumulateFill fn** - What: Totals grow with every execution. How: Pure reducer adding qty and notional into the session accumulator object per fill event.
-- [ ] **T19.8.4 - dayKey fn** - What: A stable identifier for the local trading day. How: Pure fn deriving YYYY-MM-DD from a timestamp in the user's local timezone.
-- [ ] **T19.8.5 - resetIfNewDay fn** - What: Totals restart cleanly at midnight, even mid-session. How: Compare stored dayKey against dayKey(hud.now) on each hud:tick and zero the accumulators on roll.
-- [ ] **T19.8.6 - Persist accumulators** - What: A page refresh never erases your day. How: Sync the accumulator slice through spektrum/persist to localStorage keyed by dayKey.
-- [ ] **T19.8.7 - Wire fills stream** - What: Both venues feed the same totals. How: Subscribe OKX fills channel and EToro execution responses into accumulateFill via a shared adapter.
-- [ ] **T19.8.8 - Volume tile markup and style** - What: Contracts and turnover in compact notation. How: Bind formatCompact values in the HUD block styled with the terminal monospace tokens.
-- [ ] **T19.8.9 - Single tests per volume fn** - What: Notional, accumulation, day keying and reset proven separately. How: One Vitest test per fn including a midnight-roll fixture, each run via its -t filter.
-- [ ] **T19.8.10 - Merge volume totals** - What: Daily size tracking on main. How: Lint and targeted tests green, then merge the branch.
+- [x] **T19.8.1 - Begin volume branch** - What: Clean slate for the accumulators. How: git checkout -b feature/f19.8-volume-turnover from main.
+- [x] **T19.8.2 - notional fn** - What: Consistent money value per fill. How: Pure fn qty * price with contract multiplier support for OKX swap instruments.
+- [x] **T19.8.3 - accumulateFill fn** - What: Totals grow with every execution. How: Pure reducer adding qty and notional into the session accumulator object per fill event.
+- [x] **T19.8.4 - dayKey fn** - What: A stable identifier for the local trading day. How: Pure fn deriving YYYY-MM-DD from a timestamp in the user's local timezone.
+- [x] **T19.8.5 - resetIfNewDay fn** - What: Totals restart cleanly at midnight, even mid-session. How: Compare stored dayKey against dayKey(hud.now) on each hud:tick and zero the accumulators on roll.
+- [x] **T19.8.6 - Persist accumulators** - What: A page refresh never erases your day. How: Sync the accumulator slice through spektrum/persist to localStorage keyed by dayKey.
+- [x] **T19.8.7 - Wire fills stream** - What: Both venues feed the same totals. How: Subscribe OKX fills channel and EToro execution responses into accumulateFill via a shared adapter.
+- [x] **T19.8.8 - Volume tile markup and style** - What: Contracts and turnover in compact notation. How: Bind formatCompact values in the HUD block styled with the terminal monospace tokens.
+- [x] **T19.8.9 - Single tests per volume fn** - What: Notional, accumulation, day keying and reset proven separately. How: One Vitest test per fn including a midnight-roll fixture, each run via its -t filter.
+- [x] **T19.8.10 - Merge volume totals** - What: Daily size tracking on main. How: Lint and targeted tests green, then merge the branch.
 
 ### F19.9 - Fee burn meter
 

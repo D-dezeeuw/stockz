@@ -348,6 +348,23 @@
                 <span class="hud__value">{{ui.hud.exposureLabel}}</span>
                 <span class="hud__label">gross exposure</span>
               </div>
+              <!-- Pace against the trader's own target, banded so small wobbles stay quiet. -->
+              <div class="hud__tile" :class="'hud__tile hud__tile--pace-' + ui.session.paceState">
+                <span class="hud__value">{{ui.session.paceLabel}}</span>
+                <span class="hud__label">trades / hr · target {{ui.session.target}}</span>
+                <span class="hud__meter">
+                  <i :style="'width:' + (ui.session.paceRatio * 100) + '%'"></i>
+                </span>
+              </div>
+              <!-- The run in progress. Three losses is where discipline goes. -->
+              <div class="hud__tile" :class="'hud__tile hud__tile--streak-' + ui.session.streakTone">
+                <span class="hud__value">{{ui.session.streak}}{{ui.session.streakKind === 'win' ? 'W' : (ui.session.streakKind === 'loss' ? 'L' : '')}}</span>
+                <span class="hud__label">streak</span>
+              </div>
+              <div class="hud__tile">
+                <span class="hud__value">{{ui.session.turnoverLabel}}</span>
+                <span class="hud__label">turnover · {{ui.session.contracts}} traded</span>
+              </div>
               <!-- Venue lag: the answer to "is it me or is it them". -->
               <div class="hud__tile hud__tile--venues">
                 <span class="hud__venue">
