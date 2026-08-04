@@ -12,6 +12,7 @@ import { registerPrefillActions } from '../book/prefill.js'
 import { registerGroupingActions } from '../book/grouping.js'
 import { registerTapeActions } from '../book/tape.js'
 import { registerTicketActions } from '../ticket/actions.js'
+import { registerSizingActions } from '../ticket/sizing.js'
 
 beforeEach(() => {
   clearActions()
@@ -35,6 +36,8 @@ describe('allActionNames', () => {
       'ticket.nudge',
       'ticket.reset',
       'ticket.arm',
+      'ticket.applyPreset',
+      'ticket.stepQty',
       'app.reset',
       'lists.focus',
       'lists.add',
@@ -62,6 +65,7 @@ describe('allActionNames', () => {
     registerGroupingActions()
     registerTapeActions()
     registerTicketActions()
+    registerSizingActions()
     expect(actionNames().sort()).toEqual(allActionNames().sort())
 
     // Every name follows <namespace>.<verb>, which is what registerAction enforces.

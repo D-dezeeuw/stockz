@@ -119,6 +119,13 @@ export const SETTINGS_SCHEMA = Object.freeze([
     default: 4,
   },
   {
+    key: 'qtyPresets',
+    group: 'trading',
+    label: 'Size presets (% of buying power)',
+    kind: 'text',
+    default: '25,50,75,100',
+  },
+  {
     key: 'favourites',
     group: 'instruments',
     label: 'Favourite instruments',

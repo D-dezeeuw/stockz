@@ -77,6 +77,7 @@ export const PATHS = Object.freeze({
     whaleMultiplier: 'settings.whaleMultiplier',
     priceGroups: 'settings.priceGroups',
     tapeFloors: 'settings.tapeFloors',
+    qtyPresets: 'settings.qtyPresets',
   }),
   market: Object.freeze({
     venues: 'market.venues',
@@ -106,6 +107,7 @@ export const PATHS = Object.freeze({
     orders: 'trade.orders',
     positions: 'trade.positions',
     dayPnl: 'trade.dayPnl',
+    buyingPower: 'trade.buyingPower',
     ticketPrice: 'trade.ticketPrice',
     ticketSide: 'trade.ticketSide',
     ticketSize: 'trade.ticketSize',

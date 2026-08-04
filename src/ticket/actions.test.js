@@ -104,6 +104,9 @@ describe('readTicket', () => {
     setValue('market.bookStatus', 'live')
     tick()
 
+    setValue('trade.armed', true)
+    tick()
+
     const read = readTicket({ now: 1100 })
     expect(read.ticket).toMatchObject({ symbol: 'okx:BTC-USDT', size: 0.5, side: 'buy' })
     // A buy at market takes the offer.

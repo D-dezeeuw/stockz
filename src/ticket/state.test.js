@@ -75,19 +75,24 @@ describe('canSubmit', () => {
     const ticket = { symbol: 'okx:BTC-USDT', size: 0.1 }
     const priced = { price: 100 }
 
-    expect(canSubmit(ticket, priced, { bookStatus: 'live' })).toEqual({ ok: true, reason: '' })
+    const hot = { bookStatus: 'live', armed: true }
+    expect(canSubmit(ticket, priced, hot)).toEqual({ ok: true, reason: '' })
 
-    expect(canSubmit({ ...ticket, symbol: '' }, priced, { bookStatus: 'live' }).reason).toBe(
-      'no instrument',
-    )
-    expect(canSubmit({ ...ticket, size: 0 }, priced, { bookStatus: 'live' }).reason).toBe('no size')
-    expect(canSubmit(ticket, { price: 0 }, { bookStatus: 'live' }).reason).toBe('no price')
+    expect(canSubmit({ ...ticket, symbol: '' }, priced, hot).reason).toBe('no instrument')
+    expect(canSubmit({ ...ticket, size: 0 }, priced, hot).reason).toBe('no size')
+    expect(canSubmit(ticket, { price: 0 }, hot).reason).toBe('no price')
 
     // A price read off a stale ladder is a market order in disguise.
-    expect(canSubmit(ticket, priced, { bookStatus: 'stale' })).toEqual({
+    expect(canSubmit(ticket, priced, { bookStatus: 'stale', armed: true })).toEqual({
       ok: false,
       reason: 'book not live',
     })
+
+    // A cold desk sends nothing — and it is checked last, so a ticket that is *also*
+    // missing a size says so, which is the more useful message of the two.
+    expect(canSubmit(ticket, priced, { bookStatus: 'live' }).reason).toBe('disarmed')
+    expect(canSubmit({ ...ticket, size: 0 }, priced, { bookStatus: 'live' }).reason).toBe('no size')
+
     expect(canSubmit(null, null).ok).toBe(false)
   })
 })

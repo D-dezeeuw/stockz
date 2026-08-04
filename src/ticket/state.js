@@ -93,6 +93,9 @@ export function canSubmit(ticket, resolved, desk = {}) {
   // The book guard is not a nicety: a price read off a stale ladder is a price that may
   // not exist, and the order would be a market order in disguise.
   if (!canTradeBook(desk.bookStatus)) return { ok: false, reason: 'book not live' }
+  // Armed is checked last so the ticket can still show *why* it is otherwise invalid
+  // while the desk is cold — "no size" is more useful than "disarmed" when both are true.
+  if (desk.armed !== true) return { ok: false, reason: 'disarmed' }
 
   return { ok: true, reason: '' }
 }

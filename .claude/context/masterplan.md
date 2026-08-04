@@ -2432,32 +2432,32 @@
 **What:** Hit exact size instantly with 25/50/100 percent chips and absolute step buttons pulled from user settings.
 **How:** Preset row rendered with data-each from phase-7 settings state plus applyPreset() converting percentages to quantity from buying power.
 
-- [ ] **T15.3.1 - Sizing branch** - What: Contained work area for qty logic. How: Cut feature/f15-03-qty-presets from main.
-- [ ] **T15.3.2 - Preset settings schema** - What: User-owned size ladder. How: Extend the phase-7 settings state with a qtyPresets array persisted via spektrum/persist.
-- [ ] **T15.3.3 - Preset chip row** - What: One-tap sizing chips on the ticket. How: data-each over settings.qtyPresets rendering chips that fire a ticket.applyPreset data-action.
-- [ ] **T15.3.4 - applyPreset() function** - What: Percent chips become real quantity. How: Compute qty from a buying-power computed key derived from phase-18 account equity state.
-- [ ] **T15.3.5 - Absolute step buttons** - What: Fine-tune size in fixed increments. How: Plus/minus buttons dispatching ticket.stepQty with the step size from settings.
-- [ ] **T15.3.6 - Direct qty input** - What: Type any size directly. How: Numeric field with data-model="ticket.qty" guarded by a clampQty() min/max function.
-- [ ] **T15.3.7 - roundToLot() function** - What: Sizes venues actually accept. How: Snap qty to OKX instrument lotSz or EToro minimum amount using phase-12 instrument metadata.
-- [ ] **T15.3.8 - Chip styling** - What: Presets readable mid-trade. How: Compact terminal-style chips with orange active state in both day and night themes.
-- [ ] **T15.3.9 - Single tests for sizing fns** - What: Trustworthy size math. How: Write the one Vitest test each for applyPreset, clampQty and roundToLot; run only those with vitest -t.
-- [ ] **T15.3.10 - Merge sizing** - What: Sizing toolkit on main. How: Verify lint plus the three targeted tests, then merge feature/f15-03-qty-presets.
+- [x] **T15.3.1 - Sizing branch** - What: Contained work area for qty logic. How: Cut feature/f15-03-qty-presets from main.
+- [x] **T15.3.2 - Preset settings schema** - What: User-owned size ladder. How: Extend the phase-7 settings state with a qtyPresets array persisted via spektrum/persist.
+- [x] **T15.3.3 - Preset chip row** - What: One-tap sizing chips on the ticket. How: data-each over settings.qtyPresets rendering chips that fire a ticket.applyPreset data-action.
+- [x] **T15.3.4 - applyPreset() function** - What: Percent chips become real quantity. How: Compute qty from a buying-power computed key derived from phase-18 account equity state.
+- [x] **T15.3.5 - Absolute step buttons** - What: Fine-tune size in fixed increments. How: Plus/minus buttons dispatching ticket.stepQty with the step size from settings.
+- [x] **T15.3.6 - Direct qty input** - What: Type any size directly. How: Numeric field with data-model="ticket.qty" guarded by a clampQty() min/max function.
+- [x] **T15.3.7 - roundToLot() function** - What: Sizes venues actually accept. How: Snap qty to OKX instrument lotSz or EToro minimum amount using phase-12 instrument metadata.
+- [x] **T15.3.8 - Chip styling** - What: Presets readable mid-trade. How: Compact terminal-style chips with orange active state in both day and night themes.
+- [x] **T15.3.9 - Single tests for sizing fns** - What: Trustworthy size math. How: Write the one Vitest test each for applyPreset, clampQty and roundToLot; run only those with vitest -t.
+- [x] **T15.3.10 - Merge sizing** - What: Sizing toolkit on main. How: Verify lint plus the three targeted tests, then merge feature/f15-03-qty-presets.
 
 ### F15.4 - Arm/Disarm Toggle
 
 **What:** One deliberate switch stands between the keyboard and live money - the only confirmation surface the desk will ever have.
 **How:** Global desk.armed flag in Spektrum state gating every submit path, flipped by a labelled toggle in the ticket header.
 
-- [ ] **T15.4.1 - Arm toggle branch** - What: Focused branch for the arming gate. How: Branch feature/f15-04-arm-toggle from main.
-- [ ] **T15.4.2 - Armed state key** - What: Single source of truth for live-fire status. How: setValue('desk.armed', false) at boot, documented with describe() so devtools shows intent.
-- [ ] **T15.4.3 - ARM toggle control** - What: One flick to go hot or cold. How: Toggle in the ticket header firing data-action="desk.toggleArm" with :attr class state.
-- [ ] **T15.4.4 - canSubmit() guard** - What: A single gate every order passes. How: Pure fn returning eligibility from desk.armed, ticket.qty and ticket.symbol, called by all submit paths.
-- [ ] **T15.4.5 - Disarmed visuals** - What: Zero ambiguity when the desk is cold. How: Dim and disable BUY/SELL via data-if and :attr disabled bound to desk.armed.
-- [ ] **T15.4.6 - Session-only arming** - What: Every reload starts safe without a dialog. How: Exclude desk.armed from the spektrum/persist config so it never survives a refresh.
-- [ ] **T15.4.7 - Breaker auto-disarm** - What: Instant cold desk when limits trip. How: addSystem watcher flipping desk.armed false the moment the phase-24 circuit breaker fires.
-- [ ] **T15.4.8 - Armed indicator styling** - What: Unmissable hot-desk signal. How: Pulsing orange ARMED chip in the ticket header using a CSS keyframe animation.
-- [ ] **T15.4.9 - Single test canSubmit** - What: The gate logic proven once. How: One Vitest test over armed/disarmed and empty-ticket cases, run via vitest -t canSubmit.
-- [ ] **T15.4.10 - Merge arming gate** - What: The only safety toggle live on main. How: Lint and targeted test green, merge feature/f15-04-arm-toggle.
+- [x] **T15.4.1 - Arm toggle branch** - What: Focused branch for the arming gate. How: Branch feature/f15-04-arm-toggle from main.
+- [x] **T15.4.2 - Armed state key** - What: Single source of truth for live-fire status. How: setValue('desk.armed', false) at boot, documented with describe() so devtools shows intent.
+- [x] **T15.4.3 - ARM toggle control** - What: One flick to go hot or cold. How: Toggle in the ticket header firing data-action="desk.toggleArm" with :attr class state.
+- [x] **T15.4.4 - canSubmit() guard** - What: A single gate every order passes. How: Pure fn returning eligibility from desk.armed, ticket.qty and ticket.symbol, called by all submit paths.
+- [x] **T15.4.5 - Disarmed visuals** - What: Zero ambiguity when the desk is cold. How: Dim and disable BUY/SELL via data-if and :attr disabled bound to desk.armed.
+- [x] **T15.4.6 - Session-only arming** - What: Every reload starts safe without a dialog. How: Exclude desk.armed from the spektrum/persist config so it never survives a refresh.
+- [ ] **T15.4.7 - Breaker auto-disarm** - What: Instant cold desk when limits trip. How: addSystem watcher flipping desk.armed false the moment the phase-24 circuit breaker fires. **Deferred:** the circuit breaker itself is phase 24; the disarm seam (`ticket.arm` with an explicit `armed` payload) exists for it to call.
+- [x] **T15.4.8 - Armed indicator styling** - What: Unmissable hot-desk signal. How: Pulsing orange ARMED chip in the ticket header using a CSS keyframe animation.
+- [x] **T15.4.9 - Single test canSubmit** - What: The gate logic proven once. How: One Vitest test over armed/disarmed and empty-ticket cases, run via vitest -t canSubmit.
+- [x] **T15.4.10 - Merge arming gate** - What: The only safety toggle live on main. How: Lint and targeted test green, merge feature/f15-04-arm-toggle.
 
 ### F15.5 - One-Click Submit Fast Path
 

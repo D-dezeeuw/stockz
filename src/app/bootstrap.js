@@ -20,6 +20,7 @@ import { registerGroupingActions } from '../book/grouping.js'
 import { registerTapeActions } from '../book/tape.js'
 import { connectFeeds } from './feeds.js'
 import { registerTicketActions } from '../ticket/actions.js'
+import { registerSizingActions } from '../ticket/sizing.js'
 import { appVersion } from './version.js'
 
 /**
@@ -70,6 +71,7 @@ export function bootstrap(options = {}) {
   registerGroupingActions()
   registerTapeActions()
   registerTicketActions()
+  registerSizingActions()
   adoptKeys()
   applyTheme(doc?.documentElement?.getAttribute?.('data-theme') || preferredTheme(), doc)
   const derived = registerDerived()
