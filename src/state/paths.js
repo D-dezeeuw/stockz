@@ -61,6 +61,8 @@ export const PATHS = Object.freeze({
     paletteIndex: 'ui.paletteIndex',
     paletteRows: 'ui.paletteRows',
     scope: 'ui.scope',
+    captureFor: 'ui.captureFor',
+    capturePreview: 'ui.capturePreview',
   }),
   settings: Object.freeze({
     theme: 'settings.theme',

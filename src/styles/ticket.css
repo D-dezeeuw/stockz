@@ -238,3 +238,18 @@
 .palette__row[aria-selected='true'] {
   background: color-mix(in srgb, var(--orange) 22%, transparent);
 }
+
+/* A field that is listening for keys has to look like it: everything typed while it
+   glows goes into the binding rather than into the desk. */
+.keysheet__chord--recording {
+  border-color: var(--orange);
+  color: var(--orange);
+  box-shadow: 0 0 8px color-mix(in srgb, var(--orange) 45%, transparent);
+}
+
+button.keysheet__chord {
+  background: transparent;
+  cursor: pointer;
+  font: inherit;
+  font-family: ui-monospace, monospace;
+}

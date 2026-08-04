@@ -59,6 +59,9 @@ export const ACTIONS = Object.freeze({
     rebind: 'keys.rebind',
     resetBindings: 'keys.resetBindings',
     panic: 'keys.panic',
+    capture: 'keys.capture',
+    captureKey: 'keys.captureKey',
+    captureSave: 'keys.captureSave',
   }),
   settings: Object.freeze({
     update: 'settings.update',
