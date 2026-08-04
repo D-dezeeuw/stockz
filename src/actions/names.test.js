@@ -142,6 +142,8 @@ describe('allActionNames', () => {
       'backtest.applyCombo',
       'backtest.pin',
       'backtest.clearSlots',
+      'backtest.verify',
+      'backtest.rerun',
       'bot.toggleArm',
       'bot.setAuto',
       'bot.disableAll',

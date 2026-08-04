@@ -107,6 +107,8 @@ export const ACTIONS = Object.freeze({
     applyCombo: 'backtest.applyCombo',
     pin: 'backtest.pin',
     clearSlots: 'backtest.clearSlots',
+    verify: 'backtest.verify',
+    rerun: 'backtest.rerun',
   }),
   bot: Object.freeze({
     toggleArm: 'bot.toggleArm',

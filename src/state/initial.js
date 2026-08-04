@@ -237,6 +237,8 @@ export function initialState(overrides = {}) {
     [PATHS.backtest.sweepSort]: { key: 'net', dir: 'desc' },
     [PATHS.backtest.runs]: [],
     [PATHS.backtest.slots]: [],
+    [PATHS.backtest.hash]: '',
+    [PATHS.backtest.determinism]: { checking: false, deterministic: false, hash: '', reason: '' },
     [PATHS.backtest.compare]: { a: null, b: null, diffs: [], curves: [], hint: 'pin two runs to compare' },
     [PATHS.backtest.result]: null,
     [PATHS.backtest.summary]: {

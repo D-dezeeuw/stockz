@@ -1,4 +1,5 @@
 import { FEE_SCHEDULE } from '../hud/fee-schedule.js'
+import { roundToTick } from './determinism.js'
 
 /**
  * Fills that behave like a venue, so backtest P&L is honest.
@@ -38,6 +39,13 @@ export const DEFAULT_FILL_CONFIG = Object.freeze({
   ]),
   venue: 'okx',
   instrument: '',
+  // Jitter, as a fraction of the modelled slippage and latency. Real fills are not
+  // identical twice; a sim with no variance flatters a strategy that happens to sit on a
+  // knife edge. It routes through the seeded RNG exclusively, so the variance is
+  // reproducible rather than merely present.
+  jitter: 0,
+  seed: 0,
+  tickSize: 0,
   // What the sim sends. Market is the bot's own default; limit exists so a passive idea
   // can be scored against the honest "did the tape actually come to you" test.
   orderType: 'market',
@@ -71,6 +79,9 @@ export function resolveFillConfig(overrides = {}) {
       .sort((a, b) => a.size - b.size),
     venue: String(overrides?.venue ?? DEFAULT_FILL_CONFIG.venue),
     instrument: String(overrides?.instrument ?? DEFAULT_FILL_CONFIG.instrument),
+    jitter: Math.max(0, Math.min(1, num(overrides?.jitter, DEFAULT_FILL_CONFIG.jitter))),
+    seed: num(overrides?.seed, DEFAULT_FILL_CONFIG.seed),
+    tickSize: num(overrides?.tickSize, DEFAULT_FILL_CONFIG.tickSize),
     orderType: overrides?.orderType === 'limit' ? 'limit' : 'market',
     limitOffsetBps: num(overrides?.limitOffsetBps, DEFAULT_FILL_CONFIG.limitOffsetBps),
     size: Number(overrides?.size) > 0 ? Number(overrides.size) : DEFAULT_FILL_CONFIG.size,
@@ -199,7 +210,13 @@ export function simMarketFill(order, tick, config = DEFAULT_FILL_CONFIG) {
   // The opposing side of the book: a market buy pays the offer. Filling at the mid — or
   // worse, at the last print — is the single most flattering lie a backtest can tell.
   const touch = buying ? quote.ask : quote.bid
-  const bps = (Number(config?.slippageBps) || 0) + slippageForSize(size, config?.sizeCurve)
+  const base = (Number(config?.slippageBps) || 0) + slippageForSize(size, config?.sizeCurve)
+  // Jitter is drawn from the run's seeded generator, never `Math.random`: a sim that
+  // reached the host's entropy could never be replayed, which makes every number it
+  // produced unfalsifiable.
+  const spread = Math.max(0, Number(config?.jitter) || 0)
+  const draw = typeof config?.rng === 'function' ? config.rng() : 0.5
+  const bps = base * (1 + spread * (draw * 2 - 1))
   // Always adverse. Slippage that could go either way would average out to nothing over a
   // long run, which is exactly the wrong model of a cost.
   const price = buying ? touch * (1 + bps / 10000) : touch * (1 - bps / 10000)
@@ -208,7 +225,9 @@ export function simMarketFill(order, tick, config = DEFAULT_FILL_CONFIG) {
     filled: true,
     side: buying ? 'buy' : 'sell',
     size,
-    price: Number(price.toFixed(8)),
+    // Snapped to the venue's grid and settled to fixed decimals: two runs that accumulate
+    // float error in a different order produce different hashes for identical trades.
+    price: roundToTick(price, config?.tickSize),
     ts: Number(tick?.ts) || 0,
     liquidity: 'taker',
     slippageBps: Number(bps.toFixed(4)),
@@ -243,7 +262,7 @@ export function simLimitFill(order, tick, config = DEFAULT_FILL_CONFIG) {
     size,
     // At the limit, never better. A passive order gets the price it asked for; giving it
     // the improvement would credit it with the aggressor's edge.
-    price: Number(limit.toFixed(8)),
+    price: roundToTick(limit, config?.tickSize),
     ts: Number(tick?.ts) || 0,
     liquidity: 'maker',
     slippageBps: 0,

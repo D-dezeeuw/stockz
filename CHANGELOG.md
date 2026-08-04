@@ -52,6 +52,16 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
   direction is good for *that* stat, and both equity curves go on one axis with a **shared
   scale**: two curves auto-scaled to their own ranges look identical whatever they earned.
 
+- **F27.10 — deterministic replay harness.** Same recording, same params, same seed, same
+  result — to the tick. A seeded mulberry32 is the sim's only source of randomness, money
+  maths rounds to the venue's tick and sums as integers so the total cannot depend on the
+  order fills arrived in, and a run's outcome reduces to one FNV-1a hash over canonical
+  JSON: a single string equality with no tolerance to argue about. `verify` runs the same
+  configuration twice and shows the hash, not just a badge — a green tick cannot be
+  compared, and the first thing said after "mine gives a different number" is the number. A
+  twelve-tick fixture is committed with its expected hash, so the pipeline has one outcome
+  that cannot change silently.
+
 ### Fixed
 
 - **Two `data-each` bindings rendered nothing and warned on every frame.** Spektrum binds

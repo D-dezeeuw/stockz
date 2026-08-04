@@ -163,7 +163,10 @@ describe('driveBacktest', () => {
     ])
     expect(result.errors).toBe(1)
     expect(result.cancelled).toBe(false)
-    expect(result.state).toEqual({ run: { signals: 2, fills: 2, errors: 1 } })
+    // Fees are summed as integers in the snapshot, so a rerun with the fills in a
+    // different order still hashes the same.
+    expect(result.state).toEqual({ run: { signals: 2, fills: 2, errors: 1, fees: expect.any(Number) } })
+    expect(result.state.run.fees).toBeGreaterThan(0)
     expect(result.elapsedMs).toBeGreaterThan(0)
     expect(progress.at(-1)).toMatchObject({ played: 4, total: 4, signals: 2 })
 

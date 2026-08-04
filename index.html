@@ -1048,6 +1048,15 @@
                 <button type="button" class="chip" data-action="click" data-fn="backtest.sweep"
                         data-if="!backtest.sweep.active">sweep params</button>
                 <span class="label num" data-if="backtest.sweep.active">sweeping {{backtest.sweep.done}} / {{backtest.sweep.total}}</span>
+                <button type="button" class="chip" data-action="click" data-fn="backtest.rerun">rerun seed</button>
+                <button type="button" class="chip" data-action="click" data-fn="backtest.verify"
+                        data-if="!backtest.determinism.checking">verify</button>
+                <span class="label" data-if="backtest.determinism.checking">checking…</span>
+                <!-- The hash, not just a badge: a green tick cannot be compared, and the
+                     first thing said after "mine gives a different number" is the number. -->
+                <span class="chip chip--go" data-if="backtest.determinism.deterministic">DETERMINISTIC · {{backtest.determinism.hash}}</span>
+                <span class="chip chip--warn" data-if="backtest.determinism.reason">{{backtest.determinism.reason}}</span>
+                <span class="label num" data-if="backtest.hash">#{{backtest.hash}}</span>
               </div>
               <div class="sweep" data-if="backtest.sweepView.length > 0">
                 <div class="sweep__head">

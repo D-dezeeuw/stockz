@@ -375,11 +375,23 @@ describe('resetBacktestRunner', () => {
 })
 
 describe('registerBacktestActions', () => {
-  it('registers the three actions and seeds the strategy picker', () => {
-    expect(registerBacktestActions()).toEqual(['backtest.start', 'backtest.cancel', 'backtest.configure'])
+  it('registers the launcher actions and seeds the strategy picker', () => {
+    expect(registerBacktestActions()).toEqual([
+      'backtest.start',
+      'backtest.cancel',
+      'backtest.configure',
+      'backtest.verify',
+      'backtest.rerun',
+    ])
     tick()
 
-    expect(actionNames().sort()).toEqual(['backtest.cancel', 'backtest.configure', 'backtest.start'])
+    expect(actionNames().sort()).toEqual([
+      'backtest.cancel',
+      'backtest.configure',
+      'backtest.rerun',
+      'backtest.start',
+      'backtest.verify',
+    ])
     // The catalog is static, so the picker's options are written once rather than
     // recomputed per render.
     expect(appState.backtest.strategies[0]).toMatchObject({ id: 'momentum-burst' })
