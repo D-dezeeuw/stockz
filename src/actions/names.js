@@ -21,6 +21,8 @@ export const ACTIONS = Object.freeze({
     paletteMove: 'ui.paletteMove',
     paletteRun: 'ui.paletteRun',
     toggleCompactHud: 'ui.toggleCompactHud',
+    dismissToast: 'ui.dismissToast',
+    hoverToast: 'ui.hoverToast',
   }),
   strategy: Object.freeze({
     stop: 'strategy.stop',

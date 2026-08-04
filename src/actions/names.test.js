@@ -13,6 +13,7 @@ import { registerGroupingActions } from '../book/grouping.js'
 import { registerTapeActions } from '../book/tape.js'
 import { registerCompactActions } from '../hud/compact.js'
 import { registerAlertActions } from '../alerts/price.js'
+import { registerToastActions } from '../ui/toast.js'
 import { registerStrategyActions } from '../strategy/registry.js'
 import { registerTicketActions } from '../ticket/actions.js'
 import { registerSizingActions } from '../ticket/sizing.js'
@@ -43,6 +44,8 @@ describe('allActionNames', () => {
       'ui.paletteMove',
       'ui.paletteRun',
       'ui.toggleCompactHud',
+      'ui.dismissToast',
+      'ui.hoverToast',
       'strategy.stop',
       'strategy.setParam',
       'strategy.resume',
@@ -104,6 +107,7 @@ describe('allActionNames', () => {
     registerTapeActions()
     registerCompactActions()
     registerAlertActions()
+    registerToastActions()
     registerStrategyActions()
     registerTicketActions()
     registerSizingActions()

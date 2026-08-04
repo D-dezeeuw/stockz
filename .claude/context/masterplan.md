@@ -3633,16 +3633,16 @@
 **What:** The user gets glanceable color-coded pop-ups that stack and queue without ever blocking the trading flow.
 **How:** Toast queue in Spektrum state rendered by data-each in an overlay, auto-dismiss timers scheduled via addAsync.
 
-- [ ] **T22.5.1 - Branch and scaffold toast system** - What: A branch plus overlay container for pop-ups. How: git checkout -b feature/f22-5-toasts; create src/alerts/toast.js and a toast overlay element in index.html.
-- [ ] **T22.5.2 - Build enqueueToast fn** - What: Alerts become queued toasts with a hard cap, never a flood. How: Implement enqueueToast(state, toast) via addValue with a maxQueue cap and oldest-drop overflow policy.
-- [ ] **T22.5.3 - Build dismissToast fn and timers** - What: Toasts leave by click or on schedule. How: Implement dismissToast(id) and per-toast auto-dismiss timers scheduled through addAsync.
-- [ ] **T22.5.4 - Render toast stack** - What: Live stacking pop-ups in the corner of the dashboard. How: data-each over the queue with severity class via :class and data-action click-to-dismiss per toast.
-- [ ] **T22.5.5 - Style severity looks** - What: Info green, warn orange, error red in both day and night themes. How: Design-system tokens per severity, slide-in and fade-out CSS keyframes, monospace terminal typography.
-- [ ] **T22.5.6 - Pause-on-hover** - What: Reading a toast stops its clock. How: pointerenter and pointerleave handlers via data-action freezing and resuming the ttl countdown state.
-- [ ] **T22.5.7 - Build coalesceToast fn** - What: Repeats collapse into one toast with a counter badge. How: Implement coalesceToast(state, toast, windowMs) bumping a count field instead of enqueueing duplicates.
-- [ ] **T22.5.8 - Wire alert bus** - What: Every alert:fired shows up as a toast automatically. How: watch() on trigger('alert:fired') calling enqueueToast with the severity mapping, gated later by DND.
-- [ ] **T22.5.9 - Write single unit tests** - What: Queue behavior locked with one test per fn. How: One Vitest test each for enqueueToast, dismissToast and coalesceToast; run only those tests.
-- [ ] **T22.5.10 - Verify burst behavior and merge** - What: Twenty rapid alerts render smoothly with no jank or overflow. How: Fire a scripted burst, check cap, coalesce and FPS in DevTools, ESLint, merge to main.
+- [x] **T22.5.1 - Branch and scaffold toast system** - What: A branch plus overlay container for pop-ups. How: git checkout -b feature/f22-5-toasts; create src/alerts/toast.js and a toast overlay element in index.html.
+- [x] **T22.5.2 - Build enqueueToast fn** - What: Alerts become queued toasts with a hard cap, never a flood. How: Implement enqueueToast(state, toast) via addValue with a maxQueue cap and oldest-drop overflow policy.
+- [x] **T22.5.3 - Build dismissToast fn and timers** - What: Toasts leave by click or on schedule. How: Implement dismissToast(id) and per-toast auto-dismiss timers scheduled through addAsync.
+- [x] **T22.5.4 - Render toast stack** - What: Live stacking pop-ups in the corner of the dashboard. How: data-each over the queue with severity class via :class and data-action click-to-dismiss per toast.
+- [x] **T22.5.5 - Style severity looks** - What: Info green, warn orange, error red in both day and night themes. How: Design-system tokens per severity, slide-in and fade-out CSS keyframes, monospace terminal typography.
+- [x] **T22.5.6 - Pause-on-hover** - What: Reading a toast stops its clock. How: pointerenter and pointerleave handlers via data-action freezing and resuming the ttl countdown state.
+- [x] **T22.5.7 - Build coalesceToast fn** - What: Repeats collapse into one toast with a counter badge. How: Implement coalesceToast(state, toast, windowMs) bumping a count field instead of enqueueing duplicates.
+- [x] **T22.5.8 - Wire alert bus** - What: Every alert:fired shows up as a toast automatically. How: watch() on trigger('alert:fired') calling enqueueToast with the severity mapping, gated later by DND.
+- [x] **T22.5.9 - Write single unit tests** - What: Queue behavior locked with one test per fn. How: One Vitest test each for enqueueToast, dismissToast and coalesceToast; run only those tests.
+- [x] **T22.5.10 - Verify burst behavior and merge** - What: Twenty rapid alerts render smoothly with no jank or overflow. How: Fire a scripted burst, check cap, coalesce and FPS in DevTools, ESLint, merge to main.
 
 ### F22.6 - WebAudio Sound Pack
 

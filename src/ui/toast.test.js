@@ -9,9 +9,17 @@ import {
   expireToasts,
   describeEngineError,
   wireEngineErrors,
+  coalesceToast,
+  pauseToast,
+  toastFromAlert,
+  registerToastActions,
+  wireAlertToasts,
 } from './toast.js'
 import { appState, tick, resetState, setValue } from '../app/engine.js'
 import { PATHS } from '../state/paths.js'
+import { ACTIONS } from '../actions/names.js'
+import { dispatchAction, clearActions } from '../actions/registry.js'
+import { emitAlert, resetAlerts } from '../alerts/bus.js'
 
 /** Push a toast and flush it into state in one step. */
 function push(message, level, now) {
@@ -119,5 +127,113 @@ describe('wireEngineErrors', () => {
     expect(toast.message).toMatch(/falling behind the feed/)
     expect(appState.ui.toasts[0].id).toBe(toast.id)
     expect(appState.ui.toasts[0].at).toBe(500)
+  })
+})
+
+describe('coalesceToast', () => {
+  it('bumps a repeat instead of filling the cap with one message', () => {
+    resetState()
+
+    coalesceToast('venue error', 'error', 1000)
+    tick()
+    const bumped = coalesceToast('venue error', 'error', 1200)
+    tick()
+
+    // Forty errors a second would otherwise push out the three others the trader needed.
+    expect(appState.ui.toasts).toHaveLength(1)
+    expect(bumped.count).toBe(2)
+
+    coalesceToast('something else', 'info', 1300)
+    tick()
+    expect(appState.ui.toasts).toHaveLength(2)
+  })
+})
+
+describe('pauseToast', () => {
+  it('freezes the clock, so a message never vanishes mid-word', () => {
+    resetState()
+
+    const toast = pushToast('read me', 'info', 1000)
+    tick()
+
+    const paused = pauseToast(toast.id, true, 2000)
+    tick()
+    expect(paused.paused).toBe(true)
+    expect(paused.remaining).toBe(3000)
+
+    // A paused toast never expires.
+    expect(expireToasts(999999)).toBe(0)
+
+    const resumed = pauseToast(toast.id, false, 5000)
+    tick()
+    expect(resumed.until).toBe(8000)
+    // Resuming again re-banks the same remaining time from the new now: the countdown is
+    // what was left when the pointer arrived, not a fixed deadline.
+    expect(pauseToast(toast.id, false, 9000).until).toBe(12000)
+    // A toast that was never paused has nothing banked and expires at once rather than
+    // living forever.
+    const fresh = pushToast('never paused', 'info', 1000)
+    tick()
+    expect(pauseToast(fresh.id, false, 9000).until).toBe(9000)
+    expect(pauseToast(9999, true, 1000)).toBeNull()
+  })
+})
+
+describe('toastFromAlert', () => {
+  it('keeps one severity vocabulary, so error cannot quietly become warn', () => {
+    resetState()
+
+    const toast = toastFromAlert({ text: 'REJECT BUY x', severity: 'error', ts: 1000 })
+    tick()
+
+    expect(toast).toMatchObject({ message: 'REJECT BUY x', level: 'error' })
+    expect(appState.ui.toasts).toHaveLength(1)
+    // An alert with no severity is info, and one with no timestamp uses the caller's clock.
+    expect(toastFromAlert({ text: 'plain' }, 2000).level).toBe('info')
+    expect(toastFromAlert({ text: '  ' })).toBeNull()
+  })
+})
+
+describe('registerToastActions', () => {
+  it('wires click-to-dismiss', () => {
+    resetState()
+    clearActions()
+
+    expect(registerToastActions()).toBe(ACTIONS.ui.dismissToast)
+
+    const toast = pushToast('gone soon', 'info', 1000)
+    tick()
+    dispatchAction(ACTIONS.ui.dismissToast, { id: toast.id })
+    tick()
+
+    expect(appState.ui.toasts).toEqual([])
+
+    // A bare id works too: the markup binds one attribute, not an object.
+    const second = pushToast('also gone', 'info', 1000)
+    tick()
+    dispatchAction(ACTIONS.ui.dismissToast, second.id)
+    tick()
+    expect(appState.ui.toasts).toEqual([])
+  })
+})
+
+describe('wireAlertToasts', () => {
+  it('subscribes once, because a new alert type must not need a new wire', () => {
+    resetState()
+    resetAlerts()
+
+    // The default clock path, exercised before the injected one.
+    wireAlertToasts()()
+
+    const off = wireAlertToasts({ now: () => 1000 })
+    emitAlert({ text: 'BUY BTC', key: 'k', severity: 'warn', ts: 1000 })
+    tick()
+
+    expect(appState.ui.toasts[0]).toMatchObject({ message: 'BUY BTC', level: 'warn' })
+
+    off()
+    emitAlert({ text: 'SELL BTC', key: 'j', ts: 2000 })
+    tick()
+    expect(appState.ui.toasts).toHaveLength(1)
   })
 })

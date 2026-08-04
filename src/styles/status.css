@@ -110,3 +110,38 @@ body,
 .num {
   transition: none;
 }
+
+/*
+ * Toast severities. Only warn and error take a colour: a stack where every toast is
+ * coloured is one where colour has stopped carrying the severity it was added for.
+ */
+.toast {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2, 0.5rem);
+  cursor: pointer;
+}
+
+.toast--warn {
+  border-color: var(--orange);
+}
+
+.toast--error {
+  border-color: var(--orange);
+  box-shadow: 0 0 8px color-mix(in srgb, var(--orange) 40%, transparent);
+}
+
+.toast--success {
+  border-color: var(--green);
+}
+
+.toast__count {
+  margin-left: auto;
+  color: var(--ink-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* A paused toast says so, so the trader knows why it has not gone. */
+.toast.is-paused {
+  border-style: dashed;
+}

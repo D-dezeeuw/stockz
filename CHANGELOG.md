@@ -12,6 +12,16 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ### Added
 
+- **Severity toasts, fed from the alert bus** — the toast stack the desk has had since phase 2
+  now takes every bus alert through **one subscription**, which is the whole reason the bus
+  exists: a new alert type must not need a new wire into every output. Repeats **coalesce
+  into a count** rather than re-stacking — a venue erroring forty times a second would
+  otherwise fill the four-toast cap with one message and push out the three others the
+  trader needed to see, and the count is more informative than the repeats were. Hovering a
+  toast **freezes its countdown**, because a message that vanishes mid-word is worse than one
+  that never appeared, and a paused toast says so rather than looking stuck. The bus severity
+  and the toast level are deliberately the same vocabulary: a second mapping table is a
+  second place for `error` to quietly become `warn`.
 - **Feed and spread health warnings** — the alerts a trader most needs are the ones about
   *conditions* rather than events, because conditions are what make an otherwise good trade
   expensive: a spread that has quietly tripled, a feed lagging by half a second, a venue that

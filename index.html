@@ -655,7 +655,13 @@
 
     <!-- Toasts float above the grid. -->
     <ul class="toasts" data-each="toast in ui.toasts">
-      <li :class="'toast toast--' + toast.level">{{toast.message}}</li>
+      <!-- Reading a toast stops its clock; a message that vanishes mid-word is worse than
+           one that never appeared. -->
+      <li :class="toast.paused ? 'toast is-paused toast--' + toast.level : 'toast toast--' + toast.level"
+          data-action="click" data-fn="ui.dismissToast" :data-id="toast.id">
+        <span>{{toast.message}}</span>
+        <b class="toast__count" data-if="toast.count > 1">×{{toast.count}}</b>
+      </li>
     </ul>
 
     <footer class="app-footer">
