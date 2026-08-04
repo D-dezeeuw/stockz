@@ -1,0 +1,59 @@
+/*
+ * Analytics.
+ *
+ * Four tiles that answer a different question from everything else on the desk. The desk
+ * asks "what is happening"; these ask "is this working", and the visual language says so —
+ * larger numbers, quieter surroundings, nothing that blinks. A trader looks here between
+ * sessions, not between trades.
+ */
+
+.kpis {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(7rem, 1fr));
+  gap: var(--sp-1);
+}
+
+.kpi {
+  display: grid;
+  gap: 1px;
+  padding: var(--sp-2);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-1);
+  background: var(--bg-inset);
+}
+
+.kpi__value {
+  font-size: var(--fs-3);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+}
+
+.kpi__label {
+  color: var(--ink-muted);
+  font-size: var(--fs-0);
+  text-transform: lowercase;
+}
+
+.kpi__note {
+  color: var(--ink-faint);
+  font-size: var(--fs-0);
+}
+
+/* Tone is about the number's meaning, never just its sign — the win-rate tile stays neutral
+   because a 40% win rate with a 3:1 payoff is a fine strategy. */
+.kpi--up .kpi__value {
+  color: var(--green);
+}
+
+.kpi--down .kpi__value {
+  color: var(--orange);
+}
+
+.kpi--flat .kpi__value {
+  color: var(--ink-muted);
+}
+
+.kpi--info .kpi__value {
+  color: var(--ink-strong);
+}

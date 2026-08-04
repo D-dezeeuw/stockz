@@ -47,6 +47,7 @@
   <link rel="stylesheet" href="./src/styles/strategies.css">
   <link rel="stylesheet" href="./src/styles/breakers.css">
   <link rel="stylesheet" href="./src/styles/journal.css">
+  <link rel="stylesheet" href="./src/styles/analytics.css">
   <link rel="stylesheet" href="./src/styles/utilities.css">
 
   <!-- The UI engine, straight from the CDN. Pinned to an exact version: the live page
@@ -489,6 +490,18 @@
               <textarea class="field__input journal__note" rows="2" placeholder="why did I take this?"
                         data-action="blur" data-fn="journal.setNote"
                         :data-id="journal.editing"></textarea>
+            </div>
+            <!-- The four numbers that say whether the edge is real. A P&L says what
+                 happened; these say whether it will keep happening — a trader up six hundred
+                 on the day with a profit factor of 1.02 has had a good day and does not have
+                 an edge, and those call for completely different next weeks. Empty reads "—",
+                 never zero: a desk that has not traded has no win rate. -->
+            <div class="kpis" data-if="block.id === 'analytics'" data-each="k in analytics.kpis">
+              <div class="kpi" :class="'kpi kpi--' + k.tone">
+                <span class="kpi__value">{{k.value}}</span>
+                <span class="kpi__label">{{k.label}}</span>
+                <span class="kpi__note">{{k.note}}</span>
+              </div>
             </div>
             <!-- An alert set in under three seconds: level, direction, done. -->
             <div class="alerts" data-if="block.id === 'watchlist'">
