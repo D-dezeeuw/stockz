@@ -18,6 +18,7 @@ import { registerShortcutActions } from '../ticket/shortcuts.js'
 import { registerIntentAction } from '../ticket/intent.js'
 import { registerBindingActions } from '../keys/overrides.js'
 import { registerPaletteActions } from '../keys/palette.js'
+import { registerPanicAction } from '../keys/panic.js'
 
 beforeEach(() => {
   clearActions()
@@ -62,6 +63,7 @@ describe('allActionNames', () => {
       'keys.lock',
       'keys.rebind',
       'keys.resetBindings',
+      'keys.panic',
       'settings.update',
       'settings.reset',
     ])
@@ -86,6 +88,7 @@ describe('allActionNames', () => {
     registerIntentAction()
     registerBindingActions()
     registerPaletteActions()
+    registerPanicAction()
     expect(actionNames().sort()).toEqual(allActionNames().sort())
 
     // Every name follows <namespace>.<verb>, which is what registerAction enforces.

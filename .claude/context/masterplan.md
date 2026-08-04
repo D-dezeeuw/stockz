@@ -2679,32 +2679,32 @@
 **What:** Hold an arrow and the price walks tick by tick, accelerating - no click spamming.
 **How:** keydown/keyup repeat engine with startRepeat() and stopRepeat() timers driving ticket.nudgePrice triggers on an easing curve.
 
-- [ ] **T16.8.1 - Repeat engine branch** - What: Focused branch for hold mechanics. How: Branch feature/f16-08-hold-repeat from main.
-- [ ] **T16.8.2 - Repeat engine module** - What: Reusable hold-to-repeat machinery. How: src/keys/repeat.js with startRepeat(actionId) and stopRepeat() built on setInterval.
-- [ ] **T16.8.3 - nextRepeatDelay() curve** - What: Nudges accelerate naturally under hold. How: Easing fn stepping the interval from 350ms down to 40ms after eight repeats.
-- [ ] **T16.8.4 - Release and blur safety** - What: A nudge can never run away. How: Stop timers on keyup, window blur and visibilitychange events.
-- [ ] **T16.8.5 - Nudge action integration** - What: Arrows walk the live limit price. How: Route arrow chords through the engine into ticket.nudgePrice with phase-12 tickSz steps.
-- [ ] **T16.8.6 - Repeatable catalog flag** - What: Only safe actions may auto-repeat. How: repeatable:true marker in actions.js; the engine refuses unmarked action ids.
-- [ ] **T16.8.7 - getNudgeStep() modifiers** - What: Coarse jumps when the move is big. How: Shift-arrow multiplies the step to ten ticks via a pure step-resolution fn.
-- [ ] **T16.8.8 - Repeat visual feedback** - What: Each tick of the walk is visible. How: Pulse the limit price field per repeat via an :attr class binding animation.
-- [ ] **T16.8.9 - Single tests for repeat fns** - What: Timing and step math verified. How: One Vitest test each for nextRepeatDelay and getNudgeStep via vitest -t.
-- [ ] **T16.8.10 - Merge hold-repeat** - What: Fluid price walking on main. How: Lint plus targeted tests green, merge feature/f16-08-hold-repeat.
+- [x] **T16.8.1 - Repeat engine branch** - What: Focused branch for hold mechanics. How: Branch feature/f16-08-hold-repeat from main.
+- [x] **T16.8.2 - Repeat engine module** - What: Reusable hold-to-repeat machinery. How: src/keys/repeat.js with startRepeat(actionId) and stopRepeat() built on setInterval.
+- [x] **T16.8.3 - nextRepeatDelay() curve** - What: Nudges accelerate naturally under hold. How: Easing fn stepping the interval from 350ms down to 40ms after eight repeats.
+- [x] **T16.8.4 - Release and blur safety** - What: A nudge can never run away. How: Stop timers on keyup, window blur and visibilitychange events.
+- [x] **T16.8.5 - Nudge action integration** - What: Arrows walk the live limit price. How: Route arrow chords through the engine into ticket.nudgePrice with phase-12 tickSz steps.
+- [x] **T16.8.6 - Repeatable catalog flag** - What: Only safe actions may auto-repeat. How: repeatable:true marker in actions.js; the engine refuses unmarked action ids.
+- [x] **T16.8.7 - getNudgeStep() modifiers** - What: Coarse jumps when the move is big. How: Shift-arrow multiplies the step to ten ticks via a pure step-resolution fn.
+- [x] **T16.8.8 - Repeat visual feedback** - What: Each tick of the walk is visible. How: Pulse the limit price field per repeat via an :attr class binding animation.
+- [x] **T16.8.9 - Single tests for repeat fns** - What: Timing and step math verified. How: One Vitest test each for nextRepeatDelay and getNudgeStep via vitest -t.
+- [x] **T16.8.10 - Merge hold-repeat** - What: Fluid price walking on main. How: Lint plus targeted tests green, merge feature/f16-08-hold-repeat.
 
 ### F16.9 - Double-ESC Panic Cancel
 
 **What:** Two taps of Escape and every working order is gone - the fastest exit in the room.
 **How:** isDoubleTap() detector on Escape chaining into the phase-15 cancelAll() path with a distinct panic flash and cue.
 
-- [ ] **T16.9.1 - Panic branch** - What: Isolated branch for the panic path. How: Branch feature/f16-09-panic from main.
-- [ ] **T16.9.2 - isDoubleTap() function** - What: Reliable double-press detection. How: Pure fn detecting two Escapes within a 400ms window from event timestamps.
-- [ ] **T16.9.3 - Escape precedence wiring** - What: Panic wins over overlay closing. How: Handle Escape in the capture phase first; single taps still close palette and overlays.
-- [ ] **T16.9.4 - Panic action dispatch** - What: All working orders cancelled at once. How: keys.panic trigger invoking the F15.9 cancelAll() across OKX and EToro.
-- [ ] **T16.9.5 - Auto-disarm on panic** - What: The desk goes cold with the cancel. How: Panic handler also flips desk.armed to false through the F15.4 gate.
-- [ ] **T16.9.6 - Panic feedback** - What: Unmistakable confirmation of the exit. How: Full-width orange flash bar plus a distinct low WebAudio buzz from the F15.7 cue set.
-- [ ] **T16.9.7 - panicCooldown() guard** - What: No accidental double-panic loops. How: One-second lockout fn suppressing re-triggers immediately after a panic fires.
-- [ ] **T16.9.8 - Journal panic record** - What: Every panic is auditable later. How: Write a panic event with timestamp and cancelled count to the phase-25 journal key.
-- [ ] **T16.9.9 - Single tests for panic fns** - What: Detector and lockout proven. How: One Vitest test each for isDoubleTap and panicCooldown, run only via vitest -t.
-- [ ] **T16.9.10 - Merge panic** - What: Double-ESC exit on main. How: Lint plus targeted tests green, merge feature/f16-09-panic.
+- [x] **T16.9.1 - Panic branch** - What: Isolated branch for the panic path. How: Branch feature/f16-09-panic from main.
+- [x] **T16.9.2 - isDoubleTap() function** - What: Reliable double-press detection. How: Pure fn detecting two Escapes within a 400ms window from event timestamps.
+- [x] **T16.9.3 - Escape precedence wiring** - What: Panic wins over overlay closing. How: Handle Escape in the capture phase first; single taps still close palette and overlays.
+- [x] **T16.9.4 - Panic action dispatch** - What: All working orders cancelled at once. How: keys.panic trigger invoking the F15.9 cancelAll() across OKX and EToro.
+- [x] **T16.9.5 - Auto-disarm on panic** - What: The desk goes cold with the cancel. How: Panic handler also flips desk.armed to false through the F15.4 gate.
+- [x] **T16.9.6 - Panic feedback** - What: Unmistakable confirmation of the exit. How: Full-width orange flash bar plus a distinct low WebAudio buzz from the F15.7 cue set.
+- [x] **T16.9.7 - panicCooldown() guard** - What: No accidental double-panic loops. How: One-second lockout fn suppressing re-triggers immediately after a panic fires.
+- [ ] **T16.9.8 - Journal panic record** - What: Every panic is auditable later. How: Write a panic event with timestamp and cancelled count to the phase-25 journal key. **Deferred:** the journal is phase 25; the panic handler already computes the timestamp and working-order count the entry needs.
+- [x] **T16.9.9 - Single tests for panic fns** - What: Detector and lockout proven. How: One Vitest test each for isDoubleTap and panicCooldown, run only via vitest -t.
+- [x] **T16.9.10 - Merge panic** - What: Double-ESC exit on main. How: Lint plus targeted tests green, merge feature/f16-09-panic.
 
 ### F16.10 - Hotkey Capture Component
 

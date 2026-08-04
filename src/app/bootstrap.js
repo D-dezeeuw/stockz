@@ -32,6 +32,8 @@ import { mountKeymap } from '../keys/keymap.js'
 import { registerBindingActions } from '../keys/overrides.js'
 import { registerPaletteActions } from '../keys/palette.js'
 import { trackBlockFocus } from '../keys/scopes.js'
+import { registerPanicAction } from '../keys/panic.js'
+import { createRepeater, guardRepeat } from '../keys/repeat.js'
 import { appVersion } from './version.js'
 
 /**
@@ -90,6 +92,7 @@ export function bootstrap(options = {}) {
   registerIntentAction({ submit: submitFromIntent })
   registerBindingActions()
   registerPaletteActions()
+  registerPanicAction()
   adoptKeys()
   applyTheme(doc?.documentElement?.getAttribute?.('data-theme') || preferredTheme(), doc)
   const derived = registerDerived()
@@ -108,6 +111,7 @@ export function bootstrap(options = {}) {
   observeLayout({ doc })
   const unkey = mountKeymap(doc?.defaultView ?? globalThis.window)
   const unfocus = trackBlockFocus(doc)
+  const unrepeat = guardRepeat(createRepeater(), doc?.defaultView ?? globalThis.window)
   revealApp(doc)
   checkpoint('boot', { version: appVersion() })
 
@@ -128,6 +132,7 @@ export function bootstrap(options = {}) {
     cleanup: () => {
       unkey()
       unfocus()
+      unrepeat()
       cleanup?.()
     },
     feeds,
