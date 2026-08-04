@@ -4,6 +4,7 @@ import { registerAction, dispatchAction } from '../actions/registry.js'
 import { ACTIONS, allActionNames } from '../actions/names.js'
 import { allBindings } from './keymap.js'
 import { chordLabel } from './defaults.js'
+import { pushScope, popScope } from './scopes.js'
 
 /**
  * The command palette.
@@ -152,6 +153,11 @@ export function registerPaletteActions() {
     rows = open ? searchActions('') : []
     setValue(PATHS.ui.paletteRows, rows)
 
+    // The modal scope is what stops the letters being typed into the search box from
+    // firing trades. It goes up with the palette and comes down with it.
+    if (open) pushScope('modal', 'palette')
+    else popScope('modal', 'palette')
+
     return Boolean(open)
   })
 
@@ -181,6 +187,7 @@ export function registerPaletteActions() {
     // Closed before dispatching: the action may open an overlay of its own, and a
     // palette still on screen behind it is the kind of stuck state nobody enjoys.
     setValue(PATHS.ui.modal, '')
+    popScope('modal', 'palette')
     dispatchAction(row.action, {})
 
     return true

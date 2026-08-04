@@ -54,6 +54,7 @@ export function initialState(overrides = {}) {
     [PATHS.ui.paletteQuery]: '',
     [PATHS.ui.paletteIndex]: 0,
     [PATHS.ui.paletteRows]: [],
+    [PATHS.ui.scope]: 'global',
 
     // preferences (the only persisted branch) - defaults come from the schema so the
     // drawer, the migration and reset-to-defaults can never disagree about them

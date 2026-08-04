@@ -12,6 +12,11 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ### Added
 
+- **Scoped keys** — the same chord means different things in different places, resolved
+  nearest-first: a modal beats a focused block, which beats the global layout. A modal
+  does *not* fall through to the desk, which is what makes typing in the palette safe —
+  B is a letter there, not a buy. Focus tracking only leaves a block when focus really
+  does, since moving between two inputs inside one block fires `focusout` too. (F16.7)
 - **Command palette** — Ctrl+K, type, Enter. The bindings cover what is used every
   minute; the palette covers the rest, which nobody should memorise a chord for or hunt
   through menus for. Every row shows the chord that would have done the same thing, so a

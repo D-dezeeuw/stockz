@@ -2663,16 +2663,16 @@
 **What:** Keys mean the right thing in the right place - block-focused shortcuts never fight global ones.
 **How:** Scope stack in Spektrum state (global, focused block, overlay) consulted by resolveKey through an activeScope() chain walk.
 
-- [ ] **T16.7.1 - Scopes branch** - What: Isolated branch for context logic. How: Branch feature/f16-07-scopes from main.
-- [ ] **T16.7.2 - Scope stack state** - What: The desk knows where attention is. How: keys.scopeStack array in state with pushScope() and popScope() helper functions.
-- [ ] **T16.7.3 - Block focus tracking** - What: Focus follows the trader automatically. How: focusin/focusout listeners on data-ref block roots pushing the focused-block scope.
-- [ ] **T16.7.4 - activeScope() function** - What: One authoritative resolution order. How: Pure fn returning the priority chain overlay, focused block, then global.
-- [ ] **T16.7.5 - Scoped resolveKey upgrade** - What: Nearest context wins every keypress. How: Extend resolveKey to walk the activeScope chain and stop at the first match.
-- [ ] **T16.7.6 - Modal overlay scope** - What: Palette input never fires trades. How: Palette and cheat-sheet push a modal scope swallowing all chords except their own.
-- [ ] **T16.7.7 - Scope indicator styling** - What: Always know which block owns keys. How: Focus ring plus a small scope label chip on the focused block via :attr class.
-- [ ] **T16.7.8 - Reference block binding** - What: A worked example for future blocks. How: Register ladder-scoped PageUp/PageDown depth scrolling against the phase-14 book block.
-- [ ] **T16.7.9 - Single tests for scope fns** - What: Priority rules proven. How: One Vitest test each for pushScope and activeScope, run only via vitest -t.
-- [ ] **T16.7.10 - Merge scopes** - What: Context-aware keys on main. How: Lint plus targeted tests green, merge feature/f16-07-scopes.
+- [x] **T16.7.1 - Scopes branch** - What: Isolated branch for context logic. How: Branch feature/f16-07-scopes from main.
+- [x] **T16.7.2 - Scope stack state** - What: The desk knows where attention is. How: keys.scopeStack array in state with pushScope() and popScope() helper functions.
+- [x] **T16.7.3 - Block focus tracking** - What: Focus follows the trader automatically. How: focusin/focusout listeners on data-ref block roots pushing the focused-block scope.
+- [x] **T16.7.4 - activeScope() function** - What: One authoritative resolution order. How: Pure fn returning the priority chain overlay, focused block, then global.
+- [x] **T16.7.5 - Scoped resolveKey upgrade** - What: Nearest context wins every keypress. How: Extend resolveKey to walk the activeScope chain and stop at the first match.
+- [x] **T16.7.6 - Modal overlay scope** - What: Palette input never fires trades. How: Palette and cheat-sheet push a modal scope swallowing all chords except their own.
+- [x] **T16.7.7 - Scope indicator styling** - What: Always know which block owns keys. How: Focus ring plus a small scope label chip on the focused block via :attr class.
+- [x] **T16.7.8 - Reference block binding** - What: A worked example for future blocks. How: Register ladder-scoped PageUp/PageDown depth scrolling against the phase-14 book block.
+- [x] **T16.7.9 - Single tests for scope fns** - What: Priority rules proven. How: One Vitest test each for pushScope and activeScope, run only via vitest -t.
+- [x] **T16.7.10 - Merge scopes** - What: Context-aware keys on main. How: Lint plus targeted tests green, merge feature/f16-07-scopes.
 
 ### F16.8 - Hold-to-Repeat Price Nudge
 
