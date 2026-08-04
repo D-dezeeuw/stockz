@@ -113,6 +113,8 @@ export function initialState(overrides = {}) {
     [PATHS.settings.presets]: {},
     [PATHS.settings.priceGroups]: {},
     [PATHS.settings.strategyParams]: {},
+    [PATHS.settings.activePresets]: {},
+    [PATHS.settings.customPresets]: {},
     [PATHS.settings.tapeFloors]: {},
     [PATHS.settings.chords]: {},
     [PATHS.settings.watchlists]: [],

@@ -1,4 +1,4 @@
-import { setValue } from '../app/engine.js'
+import { setValue, appState } from '../app/engine.js'
 import { PATHS } from '../state/paths.js'
 import { registerAction } from '../actions/registry.js'
 import { ACTIONS } from '../actions/names.js'
@@ -12,6 +12,7 @@ import { measureTick, recordCost, shouldRunTick, DEFAULT_BUDGET_MS } from './bud
 import { recordResult, release, resetSandbox, isQuarantined } from './sandbox.js'
 import { snapshotRing, resetHistory } from './history.js'
 import { setWeight, publishWeights } from './composite.js'
+import { applyPreset, presetNames, presetDirty } from './presets.js'
 
 /**
  * Who is registered, and what is running where.
@@ -213,6 +214,7 @@ export function publishRunning() {
     // The last few calls, so a decision can be read in context without opening the
     // journal.
     recent: snapshotRing(run.key, 5).slice().reverse(),
+    ...presetPicker(run.strategyId),
   }))
 
   setValue(PATHS.strategy.running, rows)
@@ -252,6 +254,7 @@ export function registerStrategyActions() {
     resumeStrategy(payload?.key ?? payload?.runKey ?? payload),
   )
   registerAction(ACTIONS.strategy.setWeight, (_state, payload) => tuneWeight(payload))
+  registerAction(ACTIONS.strategy.setPreset, (_state, payload) => pickPreset(payload))
 
   return ACTIONS.strategy.stop
 }
@@ -393,4 +396,43 @@ export function tuneWeight(payload) {
   publishWeights(liveRuns(), weights)
 
   return weights
+}
+
+/**
+ * Switch a strategy to a preset pack.
+ *
+ * @param {{strategy?: string, value?: string, preset?: string}} payload - the picker's write.
+ * @returns {object|null} the params now in force.
+ */
+export function pickPreset(payload) {
+  const strategy = strategyFor(payload?.strategy)
+  if (!strategy) return null
+
+  const next = applyPreset(strategy, payload?.value ?? payload?.preset)
+  if (!next) return null
+
+  // Applied to anything already running, same as a manual edit: a preset that only took
+  // effect on the next start would be a preset nobody trusts mid-session.
+  for (const run of liveRuns()) {
+    if (run.strategyId !== strategy.id) continue
+    applyParams(run, next, strategy)
+    run.budgetMs = Number(next.budgetMs) || run.budgetMs
+  }
+
+  return next
+}
+
+/**
+ * The preset picker's rows for a strategy.
+ *
+ * @param {string} strategyId - the strategy.
+ * @returns {{names: string[], active: string, dirty: boolean}} the picker.
+ */
+export function presetPicker(strategyId) {
+  const strategy = strategyFor(strategyId)
+  if (!strategy) return { names: [], active: '', dirty: false }
+
+  const active = String(appState.settings?.activePresets?.[strategy.id] ?? 'standard')
+
+  return { names: presetNames(strategy.id), active, dirty: presetDirty(strategy, active) }
 }

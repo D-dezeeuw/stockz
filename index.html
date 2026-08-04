@@ -452,6 +452,13 @@
                 <div class="runs__row">
                   <span class="runs__name">{{run.name}}</span>
                   <span class="runs__instrument">{{run.instrument}}</span>
+                  <!-- One decision instead of forty numbers. Dirty means the live params
+                       have drifted from the pack that was picked. -->
+                  <select class="chip runs__preset" :class="run.dirty ? 'chip runs__preset is-dirty' : 'chip runs__preset'"
+                          data-action="change" data-fn="strategy.setPreset"
+                          :data-strategy="run.strategyId" data-each="p in run.names">
+                    <option :value="p" :selected="p === run.active">{{p}}</option>
+                  </select>
                   <!-- Glyph, strength bar and the reason as a tooltip: a chip that says
                        "short" and nothing else cannot be argued with after the fact. -->
                   <span class="runs__signal" :class="'runs__signal runs__signal--' + run.tone"

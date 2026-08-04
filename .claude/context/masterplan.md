@@ -3530,16 +3530,16 @@
 **What:** The user picks conservative, standard or aggressive per strategy and trades tuned scalping defaults instantly.
 **How:** Preset modules per strategy applied through batched setValue calls, custom packs saved via spektrum/persist.
 
-- [ ] **T21.9.1 - Branch and scaffold presets** - What: A branch and folder where all tuned defaults live. How: git checkout -b feature/f21-9-preset-packs; create src/strategies/presets/ with one module per strategy.
-- [ ] **T21.9.2 - Build validatePreset fn** - What: Bad preset shapes rejected before they touch live params. How: Implement validatePreset(preset, schema) checking keys, types and numeric ranges per strategy schema.
-- [ ] **T21.9.3 - Build applyPreset fn** - What: One click swaps a strategy's full param set atomically. How: Implement applyPreset(stratId, preset) issuing a batched setValue over the strategy's param keys.
-- [ ] **T21.9.4 - Author presets pack A** - What: Tuned conservative/standard/aggressive values for momentum, VWAP, spread and imbalance. How: Write the four preset modules with curated scalping values and inline rationale comments.
-- [ ] **T21.9.5 - Author presets pack B** - What: Tuned packs for tape pressure, range fade, open drive and squeeze. How: Write the remaining four preset modules with curated values matched to 1s-scale scalping.
-- [ ] **T21.9.6 - Preset picker UI** - What: Preset switching inside each strategy row, zero navigation. How: A select bound with data-model to the active preset and data-action calling applyPreset on change.
-- [ ] **T21.9.7 - Build savePreset fn** - What: The user's own tweaks saved as a named custom pack. How: Implement savePreset(stratId, name, params) diffing current state and persisting under stockz.presets via spektrum/persist.
-- [ ] **T21.9.8 - Dirty state and reset** - What: Visible drift from the active preset and a one-click reset. How: A computed() dirty flag comparing live params to the preset plus a reset data-action reapplying it.
-- [ ] **T21.9.9 - Write single unit tests** - What: Preset plumbing proven fn by fn. How: One Vitest test each for validatePreset, applyPreset and savePreset; run only those tests.
-- [ ] **T21.9.10 - Verify live switching and merge** - What: Presets swap mid-replay without breaking running strategies. How: Switch packs during an IndexedDB replay, confirm param pickup, ESLint, merge to main.
+- [x] **T21.9.1 - Branch and scaffold presets** - What: A branch and folder where all tuned defaults live. How: git checkout -b feature/f21-9-preset-packs; create src/strategies/presets/ with one module per strategy.
+- [x] **T21.9.2 - Build validatePreset fn** - What: Bad preset shapes rejected before they touch live params. How: Implement validatePreset(preset, schema) checking keys, types and numeric ranges per strategy schema.
+- [x] **T21.9.3 - Build applyPreset fn** - What: One click swaps a strategy's full param set atomically. How: Implement applyPreset(stratId, preset) issuing a batched setValue over the strategy's param keys.
+- [x] **T21.9.4 - Author presets pack A** - What: Tuned conservative/standard/aggressive values for momentum, VWAP, spread and imbalance. How: Write the four preset modules with curated scalping values and inline rationale comments.
+- [x] **T21.9.5 - Author presets pack B** - What: Tuned packs for tape pressure, range fade, open drive and squeeze. How: Write the remaining four preset modules with curated values matched to 1s-scale scalping.
+- [x] **T21.9.6 - Preset picker UI** - What: Preset switching inside each strategy row, zero navigation. How: A select bound with data-model to the active preset and data-action calling applyPreset on change.
+- [x] **T21.9.7 - Build savePreset fn** - What: The user's own tweaks saved as a named custom pack. How: Implement savePreset(stratId, name, params) diffing current state and persisting under stockz.presets via spektrum/persist.
+- [x] **T21.9.8 - Dirty state and reset** - What: Visible drift from the active preset and a one-click reset. How: A computed() dirty flag comparing live params to the preset plus a reset data-action reapplying it.
+- [x] **T21.9.9 - Write single unit tests** - What: Preset plumbing proven fn by fn. How: One Vitest test each for validatePreset, applyPreset and savePreset; run only those tests.
+- [x] **T21.9.10 - Verify live switching and merge** - What: Presets swap mid-replay without breaking running strategies. How: Switch packs during an IndexedDB replay, confirm param pickup, ESLint, merge to main.
 
 ### F21.10 - Live Strategy Scoreboard
 
