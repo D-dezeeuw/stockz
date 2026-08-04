@@ -150,6 +150,12 @@
             <!-- The ladder block. Rows are DOM, not canvas: they are click targets for
                  the order ticket, and a canvas row cannot be one. -->
             <div class="ladder" data-if="block.id === 'ladder'">
+              <!-- Pressure gauge: two widths that sum to 100, so no maths in the template. -->
+              <div class="gauge" :class="market.imbalance.hot ? 'gauge gauge--hot' : 'gauge'">
+                <span class="gauge__seg gauge__seg--bid" :style="'width:' + market.imbalance.bidPct + '%'"></span>
+                <span class="gauge__seg gauge__seg--ask" :style="'width:' + market.imbalance.askPct + '%'"></span>
+                <span class="gauge__label">{{market.imbalance.label}}</span>
+              </div>
               <div class="ladder__side ladder__side--ask" data-each="row in market.ladder.asks">
                 <div class="ladder__row ladder__row--ask" :style="'--bar:' + row.pct + '%'"
                      data-action="click" data-fn="book.prefill" data-side="sell">

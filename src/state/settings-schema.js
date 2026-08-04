@@ -93,6 +93,23 @@ export const SETTINGS_SCHEMA = Object.freeze([
     default: false,
   },
   {
+    key: 'bookDepth',
+    group: 'trading',
+    label: 'Imbalance depth',
+    kind: 'select',
+    options: ['5', '10', '20'],
+    default: '10',
+  },
+  {
+    key: 'imbalanceThreshold',
+    group: 'trading',
+    label: 'Imbalance glow at',
+    kind: 'number',
+    min: 0,
+    step: 0.05,
+    default: 0.4,
+  },
+  {
     key: 'favourites',
     group: 'instruments',
     label: 'Favourite instruments',

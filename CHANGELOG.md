@@ -12,6 +12,11 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ### Added
 
+- **Imbalance gauge** — bid/ask pressure as one number, smoothed by an EMA because the
+  raw reading swings from +0.4 to −0.2 and back on a single cancelled order, and a
+  flickering gauge invites acting on noise. Depth is selectable (5/10/20) since the touch
+  and the structure behind it disagree constantly, and crossing the persisted threshold
+  lights the gauge so pressure registers in peripheral vision. (F14.4)
 - **Time & sales tape** — the flow, coloured by who crossed the spread. It answers what
   the chart cannot: a price rising on small buys reads nothing like the same price rising
   on one 40-lot sweep. Hard-capped at 500 prints and stored newest-first so the template
