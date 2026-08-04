@@ -17,6 +17,7 @@ import { registerListActions, seedLists } from '../lists/state.js'
 import { registerCandleActions } from '../charts/candlestick.js'
 import { registerPrefillActions } from '../book/prefill.js'
 import { registerGroupingActions } from '../book/grouping.js'
+import { registerTapeActions } from '../book/tape.js'
 import { appVersion } from './version.js'
 
 /**
@@ -65,6 +66,7 @@ export function bootstrap(options = {}) {
   registerCandleActions()
   registerPrefillActions()
   registerGroupingActions()
+  registerTapeActions()
   adoptKeys()
   applyTheme(doc?.documentElement?.getAttribute?.('data-theme') || preferredTheme(), doc)
   const derived = registerDerived()

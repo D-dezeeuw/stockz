@@ -10,6 +10,7 @@ import { registerListActions } from '../lists/state.js'
 import { registerCandleActions } from '../charts/candlestick.js'
 import { registerPrefillActions } from '../book/prefill.js'
 import { registerGroupingActions } from '../book/grouping.js'
+import { registerTapeActions } from '../book/tape.js'
 
 beforeEach(() => {
   clearActions()
@@ -26,6 +27,7 @@ describe('allActionNames', () => {
       'ui.setCandleInterval',
       'book.prefill',
       'book.setGroup',
+      'book.setFloor',
       'app.reset',
       'lists.focus',
       'lists.add',
@@ -51,6 +53,7 @@ describe('allActionNames', () => {
     registerCandleActions()
     registerPrefillActions()
     registerGroupingActions()
+    registerTapeActions()
     expect(actionNames().sort()).toEqual(allActionNames().sort())
 
     // Every name follows <namespace>.<verb>, which is what registerAction enforces.

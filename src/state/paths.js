@@ -76,6 +76,7 @@ export const PATHS = Object.freeze({
     imbalanceThreshold: 'settings.imbalanceThreshold',
     whaleMultiplier: 'settings.whaleMultiplier',
     priceGroups: 'settings.priceGroups',
+    tapeFloors: 'settings.tapeFloors',
   }),
   market: Object.freeze({
     venues: 'market.venues',
@@ -87,6 +88,7 @@ export const PATHS = Object.freeze({
     book: 'market.book',
     ladder: 'market.ladder',
     tape: 'market.tape',
+    tapeHidden: 'market.tapeHidden',
     imbalance: 'market.imbalance',
     whales: 'market.whales',
     whaleCount: 'market.whaleCount',

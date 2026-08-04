@@ -277,3 +277,19 @@
   padding-block: var(--space-1, 0.25rem);
   flex: 0 0 auto;
 }
+
+.tape__bar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1, 0.25rem);
+  padding-block: var(--space-1, 0.25rem);
+  flex: 0 0 auto;
+}
+
+/* The badge answers the question a noise floor creates: how much am I not seeing. */
+.tape__hidden {
+  margin-left: auto;
+  color: var(--ink-muted);
+  font-size: var(--font-size-xs, 0.6875rem);
+  font-variant-numeric: tabular-nums;
+}

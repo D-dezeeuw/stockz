@@ -2345,16 +2345,16 @@
 **What:** Hide dust prints and watch only the flow that matters to your size.
 **How:** A minimum-size filter fn over the prints buffer with preset chips and a persisted per-instrument threshold.
 
-- [ ] **T14.8.1 - Branch tape filter work** - What: Filtering built without touching the tape core. How: git checkout -b feature/14-8-tape-filter from main.
-- [ ] **T14.8.2 - Implement passesFilter** - What: One rule deciding what the tape shows. How: Pure fn returning size >= minSize, with a whale bypass flag parameter.
-- [ ] **T14.8.3 - Add the minimum size input** - What: Dial in your exact noise floor. How: Numeric input in the tape header bound to minSize via Spektrum data-model.
-- [ ] **T14.8.4 - Add preset chips** - What: Common floors reachable in one tap. How: 0/1K/10K chip buttons firing data-action setters on the minSize value.
-- [ ] **T14.8.5 - Chain the filteredTape computed** - What: The tape thins instantly as you adjust. How: Spektrum computed applying passesFilter over the prints buffer.
-- [ ] **T14.8.6 - Implement hiddenCount** - What: You always know how much flow is filtered away. How: Pure fn counting suppressed prints rendered as a small badge next to the input.
-- [ ] **T14.8.7 - Bypass the filter for whales** - What: Whales are never hidden by your noise floor. How: Pass the phase F14.5 isWhale result as the bypass flag inside the computed chain.
-- [ ] **T14.8.8 - Persist the threshold** - What: Your floor per market survives reloads. How: Per-instrument minSize stored via spektrum/persist alongside the grouping choice.
-- [ ] **T14.8.9 - Write single unit tests for filter fns** - What: Filter and count logic locked. How: One Vitest test each for passesFilter and hiddenCount, run individually via vitest run -t.
-- [ ] **T14.8.10 - Verify and merge the tape filter** - What: A tape tuned to meaningful flow only. How: Sweep thresholds against live prints checking badge math, then merge feature/14-8-tape-filter into main.
+- [x] **T14.8.1 - Branch tape filter work** - What: Filtering built without touching the tape core. How: git checkout -b feature/14-8-tape-filter from main.
+- [x] **T14.8.2 - Implement passesFilter** - What: One rule deciding what the tape shows. How: Pure fn returning size >= minSize, with a whale bypass flag parameter.
+- [x] **T14.8.3 - Add the minimum size input** - What: Dial in your exact noise floor. How: Numeric input in the tape header bound to minSize via Spektrum data-model.
+- [x] **T14.8.4 - Add preset chips** - What: Common floors reachable in one tap. How: 0/1K/10K chip buttons firing data-action setters on the minSize value.
+- [x] **T14.8.5 - Chain the filteredTape computed** - What: The tape thins instantly as you adjust. How: Spektrum computed applying passesFilter over the prints buffer.
+- [x] **T14.8.6 - Implement hiddenCount** - What: You always know how much flow is filtered away. How: Pure fn counting suppressed prints rendered as a small badge next to the input.
+- [x] **T14.8.7 - Bypass the filter for whales** - What: Whales are never hidden by your noise floor. How: Pass the phase F14.5 isWhale result as the bypass flag inside the computed chain.
+- [x] **T14.8.8 - Persist the threshold** - What: Your floor per market survives reloads. How: Per-instrument minSize stored via spektrum/persist alongside the grouping choice.
+- [x] **T14.8.9 - Write single unit tests for filter fns** - What: Filter and count logic locked. How: One Vitest test each for passesFilter and hiddenCount, run individually via vitest run -t.
+- [x] **T14.8.10 - Verify and merge the tape filter** - What: A tape tuned to meaningful flow only. How: Sweep thresholds against live prints checking badge math, then merge feature/14-8-tape-filter into main.
 
 ### F14.9 - Windowed Tape Rendering
 

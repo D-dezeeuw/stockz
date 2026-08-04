@@ -12,6 +12,10 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ### Added
 
+- **Tape size filter** — a per-instrument noise floor with one-tap presets, and a badge
+  saying how much flow it is hiding, because that is the question a filter creates.
+  Whales bypass the floor entirely: the print that most changes what the flow means must
+  never be a casualty of hiding dust. (F14.8)
 - **Price grouping** — collapse the ladder to coarser steps and the resting size appears
   behind the tick-level texture. Bids floor and asks ceil, so a grouped book is never
   narrower than the real one and can never appear crossed; group sizes are whole
