@@ -57,6 +57,19 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
   on blur rather than on a button, because a save button in a journal is a note that does not
   get written. An emptied annotation is dropped entirely so "annotated" keeps meaning
   something, and a stored catalogue is merged with the presets rather than replacing them.
+- **A labelled pin on every closed scalp** — the engine could already replay to any point in
+  its history; what it could not do is say *which* point, and "state 4,812 frames ago" is not
+  an answer anybody uses. Each close drops a pin named by what the trade was and what it made,
+  so a trader looking for a snapshot looks for a trade. Two rules keep it from being a
+  liability: it never costs the fill path anything — deferred to a microtask, and a trade
+  already pinned is never pinned again, because a journal feature that added latency to
+  execution would trade the thing the desk is *for* against the thing that merely records it
+  — and you can always get back, since the live head is pinned before any jump and a fixed
+  **VIEWING HISTORY** bar stays on screen the whole time you are away. A trader who forgot
+  they were standing in the past would read every number on the desk as the present one and
+  act on it. A failed snapshot loses the pin and never the trade, and returning to live clears
+  the flag even when there is nothing to return to: a desk stuck showing "viewing history"
+  with no way out is worse than one that simply carries on.
 
 ## [0.24.0] — 2026-08-04 — Phase 24: Circuit Breakers & Risk Kill Switch
 

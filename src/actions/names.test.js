@@ -24,6 +24,7 @@ import { registerKillActions } from '../breakers/kill.js'
 import { registerRearmActions } from '../breakers/rearm.js'
 import { registerLogActions as registerBreakerLogActions } from '../breakers/log.js'
 import { registerTagActions } from '../journal/tags.js'
+import { registerCheckpointActions } from '../journal/checkpoints.js'
 import { registerStrategyActions } from '../strategy/registry.js'
 import { registerTicketActions } from '../ticket/actions.js'
 import { registerSizingActions } from '../ticket/sizing.js'
@@ -84,6 +85,8 @@ describe('allActionNames', () => {
       'journal.removeTag',
       'journal.setNote',
       'journal.editNote',
+      'journal.jump',
+      'journal.live',
       'bot.toggleArm',
       'bot.setAuto',
       'bot.disableAll',
@@ -152,6 +155,7 @@ describe('allActionNames', () => {
     registerRearmActions()
     registerBreakerLogActions()
     registerTagActions()
+    registerCheckpointActions()
     registerStrategyActions()
     registerTicketActions()
     registerSizingActions()

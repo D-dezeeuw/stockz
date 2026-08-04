@@ -2,6 +2,7 @@ import { setValue } from '../app/engine.js'
 import { PATHS } from '../state/paths.js'
 import { splitFlipFill } from '../positions/math.js'
 import { createLogger } from '../utils/log.js'
+import { pinTrade } from './checkpoints.js'
 
 /**
  * Turning fills into trades.
@@ -305,6 +306,9 @@ export function onJournalFill(fill) {
   // Persisted on every fill rather than on a timer: the state worth keeping is precisely
   // the half-open scalp, and a reload always happens at the wrong moment.
   saveOpenLots()
+  // A labelled pin per closed scalp, deferred off this path: the snapshot must never be
+  // something the fill waited for.
+  for (const trade of closed) pinTrade(trade)
   if (closed.length) setValue(PATHS.journal.last, closed[closed.length - 1])
 
   return closed
