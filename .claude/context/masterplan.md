@@ -4301,16 +4301,16 @@
 **What:** A histogram of how long scalps are held, colored by average PnL per bucket, so the user learns the hold durations where the edge lives.
 **How:** holdTimeBuckets() with log-scale duration bins rendered by a canvas bar renderer with median/average markers and per-bar tooltips.
 
-- [ ] **T26.5.1 - Cut histogram branch** - What: Histogram work isolated from main. How: git checkout -b feature/f26.5-holdtime-histogram from main.
-- [ ] **T26.5.2 - Define log-scale bins** - What: Sub-10s scalps and 10-minute holds both resolve clearly. How: HOLD_BINS constant in src/analytics/holdtime.js with edges 10s, 30s, 1m, 3m, 10m, 30m, plus an overflow bin.
-- [ ] **T26.5.3 - Implement holdTimeBuckets()** - What: Trade counts and avg PnL per duration bin. How: Pure holdTimeBuckets(trades) folding each trade's holdTime metric into HOLD_BINS with count and mean netPnl per bin.
-- [ ] **T26.5.4 - Implement medianHold() and avgHold()** - What: The two center-of-mass numbers for hold behavior. How: medianHold(trades) via sorted midpoint and avgHold(trades) via mean over holdTime values.
-- [ ] **T26.5.5 - Render the histogram bars** - What: The distribution shape visible in one look. How: drawHistogram(ctx, buckets, size) painting bars scaled to max count with bin edge labels beneath on a DPR-scaled canvas.
-- [ ] **T26.5.6 - Color bars by bucket PnL** - What: Profitable hold ranges glow green, losing ranges orange. How: Fill each bar with cellColor(avgPnl, maxAbs) reusing the diverging scale from the heatmap module.
-- [ ] **T26.5.7 - Draw median and average markers** - What: Typical hold length marked directly on the chart. How: Vertical dashed lines at medianHold and avgHold positions with small labels, drawn after the bars.
-- [ ] **T26.5.8 - Add per-bar tooltips and wiring** - What: Exact counts and avg PnL per bin, always current. How: pointermove hit-testing bars into a tooltip div plus a Spektrum watch redrawing on period-filtered trade changes.
-- [ ] **T26.5.9 - Write single unit tests for hold fns** - What: holdTimeBuckets, medianHold and avgHold each proven once. How: One Vitest test per function in holdtime.test.js with edge-of-bin fixtures, run via vitest run -t.
-- [ ] **T26.5.10 - Verify and merge histogram** - What: The distribution ships green and truthful. How: Run targeted tests, validate bin placement of boundary-duration fixtures in-browser, merge to main.
+- [x] **T26.5.1 - Cut histogram branch** - What: Histogram work isolated from main. How: git checkout -b feature/f26.5-holdtime-histogram from main.
+- [x] **T26.5.2 - Define log-scale bins** - What: Sub-10s scalps and 10-minute holds both resolve clearly. How: HOLD_BINS constant in src/analytics/holdtime.js with edges 10s, 30s, 1m, 3m, 10m, 30m, plus an overflow bin.
+- [x] **T26.5.3 - Implement holdTimeBuckets()** - What: Trade counts and avg PnL per duration bin. How: Pure holdTimeBuckets(trades) folding each trade's holdTime metric into HOLD_BINS with count and mean netPnl per bin.
+- [x] **T26.5.4 - Implement medianHold() and avgHold()** - What: The two center-of-mass numbers for hold behavior. How: medianHold(trades) via sorted midpoint and avgHold(trades) via mean over holdTime values.
+- [x] **T26.5.5 - Render the histogram bars** - What: The distribution shape visible in one look. How: drawHistogram(ctx, buckets, size) painting bars scaled to max count with bin edge labels beneath on a DPR-scaled canvas.
+- [x] **T26.5.6 - Color bars by bucket PnL** - What: Profitable hold ranges glow green, losing ranges orange. How: Fill each bar with cellColor(avgPnl, maxAbs) reusing the diverging scale from the heatmap module.
+- [x] **T26.5.7 - Draw median and average markers** - What: Typical hold length marked directly on the chart. How: Vertical dashed lines at medianHold and avgHold positions with small labels, drawn after the bars.
+- [x] **T26.5.8 - Add per-bar tooltips and wiring** - What: Exact counts and avg PnL per bin, always current. How: pointermove hit-testing bars into a tooltip div plus a Spektrum watch redrawing on period-filtered trade changes.
+- [x] **T26.5.9 - Write single unit tests for hold fns** - What: holdTimeBuckets, medianHold and avgHold each proven once. How: One Vitest test per function in holdtime.test.js with edge-of-bin fixtures, run via vitest run -t.
+- [x] **T26.5.10 - Verify and merge histogram** - What: The distribution ships green and truthful. How: Run targeted tests, validate bin placement of boundary-duration fixtures in-browser, merge to main.
 
 ### F26.6 - Streak Analysis View
 

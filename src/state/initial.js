@@ -241,6 +241,8 @@ export function initialState(overrides = {}) {
     [PATHS.analytics.ranking]: [],
     [PATHS.analytics.rankingTotal]: 0,
     [PATHS.analytics.rankingExpanded]: false,
+    [PATHS.analytics.holds]: [],
+    [PATHS.analytics.holdCentre]: { median: 0, mean: 0, medianLabel: '—', meanLabel: '—' },
 
     // journal
     [PATHS.journal.trades]: [],

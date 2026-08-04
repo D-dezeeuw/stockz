@@ -46,6 +46,7 @@ import { registerRetentionActions, scheduleRetention, storageUsage } from '../jo
 import { startEquityChart } from '../analytics/equity.js'
 import { startHeatmap } from '../analytics/heatmap.js'
 import { registerRankingActions } from '../analytics/instruments.js'
+import { startHistogram } from '../analytics/holdtime.js'
 import { registerKillActions } from '../breakers/kill.js'
 import { registerRearmActions, mountRelease } from '../breakers/rearm.js'
 import {
@@ -167,6 +168,7 @@ export function bootstrap(options = {}) {
   startEquityChart()
   startHeatmap()
   registerRankingActions()
+  startHistogram()
   loadAnnotations()
   pruneBreakerEvents(Date.now())
   // The daily-loss trip has no other reaction path — it publishes a code and returns a
