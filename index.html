@@ -343,6 +343,17 @@
                 <span class="hud__value">{{ui.hud.exposureLabel}}</span>
                 <span class="hud__label">gross exposure</span>
               </div>
+              <!-- Venue lag: the answer to "is it me or is it them". -->
+              <div class="hud__tile hud__tile--venues">
+                <span class="hud__venue">
+                  <i :class="'led led--' + (ui.rtt.okx ? ui.rtt.okx.tier : 'unknown')"></i>
+                  okx <b>{{ui.rtt.okx ? ui.rtt.okx.ms : '—'}}</b>
+                </span>
+                <span class="hud__venue">
+                  <i :class="'led led--' + (ui.rtt.etoro ? ui.rtt.etoro.tier : 'unknown')"></i>
+                  etoro <b>{{ui.rtt.etoro ? ui.rtt.etoro.ms : '—'}}</b>
+                </span>
+              </div>
             </div>
             <p class="label" data-if="block.id !== 'book' &amp;&amp; block.id !== 'tape' &amp;&amp; block.id !== 'ticket' &amp;&amp; block.id !== 'positions' &amp;&amp; block.id !== 'hud'">ready</p>
           </div>

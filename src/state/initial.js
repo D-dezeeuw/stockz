@@ -57,6 +57,7 @@ export function initialState(overrides = {}) {
     [PATHS.ui.scope]: 'global',
     [PATHS.ui.pnlPulse]: '',
     [PATHS.ui.pnlPulseAt]: 0,
+    [PATHS.ui.rtt]: { worst: { venue: '', ms: -1, tier: 'unknown' } },
     [PATHS.ui.hud]: {
       latencyMs: 0,
       latencyGrade: 'warn',
