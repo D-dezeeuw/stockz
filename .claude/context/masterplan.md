@@ -3196,16 +3196,16 @@
 **What:** Fees eating your PnL shown live, so overtrading cost is never invisible.
 **How:** Per-fill fee from venue schedules, session sum, burn rate per hour and a fees-vs-PnL ratio in a HUD meter.
 
-- [ ] **T19.9.1 - Open fee branch** - What: Dedicated branch for fee accounting. How: Create feature/f19.9-fee-burn from main before writing the schedule module.
-- [ ] **T19.9.2 - Fee schedule module** - What: Accurate venue rates in one place. How: src/hud/fee-schedule.js exporting OKX maker/taker bps and EToro markup constants with source comments.
-- [ ] **T19.9.3 - feeForFill fn** - What: The exact fee of each fill, venue-aware. How: Pure fn picking maker or taker bps by liquidity flag and multiplying against fill notional.
-- [ ] **T19.9.4 - sessionFees accumulator fn** - What: Total fees paid today always current. How: addFee(prev, fee) reducer feeding a hud.fees.total value on every scored fill.
-- [ ] **T19.9.5 - burnRate fn** - What: Fees per hour reveals overtrading pace. How: Pure fn dividing session fees by elapsed session hours from the hud clock, guarded under 5 minutes.
-- [ ] **T19.9.6 - feesVsPnl fn** - What: The ratio that shows fees devouring your edge. How: Pure fn fees / max(abs(realizedPnl), epsilon) exposed as computed hud.fees.ratio.
-- [ ] **T19.9.7 - Publish fee state** - What: Fee figures readable by HUD and analytics. How: setValue hud.fees.total, hud.fees.rate and hud.fees.ratio after each fill scoring pass.
-- [ ] **T19.9.8 - Burn meter markup and style** - What: A filling meter that shifts green to orange as fees mount. How: Gradient progress bar bound via :style with a warn class past a configurable ratio threshold.
-- [ ] **T19.9.9 - Single tests per fee fn** - What: Fee math, accumulation, rate and ratio proven alone. How: One Vitest test per fn with maker and taker fixtures, run only via -t name filters.
-- [ ] **T19.9.10 - Merge fee meter** - What: Fee awareness shipped to main. How: ESLint and targeted Vitest runs green, then merge feature/f19.9.
+- [x] **T19.9.1 - Open fee branch** - What: Dedicated branch for fee accounting. How: Create feature/f19.9-fee-burn from main before writing the schedule module.
+- [x] **T19.9.2 - Fee schedule module** - What: Accurate venue rates in one place. How: src/hud/fee-schedule.js exporting OKX maker/taker bps and EToro markup constants with source comments.
+- [x] **T19.9.3 - feeForFill fn** - What: The exact fee of each fill, venue-aware. How: Pure fn picking maker or taker bps by liquidity flag and multiplying against fill notional.
+- [x] **T19.9.4 - sessionFees accumulator fn** - What: Total fees paid today always current. How: addFee(prev, fee) reducer feeding a hud.fees.total value on every scored fill.
+- [x] **T19.9.5 - burnRate fn** - What: Fees per hour reveals overtrading pace. How: Pure fn dividing session fees by elapsed session hours from the hud clock, guarded under 5 minutes.
+- [x] **T19.9.6 - feesVsPnl fn** - What: The ratio that shows fees devouring your edge. How: Pure fn fees / max(abs(realizedPnl), epsilon) exposed as computed hud.fees.ratio.
+- [x] **T19.9.7 - Publish fee state** - What: Fee figures readable by HUD and analytics. How: setValue hud.fees.total, hud.fees.rate and hud.fees.ratio after each fill scoring pass.
+- [x] **T19.9.8 - Burn meter markup and style** - What: A filling meter that shifts green to orange as fees mount. How: Gradient progress bar bound via :style with a warn class past a configurable ratio threshold.
+- [x] **T19.9.9 - Single tests per fee fn** - What: Fee math, accumulation, rate and ratio proven alone. How: One Vitest test per fn with maker and taker fixtures, run only via -t name filters.
+- [x] **T19.9.10 - Merge fee meter** - What: Fee awareness shipped to main. How: ESLint and targeted Vitest runs green, then merge feature/f19.9.
 
 ### F19.10 - Compact HUD row
 

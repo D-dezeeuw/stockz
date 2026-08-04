@@ -74,6 +74,17 @@ export function initialState(overrides = {}) {
       paceLabel: '0.0',
       turnoverLabel: '0.0',
     },
+    [PATHS.ui.fees]: {
+      total: 0,
+      rate: 0,
+      ratio: 0,
+      count: 0,
+      estimated: 0,
+      totalLabel: '0.0',
+      rateLabel: '0.0/h',
+      barPct: 0,
+      tone: 'ok',
+    },
     [PATHS.ui.hud]: {
       latencyMs: 0,
       latencyGrade: 'warn',

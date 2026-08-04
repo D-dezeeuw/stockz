@@ -365,6 +365,15 @@
                 <span class="hud__value">{{ui.session.turnoverLabel}}</span>
                 <span class="hud__label">turnover · {{ui.session.contracts}} traded</span>
               </div>
+              <!-- Fees against gross. Past half, they are the business rather than a cost
+                   of it, and the meter says so before the P&L does. -->
+              <div class="hud__tile" :class="'hud__tile hud__tile--burn-' + ui.fees.tone">
+                <span class="hud__value">{{ui.fees.totalLabel}}</span>
+                <span class="hud__label">fees · {{ui.fees.rateLabel}}</span>
+                <span class="hud__meter">
+                  <i :style="'width:' + ui.fees.barPct + '%'"></i>
+                </span>
+              </div>
               <!-- Venue lag: the answer to "is it me or is it them". -->
               <div class="hud__tile hud__tile--venues">
                 <span class="hud__venue">

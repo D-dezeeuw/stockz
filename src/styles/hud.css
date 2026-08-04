@@ -114,8 +114,13 @@
   transition: width 120ms linear;
 }
 
-.hud__tile--pace-over .hud__meter i {
+.hud__tile--pace-over .hud__meter i,
+.hud__tile--burn-warn .hud__meter i {
   background: var(--orange);
+}
+
+.hud__tile--burn-warn .hud__value {
+  color: var(--orange);
 }
 
 @media (prefers-reduced-motion: reduce) {

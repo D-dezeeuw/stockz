@@ -9,6 +9,7 @@ import { issueId, claimId, resetIds } from './ids.js'
 import { stampLatency, resetLatency } from './latency.js'
 import { ingestFill } from '../positions/store.js'
 import { captureIntent, scoreFill } from '../hud/quality.js'
+import { recordFee } from '../hud/fees.js'
 import { createLogger } from '../utils/log.js'
 
 const log = createLogger('exec')
@@ -205,6 +206,17 @@ export function apply(clientId, state, detail = {}) {
         qty: justFilled,
         px: Number(detail.avgPx) || order.price,
         ts: Number(detail.ts) || order.ts,
+      })
+
+      // Scored off the same fill: the venue's own charge when it reported one, the rate
+      // card when it has not billed yet.
+      recordFee({
+        venue: order.venue,
+        instrument: order.instrument,
+        qty: justFilled,
+        px: Number(detail.avgPx) || order.price,
+        fee: detail.fee,
+        maker: detail.maker,
       })
     }
   }
