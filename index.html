@@ -121,6 +121,9 @@
         <svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"
              data-if="ui.theme === 'day'"><path d="M8 4.5 A3.5 3.5 0 1 1 8 11.5 A3.5 3.5 0 1 1 8 4.5 Z M7.25 0 H8.75 V2.5 H7.25 Z M7.25 13.5 H8.75 V16 H7.25 Z M0 7.25 H2.5 V8.75 H0 Z M13.5 7.25 H16 V8.75 H13.5 Z"/></svg>
       </button>
+      <!-- The day's number, always in view: the answer changes what the right next
+           trade is. -->
+      <span class="daypnl" :class="'daypnl' + (trade.dayTotal >= 0 ? ' daypnl--up' : ' daypnl--down') + (ui.pnlPulse ? ' daypnl--pulse-' + ui.pnlPulse : '')">{{trade.dayLabel}}</span>
     </header>
 
     <!-- The grid: every cell identical in size, driven entirely by the block registry.

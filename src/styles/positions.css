@@ -69,3 +69,64 @@
 .pnl--down {
   color: var(--orange);
 }
+
+/*
+ * The header's day P&L.
+ *
+ * The pulse is opacity and transform only — compositor-only properties — because this
+ * fires on every meaningful mark change and anything that triggers layout would make the
+ * whole header jitter with the market.
+ */
+
+.daypnl {
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  /* Fixed width: a header that reflows as the number grows drags the nav with it. */
+  min-width: 5.5rem;
+  text-align: right;
+}
+
+.daypnl--up {
+  color: var(--green);
+}
+
+.daypnl--down {
+  color: var(--orange);
+}
+
+.daypnl--pulse-up {
+  animation: pnl-pulse-up 600ms ease-out;
+}
+
+.daypnl--pulse-down {
+  animation: pnl-pulse-down 600ms ease-out;
+}
+
+@keyframes pnl-pulse-up {
+  0% {
+    opacity: 0.4;
+    transform: translateY(2px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pnl-pulse-down {
+  0% {
+    opacity: 0.4;
+    transform: translateY(-2px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .daypnl--pulse-up,
+  .daypnl--pulse-down {
+    animation: none;
+  }
+}

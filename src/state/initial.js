@@ -55,6 +55,8 @@ export function initialState(overrides = {}) {
     [PATHS.ui.paletteIndex]: 0,
     [PATHS.ui.paletteRows]: [],
     [PATHS.ui.scope]: 'global',
+    [PATHS.ui.pnlPulse]: '',
+    [PATHS.ui.pnlPulseAt]: 0,
     [PATHS.ui.captureFor]: '',
     [PATHS.ui.capturePreview]: null,
 
@@ -103,6 +105,8 @@ export function initialState(overrides = {}) {
     [PATHS.trade.pnl]: { unrealized: 0, realized: 0, fees: 0, count: 0 },
     [PATHS.trade.ledger]: [],
     [PATHS.trade.score]: { gross: 0, fees: 0, net: 0, count: 0, wins: 0 },
+    [PATHS.trade.dayTotal]: 0,
+    [PATHS.trade.dayLabel]: '0.00',
     [PATHS.trade.buyingPower]: 0,
     [PATHS.trade.lastReject]: '',
     [PATHS.trade.queue]: [],

@@ -7,6 +7,7 @@ import { updateImbalance, resetImbalance } from '../../book/imbalance.js'
 import { setBookStatus, scheduleResync } from '../../book/integrity.js'
 import { splitSymbol } from '../../lists/ops.js'
 import { markPosition, flushPositions, positionKey } from '../../positions/store.js'
+import { refreshDayPnl, expirePulse } from '../../positions/header.js'
 import { setValue, appState } from '../../app/engine.js'
 import { PATHS } from '../../state/paths.js'
 
@@ -111,7 +112,8 @@ export function flushFeed(focus, options = {}) {
   const bid = Number(book?.bids?.[0]?.[0]) || 0
   const ask = Number(book?.asks?.[0]?.[0]) || 0
   if (bid > 0 && ask > 0) markPosition(positionKey('okx', instId), (bid + ask) / 2)
-  flushPositions()
+  if (flushPositions()) refreshDayPnl({ now: Number(book?.ts) || 0 })
+  expirePulse(Number(book?.ts) || 0)
   // Read from the store, not from state: the flush above is queued for this frame, so
   // `appState` still holds the previous book and the gauge would lag by one frame.
   if (wrote) updateImbalance(bookFor(instId), options)
