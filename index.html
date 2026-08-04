@@ -427,6 +427,17 @@
                   </select>
                 </label>
               </div>
+              <!-- Benched runs. Visible and reversible: a strategy that vanished silently
+                   would look exactly like one with nothing to say. -->
+              <div class="runs__rows runs__rows--benched" data-each="bad in strategy.quarantined">
+                <div class="runs__row runs__row--benched">
+                  <span class="runs__name">{{bad.strategyId}}</span>
+                  <span class="runs__instrument">{{bad.instrument}}</span>
+                  <span class="runs__error truncate" :title="bad.error">{{bad.error}}</span>
+                  <button type="button" class="chip" data-action="click" data-fn="strategy.resume"
+                          :data-key="bad.key">resume</button>
+                </div>
+              </div>
               <div class="runs__rows" data-each="run in strategy.running">
                 <div class="runs__row">
                   <span class="runs__name">{{run.name}}</span>

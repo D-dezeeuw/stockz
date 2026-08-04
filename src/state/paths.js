@@ -162,6 +162,7 @@ export const PATHS = Object.freeze({
   strategy: Object.freeze({
     registered: 'strategy.registered',
     running: 'strategy.running',
+    quarantined: 'strategy.quarantined',
     signals: 'strategy.signals',
   }),
 })

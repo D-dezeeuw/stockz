@@ -9,6 +9,7 @@ import { setStrategyParam, publishParamForm, applyParams, paramsFor } from './pa
 import { normalizeSignal, publishSignal, sweepSignals, signalChip } from './signal.js'
 import { sessionKey } from '../positions/ledger.js'
 import { measureTick, recordCost, shouldRunTick, DEFAULT_BUDGET_MS } from './budget.js'
+import { recordResult, release, resetSandbox, isQuarantined } from './sandbox.js'
 
 /**
  * Who is registered, and what is running where.
@@ -129,7 +130,7 @@ export function startStrategy(strategyId, instrument, options = {}) {
   }
 
   const timed = measureTick(
-    (payload) => runHook(strategy, 'onTick', run.ctx, payload),
+    (payload) => runHook(strategy, 'onTick', run.ctx, payload, key),
     { clock: options.clock },
   )
 
@@ -144,8 +145,10 @@ export function startStrategy(strategyId, instrument, options = {}) {
 
     const { result, costMs } = timed(tick)
     recordCost(run, costMs)
+    // Three throws in a row and the run benches itself, subscription and all.
+    if (recordResult(run, result, { stop: stopStrategy, now: tick?.ts }).quarantined) return
 
-    run.signal = normalizeSignal(result, {
+    run.signal = normalizeSignal(result.signal, {
       now: Number(tick?.ts) || 0,
       source: strategy.id,
       instrument: run.instrument,
@@ -219,6 +222,7 @@ export function resetStrategies() {
   for (const run of liveRuns()) run.unsubscribe?.()
   runs.clear()
   known.clear()
+  resetSandbox()
   sessionDay = ''
   return true
 }
@@ -237,6 +241,9 @@ export function registerStrategyActions() {
     stopStrategy(payload?.key ?? payload?.runKey ?? payload),
   )
   registerAction(ACTIONS.strategy.setParam, (_state, payload) => tuneStrategy(payload))
+  registerAction(ACTIONS.strategy.resume, (_state, payload) =>
+    resumeStrategy(payload?.key ?? payload?.runKey ?? payload),
+  )
 
   return ACTIONS.strategy.stop
 }
@@ -337,4 +344,29 @@ export function tickStrategies(now, startHourUtc = 0) {
 export function showParamForm(strategyId) {
   const strategy = strategyFor(strategyId)
   return strategy ? publishParamForm(strategy) : []
+}
+
+/**
+ * Put a fixed strategy back to work.
+ *
+ * @param {string} runKey - the benched run.
+ * @returns {object|null} the restarted run.
+ */
+export function resumeStrategy(runKey) {
+  const record = release(runKey)
+  if (!record) return null
+
+  // Restarted rather than un-flagged: the run was stopped when it was benched, so there is
+  // no subscription left to re-enable — there is only a run to create again.
+  return startStrategy(record.strategyId, record.instrument)
+}
+
+/**
+ * Is this run benched?
+ *
+ * @param {string} runKey - the run key.
+ * @returns {boolean} true when quarantined.
+ */
+export function runQuarantined(runKey) {
+  return isQuarantined(runKey)
 }
