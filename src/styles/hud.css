@@ -53,3 +53,54 @@
 .hud__tile--bad {
   border-color: var(--orange);
 }
+
+/*
+ * Venue LEDs. Colour carries the reading before the number does, which is the point of
+ * having them — a glance answers "is it me or is it them" without reading milliseconds.
+ */
+.hud__tile--venues {
+  gap: 0.2rem;
+}
+
+.hud__venue {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1, 0.25rem);
+  font-size: var(--font-size-xs, 0.6875rem);
+  color: var(--ink-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.hud__venue b {
+  margin-left: auto;
+  color: var(--ink);
+}
+
+.led {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: var(--ink-muted);
+  flex: 0 0 auto;
+}
+
+.led--ok {
+  background: var(--green);
+  box-shadow: 0 0 4px var(--green);
+}
+
+.led--warn {
+  background: var(--orange);
+}
+
+.led--bad {
+  background: var(--orange);
+  box-shadow: 0 0 6px var(--orange);
+}
+
+/* Never measured reads as unlit rather than as a fault: a desk starting its session
+   must not look broken. */
+.led--unknown {
+  background: transparent;
+  border: 1px solid var(--line);
+}

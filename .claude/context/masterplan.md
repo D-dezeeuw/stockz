@@ -3084,16 +3084,16 @@
 **What:** Per-venue heartbeat lag on screen so you always know which venue is fast right now.
 **How:** OKX v5 WS ping/pong frames and a timed EToro REST probe stamped with performance.now(), tiered and published into hud state.
 
-- [ ] **T19.2.1 - Open the RTT branch** - What: Clean line of work for venue probing. How: Branch feature/f19.2-ping-rtt off main and push the tracking branch.
-- [ ] **T19.2.2 - pingOkx fn** - What: Real RTT numbers from the venue you scalp on. How: Send a 'ping' text frame on the OKX v5 public WS and resolve the performance.now() delta when 'pong' returns.
-- [ ] **T19.2.3 - probeEtoro fn** - What: Comparable lag reading for the EToro leg. How: Time a lightweight GET against an EToro REST status endpoint using the key layer's stored STOCKZ_ETORO_API_KEY.
-- [ ] **T19.2.4 - Probe scheduler** - What: Continuous readings without probe bursts. How: addAsync loop per venue every 5s with random jitter so OKX and EToro probes never align.
-- [ ] **T19.2.5 - classifyRtt fn** - What: Instant good/warn/bad read without parsing numbers. How: Pure fn mapping ms to ok/warn/bad tiers at 80ms and 250ms cut lines.
-- [ ] **T19.2.6 - Publish RTT state** - What: Other blocks can react to venue slowness. How: setValue hud.rtt.okx and hud.rtt.etoro per probe plus a computed hud.rtt.worst.
-- [ ] **T19.2.7 - RTT tile markup** - What: Both venues visible at a glance inside the HUD. How: Two venue rows bound with {{}} values and :class tier bindings in the HUD block.
-- [ ] **T19.2.8 - LED tier styling** - What: Color tells the story before the number does. How: Green/orange/red LED dots from design-system tokens, correct in both day and night themes.
-- [ ] **T19.2.9 - Single tests per probe fn** - What: Each probe and classifier proven alone. How: One Vitest test each for pingOkx (fake WS), probeEtoro (mocked fetch) and classifyRtt, run with -t name filters.
-- [ ] **T19.2.10 - Land RTT on main** - What: Venue lag monitoring live for everyone. How: Verify lint plus the three targeted test runs, then merge the branch to main.
+- [x] **T19.2.1 - Open the RTT branch** - What: Clean line of work for venue probing. How: Branch feature/f19.2-ping-rtt off main and push the tracking branch.
+- [x] **T19.2.2 - pingOkx fn** - What: Real RTT numbers from the venue you scalp on. How: Send a 'ping' text frame on the OKX v5 public WS and resolve the performance.now() delta when 'pong' returns.
+- [x] **T19.2.3 - probeEtoro fn** - What: Comparable lag reading for the EToro leg. How: Time a lightweight GET against an EToro REST status endpoint using the key layer's stored STOCKZ_ETORO_API_KEY.
+- [x] **T19.2.4 - Probe scheduler** - What: Continuous readings without probe bursts. How: addAsync loop per venue every 5s with random jitter so OKX and EToro probes never align.
+- [x] **T19.2.5 - classifyRtt fn** - What: Instant good/warn/bad read without parsing numbers. How: Pure fn mapping ms to ok/warn/bad tiers at 80ms and 250ms cut lines.
+- [x] **T19.2.6 - Publish RTT state** - What: Other blocks can react to venue slowness. How: setValue hud.rtt.okx and hud.rtt.etoro per probe plus a computed hud.rtt.worst.
+- [x] **T19.2.7 - RTT tile markup** - What: Both venues visible at a glance inside the HUD. How: Two venue rows bound with {{}} values and :class tier bindings in the HUD block.
+- [x] **T19.2.8 - LED tier styling** - What: Color tells the story before the number does. How: Green/orange/red LED dots from design-system tokens, correct in both day and night themes.
+- [x] **T19.2.9 - Single tests per probe fn** - What: Each probe and classifier proven alone. How: One Vitest test each for pingOkx (fake WS), probeEtoro (mocked fetch) and classifyRtt, run with -t name filters.
+- [x] **T19.2.10 - Land RTT on main** - What: Venue lag monitoring live for everyone. How: Verify lint plus the three targeted test runs, then merge the branch to main.
 
 ### F19.3 - Order roundtrip latency tracker
 

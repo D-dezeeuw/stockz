@@ -1,4 +1,5 @@
 import { startOkxFeed } from '../venues/okx/live.js'
+import { startProbe, probeEtoro } from '../hud/rtt.js'
 import { hasKeys } from '../venues/vault.js'
 import { appState, watch } from './engine.js'
 import { PATHS } from '../state/paths.js'
@@ -63,6 +64,9 @@ export function connectFeeds(options = {}) {
     okx.focusOn(String(appState.market?.focus ?? '')),
   )
 
+  // Venue lag is measured continuously, jittered so the two probes never align.
+  const stopProbe = startProbe('etoro', () => probeEtoro())
+
   return {
     okx,
     // Reported so the settings drawer can say why trading is unavailable without
@@ -70,6 +74,7 @@ export function connectFeeds(options = {}) {
     authenticated: hasKeys('okx'),
     stop: () => {
       unwatch?.()
+      stopProbe()
       okx.stop()
     },
   }

@@ -12,6 +12,14 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ### Added
 
+- **Venue RTT monitor** — the number that answers "is it me or is it them", which have
+  completely different responses: a busy tab is the trader's problem, a venue having a bad
+  minute means sitting out. An unanswered ping resolves as a *reading* rather than an
+  error, because "not answering" is the most important measurement there is — and it
+  replaces the smoothed value outright instead of blending in, so recovery starts fresh
+  rather than from a pre-failure average. Probes are jittered ±20%: two venues polled on
+  the same boundary make a synchronised spike in the desk's own network use, a
+  self-inflicted version of the problem being measured. (F19.2)
 - **Scalper HUD** — vital signs rather than analysis: submit→ack latency with its p95,
   spread in basis points, trades per minute, win rate and gross exposure. Every tile is
   derived from something the desk already recorded, not measured afresh. Spread is in bps
