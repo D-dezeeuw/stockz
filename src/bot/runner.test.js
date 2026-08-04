@@ -8,6 +8,7 @@ import {
   runGates,
   decide,
   dispatchOrder,
+  isExitSignal,
   drainTick,
   flushDecisions,
   createBotRunner,
@@ -174,8 +175,25 @@ describe('dispatchOrder', () => {
       strategy: 'momentum-burst',
     })
 
-    // An exit signal is not an entry to place; flattening is the position layer's job.
-    expect((await dispatchOrder(signal({ action: 'flat' }), { send: async () => ({}) })).ok).toBe(false)
+    // An exit closes the position rather than placing an order of its own - flattening is
+    // the position layer's job because only it knows the size. This assertion used to
+    // expect `false` and so encoded the bug: nothing carried exits to the position layer,
+    // so every `flat` a strategy emitted was decided, logged as taken, and dropped. The bot
+    // opened and never closed.
+    const flattened = []
+    const exit = await dispatchOrder(signal({ action: 'flat' }), {
+      flatten: async (key) => (flattened.push(key), { ok: true, reason: '' }),
+    })
+    expect(exit.ok).toBe(true)
+    expect(flattened).toEqual(['okx:BTC-USDT'])
+
+    // "Nothing to close" is the normal case, not a failure: a strategy times out of a
+    // position the desk never took, and crying about it would fill the log with noise.
+    const nothing = await dispatchOrder(signal({ action: 'flat' }), {
+      flatten: async () => ({ ok: false, reason: 'no position' }),
+    })
+    expect(nothing).toMatchObject({ ok: false, reason: 'no position' })
+
     expect((await dispatchOrder(signal({ instrument: '' }), { send: async () => ({}) })).ok).toBe(false)
 
     // Refused at the mapper is refused before the network: a size that rounds to zero is
@@ -186,6 +204,20 @@ describe('dispatchOrder', () => {
       send: async () => ({ ok: true }),
     })
     expect(refused).toMatchObject({ ok: false, reason: 'size rounds to zero' })
+  })
+})
+
+describe('isExitSignal', () => {
+  it('treats anything that is not an entry as a way out', () => {
+    expect(isExitSignal({ action: 'flat' })).toBe(true)
+    expect(isExitSignal({ action: 'close' })).toBe(true)
+
+    expect(isExitSignal({ action: 'buy' })).toBe(false)
+    expect(isExitSignal({ action: 'sell' })).toBe(false)
+
+    // `enqueueSignal` already drops 'none', and an empty action is not a call to act.
+    expect(isExitSignal({ action: '' })).toBe(false)
+    expect(isExitSignal({})).toBe(false)
   })
 })
 

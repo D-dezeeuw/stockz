@@ -113,6 +113,15 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ### Fixed
 
+- **The bot opened positions and never closed them.** Strategies emit `flat` when a time
+  stop, target or stop-loss fires, and `mapSignalToOrder` refuses those by design — closing
+  is the position layer's job, because only it knows the size. Nothing ever carried them
+  there. Every exit was decided, logged as `taken: true`, and silently dropped, so the desk
+  accumulated one-way exposure from entry signals alone: a fifteen-minute simulated run left
+  0.85 BTC on the book with no way out of it. Exits now route to `flattenOne`, and "nothing
+  to close" is treated as the ordinary case it is rather than an error — a strategy timing
+  out of a position the desk never took is not news. The test that covered this asserted
+  `ok === false` and so encoded the bug rather than catching it.
 - **The autopilot never placed a trade — four separate reasons, each fatal alone.** Every
   part reported success: strategies ran, signals fired, the gates passed, the decision log
   filled with `taken: true`. No order existed at the end of it.
