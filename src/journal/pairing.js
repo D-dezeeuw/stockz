@@ -71,6 +71,10 @@ export function normalizeFill(raw) {
     // order asked for, and that is gone by the time anybody reviews the trade.
     intentPx: Number(raw?.intentPx) || 0,
     fee: Math.abs(Number(raw?.fee) || 0),
+    // Which record this belongs to. Practice is journaled *fully* — a paper trade dropped
+    // from the record is a lesson lost — but tagged, so it never quietly inflates a real
+    // win rate.
+    paper: raw?.paper === true,
     ts: Number(raw?.ts) || 0,
   }
 }
@@ -169,6 +173,10 @@ export function makeTrade(matched, exit) {
     fees,
     pnl,
     net: Number((pnl - fees).toFixed(10)),
+    // A trade is practice if the position it closed was opened on practice. Taking the
+    // *exit's* mode instead would let a paper position closed after a switch to live
+    // count as a real win, which is the one direction this must never get wrong.
+    paper: lotsIn.some((lot) => lot.paper === true),
   }
 }
 
