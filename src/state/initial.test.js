@@ -15,6 +15,7 @@ describe('initialState', () => {
       'alerts',
       'analytics',
       'app',
+      'backtest',
       'bot',
       'breaker',
       'journal',

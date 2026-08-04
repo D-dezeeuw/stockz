@@ -220,6 +220,25 @@ export function initialState(overrides = {}) {
       label: '',
     },
 
+    // strategies scored against those recordings
+    [PATHS.backtest.config]: { sessionId: '', strategyId: 'momentum-burst', instrument: '' },
+    [PATHS.backtest.progress]: { running: false, runId: '', played: 0, total: 0, pct: 0, signals: 0 },
+    [PATHS.backtest.strategies]: [],
+    [PATHS.backtest.recordings]: [],
+    [PATHS.backtest.result]: null,
+    [PATHS.backtest.summary]: {
+      ran: false,
+      strategyId: '',
+      instrument: '',
+      signals: 0,
+      buys: 0,
+      sells: 0,
+      played: 0,
+      errors: 0,
+      elapsed: '—',
+    },
+    [PATHS.backtest.error]: '',
+
     // the safety net
     [PATHS.breaker.tripped]: 0,
     [PATHS.breaker.reason]: '',

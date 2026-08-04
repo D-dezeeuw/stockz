@@ -20,7 +20,7 @@ export const SECTION_BLOCKS = Object.freeze({
   dashboard: ['watchlist', 'chart', 'book', 'tape', 'ticket', 'positions', 'hud', 'strategies', 'scoreboard', 'alerts', 'bot', 'journal', 'analytics'],
   trade: ['chart', 'book', 'tape', 'ticket', 'positions', 'hud', 'strategies', 'bot'],
   journal: ['journal', 'positions', 'alerts'],
-  analytics: ['analytics', 'journal', 'hud', 'chart', 'strategies', 'scoreboard', 'alerts'],
+  analytics: ['analytics', 'journal', 'hud', 'chart', 'strategies', 'scoreboard', 'alerts', 'backtest'],
 })
 
 /**

@@ -1,0 +1,86 @@
+/*
+ * The backtest launcher.
+ *
+ * Two pickers, one button, one bar. Everything the block shows before a run is a *choice*;
+ * everything after it is a number — so the pickers sit on one dense row and the stats read
+ * as a strip, in the same tabular mono as the ladder and the HUD.
+ *
+ * The bar is percent, never a spinner. A run over fifteen minutes of tape takes a couple of
+ * seconds, and the only question during those seconds is "is it moving" — which a spinner
+ * cannot answer and a percentage answers by existing.
+ */
+.backtest {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-1);
+  min-block-size: 0;
+  overflow-y: auto;
+}
+
+.backtest__pickers {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr auto;
+  gap: var(--sp-1);
+  align-items: center;
+}
+
+.backtest__pickers select {
+  min-inline-size: 0;
+}
+
+.chip--go {
+  border-color: var(--green);
+  color: var(--green);
+}
+
+.backtest__bar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-1);
+  padding: 0 var(--sp-1);
+  block-size: 1.25rem;
+  border: 1px solid var(--line);
+  background: var(--bg-inset);
+  overflow: hidden;
+}
+
+/*
+ * The fill is behind the text rather than beside it: a bar with the numbers outside it
+ * costs a second row of height, and this block has to sit in the same cell as every other.
+ */
+.backtest__fill {
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: 0;
+  background: color-mix(in srgb, var(--green) 22%, transparent);
+  transition: inline-size 80ms linear;
+}
+
+.backtest__pct,
+.backtest__ticks {
+  position: relative;
+  font-variant-numeric: tabular-nums;
+}
+
+.backtest__error {
+  color: var(--orange);
+}
+
+.backtest__stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-1) var(--sp-2);
+  font-variant-numeric: tabular-nums;
+}
+
+.backtest__stat {
+  color: var(--ink-muted);
+  font-size: var(--fs-0);
+}
+
+.backtest__stat b {
+  color: var(--green);
+  font-weight: 600;
+}

@@ -38,6 +38,7 @@ export const NAMESPACES = Object.freeze([
   'journal',
   'replay',
   'playback',
+  'backtest',
 ])
 
 /** Namespaces that survive a reload (written to localStorage by spektrum/persist). */
@@ -273,6 +274,19 @@ export const PATHS = Object.freeze({
     // Which stream the desk is watching, and the recorded moment it is showing.
     source: 'playback.source',
     at: 'playback.at',
+  }),
+  backtest: Object.freeze({
+    // What the launcher is pointed at, and how far the worker has got. Progress is one
+    // object for the same reason the transport is: its fields always move together.
+    config: 'backtest.config',
+    progress: 'backtest.progress',
+    strategies: 'backtest.strategies',
+    recordings: 'backtest.recordings',
+    // The last finished run, the always-shaped readout of it, and why the last one did
+    // not finish. The summary exists because a template cannot read through a null result.
+    result: 'backtest.result',
+    summary: 'backtest.summary',
+    error: 'backtest.error',
   }),
   analytics: Object.freeze({
     // The one switch every analytics number obeys, and the trade list it scopes to. The

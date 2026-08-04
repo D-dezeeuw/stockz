@@ -1,7 +1,5 @@
 import { defineStrategy } from '../contract.js'
 import { createRing } from '../../pipeline/ring.js'
-import { setValue } from '../../app/engine.js'
-import { PATHS } from '../../state/paths.js'
 
 /**
  * Micro range fade.
@@ -233,6 +231,34 @@ export function fadeTick(ctx, tick) {
 }
 
 /**
+ * Where published levels go. A no-op until the desk says otherwise.
+ *
+ * This strategy is the only one that has something to *show* — the band it is fading — and
+ * the contract is explicit that a strategy never calls `setValue`. It used to anyway, and
+ * that had two costs. The obvious one: a rule the contract states and one file breaks is a
+ * rule nobody can rely on. The one that bit: importing `app/engine.js` here dragged the
+ * bare specifier `spektrum` into the module graph of every strategy consumer — including
+ * the backtest worker, which gets no importmap and would have failed to load with a
+ * resolution error and no other symptom.
+ *
+ * Defaulting to a no-op is also what makes a backtest safe. A run scoring range-fade over
+ * yesterday's tape must not repaint the live chart's level overlay, and with no sink
+ * installed inside the worker it cannot.
+ */
+let levelSink = () => {}
+
+/**
+ * Tell the strategy where to send its level overlay.
+ *
+ * @param {(rows: object[]) => unknown} sink - the publisher, or null to silence it.
+ * @returns {boolean} true once installed.
+ */
+export function setLevelSink(sink) {
+  levelSink = typeof sink === 'function' ? sink : () => {}
+  return true
+}
+
+/**
  * Publish the levels for the chart overlay.
  *
  * @param {object[]} levels - the clustered levels.
@@ -245,7 +271,7 @@ export function publishLevels(levels) {
     touches: Number(level?.touches) || 0,
   }))
 
-  setValue(PATHS.market.levels, rows)
+  levelSink(rows)
   return rows
 }
 

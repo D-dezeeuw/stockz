@@ -2,6 +2,7 @@ import { setValue } from '../app/engine.js'
 import { PATHS } from '../state/paths.js'
 import { ledger, netRealized } from '../positions/ledger.js'
 import { formatCompact } from './metrics.js'
+import { FEE_SCHEDULE } from './fee-schedule.js'
 
 /**
  * What the day is costing to trade.
@@ -17,22 +18,12 @@ import { formatCompact } from './metrics.js'
  */
 
 /**
- * Published venue rates, in basis points of notional.
+ * The rate card, re-exported so every existing importer keeps its one import point.
  *
- * OKX Lv1: spot 0.080% maker / 0.100% taker; perpetuals 0.020% / 0.050%. EToro charges no
- * commission on the instruments this desk trades but takes a spread markup, ~1% on crypto,
- * which is a fee by another name and is counted as one.
+ * It lives in `fee-schedule.js` because the backtest worker needs the numbers and cannot
+ * afford this module's graph — see the note there.
  */
-export const FEE_SCHEDULE = Object.freeze({
-  okx: Object.freeze({
-    spot: Object.freeze({ maker: 8, taker: 10 }),
-    swap: Object.freeze({ maker: 2, taker: 5 }),
-  }),
-  etoro: Object.freeze({
-    spot: Object.freeze({ maker: 100, taker: 100 }),
-    swap: Object.freeze({ maker: 100, taker: 100 }),
-  }),
-})
+export { FEE_SCHEDULE }
 
 /** Below this the elapsed session is too short to extrapolate an hour from. */
 export const BURN_FLOOR_MS = 300000

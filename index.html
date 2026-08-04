@@ -49,6 +49,7 @@
   <link rel="stylesheet" href="./src/styles/breakers.css">
   <link rel="stylesheet" href="./src/styles/journal.css">
   <link rel="stylesheet" href="./src/styles/analytics.css">
+  <link rel="stylesheet" href="./src/styles/backtest.css">
   <link rel="stylesheet" href="./src/styles/utilities.css">
 
   <!-- The UI engine, straight from the CDN. Pinned to an exact version: the live page
@@ -977,7 +978,47 @@
                 </div>
               </div>
             </div>
-            <p class="label" data-if="block.id !== 'book' &amp;&amp; block.id !== 'tape' &amp;&amp; block.id !== 'ticket' &amp;&amp; block.id !== 'positions' &amp;&amp; block.id !== 'hud' &amp;&amp; block.id !== 'strategies' &amp;&amp; block.id !== 'scoreboard' &amp;&amp; block.id !== 'alerts' &amp;&amp; block.id !== 'bot'">ready</p>
+            <!-- The backtest launcher. Pick a recording, pick a strategy, hit run: the
+                 worker crunches tens of thousands of ticks while this stays at sixty
+                 frames, because none of it happens on this thread. -->
+            <div class="backtest" data-if="block.id === 'backtest'">
+              <div class="backtest__pickers">
+                <!-- data-each binds the CONTAINER and repeats its first child, so the
+                     placeholder is a row in `backtest.recordings` rather than a literal
+                     option beside the bound ones — a select cannot hold both. -->
+                <select data-action="change" data-fn="backtest.configure" data-field="sessionId"
+                        aria-label="Recording" data-each="backtest.recordings" data-as="rec">
+                  <option :value="rec.id"
+                          :selected="rec.id === backtest.config.sessionId">{{rec.name}}</option>
+                </select>
+                <select data-action="change" data-fn="backtest.configure" data-field="strategyId"
+                        aria-label="Strategy" data-each="backtest.strategies" data-as="s">
+                  <option :value="s.id"
+                          :selected="s.id === backtest.config.strategyId">{{s.name}}</option>
+                </select>
+                <button type="button" class="chip chip--go" data-action="click"
+                        data-fn="backtest.start" data-if="!backtest.progress.running">run</button>
+                <button type="button" class="chip chip--on" data-action="click"
+                        data-fn="backtest.cancel" data-if="backtest.progress.running">stop</button>
+              </div>
+              <!-- Percent complete rather than a spinner: a run over a long recording takes
+                   seconds, and a spinner cannot tell "working" from "hung". -->
+              <div class="backtest__bar" data-if="backtest.progress.running">
+                <span class="backtest__fill" :style="'width:' + backtest.progress.pct + '%'"></span>
+                <span class="backtest__pct num">{{backtest.progress.pct}}%</span>
+                <span class="backtest__ticks label num">{{backtest.progress.played}} / {{backtest.progress.total}}</span>
+              </div>
+              <p class="label backtest__error" data-if="backtest.error">{{backtest.error}}</p>
+              <div class="backtest__stats" data-if="backtest.summary.ran">
+                <span class="backtest__stat"><b class="num">{{backtest.summary.signals}}</b> signals</span>
+                <span class="backtest__stat"><b class="num">{{backtest.summary.buys}}</b> buy</span>
+                <span class="backtest__stat"><b class="num">{{backtest.summary.sells}}</b> sell</span>
+                <span class="backtest__stat"><b class="num">{{backtest.summary.played}}</b> ticks</span>
+                <span class="backtest__stat"><b class="num">{{backtest.summary.elapsed}}</b></span>
+              </div>
+              <p class="label" data-if="!backtest.summary.ran">no run yet · record a session first</p>
+            </div>
+            <p class="label" data-if="block.id !== 'book' &amp;&amp; block.id !== 'tape' &amp;&amp; block.id !== 'ticket' &amp;&amp; block.id !== 'positions' &amp;&amp; block.id !== 'hud' &amp;&amp; block.id !== 'strategies' &amp;&amp; block.id !== 'scoreboard' &amp;&amp; block.id !== 'alerts' &amp;&amp; block.id !== 'bot' &amp;&amp; block.id !== 'backtest'">ready</p>
           </div>
         </div>
       </section>
