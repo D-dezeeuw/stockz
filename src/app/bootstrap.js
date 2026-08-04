@@ -43,6 +43,7 @@ import { registerFilterActions } from '../journal/filters.js'
 import { registerCsvActions } from '../journal/csv.js'
 import { registerSummaryActions } from '../journal/summary.js'
 import { registerRetentionActions, scheduleRetention, storageUsage } from '../journal/retention.js'
+import { startEquityChart } from '../analytics/equity.js'
 import { registerKillActions } from '../breakers/kill.js'
 import { registerRearmActions, mountRelease } from '../breakers/rearm.js'
 import {
@@ -161,6 +162,7 @@ export function bootstrap(options = {}) {
   // frame costs the trader money to save disk nobody was short of.
   scheduleRetention()
   storageUsage()
+  startEquityChart()
   loadAnnotations()
   pruneBreakerEvents(Date.now())
   // The daily-loss trip has no other reaction path — it publishes a code and returns a

@@ -5,6 +5,7 @@ import { ACTIONS } from '../actions/names.js'
 import { refreshJournalRows } from './metrics.js'
 import { refreshDays } from './summary.js'
 import { refreshKpis } from '../analytics/kpis.js'
+import { refreshEquity } from '../analytics/equity.js'
 
 /**
  * Finding the trades worth studying.
@@ -121,6 +122,7 @@ export function refreshFiltered(rows = refreshJournalRows(), filters = appState.
   // The KPIs describe the slice too. Tiles that answered a different question from the list
   // under them would be four numbers nobody could place.
   refreshKpis(visible)
+  refreshEquity(visible)
 
   return visible
 }

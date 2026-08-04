@@ -24,6 +24,18 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
   the displayed win rate, since multiplying a rounded rate by an average carries the error
   into a number traders compare across weeks. Tone follows meaning rather than sign: the win
   rate never goes red on the rate alone, because 40% with a 3:1 payoff is a fine strategy.
+- **The equity curve** — the tiles say whether the edge exists; the curve says what the ride
+  was like, and those are genuinely different questions. Two traders can end the week on the
+  same number with one having ground it out and the other having been down four thousand on
+  Wednesday, and only the second is about to blow up. Plotted **per trade, not per hour**:
+  time on the x-axis makes a lunch break look like a flat patch of trading, and every point
+  here is a decision. Zero is always inside the vertical range — a curve that never showed the
+  waterline would let a losing session look like a rising one, which is the single most
+  misleading thing this chart could do — and the line changes colour at that waterline rather
+  than needing a legend. Max drawdown is measured from the **running peak**, not from zero, so
+  a trader who was up two thousand and gave back fifteen hundred sees a drawdown even though
+  they never went red. The crosshair snaps to a trade rather than interpolating: an equity
+  read between two trades is one that never existed.
 
 ## [0.25.0] — 2026-08-04 — Phase 25: Trade Journal & Time-Travel Audit
 

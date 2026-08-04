@@ -4253,16 +4253,16 @@
 **What:** A live equity curve of cumulative net PnL per trade, so the user sees the shape of the session and the account trajectory instantly.
 **How:** equitySeries() pure fn feeding a hand-rolled canvas line renderer with axes, crosshair hover and Spektrum watch-driven redraws.
 
-- [ ] **T26.2.1 - Cut equity-curve branch** - What: Chart work stays off main. How: git checkout -b feature/f26.2-equity-curve from main.
-- [ ] **T26.2.2 - Implement equitySeries()** - What: One clean data series of account progress. How: Pure equitySeries(trades) in src/analytics/equity.js returning cumulative netPnl points keyed by trade closeTs.
-- [ ] **T26.2.3 - Scaffold the canvas renderer** - What: A crisp chart surface on every screen. How: drawEquity(ctx, series, size) module with devicePixelRatio-scaled canvas sizing and a clearRect frame reset.
-- [ ] **T26.2.4 - Draw axes and gridlines** - What: Values readable without guessing scale. How: Compute nice min/max ticks in drawEquity and stroke dim horizontal gridlines with right-edge price labels in monospace.
-- [ ] **T26.2.5 - Draw the equity line and zero baseline** - What: Above-water and underwater segments visually distinct. How: Stroke the polyline splitting color at the zero crossing, green above and orange below per the money-hacker palette.
-- [ ] **T26.2.6 - Add the hover crosshair** - What: Any point inspectable down to the exact trade. How: pointermove handler snapping to the nearest series point, drawing crosshair lines and a tooltip with trade id, time and equity.
-- [ ] **T26.2.7 - Wire reactive redraws** - What: The curve extends live as trades close. How: Spektrum watch on the period-filtered trades computed scheduling drawEquity via requestAnimationFrame with the fresh series.
-- [ ] **T26.2.8 - Handle theme and resize** - What: The chart stays crisp across theme flips and layout changes. How: ResizeObserver re-rasterizes on block resize; colors read from CSS custom properties at draw time so day/night just works.
-- [ ] **T26.2.9 - Write single unit tests for equity fns** - What: equitySeries and the tick calculator each proven once. How: One Vitest test per function in equity.test.js asserting cumulative sums and tick bounds, run via vitest run -t.
-- [ ] **T26.2.10 - Verify and merge equity curve** - What: The curve ships green and pixel-clean. How: Run targeted tests, eyeball rendering on 1x and 2x displays in both themes, merge the feature branch to main.
+- [x] **T26.2.1 - Cut equity-curve branch** - What: Chart work stays off main. How: git checkout -b feature/f26.2-equity-curve from main.
+- [x] **T26.2.2 - Implement equitySeries()** - What: One clean data series of account progress. How: Pure equitySeries(trades) in src/analytics/equity.js returning cumulative netPnl points keyed by trade closeTs.
+- [x] **T26.2.3 - Scaffold the canvas renderer** - What: A crisp chart surface on every screen. How: drawEquity(ctx, series, size) module with devicePixelRatio-scaled canvas sizing and a clearRect frame reset.
+- [x] **T26.2.4 - Draw axes and gridlines** - What: Values readable without guessing scale. How: Compute nice min/max ticks in drawEquity and stroke dim horizontal gridlines with right-edge price labels in monospace.
+- [x] **T26.2.5 - Draw the equity line and zero baseline** - What: Above-water and underwater segments visually distinct. How: Stroke the polyline splitting color at the zero crossing, green above and orange below per the money-hacker palette.
+- [x] **T26.2.6 - Add the hover crosshair** - What: Any point inspectable down to the exact trade. How: pointermove handler snapping to the nearest series point, drawing crosshair lines and a tooltip with trade id, time and equity.
+- [x] **T26.2.7 - Wire reactive redraws** - What: The curve extends live as trades close. How: Spektrum watch on the period-filtered trades computed scheduling drawEquity via requestAnimationFrame with the fresh series.
+- [x] **T26.2.8 - Handle theme and resize** - What: The chart stays crisp across theme flips and layout changes. How: ResizeObserver re-rasterizes on block resize; colors read from CSS custom properties at draw time so day/night just works.
+- [x] **T26.2.9 - Write single unit tests for equity fns** - What: equitySeries and the tick calculator each proven once. How: One Vitest test per function in equity.test.js asserting cumulative sums and tick bounds, run via vitest run -t.
+- [x] **T26.2.10 - Verify and merge equity curve** - What: The curve ships green and pixel-clean. How: Run targeted tests, eyeball rendering on 1x and 2x displays in both themes, merge the feature branch to main.
 
 ### F26.3 - PnL-by-Hour Heatmap
 

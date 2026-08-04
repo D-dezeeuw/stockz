@@ -251,6 +251,8 @@ export const PATHS = Object.freeze({
   }),
   analytics: Object.freeze({
     kpis: 'analytics.kpis',
+    equity: 'analytics.equity',
+    drawdown: 'analytics.drawdown',
   }),
   journal: Object.freeze({
     trades: 'journal.trades',
