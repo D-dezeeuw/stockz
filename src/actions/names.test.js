@@ -11,6 +11,7 @@ import { registerCandleActions } from '../charts/candlestick.js'
 import { registerPrefillActions } from '../book/prefill.js'
 import { registerGroupingActions } from '../book/grouping.js'
 import { registerTapeActions } from '../book/tape.js'
+import { registerCompactActions } from '../hud/compact.js'
 import { registerTicketActions } from '../ticket/actions.js'
 import { registerSizingActions } from '../ticket/sizing.js'
 import { registerSubmitAction } from '../ticket/submit.js'
@@ -39,6 +40,7 @@ describe('allActionNames', () => {
       'ui.paletteSearch',
       'ui.paletteMove',
       'ui.paletteRun',
+      'ui.toggleCompactHud',
       'book.prefill',
       'book.setGroup',
       'book.setFloor',
@@ -88,6 +90,7 @@ describe('allActionNames', () => {
     registerPrefillActions()
     registerGroupingActions()
     registerTapeActions()
+    registerCompactActions()
     registerTicketActions()
     registerSizingActions()
     registerSubmitAction()

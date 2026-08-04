@@ -20,6 +20,7 @@ export const ACTIONS = Object.freeze({
     paletteSearch: 'ui.paletteSearch',
     paletteMove: 'ui.paletteMove',
     paletteRun: 'ui.paletteRun',
+    toggleCompactHud: 'ui.toggleCompactHud',
   }),
   book: Object.freeze({
     prefill: 'book.prefill',

@@ -85,6 +85,7 @@ export function initialState(overrides = {}) {
       barPct: 0,
       tone: 'ok',
     },
+    [PATHS.ui.hudRow]: [],
     [PATHS.ui.hud]: {
       latencyMs: 0,
       latencyGrade: 'warn',

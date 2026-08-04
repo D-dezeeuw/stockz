@@ -13,6 +13,7 @@ import { refreshHud, spreadBps } from '../../hud/state.js'
 import { flushQuality } from '../../hud/quality.js'
 import { refreshSession } from '../../hud/session.js'
 import { flushFees } from '../../hud/fees.js'
+import { refreshCompact } from '../../hud/compact.js'
 import { evictStale } from '../../exec/latency.js'
 import { setValue, appState } from '../../app/engine.js'
 import { PATHS } from '../../state/paths.js'
@@ -127,6 +128,10 @@ export function flushFeed(focus, options = {}) {
   refreshHud({ now: at })
   refreshSession({ now: at })
   flushFees({ now: at })
+  // The strip re-reads what the tiles above published, which lands next tick — so it
+  // trails them by one frame. Sixteen milliseconds on a readout nobody trades off, and
+  // the alternative is a second copy of every metric's derivation.
+  if (appState.settings?.compactHud === true) refreshCompact()
   flushQuality(spreadBps())
   // Swept on the same frame: an order whose ack never came would otherwise sit in the
   // latency map for the life of the session.

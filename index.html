@@ -322,7 +322,18 @@
             </div>
             <!-- Vital signs: is the desk fast, is the market wide, am I trading too
                  much, how am I doing. Four questions asked between trades. -->
-            <div class="hud" data-if="block.id === 'hud'">
+            <button type="button" class="chip hud__density" data-if="block.id === 'hud'"
+                    data-action="click" data-fn="ui.toggleCompactHud">{{settings.compactHud ? 'expand' : 'compact'}}</button>
+            <!-- One row instead of nine tiles, ordered worst-first: in a strip this dense
+                 a fixed order buries the one reading that matters behind seven that are
+                 fine. Exactly one representation is mounted at a time. -->
+            <div class="hud-strip" data-if="block.id === 'hud' &amp;&amp; settings.compactHud" data-each="cell in ui.hudRow">
+              <span class="hud-strip__cell" :class="'hud-strip__cell hud-strip__cell--' + cell.tone">
+                <b>{{cell.label}}</b>
+                <span>{{cell.value}}</span>
+              </span>
+            </div>
+            <div class="hud" data-if="block.id === 'hud' &amp;&amp; !settings.compactHud">
               <div class="hud__tile" :class="'hud__tile hud__tile--' + ui.hud.latencyGrade">
                 <span class="hud__value">{{ui.hud.latencyLabel}}</span>
                 <span class="hud__label">submit → ack · p95 {{ui.hud.latencyP95Label}}</span>
