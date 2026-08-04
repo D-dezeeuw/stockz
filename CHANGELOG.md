@@ -12,6 +12,11 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ### Added
 
+- **Crosshair and readout** — hover anywhere and read the exact print: time snaps by
+  binary search to the nearest real tick (interpolation would show a price that never
+  traded, and traders place orders off these numbers) while price follows the cursor,
+  because the level being hovered is one being *considered*. The overlay owns its own
+  canvas, so moving the cursor never repaints the chart underneath. (F13.5)
 - **Micro-candles with a volume band** — 1s/5s/1m bodies and wicks at scalping
   resolution, framed by their wicks so a spike is never clipped, with the volume
   histogram sharing the candles' x geometry exactly: bars that drift a pixel from their
