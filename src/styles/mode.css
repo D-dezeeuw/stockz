@@ -116,3 +116,15 @@
 
 .paper-rest__side--buy { color: var(--green); }
 .paper-rest__side--sell { color: var(--orange); }
+
+/* One chip, on the position rather than on the desk's mode. Small and orange: it has to
+   be readable at a glance in a dense row without competing with the P&L beside it. */
+.pos-paper {
+  margin-inline-start: 3px;
+  padding: 0 2px;
+  border: 1px solid var(--orange);
+  color: var(--orange);
+  font-size: 0.6em;
+  font-weight: 700;
+  vertical-align: super;
+}
