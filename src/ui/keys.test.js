@@ -1,5 +1,4 @@
 // @vitest-environment jsdom
-import 'fake-indexeddb/auto'
 import { describe, it, expect, beforeEach } from 'vitest'
 import {
   syncKeyPresence,
@@ -126,17 +125,17 @@ describe('lockKeys', () => {
 })
 
 describe('adoptKeys', () => {
-  it('prefers the URL, falls back to dev env, and records presence', async () => {
+  it('prefers the URL, falls back to dev env, and records presence', () => {
     const win = {
       location: { search: '?okxKey=ak&okxSecret=sk&okxPass=pp', pathname: '/stockz/', hash: '' },
       history: { replaceState: () => {} },
     }
 
-    expect(await adoptKeys({ win, bag: {} })).toEqual({ okx: true, etoro: false })
+    expect(adoptKeys({ win, bag: {} })).toEqual({ okx: true, etoro: false })
 
     clearKeys()
     expect(
-      await adoptKeys({
+      adoptKeys({
         win: { location: { search: '' } },
         bag: { STOCKZ_ETORO_API_KEY: 'ek', STOCKZ_ETORO_USER_KEY: 'uk' },
       }),
@@ -166,8 +165,10 @@ describe('registerKeyActions', () => {
 describe('rememberEnabled', () => {
   it('reads the setting, and ships on so a revisit does not re-ask', () => {
     // On by default: the desk is opened repeatedly through the day and re-entering three
-    // OKX fields each time is how people end up pasting keys into the URL bar instead.
-    // Safe to default only because the stored copy is encrypted — see keystore.js.
+    // OKX fields each time is how people end up pasting keys into the URL bar instead —
+    // which puts them in browser history and Referer headers, a strictly worse place than
+    // localStorage. The stored copy is plaintext, so the label says so and the real
+    // mitigation is a trade-only venue key with an IP allowlist.
     expect(defaultSettings().rememberCredentials).toBe(true)
 
     // Absent from state entirely is still false rather than a crash.
@@ -180,7 +181,7 @@ describe('rememberEnabled', () => {
 })
 
 describe('toggleRemember', () => {
-  it('flips the setting synchronously, because a checkbox must not await crypto', () => {
+  it('flips the setting and acts on it in both directions', () => {
     expect(toggleRemember({}, { value: true })).toBe(true)
     tick()
     expect(rememberEnabled()).toBe(true)
@@ -193,16 +194,15 @@ describe('toggleRemember', () => {
 })
 
 describe('applyRemember', () => {
-  it('writes ciphertext when switched on and removes it when switched off', async () => {
+  it('stores the keys when switched on and removes them when switched off', () => {
     setKeys('okx', OKX)
 
-    expect(await applyRemember(true)).toBe(true)
-    // Remembering *those* keys, and as an envelope: the stored blob must not contain them.
-    const stored = localStorage.getItem(KEYS_CACHE_KEY)
-    expect(stored).toBeTruthy()
-    expect(stored).not.toContain('ak')
+    // Switching it on with keys already loaded remembers *those* keys, rather than waiting
+    // for the next submit to write anything.
+    expect(applyRemember(true)).toBe(true)
+    expect(JSON.parse(localStorage.getItem(KEYS_CACHE_KEY))).toEqual({ okx: OKX })
 
-    expect(await applyRemember(false)).toBe(true)
+    expect(applyRemember(false)).toBe(true)
     // Switching it off takes the copy with it rather than leaving one behind until a lock.
     expect(localStorage.getItem(KEYS_CACHE_KEY)).toBeNull()
   })

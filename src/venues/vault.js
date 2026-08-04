@@ -1,6 +1,5 @@
 import { createLogger } from '../utils/log.js'
 import { readEnv } from '../utils/env.js'
-import { encryptBlob, decryptBlob, resetKeystore } from './keystore.js'
 
 /**
  * The key vault.
@@ -15,15 +14,16 @@ import { encryptBlob, decryptBlob, resetKeystore } from './keystore.js'
  * and trade), the remembered cache, the key modal, and `import.meta.env` for local dev.
  *
  * **On the cache, plainly.** When "remember keys" is on, credentials are written to
- * `localStorage` so a revisit does not cost the trader their session. They are **encrypted**
- * with a non-extractable WebCrypto key (see `keystore.js`), which means a stolen profile,
- * a sync backup or a glance at devtools yields ciphertext and nothing else. It does not and
- * cannot stop script running on this origin, which can simply ask the same key to decrypt —
- * the mitigation for that lives at the venue, in a trade-only key with an IP allowlist.
+ * `localStorage` in the clear, so a revisit does not cost the trader their session. Anything
+ * with access to the profile — a stolen laptop, a sync backup, a glance at devtools — can
+ * read them. That is the trade the desk makes for one-click revisits, and the mitigation for
+ * it lives at the venue rather than in this file: a trade-only key with an IP allowlist,
+ * which cannot move funds no matter who holds it. Remembering is opt-in for that reason.
  *
- * What does *not* change is the harder guarantee: credentials still never enter Spektrum
- * state. State is recorded into history, returned by `serialize()`, exported with the trade
- * journal and dumped by devtools; the cache is a separate storage key nothing else reads.
+ * What the cache does not change is the harder guarantee: credentials still never enter
+ * Spektrum state. State is recorded into history, returned by `serialize()`, exported with
+ * the trade journal and dumped by devtools; the cache is a separate storage key nothing
+ * else reads.
  */
 
 const log = createLogger('vault')
@@ -216,18 +216,11 @@ export const KEYS_CACHE_KEY = 'stockz.keys.v1'
  * @param {Storage} [storage] - storage to write to.
  * @returns {number} how many venues were written.
  */
-export async function cacheKeys(storage = globalThis.localStorage, deps = {}) {
+export function cacheKeys(storage = globalThis.localStorage) {
   const payload = Object.fromEntries(vault)
-  const sealed = await encryptBlob(JSON.stringify(payload), deps)
-  // No keystore, no cache. Writing plaintext as a fallback would quietly hand back exactly
-  // the exposure the encryption exists to remove, on the machines least able to afford it.
-  if (!sealed) {
-    log.warn('no keystore available — credentials will not be remembered')
-    return 0
-  }
 
   try {
-    storage?.setItem?.(KEYS_CACHE_KEY, JSON.stringify(sealed))
+    storage?.setItem?.(KEYS_CACHE_KEY, JSON.stringify(payload))
     return Object.keys(payload).length
   } catch (err) {
     // A full or blocked storage loses the convenience, never the session: the keys are
@@ -243,23 +236,12 @@ export async function cacheKeys(storage = globalThis.localStorage, deps = {}) {
  * @param {Storage} [storage] - storage to read from.
  * @returns {number} how many venues were restored.
  */
-export async function loadCachedKeys(storage = globalThis.localStorage, deps = {}) {
-  let envelope
-  try {
-    envelope = JSON.parse(storage?.getItem?.(KEYS_CACHE_KEY) ?? 'null')
-  } catch (err) {
-    log.warn(`unreadable key cache: ${err?.message ?? err}`)
-    return 0
-  }
-  if (!envelope) return 0
-
-  const plain = await decryptBlob(envelope, deps)
-  if (!plain) return 0
-
+export function loadCachedKeys(storage = globalThis.localStorage) {
   let parsed
   try {
-    parsed = JSON.parse(plain)
-  } catch {
+    parsed = JSON.parse(storage?.getItem?.(KEYS_CACHE_KEY) ?? 'null')
+  } catch (err) {
+    log.warn(`unreadable key cache: ${err?.message ?? err}`)
     return 0
   }
   if (!parsed || typeof parsed !== 'object') return 0
@@ -280,10 +262,7 @@ export async function loadCachedKeys(storage = globalThis.localStorage, deps = {
  * @param {Storage} [storage] - storage to clear.
  * @returns {boolean} true when the cache is gone.
  */
-export async function forgetCachedKeys(storage = globalThis.localStorage, deps = {}) {
-  // The wrapping key goes too. The ciphertext may already be on a backup somewhere, and
-  // destroying the key is what turns those copies into permanent noise.
-  await resetKeystore(deps)
+export function forgetCachedKeys(storage = globalThis.localStorage) {
   try {
     // Removed rather than overwritten with an empty object: a lock that left a key-shaped
     // hole behind would be a lock the next reader has to interpret.

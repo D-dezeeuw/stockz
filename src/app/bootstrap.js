@@ -108,6 +108,12 @@ export function bootstrap(options = {}) {
   // trader's layout and theme rather than defaults that visibly change a frame later.
   restoreSettings()
   persistSettings()
+  // Flushed here, not left for the tick before the first paint. `setValue` lands next tick,
+  // so every boot step below that *reads* a setting would otherwise see undefined — which is
+  // exactly what happened to `rememberEnabled()`: remembered credentials were written on
+  // save and then never restored on the revisit they exist for, because the switch still
+  // read as off when `adoptKeys` asked.
+  tick()
 
   // Actions and derivations must exist before bindDOM: data-fn attributes would bind to
   // nothing, and derived paths would render as blanks on the first paint.
@@ -204,13 +210,10 @@ export function bootstrap(options = {}) {
   registerPaletteActions()
   registerPanicAction()
   registerCaptureActions()
-  // Awaited through a promise rather than blocking boot: decrypting the remembered keys is
-  // a couple of milliseconds, and the desk should paint its first frame regardless.
   adoptKeys()
-    .catch(() => ({}))
-    // Asked for rather than waited for: a live-mode desk with no credentials cannot place an
-    // order, and finding that out on the first click is finding out too late.
-    .then(() => promptForKeys())
+  // A live-mode desk with no credentials cannot place an order, and finding that out on the
+  // first click is finding out too late.
+  promptForKeys()
   applyTheme(doc?.documentElement?.getAttribute?.('data-theme') || preferredTheme(), doc)
   const derived = registerDerived()
   wireEngineErrors()

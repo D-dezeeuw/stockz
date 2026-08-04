@@ -278,7 +278,7 @@ export const SETTINGS_SCHEMA = Object.freeze([
   {
     key: 'rememberCredentials',
     group: 'risk',
-    label: 'Remember API keys on this browser (encrypted)',
+    label: 'Remember API keys on this browser (stored unencrypted)',
     kind: 'toggle',
     default: true,
   },
