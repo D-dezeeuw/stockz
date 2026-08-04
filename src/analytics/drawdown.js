@@ -145,7 +145,7 @@ export function drawUnderwater(ctx, series, size, palette = chartPalette()) {
  * @param {object[]} [trades] - the enriched trades, newest first.
  * @returns {object[]} the drawdown series.
  */
-export function refreshDrawdown(trades = appState.journal?.filtered) {
+export function refreshDrawdown(trades = appState.analytics?.trades) {
   const ordered = [...(Array.isArray(trades) ? trades : [])].reverse()
   const series = drawdownSeries(equitySeries(ordered))
   const worst = maxDrawdown(series)

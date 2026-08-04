@@ -44,6 +44,19 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ### Added
 
+- **F26.9 — one period switch over every analytics number.** Day, week, month or all time,
+  and every KPI tile, chart and ranking obeys it: a dashboard where the tiles said "today"
+  while the heatmap said "everything" would be worse than one that only ever showed all
+  time. Weeks start **Monday** and months are calendar months, both in local time — the
+  journal's day rows are UTC because they are about sessions, but this is about the trader's
+  own week, and one that reset on Sunday afternoon is a week nobody recognises. "All" is
+  genuinely unbounded rather than a very large window, because a ninety-day "all time"
+  silently becomes wrong the day somebody's history outgrows it. Switchable by click or by
+  the bracket keys, which read as narrower and wider and sit together under one hand. The
+  analytics modules now read a published `analytics.trades` rather than the raw journal
+  list, so the canvas redraw closures repaint from the same scoped rows instead of reaching
+  for the unscoped ones.
+
 - **A market mode, defaulting to Volatile.** The order-rate ceiling is what actually decides
   how much trading happens, and it binds long before any other limit: signals arrive in
   clusters, so a burst empties the window in seconds and everything behind it is refused.

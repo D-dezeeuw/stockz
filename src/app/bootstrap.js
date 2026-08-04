@@ -49,6 +49,7 @@ import { registerRetentionActions, scheduleRetention, storageUsage } from '../jo
 import { startEquityChart } from '../analytics/equity.js'
 import { startHeatmap } from '../analytics/heatmap.js'
 import { registerRankingActions } from '../analytics/instruments.js'
+import { registerPeriodActions, mountPeriod } from '../analytics/period.js'
 import { startHistogram } from '../analytics/holdtime.js'
 import { startStreakStrip } from '../analytics/streaks.js'
 import { startFeeBars } from '../analytics/fees.js'
@@ -181,6 +182,7 @@ export function bootstrap(options = {}) {
   startEquityChart()
   startHeatmap()
   registerRankingActions()
+  registerPeriodActions()
   startHistogram()
   startStreakStrip()
   startFeeBars()
@@ -225,6 +227,8 @@ export function bootstrap(options = {}) {
   // so opening the modal on a desk that already has keys shows the URL for those keys.
   showKeyUrl(doc)
   applyTheme(doc?.documentElement?.getAttribute?.('data-theme') || preferredTheme(), doc)
+  // Analytics obey the period switch from the first paint, not from the first change.
+  const unperiod = mountPeriod()
   const derived = registerDerived()
   wireEngineErrors()
 
@@ -279,6 +283,7 @@ export function bootstrap(options = {}) {
       unreconcile()
       unwatchlist()
       unautopilot()
+      unperiod?.()
       cleanup?.()
     },
     feeds,

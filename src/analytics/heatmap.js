@@ -185,7 +185,7 @@ export function hourExtremes(cells) {
  * @param {object[]} [trades] - the enriched trades.
  * @returns {object[]} the cells.
  */
-export function refreshHeatmap(trades = appState.journal?.filtered) {
+export function refreshHeatmap(trades = appState.analytics?.trades) {
   const cells = bucketByHour(trades)
   // Only traded cells are published: a hundred and sixty-eight rows of zeroes in state on
   // every trade close is a write nobody reads.
@@ -210,7 +210,7 @@ export function startHeatmap(deps = {}) {
   const canvas = doc?.getElementById?.('hours-canvas')
   if (!canvas) return null
 
-  const read = deps.cells ?? (() => bucketByHour(appState.journal?.filtered))
+  const read = deps.cells ?? (() => bucketByHour(appState.analytics?.trades))
   const redraw = () => {
     const size = sizeCanvas(canvas, { width: canvas.clientWidth, height: canvas.clientHeight })
     drawHeatmap(canvas.getContext('2d'), read(), size)

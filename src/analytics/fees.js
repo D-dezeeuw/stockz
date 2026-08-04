@@ -127,7 +127,7 @@ export function drawFeeBars(ctx, totals, size, palette = chartPalette()) {
  * @param {object[]} [trades] - the enriched trades.
  * @returns {object} the totals.
  */
-export function refreshFees(trades = appState.journal?.filtered) {
+export function refreshFees(trades = appState.analytics?.trades) {
   const totals = grossVsFees(trades)
 
   setValue(PATHS.analytics.fees, totals)
