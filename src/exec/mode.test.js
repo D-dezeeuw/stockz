@@ -179,9 +179,11 @@ describe('registerModeActions', () => {
       'trade.holdLive',
       'trade.releaseLive',
       'trade.resetPaper',
+      'trade.holdReset',
     ])
     expect(actionNames().sort()).toEqual([
       'trade.holdLive',
+      'trade.holdReset',
       'trade.releaseLive',
       'trade.resetPaper',
       'trade.setMode',

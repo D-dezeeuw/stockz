@@ -128,3 +128,8 @@
   font-weight: 700;
   vertical-align: super;
 }
+
+.chip--hold {
+  position: relative;
+  overflow: hidden;
+}

@@ -138,6 +138,7 @@ describe('allActionNames', () => {
       'trade.holdLive',
       'trade.releaseLive',
       'trade.resetPaper',
+      'trade.holdReset',
       'backtest.start',
       'backtest.cancel',
       'backtest.configure',

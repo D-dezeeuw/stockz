@@ -219,6 +219,7 @@ export const PATHS = Object.freeze({
     // equity curve that silently mixed them is the most confidently wrong chart possible.
     paperBalance: 'trade.paperBalance',
     paperAccount: 'trade.paperAccount',
+    resetHoldPct: 'trade.resetHoldPct',
     orders: 'trade.orders',
     positions: 'trade.positions',
     dayPnl: 'trade.dayPnl',

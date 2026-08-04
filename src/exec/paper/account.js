@@ -2,6 +2,9 @@ import { setValue, appState, watch } from '../../app/engine.js'
 import { PATHS } from '../../state/paths.js'
 import { openPositions } from '../../positions/store.js'
 import { createLogger } from '../../utils/log.js'
+import { createHold } from '../../ui/hold.js'
+import { resetPositions } from '../../positions/store.js'
+import { resetPaperBook } from './engine.js'
 
 /**
  * The practice account.
@@ -182,11 +185,54 @@ export function resetPaperAccount(_state, payload = {}) {
       ? wanted
       : Number(appState?.settings?.paperStartBalance) || DEFAULT_BALANCE
 
+  // Everything at once. A reset that cleared the cash but left the positions would leave
+  // the account holding a book it never paid for, and the equity would be wrong from the
+  // first tick — worse than not resetting at all, because it looks like it worked.
+  if (payload?.keepBook !== true) {
+    resetPaperBook()
+    resetPositions()
+  }
   setValue(PATHS.trade.paperBalance, start)
-  refreshAccount({ balance: start })
+  setValue(PATHS.trade.paperResting, [])
+  refreshAccount({ balance: start, positions: [] })
   log.info(`practice account reset to ${start}`)
 
   return start
+}
+
+/**
+ * The press that wipes the practice account.
+ *
+ * Held rather than confirmed, for the same reason going live is: a dialog is wrong by this
+ * project's rules, and a stray click that erases a week of practice is worse than one that
+ * costs a trade.
+ */
+const wipe = createHold({
+  path: PATHS.trade.resetHoldPct,
+  ms: 600,
+  onComplete: (payload) => resetPaperAccount(null, payload ?? {}),
+})
+
+/**
+ * Begin the press-and-hold that wipes the account.
+ *
+ * @param {object} state - engine state (unused).
+ * @param {object} [payload] - injectable timer and document.
+ * @returns {boolean} true when a hold started.
+ */
+export function beginPaperReset(state, payload) {
+  return wipe.begin(state, payload)
+}
+
+/**
+ * Abandon the wipe before it takes.
+ *
+ * @param {object} state - engine state (unused).
+ * @param {object} [payload] - injectable timer and document.
+ * @returns {boolean} true when a hold was cancelled.
+ */
+export function cancelPaperReset(state, payload) {
+  return wipe.cancel(state, payload)
 }
 
 /**
