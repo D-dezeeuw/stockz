@@ -83,6 +83,10 @@ export function initialState(overrides = {}) {
     [PATHS.trade.orders]: [],
     [PATHS.trade.positions]: [],
     [PATHS.trade.dayPnl]: 0,
+    [PATHS.trade.ticketPrice]: 0,
+    [PATHS.trade.ticketSide]: 'buy',
+    [PATHS.trade.ticketSize]: 0,
+    [PATHS.trade.ticketFlash]: 0,
     [PATHS.trade.exposure]: 0,
     [PATHS.trade.openOrders]: 0,
 

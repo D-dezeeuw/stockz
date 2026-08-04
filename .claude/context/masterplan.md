@@ -2313,16 +2313,16 @@
 **What:** Click any ladder price and the order ticket is prefilled - zero typing between decision and order.
 **How:** Spektrum data-action on ladder rows writing price and side into the phase 15 order entry store, no confirm dialogs.
 
-- [ ] **T14.6.1 - Branch prefill work** - What: Ladder-to-ticket wiring on its own line. How: git checkout -b feature/14-6-ladder-prefill from main.
-- [ ] **T14.6.2 - Wire row data-action** - What: Every ladder price is a click target. How: data-action="prefillFromLadder" on rows passing the level price and column through the event payload.
-- [ ] **T14.6.3 - Build the prefillFromLadder action** - What: Ticket loaded the instant you click. How: Action fn calling setValue on the phase 15 order store price and side, nothing submitted.
-- [ ] **T14.6.4 - Implement sideForColumn** - What: Predictable side from where you click. How: Pure fn mapping bid-column clicks to buy and ask-column clicks to sell at the clicked price.
-- [ ] **T14.6.5 - Apply the default clip size** - What: Size prefilled to your standard clip. How: Read defaultClipSize from the phase 7 settings store into the ticket quantity on prefill.
-- [ ] **T14.6.6 - Add shift-click inversion** - What: Cross the spread with one modifier. How: shiftKey in the payload flipping sideForColumn's result for aggressive entries.
-- [ ] **T14.6.7 - Prefill mid from the spread row** - What: One click to work the middle. How: Spread-row data-action prefilling the computed mid price rounded to tickSize.
-- [ ] **T14.6.8 - Flash the ticket on prefill** - What: Visible confirmation the ticket took the click. How: Brief accent outline keyframe on the order entry block triggered via a Spektrum value bump.
-- [ ] **T14.6.9 - Write the single unit test for sideForColumn** - What: Side mapping locked including shift inversion. How: One Vitest test covering both columns and the shift flag, run via vitest run -t sideForColumn.
-- [ ] **T14.6.10 - Verify and merge prefill** - What: Decision-to-ticket in a single click. How: Click through bids, asks, mid, and shift variants in Vite dev, targeted test green, then merge feature/14-6-ladder-prefill into main.
+- [x] **T14.6.1 - Branch prefill work** - What: Ladder-to-ticket wiring on its own line. How: git checkout -b feature/14-6-ladder-prefill from main.
+- [x] **T14.6.2 - Wire row data-action** - What: Every ladder price is a click target. How: data-action="prefillFromLadder" on rows passing the level price and column through the event payload.
+- [x] **T14.6.3 - Build the prefillFromLadder action** - What: Ticket loaded the instant you click. How: Action fn calling setValue on the phase 15 order store price and side, nothing submitted.
+- [x] **T14.6.4 - Implement sideForColumn** - What: Predictable side from where you click. How: Pure fn mapping bid-column clicks to buy and ask-column clicks to sell at the clicked price.
+- [x] **T14.6.5 - Apply the default clip size** - What: Size prefilled to your standard clip. How: Read defaultClipSize from the phase 7 settings store into the ticket quantity on prefill.
+- [x] **T14.6.6 - Add shift-click inversion** - What: Cross the spread with one modifier. How: shiftKey in the payload flipping sideForColumn's result for aggressive entries.
+- [x] **T14.6.7 - Prefill mid from the spread row** - What: One click to work the middle. How: Spread-row data-action prefilling the computed mid price rounded to tickSize.
+- [x] **T14.6.8 - Flash the ticket on prefill** - What: Visible confirmation the ticket took the click. How: Brief accent outline keyframe on the order entry block triggered via a Spektrum value bump.
+- [x] **T14.6.9 - Write the single unit test for sideForColumn** - What: Side mapping locked including shift inversion. How: One Vitest test covering both columns and the shift flag, run via vitest run -t sideForColumn.
+- [x] **T14.6.10 - Verify and merge prefill** - What: Decision-to-ticket in a single click. How: Click through bids, asks, mid, and shift variants in Vite dev, targeted test green, then merge feature/14-6-ladder-prefill into main.
 
 ### F14.7 - Price Grouping Control
 
