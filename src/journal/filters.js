@@ -3,6 +3,7 @@ import { PATHS } from '../state/paths.js'
 import { registerAction } from '../actions/registry.js'
 import { ACTIONS } from '../actions/names.js'
 import { refreshJournalRows } from './metrics.js'
+import { refreshDays } from './summary.js'
 
 /**
  * Finding the trades worth studying.
@@ -113,6 +114,9 @@ export function refreshFiltered(rows = refreshJournalRows(), filters = appState.
   // The count of what was hidden, not just what is shown: a filter that quietly matched
   // nothing looks exactly like a day with no trades.
   setValue(PATHS.journal.hidden, Math.max(0, rows.length - visible.length))
+  // The scorecard summarises the slice, not the whole journal: a day row that ignored the
+  // filters would contradict the list directly under it.
+  refreshDays(visible, slice.now)
 
   return visible
 }

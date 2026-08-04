@@ -41,6 +41,7 @@ import { registerExportActions } from '../journal/export.js'
 import { registerImportActions } from '../journal/import.js'
 import { registerFilterActions } from '../journal/filters.js'
 import { registerCsvActions } from '../journal/csv.js'
+import { registerSummaryActions } from '../journal/summary.js'
 import { registerKillActions } from '../breakers/kill.js'
 import { registerRearmActions, mountRelease } from '../breakers/rearm.js'
 import {
@@ -153,6 +154,7 @@ export function bootstrap(options = {}) {
   registerImportActions()
   registerFilterActions()
   registerCsvActions()
+  registerSummaryActions()
   loadAnnotations()
   pruneBreakerEvents(Date.now())
   // The daily-loss trip has no other reaction path — it publishes a code and returns a

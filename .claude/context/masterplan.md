@@ -4198,16 +4198,16 @@
 **What:** Each trading day collapses into one summary line of trades, win rate, net PnL and fees, giving the user an instant day-by-day scorecard.
 **How:** groupByDay() and daySummary() pure fns feeding Spektrum computed summaries rendered as collapsible day headers in the journal list.
 
-- [ ] **T25.9.1 - Cut summaries branch** - What: Summary work stays off main. How: git checkout -b feature/f25.9-daily-summaries from main.
-- [ ] **T25.9.2 - Implement groupByDay()** - What: Trades bucketed by their local close date. How: groupByDay(trades) in src/journal/summary.js keying a Map by YYYY-MM-DD derived from closeTs.
-- [ ] **T25.9.3 - Implement daySummary()** - What: One truthful stat line per day. How: daySummary(trades) returning tradeCount, wins, winRate, grossPnl, fees and netPnl from the enriched records.
-- [ ] **T25.9.4 - Compute summaries reactively** - What: Day rows update the moment a trade closes. How: Spektrum computed('journal.days') mapping groupByDay output through daySummary over the filtered trades.
-- [ ] **T25.9.5 - Render collapsible day headers** - What: Days scannable closed, trades one click away. How: data-each over journal.days rendering a header row per day with a data-action toggle and data-if on the trade sublist.
-- [ ] **T25.9.6 - Pin the live today row** - What: Today's running score always visible while scalping. How: Sticky-position the current day header at the block top with CSS and bind its numbers to the live computed.
-- [ ] **T25.9.7 - Style summary rows distinctly** - What: Day lines pop from trade lines at a glance. How: Heavier monospace weight, subtle background from the design-system surface token and green/orange net PnL coloring per theme.
-- [ ] **T25.9.8 - Expand day details on demand** - What: Fees versus gross and average hold per day one hover away. How: Title tooltip plus an expandable detail strip driven by data-if showing avgHold, maxWin and maxLoss from daySummary.
-- [ ] **T25.9.9 - Write single unit tests for summary fns** - What: groupByDay and daySummary each proven by one test. How: One Vitest test per function in summary.test.js covering a multi-day fixture, run via vitest run -t.
-- [ ] **T25.9.10 - Verify and merge summaries** - What: Daily scorecards ship green. How: Run targeted tests, confirm collapse state and today pinning across a simulated midnight rollover, merge to main.
+- [x] **T25.9.1 - Cut summaries branch** - What: Summary work stays off main. How: git checkout -b feature/f25.9-daily-summaries from main.
+- [x] **T25.9.2 - Implement groupByDay()** - What: Trades bucketed by their local close date. How: groupByDay(trades) in src/journal/summary.js keying a Map by YYYY-MM-DD derived from closeTs.
+- [x] **T25.9.3 - Implement daySummary()** - What: One truthful stat line per day. How: daySummary(trades) returning tradeCount, wins, winRate, grossPnl, fees and netPnl from the enriched records.
+- [x] **T25.9.4 - Compute summaries reactively** - What: Day rows update the moment a trade closes. How: Spektrum computed('journal.days') mapping groupByDay output through daySummary over the filtered trades.
+- [x] **T25.9.5 - Render collapsible day headers** - What: Days scannable closed, trades one click away. How: data-each over journal.days rendering a header row per day with a data-action toggle and data-if on the trade sublist.
+- [x] **T25.9.6 - Pin the live today row** - What: Today's running score always visible while scalping. How: Sticky-position the current day header at the block top with CSS and bind its numbers to the live computed.
+- [x] **T25.9.7 - Style summary rows distinctly** - What: Day lines pop from trade lines at a glance. How: Heavier monospace weight, subtle background from the design-system surface token and green/orange net PnL coloring per theme.
+- [x] **T25.9.8 - Expand day details on demand** - What: Fees versus gross and average hold per day one hover away. How: Title tooltip plus an expandable detail strip driven by data-if showing avgHold, maxWin and maxLoss from daySummary.
+- [x] **T25.9.9 - Write single unit tests for summary fns** - What: groupByDay and daySummary each proven by one test. How: One Vitest test per function in summary.test.js covering a multi-day fixture, run via vitest run -t.
+- [x] **T25.9.10 - Verify and merge summaries** - What: Daily scorecards ship green. How: Run targeted tests, confirm collapse state and today pinning across a simulated midnight rollover, merge to main.
 
 ### F25.10 - History Retention and Pruning
 

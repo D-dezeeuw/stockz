@@ -246,6 +246,8 @@ export function initialState(overrides = {}) {
     [PATHS.journal.filtered]: [],
     [PATHS.journal.instruments]: [],
     [PATHS.journal.hidden]: 0,
+    [PATHS.journal.days]: [],
+    [PATHS.journal.openDay]: '',
 
     // alerts
     [PATHS.alerts.fired]: null,

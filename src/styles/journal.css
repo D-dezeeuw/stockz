@@ -108,6 +108,59 @@
   font-size: var(--fs-0);
 }
 
+/*
+ * The day lines. Heavier than a trade row and on their own surface, because they answer a
+ * different question — was today good — and a scorecard that reads like another trade is a
+ * scorecard the eye slides past.
+ */
+.journal__days {
+  display: grid;
+  gap: 1px;
+  padding-block-end: var(--sp-1);
+}
+
+.journal__day {
+  display: grid;
+  grid-template-columns: minmax(6rem, 1.6fr) 3rem 3.5rem minmax(4rem, 1fr) 5rem;
+  gap: var(--sp-2);
+  align-items: baseline;
+  inline-size: 100%;
+  padding: 3px var(--sp-2);
+  border: 0;
+  border-inline-start: 2px solid transparent;
+  background: var(--bg-raised);
+  color: var(--ink);
+  font-size: var(--fs-0);
+  font-weight: 700;
+  text-align: start;
+  cursor: pointer;
+}
+
+/* Today stays in view while the scalping is happening: the running score is the number a
+   trader checks between trades, and scrolling for it is scrolling away from the ticket. */
+.journal__day--today {
+  position: sticky;
+  inset-block-start: 0;
+  z-index: 1;
+  border-inline-start-color: var(--orange);
+}
+
+.journal__day--up .journal__daynet {
+  color: var(--green);
+}
+
+.journal__day--down .journal__daynet {
+  color: var(--orange);
+}
+
+.journal__daydate {
+  color: var(--ink-strong);
+}
+
+.journal__daynet {
+  text-align: end;
+}
+
 .journal__filters {
   display: flex;
   flex-wrap: wrap;

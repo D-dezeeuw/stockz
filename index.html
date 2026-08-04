@@ -411,6 +411,20 @@
                       data-fn="journal.filter" data-key="tag" :data-value="tag"
                       :class="journal.filters.tag === tag ? 'chip chip--on' : 'chip'">{{tag}}</button>
             </div>
+            <!-- The day's line. Hundreds of rows produce exactly one question worth asking
+                 at the close — was today good, and why — and that is answered by a line, not
+                 a list. Today stays pinned at the top while the scalping is happening. -->
+            <div class="journal__days" data-if="block.id === 'journal'" data-each="d in journal.days">
+              <button type="button" data-action="click" data-fn="journal.toggleDay" :data-day="d.day"
+                      :class="'journal__day' + (d.today ? ' journal__day--today' : '') + (d.net >= 0 ? ' journal__day--up' : ' journal__day--down')"
+                      :title="'gross ' + d.gross + ' · fees ' + d.fees + ' · avg hold ' + d.avgHold + 'ms · best ' + d.maxWin + ' · worst ' + d.maxLoss">
+                <span class="journal__daydate">{{d.day}}{{d.today ? ' · today' : ''}}</span>
+                <span class="tnum">{{d.trades}}t</span>
+                <span class="tnum">{{d.winRateLabel}}</span>
+                <span class="tnum">fees {{d.fees}}</span>
+                <span class="journal__daynet tnum">{{fmt.signed(d.net)}}</span>
+              </button>
+            </div>
             <div class="journal" data-if="block.id === 'journal'" data-each="t in journal.filtered">
               <div class="journal__row" :class="t.net >= 0 ? 'journal__row journal__row--up' : 'journal__row journal__row--down'">
                 <span class="journal__inst">{{t.instrument}}</span>
