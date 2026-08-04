@@ -12,6 +12,19 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ### Added
 
+- **Hold-to-repeat nudge** — hold an arrow and the price walks, accelerating from one
+  step per 350ms down to 40ms, so a tap is exactly one tick and a hold covers real
+  distance. Only allow-listed actions may repeat: a stuck key repeating *submit* would be
+  a hundred orders, and the list makes that structurally impossible rather than merely
+  unlikely. The repeat stops on blur and tab-hide as well as keyup — a key held while the
+  tab loses focus never sends its keyup, and a nudge still walking in a background tab
+  would be discovered as a filled order. (F16.8)
+- **Double-Escape panic** — one tap closes what is open, two inside 400ms disarms the
+  desk and cancels every working order. Escape is the most-pressed key on any interface,
+  so binding a flatten to a single press would fire it by accident within a day. It goes
+  cold *before* it cancels: the disarm is instant and local while the cancels are round
+  trips, and the other order leaves a window where a held key could add to what is being
+  cancelled. (F16.9)
 - **Scoped keys** — the same chord means different things in different places, resolved
   nearest-first: a modal beats a focused block, which beats the global layout. A modal
   does *not* fall through to the desk, which is what makes typing in the palette safe —

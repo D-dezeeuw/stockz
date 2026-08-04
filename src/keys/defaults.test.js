@@ -25,8 +25,10 @@ describe('applyDefaultBindings', () => {
       payload: { side: 'buy' },
     })
     expect(resolveKey('KeyS').payload).toEqual({ side: 'sell' })
-    // Escape and F both flatten: the panic key must be the one already under the finger.
-    expect(resolveKey('Escape').action).toBe('orders.cancelAll')
+    // F flattens outright. Escape routes through the panic gesture: one tap closes,
+    // two flatten — a key pressed as often as Escape must not fire a flatten on the first.
+    expect(resolveKey('KeyF').action).toBe('orders.cancelAll')
+    expect(resolveKey('Escape').action).toBe('keys.panic')
     expect(resolveKey('shift+ArrowUp').payload).toEqual({ ticks: 10 })
 
     // An override wins over the stock binding for the same chord.

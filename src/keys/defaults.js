@@ -21,7 +21,7 @@ export const DEFAULT_BINDINGS = Object.freeze([
   { chord: 'KeyB', action: ACTIONS.ticket.submit, payload: { side: 'buy' }, label: 'buy' },
   { chord: 'KeyS', action: ACTIONS.ticket.submit, payload: { side: 'sell' }, label: 'sell' },
   { chord: 'KeyF', action: ACTIONS.orders.cancelAll, payload: {}, label: 'flatten / cancel all' },
-  { chord: 'Escape', action: ACTIONS.orders.cancelAll, payload: {}, label: 'panic: cancel all' },
+  { chord: 'Escape', action: ACTIONS.keys.panic, payload: {}, label: 'close · Esc Esc = panic' },
   { chord: 'KeyA', action: ACTIONS.ticket.arm, payload: {}, label: 'arm / disarm' },
   { chord: 'KeyR', action: ACTIONS.ticket.repeatLast, payload: {}, label: 'repeat last order' },
   { chord: 'Digit1', action: ACTIONS.ticket.setSize, payload: { preset: 0.25 }, label: 'size ¼' },
