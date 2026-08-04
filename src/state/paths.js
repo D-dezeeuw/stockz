@@ -128,6 +128,14 @@ export const PATHS = Object.freeze({
     botArmed: 'settings.botArmed',
     botSize: 'settings.botSize',
     botStrategies: 'settings.botStrategies',
+    botRules: 'settings.botRules',
+    botSizeRule: 'settings.botSizeRule',
+    botEquityPct: 'settings.botEquityPct',
+    botOrderType: 'settings.botOrderType',
+    botOffsetTicks: 'settings.botOffsetTicks',
+    botMaxPerMin: 'settings.botMaxPerMin',
+    botCooldownAfter: 'settings.botCooldownAfter',
+    botCooldownMinutes: 'settings.botCooldownMinutes',
     dnd: 'settings.dnd',
     snoozeUntil: 'settings.snoozeUntil',
     bypassCritical: 'settings.bypassCritical',
@@ -195,6 +203,8 @@ export const PATHS = Object.freeze({
   bot: Object.freeze({
     decisions: 'bot.decisions',
     status: 'bot.status',
+    limits: 'bot.limits',
+    cooldownUntil: 'bot.cooldownUntil',
   }),
   strategy: Object.freeze({
     registered: 'strategy.registered',

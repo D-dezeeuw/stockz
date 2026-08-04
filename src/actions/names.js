@@ -51,6 +51,7 @@ export const ACTIONS = Object.freeze({
     toggleArm: 'bot.toggleArm',
     setAuto: 'bot.setAuto',
     disableAll: 'bot.disableAll',
+    resume: 'bot.resume',
   }),
   book: Object.freeze({
     prefill: 'book.prefill',

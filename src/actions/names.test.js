@@ -73,6 +73,7 @@ describe('allActionNames', () => {
       'bot.toggleArm',
       'bot.setAuto',
       'bot.disableAll',
+      'bot.resume',
       'book.prefill',
       'book.setGroup',
       'book.setFloor',
