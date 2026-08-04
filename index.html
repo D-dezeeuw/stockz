@@ -914,44 +914,54 @@
     </div>
 
     <!-- Key modal. Inputs are plain DOM, never data-model: a credential bound to state
-         would land in history and every journal export. -->
+         would land in history and every journal export. One card rather than three stacked
+         ones — the modal is centred in a grid, and three cards in a column overflow a short
+         laptop viewport with nothing to scroll. -->
     <div class="modal" data-if="ui.modal === 'keys'" role="dialog" aria-label="API keys">
-      <form class="modal__card" data-action="submit" data-fn="keys.submit" data-venue="okx">
-        <p class="block__state-title">okx credentials</p>
-        <p class="label">Held in memory only — never written to disk or state.</p>
-        <input class="field__input" type="password" name="apiKey" placeholder="api key"
-               autocomplete="off" spellcheck="false">
-        <input class="field__input" type="password" name="secretKey" placeholder="secret key"
-               autocomplete="off" spellcheck="false">
-        <input class="field__input" type="password" name="passphrase" placeholder="passphrase"
-               autocomplete="off" spellcheck="false">
-        <button type="submit" class="btn">save okx</button>
-      </form>
+      <div class="modal__card keys">
+        <p class="block__state-title">venue credentials</p>
+        <!-- Both venues are optional. Saying so here stops a first-time trader assuming the
+             desk is broken until they have registered for two exchange accounts. -->
+        <p class="label">Both optional — the desk runs in paper mode without either. Add a
+          venue when you want to trade it live.</p>
 
-      <!-- eToro was missing entirely: the vault has always known the venue needs an api key
-           and a user key, and the modal only ever offered OKX's three fields. -->
-      <form class="modal__card" data-action="submit" data-fn="keys.submit" data-venue="etoro">
-        <p class="block__state-title">etoro credentials</p>
-        <input class="field__input" type="password" name="apiKey" placeholder="api key"
-               autocomplete="off" spellcheck="false">
-        <input class="field__input" type="password" name="userKey" placeholder="user key"
-               autocomplete="off" spellcheck="false">
-        <button type="submit" class="btn">save etoro</button>
-      </form>
+        <form class="keys__venue" data-action="submit" data-fn="keys.submit" data-venue="okx">
+          <p class="keys__head">
+            <span class="keys__name">okx</span>
+            <!-- Presence, so opening this does not show three empty boxes to somebody who is
+                 already connected and leave them guessing. Never the key, only whether. -->
+            <span :class="ui.keysPresent.okx ? 'keys__state keys__state--on' : 'keys__state'">{{ui.keysPresent.okx ? '● connected' : '○ not set'}}</span>
+          </p>
+          <input class="field__input" type="password" name="apiKey" placeholder="api key"
+                 autocomplete="off" spellcheck="false">
+          <input class="field__input" type="password" name="secretKey" placeholder="secret key"
+                 autocomplete="off" spellcheck="false">
+          <input class="field__input" type="password" name="passphrase" placeholder="passphrase"
+                 autocomplete="off" spellcheck="false">
+          <button type="submit" class="btn">save okx</button>
+        </form>
 
-      <div class="modal__card">
-        <!-- The trade is stated where the switch is, not in a doc nobody opens. -->
+        <form class="keys__venue" data-action="submit" data-fn="keys.submit" data-venue="etoro">
+          <p class="keys__head">
+            <span class="keys__name">etoro</span>
+            <span :class="ui.keysPresent.etoro ? 'keys__state keys__state--on' : 'keys__state'">{{ui.keysPresent.etoro ? '● connected' : '○ not set'}}</span>
+          </p>
+          <input class="field__input" type="password" name="apiKey" placeholder="api key"
+                 autocomplete="off" spellcheck="false">
+          <input class="field__input" type="password" name="userKey" placeholder="user key"
+                 autocomplete="off" spellcheck="false">
+          <button type="submit" class="btn">save etoro</button>
+        </form>
+
         <label class="field field--row">
           <input type="checkbox" data-action="change" data-fn="keys.remember"
                  :checked="settings.rememberCredentials">
-          <span class="label">Remember on this browser — encrypted with a key the page
-                cannot read, so a copied browser profile or a glance at devtools yields
-                ciphertext. Script running on this origin can still use it; scope the key
-                at the venue (trade-only, IP allowlist) for the risk that actually matters.</span>
+          <span class="label">Remember on this browser, so a revisit does not re-ask.</span>
         </label>
-        <p class="label">Or open the desk with
-          <code>?okxKey=…&amp;okxSecret=…&amp;okxPass=…</code> — the params are read once and
-          wiped from the address bar so they never reach history or a screen share.</p>
+        <p class="label keys__note">Or open the desk with
+          <code>?okxKey=…&amp;okxSecret=…&amp;okxPass=…</code> — read once, then wiped from the
+          address bar so it never reaches history or a screen share.</p>
+
         <div class="row row--between">
           <button type="button" class="btn btn--warn" data-action="click" data-fn="keys.lock">
             lock

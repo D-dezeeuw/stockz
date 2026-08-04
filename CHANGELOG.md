@@ -47,6 +47,26 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ### Fixed
 
+- **The key modal never saved anything.** A form submit delivers its named inputs *flat* on
+  the payload; `submitKeys` read `payload.fields`, found nothing, and stored an empty object.
+  Every key ever typed into that modal was dropped on the floor. Its test passed throughout
+  because it hand-built `{fields: …}` — the shape the code expected — instead of the shape the
+  DOM sends, which is the failure mode a test is supposed to catch rather than cause. Both
+  shapes are read now, and the test asserts the real one.
+- **The inputs kept the secret after saving.** The module doc claimed they were "cleared the
+  moment they are submitted"; nothing cleared them, so a secret key sat in the DOM for the
+  rest of the session — quietly undoing the reason the fields are deliberately not bound to
+  state. They are now emptied field by field rather than via `form.reset()`, which restores
+  inputs to their *default* value and would put the secret back the day anyone adds a `value`
+  attribute.
+- **The modal claimed "held in memory only — never written to disk or state"**, which stopped
+  being true when remembering was added. Replaced with what actually happens.
+- **The modal was three stacked cards** in a centred grid with no scroll, overflowing a short
+  viewport. One scrollable card now, with a per-venue **connected / not set** indicator — it
+  used to show three empty password boxes whether or not you were already configured — and a
+  line saying both venues are optional, so a first-time trader does not assume the desk is
+  broken until they hold two exchange accounts.
+
 - **The key modal had no way to open it.** It has existed since phase 7 with a close button
   as its only reference — no header control, no hotkey, no boot prompt — so the entire
   credential flow was unreachable from the running desk. There is now a **keys** button in
