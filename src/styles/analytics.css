@@ -197,3 +197,42 @@
   margin: 0;
   color: var(--ink-muted);
 }
+
+/* Streaks. The strip is the point: one tick per trade, and the run in progress at full
+   height so the eye lands on what is still happening. */
+.streaks {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--sp-1) var(--sp-2);
+  align-items: center;
+  margin-block-start: var(--sp-2);
+}
+
+.streaks__now {
+  font-size: var(--fs-2);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.streaks__now--win {
+  color: var(--green);
+}
+
+.streaks__now--loss {
+  color: var(--orange);
+}
+
+.streaks__strip {
+  grid-column: 1 / -1;
+  inline-size: 100%;
+  block-size: 1.25rem;
+}
+
+.streaks__tilt {
+  grid-column: 1 / -1;
+  margin: 0;
+  padding: 2px var(--sp-1);
+  border-inline-start: 2px solid var(--orange);
+  color: var(--orange);
+  font-size: var(--fs-0);
+}

@@ -9,6 +9,7 @@ import { refreshEquity } from '../analytics/equity.js'
 import { refreshHeatmap } from '../analytics/heatmap.js'
 import { refreshRanking } from '../analytics/instruments.js'
 import { refreshHoldTimes } from '../analytics/holdtime.js'
+import { refreshStreaks } from '../analytics/streaks.js'
 
 /**
  * Finding the trades worth studying.
@@ -129,6 +130,7 @@ export function refreshFiltered(rows = refreshJournalRows(), filters = appState.
   refreshHeatmap(visible)
   refreshRanking(visible)
   refreshHoldTimes(visible)
+  refreshStreaks(visible)
 
   return visible
 }

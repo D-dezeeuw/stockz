@@ -77,6 +77,18 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
   trade held overnight by accident drags a mean past every hold the trader intends to take.
   The colour scale is shared with the heatmap on purpose — two charts using different colour
   languages for the same idea is two charts the reader has to learn separately.
+- **Streaks, while they are still happening** — this is where a trading day stops being
+  arithmetic and starts being psychology. Four losses in a row is not four independent events
+  to the person who just had them; it is the moment size starts creeping up, the stop starts
+  moving, and the day becomes a story about getting it back. So the run in progress is drawn
+  **full height** against inset history: a trader who can see the fifth orange tick appearing
+  does not need to be told anything, and one who finds out at the end of the day has already
+  had the day. The tilt notice is a hint and stays one — no dialog, no lock-out, because
+  phase 24 owns the mechanism that actually stops a desk and a nag here would be something to
+  click through and learn to ignore. It fires on the run in progress and never on the record:
+  six losers in March is not a reason to warn every session since. Scratches **break** a run
+  rather than extending or ending it, since folding a break-even trade into either side
+  produces a record streak nobody ever had.
 
 ## [0.25.0] — 2026-08-04 — Phase 25: Trade Journal & Time-Travel Audit
 

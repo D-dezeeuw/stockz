@@ -4317,16 +4317,16 @@
 **What:** Current and record win/loss streaks plus a colored sequence strip, so the user spots hot hands and tilt spirals as they form.
 **How:** streaks() pure fn over ordered trades feeding stat tiles and a canvas tick-strip renderer with hover detail inside the analytics block.
 
-- [ ] **T26.6.1 - Cut streaks branch** - What: Streak work stays off main. How: git checkout -b feature/f26.6-streak-analysis from main.
-- [ ] **T26.6.2 - Implement streaks()** - What: Current, max win and max loss streaks computed exactly. How: Pure streaks(trades) in src/analytics/streaks.js scanning close-ordered outcomes and returning current, maxWin and maxLoss runs.
-- [ ] **T26.6.3 - Implement streakSegments()** - What: The full session as consecutive run segments for drawing. How: streakSegments(trades) returning an array of {outcome, length, startTradeId} runs preserving order.
-- [ ] **T26.6.4 - Render streak stat tiles** - What: The three streak numbers visible instantly. How: Tile trio in the analytics template bound with {{streaks.current}}-style expressions, sign-colored green/orange.
-- [ ] **T26.6.5 - Render the sequence strip** - What: The whole day's rhythm as a compact color barcode. How: drawStreakStrip(ctx, segments, size) painting one thin green or orange tick per trade in close order on canvas.
-- [ ] **T26.6.6 - Highlight the active run** - What: The ongoing streak stands out from history. How: Draw a brighter outline over the trailing run segment and pulse its stat tile with a CSS animation while it grows.
-- [ ] **T26.6.7 - Surface a tilt hint** - What: A quiet visual nudge when losses stack up. How: data-if banner in the block when streaks.current is a loss run of five or more, styled as a dim warning, no dialogs and no blocking.
-- [ ] **T26.6.8 - Add strip hover and wiring** - What: Any tick traceable to its trade, always live. How: pointermove hit-testing ticks into a tooltip with trade id and PnL, plus a Spektrum watch redrawing on new closes.
-- [ ] **T26.6.9 - Write single unit tests for streak fns** - What: streaks and streakSegments each proven by one test. How: One Vitest test per function in streaks.test.js with alternating and monotone fixtures, run via vitest run -t.
-- [ ] **T26.6.10 - Verify and merge streaks** - What: Streak analysis lands green on main. How: Run targeted tests, replay a fixture session confirming tile and strip agreement, merge the feature branch.
+- [x] **T26.6.1 - Cut streaks branch** - What: Streak work stays off main. How: git checkout -b feature/f26.6-streak-analysis from main.
+- [x] **T26.6.2 - Implement streaks()** - What: Current, max win and max loss streaks computed exactly. How: Pure streaks(trades) in src/analytics/streaks.js scanning close-ordered outcomes and returning current, maxWin and maxLoss runs.
+- [x] **T26.6.3 - Implement streakSegments()** - What: The full session as consecutive run segments for drawing. How: streakSegments(trades) returning an array of {outcome, length, startTradeId} runs preserving order.
+- [x] **T26.6.4 - Render streak stat tiles** - What: The three streak numbers visible instantly. How: Tile trio in the analytics template bound with {{streaks.current}}-style expressions, sign-colored green/orange.
+- [x] **T26.6.5 - Render the sequence strip** - What: The whole day's rhythm as a compact color barcode. How: drawStreakStrip(ctx, segments, size) painting one thin green or orange tick per trade in close order on canvas.
+- [x] **T26.6.6 - Highlight the active run** - What: The ongoing streak stands out from history. How: Draw a brighter outline over the trailing run segment and pulse its stat tile with a CSS animation while it grows.
+- [x] **T26.6.7 - Surface a tilt hint** - What: A quiet visual nudge when losses stack up. How: data-if banner in the block when streaks.current is a loss run of five or more, styled as a dim warning, no dialogs and no blocking.
+- [x] **T26.6.8 - Add strip hover and wiring** - What: Any tick traceable to its trade, always live. How: pointermove hit-testing ticks into a tooltip with trade id and PnL, plus a Spektrum watch redrawing on new closes.
+- [x] **T26.6.9 - Write single unit tests for streak fns** - What: streaks and streakSegments each proven by one test. How: One Vitest test per function in streaks.test.js with alternating and monotone fixtures, run via vitest run -t.
+- [x] **T26.6.10 - Verify and merge streaks** - What: Streak analysis lands green on main. How: Run targeted tests, replay a fixture session confirming tile and strip agreement, merge the feature branch.
 
 ### F26.7 - Fees vs Gross PnL Comparison
 
