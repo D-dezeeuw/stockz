@@ -7,6 +7,7 @@ import { spreadCaptureStrategy } from './builtin/spread-capture.js'
 import { bookImbalanceStrategy } from './builtin/book-imbalance.js'
 import { tapePressureStrategy } from './builtin/tape-pressure.js'
 import { rangeFadeStrategy } from './builtin/range-fade.js'
+import { openDriveStrategy } from './builtin/open-drive.js'
 import { safeInvoke } from './sandbox.js'
 
 /**
@@ -29,6 +30,7 @@ export const BUILTIN_STRATEGIES = Object.freeze([
   bookImbalanceStrategy,
   tapePressureStrategy,
   rangeFadeStrategy,
+  openDriveStrategy,
   compositeStrategy,
 ])
 

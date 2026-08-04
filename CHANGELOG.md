@@ -12,6 +12,20 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ### Added
 
+- **Session-open drive** — the minutes after a session opens are the only part of the day
+  where a scalper is reliably paid for being fast: volume arrives, the overnight range gets
+  tested, and the first genuine break of the opening box tends to run, because everyone who
+  was waiting for the open is doing the same arithmetic at the same moment. Crypto has no
+  open, which is exactly why the sessions are configurable — the OKX book still moves on the
+  London and New York equity opens because the people trading it are awake then. **One entry
+  per open, enforced in code**: the second attempt at a failed drive is the trade that turns
+  a small loss into the day, and it is precisely the one a trader takes when they are
+  annoyed. The exit is a **ratcheting trail**, not a target, because the premise is that the
+  move runs further than a target would have caught — and the stop only ever moves one way,
+  since a stop that could fall gives back the whole point of trailing. The opening box stops
+  growing when its build window ends (a range that kept extending would never break, which
+  is a strategy that never trades) and is discarded between sessions, because yesterday's
+  opening range is a memory, not a level.
 - **Micro range fade** — most of a scalping session is not trending: price oscillates between
   two levels everyone can see, and the trade is to sell the top and buy the bottom with a stop
   just beyond, because when the band finally breaks it breaks fast. Levels are built from
