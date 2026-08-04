@@ -33,6 +33,7 @@ import { registerDndActions, refreshDnd } from '../alerts/dnd.js'
 import { registerLogActions } from '../alerts/log.js'
 import { registerPersistActions, rehydrateAlerts } from '../alerts/persist.js'
 import { registerBotActions, createBotRunner } from '../bot/runner.js'
+import { mountMarketMode } from '../bot/throttle.js'
 import { registerSessionActions } from '../bot/session.js'
 import { watchTrip, watchPending } from '../breakers/index.js'
 import { watchBreakerSettings } from '../breakers/settings.js'
@@ -192,6 +193,9 @@ export function bootstrap(options = {}) {
   watchPending()
   // The runner comes up disarmed by construction: `botArmed` is transient and never
   // restored, so the loop can run from boot and still place nothing.
+  // The market mode is a preset for the order-rate ceiling; applied before the runner so
+  // the first drain already uses it.
+  mountMarketMode()
   createBotRunner()
   wireNativeAlerts(onAlert)
   permissionState()

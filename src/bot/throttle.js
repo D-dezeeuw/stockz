@@ -1,4 +1,4 @@
-import { setValue, appState } from '../app/engine.js'
+import { setValue, appState, watch } from '../app/engine.js'
 import { PATHS } from '../state/paths.js'
 import { pushDecision } from './runner.js'
 
@@ -78,13 +78,68 @@ let throttle = createThrottle(DEFAULT_RATE)
 let configuredRate = DEFAULT_RATE
 
 /**
+ * How busy a market the desk is tuned for, as orders per minute.
+ *
+ * The throttle is what actually decides how much trading happens, and it binds long before
+ * anything else does: signals arrive in clusters, so a burst empties the window in seconds
+ * and everything behind it is refused. Measured over a simulated hour at five prints per
+ * second, a 30/min ceiling turned ~200 signals away to let ~48 through.
+ *
+ * These are limits, not targets. Nothing here makes the desk trade more — it stops the
+ * limiter throwing away the tail of a burst the strategies did produce.
+ */
+export const MARKET_MODES = Object.freeze({
+  quiet: 15,
+  normal: 30,
+  volatile: 120,
+})
+
+/** The mode a desk starts in. */
+export const DEFAULT_MODE = 'volatile'
+
+/**
+ * The orders-per-minute ceiling a mode implies.
+ *
+ * @param {string} mode - a MARKET_MODES key.
+ * @returns {number} orders per minute; the default mode's rate for anything unknown.
+ */
+export function rateForMode(mode) {
+  return MARKET_MODES[String(mode ?? '')] ?? MARKET_MODES[DEFAULT_MODE]
+}
+
+/**
+ * Apply the market mode's rate to the throttle setting.
+ *
+ * The mode is a *preset*: it writes `botMaxPerMin` and then stops mattering, so the number
+ * stays the single source of truth and a hand-typed rate is not overwritten on the next
+ * read. Watched rather than wired to one control, because the setting can move from the
+ * drawer, the command palette or a settings import, and a preset that only worked from one
+ * of those would be a preset that silently did not apply.
+ *
+ * @param {{watch?: Function}} [deps] - injectable watcher, for tests.
+ * @returns {number} the rate now in force.
+ */
+export function mountMarketMode(deps = {}) {
+  const { watch: watcher = watch } = deps
+  const apply = () => setValue(PATHS.settings.botMaxPerMin, rateForMode(appState?.settings?.marketMode))
+
+  watcher([PATHS.settings.marketMode], apply)
+  apply()
+
+  return rateForMode(appState?.settings?.marketMode)
+}
+
+/**
  * The limiter for the rate currently configured.
  *
  * @param {object} [state] - the settings slice.
  * @returns {object} the limiter.
  */
 export function currentThrottle(state = appState?.settings) {
-  const rate = Math.max(1, Math.floor(Number(state?.botMaxPerMin) || DEFAULT_RATE))
+  // The mode is the preset and `botMaxPerMin` is the number it wrote, so the number stays
+  // the single source of truth — a mode that were consulted here as well would fight any
+  // hand-typed rate on the next read.
+  const rate = Math.max(1, Math.floor(Number(state?.botMaxPerMin) || rateForMode(state?.marketMode)))
   // Rebuilt when the setting changes, because the window size *is* the limit — a limiter
   // built for 30 cannot answer a question about 60.
   if (rate !== configuredRate) {

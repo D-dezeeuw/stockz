@@ -1,5 +1,9 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 import {
+  MARKET_MODES,
+  DEFAULT_MODE,
+  rateForMode,
+  mountMarketMode,
   createThrottle,
   currentThrottle,
   throttleGate,
@@ -15,6 +19,7 @@ import {
 } from './throttle.js'
 import { botDecisions, resetRunner } from './runner.js'
 import { appState, setValue, tick, resetState } from '../app/engine.js'
+import { PATHS } from '../state/paths.js'
 
 beforeEach(() => {
   resetThrottle()
@@ -39,6 +44,41 @@ describe('createThrottle', () => {
     expect(limiter.used(62000)).toBe(0)
     expect(limiter.allow(NaN)).toBe(false)
     expect(DEFAULT_RATE).toBe(30)
+  })
+})
+
+describe('rateForMode', () => {
+  it('maps a mode to its ceiling and falls back rather than to zero', () => {
+    expect(rateForMode('quiet')).toBe(15)
+    expect(rateForMode('normal')).toBe(30)
+    expect(rateForMode('volatile')).toBe(120)
+
+    // An unknown or absent mode is the default one, never 0 - a ceiling of zero would
+    // silently refuse every order and look exactly like a broken desk.
+    expect(rateForMode('nonsense')).toBe(MARKET_MODES[DEFAULT_MODE])
+    expect(rateForMode(undefined)).toBe(MARKET_MODES[DEFAULT_MODE])
+    expect(DEFAULT_MODE).toBe('volatile')
+  })
+})
+
+describe('mountMarketMode', () => {
+  it('writes the rate the mode implies, on mount and on every change', () => {
+    setValue(PATHS.settings.marketMode, 'quiet')
+    tick()
+
+    const watched = []
+    expect(mountMarketMode({ watch: (paths, fn) => watched.push({ paths, fn }) })).toBe(15)
+    tick()
+    // Applied on mount, not only on the next change - a preset that waited for an edit
+    // would leave the shipped default unapplied.
+    expect(appState.settings.botMaxPerMin).toBe(15)
+    expect(watched[0].paths).toEqual([PATHS.settings.marketMode])
+
+    setValue(PATHS.settings.marketMode, 'volatile')
+    tick()
+    watched[0].fn()
+    tick()
+    expect(appState.settings.botMaxPerMin).toBe(120)
   })
 })
 

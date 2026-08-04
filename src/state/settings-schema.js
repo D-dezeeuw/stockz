@@ -195,13 +195,23 @@ export const SETTINGS_SCHEMA = Object.freeze([
     default: 1,
   },
   {
+    key: 'marketMode',
+    group: 'risk',
+    label: 'Market mode (sets the order rate)',
+    kind: 'select',
+    options: ['quiet', 'normal', 'volatile'],
+    default: 'volatile',
+  },
+  {
     key: 'botMaxPerMin',
     group: 'risk',
     label: 'Auto-trade orders per minute',
     kind: 'number',
     min: 1,
     step: 1,
-    default: 30,
+    // Matches the default market mode. The throttle binds long before any other limit -
+    // signals arrive in clusters, and a low ceiling throws away the tail of every burst.
+    default: 120,
   },
   {
     key: 'botCooldownAfter',
