@@ -2130,16 +2130,16 @@
 **What:** Hover anywhere and read exact price and time, snapped to the nearest real traded tick.
 **How:** A second overlay canvas driven by pointer events, using xToTime/yToPrice plus a binary-search tick snap.
 
-- [ ] **T13.5.1 - Branch crosshair work** - What: Inspection tooling ships without touching renderers. How: git checkout -b feature/13-5-crosshair from main.
-- [ ] **T13.5.2 - Add the overlay canvas layer** - What: Crosshair moves without redrawing the chart below. How: Stack a second createChartSurface canvas above the plot, cleared and drawn independently.
-- [ ] **T13.5.3 - Track the pointer** - What: Crosshair glued to the cursor at all times. How: pointermove handler mapping clientX/Y through getBoundingClientRect into chart coordinates.
-- [ ] **T13.5.4 - Implement snapToTick** - What: The readout shows real traded prices, never interpolation. How: Binary search over the tick ring buffer for the nearest tick by time.
-- [ ] **T13.5.5 - Draw the crosshair lines** - What: Clean dashed sightlines to both axes. How: setLineDash hairlines at the snapped x/y with one clearRect wipe per frame.
-- [ ] **T13.5.6 - Draw axis readout pills** - What: Exact price and ms-precision time under the cursor. How: Filled pill labels on the right axis via formatPrice and bottom edge as hh:mm:ss.mmm.
-- [ ] **T13.5.7 - Handle leave and touch input** - What: Works on mice, trackpads, and touch alike. How: Unified pointer events with pointerleave clearing the overlay and touch-action none on the host.
-- [ ] **T13.5.8 - Style the crosshair** - What: Sightlines legible in both themes without shouting. How: Pill colors from palette roles and a 1px hairline corrected for devicePixelRatio.
-- [ ] **T13.5.9 - Write the single unit test for snapToTick** - What: Snap correctness locked at buffer edges. How: One Vitest test covering nearest, first, and last tick cases, run via vitest run -t snapToTick.
-- [ ] **T13.5.10 - Verify and merge crosshair** - What: Precise inspection live on every chart. How: Targeted test green plus pointer smoke check in Vite dev, then merge feature/13-5-crosshair into main.
+- [x] **T13.5.1 - Branch crosshair work** - What: Inspection tooling ships without touching renderers. How: git checkout -b feature/13-5-crosshair from main.
+- [x] **T13.5.2 - Add the overlay canvas layer** - What: Crosshair moves without redrawing the chart below. How: Stack a second createChartSurface canvas above the plot, cleared and drawn independently.
+- [x] **T13.5.3 - Track the pointer** - What: Crosshair glued to the cursor at all times. How: pointermove handler mapping clientX/Y through getBoundingClientRect into chart coordinates.
+- [x] **T13.5.4 - Implement snapToTick** - What: The readout shows real traded prices, never interpolation. How: Binary search over the tick ring buffer for the nearest tick by time.
+- [x] **T13.5.5 - Draw the crosshair lines** - What: Clean dashed sightlines to both axes. How: setLineDash hairlines at the snapped x/y with one clearRect wipe per frame.
+- [x] **T13.5.6 - Draw axis readout pills** - What: Exact price and ms-precision time under the cursor. How: Filled pill labels on the right axis via formatPrice and bottom edge as hh:mm:ss.mmm.
+- [x] **T13.5.7 - Handle leave and touch input** - What: Works on mice, trackpads, and touch alike. How: Unified pointer events with pointerleave clearing the overlay and touch-action none on the host.
+- [x] **T13.5.8 - Style the crosshair** - What: Sightlines legible in both themes without shouting. How: Pill colors from palette roles and a 1px hairline corrected for devicePixelRatio.
+- [x] **T13.5.9 - Write the single unit test for snapToTick** - What: Snap correctness locked at buffer edges. How: One Vitest test covering nearest, first, and last tick cases, run via vitest run -t snapToTick.
+- [x] **T13.5.10 - Verify and merge crosshair** - What: Precise inspection live on every chart. How: Targeted test green plus pointer smoke check in Vite dev, then merge feature/13-5-crosshair into main.
 
 ### F13.6 - Fill Markers Overlay
 
