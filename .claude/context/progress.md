@@ -5,11 +5,38 @@ in `masterplan.md`, and knows where the project stands. Rewritten at every phase
 
 ---
 
-## Status: Phase 15 closed (v0.15.0) · Phase 16 next — **halfway**
+## Status: Phase 16 closed (v0.16.0) · Phase 17 next
 
 **Live:** https://d-dezeeuw.github.io/stockz/ (Pages serves `main` root — pushing is deploying)
-**Tests:** 437, one per function, all passing individually. Every gated file >80% branches.
+**Tests:** 482, one per function, all passing individually. Every gated file >80% branches.
 **Branch model:** everything merges to `main`; no feature branches outstanding.
+
+## Phase 16 — Hotkeys & Command Palette (closed)
+
+| Feature | What now exists | Where |
+| --- | --- | --- |
+| F16.1 | `normalizeChord`, `registerBinding`, `registryKey`, `unregisterBinding`, `resolveKey`, `allBindings`, `isTypingTarget`, `mountKeymap` | `src/keys/keymap.js` |
+| F16.2 | `DEFAULT_BINDINGS`, `applyDefaultBindings`, `groupBindings`, `chordLabel`, `hotkeyRows` | `src/keys/defaults.js` |
+| F16.3, F16.4 | `mergeBindings`, `validateChord`, `findConflicts`, `migrateBindings`, `effectiveBindings`, `clearedMap`, `registerBindingActions` | `src/keys/overrides.js` |
+| F16.5 | `fuzzyScore`, `actionCatalog`, `searchActions`, `moveSelection`, `registerPaletteActions` | `src/keys/palette.js` |
+| F16.7 | `pushScope`, `popScope`, `activeScope`, `scopeChain`, `trackBlockFocus`, `resetScopes` | `src/keys/scopes.js` |
+| F16.8 | `nextRepeatDelay`, `getNudgeStep`, `isRepeatable`, `createRepeater`, `guardRepeat` | `src/keys/repeat.js` |
+| F16.9 | `isDoubleTap`, `panicCooldown`, `tapEscape`, `registerPanicAction` | `src/keys/panic.js` |
+| F16.10 | `acceptChord`, `capturePreview`, `registerCaptureActions` | `src/keys/capture.js` |
+
+**Chords resolve nearest-scope-first** (`modal` → `block` → `global`) and a **modal does
+not fall through** — that is what makes typing in the palette safe. Scoped bindings share
+one registry Map under a `scope chord` key; `mergeBindings` keys on scope *and* chord,
+since ArrowDown legitimately means two things.
+
+**Every binding points at an existing action** — `DEFAULT_BINDINGS` has a test asserting
+it. A chord bound to a name nobody registered is a key that silently does nothing.
+
+New state: `ui.scope`, `ui.chordSheet`, `ui.palette*`, `ui.captureFor`,
+`ui.capturePreview`. New setting: `settings.chords` (chord → action overrides).
+
+**Deferred in phase 16:** T16.9.8 journal panic record (phase 25 owns the journal; the
+handler already computes the timestamp and count the entry needs).
 
 ## Phase 15 — Rapid Order Entry (closed)
 
@@ -272,17 +299,18 @@ go stale, and faults that reach the trader instead of the console.
 | F2.9 | `pushToast`, `dismissToast`, `expireToasts`, `describeEngineError`, `wireEngineErrors` | `src/ui/toast.js` |
 | F2.10 | `collectExpressions`, `renderPrecompileModule`, `cspMeta`, `npm run build:csp` | `src/app/csp.js`, `docs/csp.md` |
 
-## Next up: Phase 16 — Keyboard-First Control
+## Next up: Phase 17 — Multi-Instrument Workspace
 
-First feature **F16.1**. Every action on the desk reachable without the mouse, which on a
-scalping desk is the difference between a trade taken and a trade watched.
+First feature **F17.1**. Trading more than one pair at once: per-instrument state,
+switching without losing context, and a layout that holds several at a time.
 
-- Every control already routes through a named action (`ACTIONS` in
-  `src/actions/names.js`), so a hotkey map is a binding from key to action name — not a
-  second implementation of anything.
-- `dispatchAction(name, payload)` is the single entry point to reuse.
-- The click-to-trade payload contract (`{price, column, shiftKey}`) is what keyboard
-  entries should produce too, so both surfaces stay one code path.
+- `market.focus` already carries a venue-qualified symbol, and the feed re-subscribes on
+  focus change (`connectFeeds` watches it). Per-instrument *state* is the new part.
+- The book, tape and candle stores are already keyed by symbol
+  (`bookFor(symbol)`, `recentTrades(symbol)`, `candles(symbol, tf)`); only the *flush*
+  into state is single-focus. That flush is the seam to widen.
+- `resetImbalance()` on symbol change is the existing precedent for what must be dropped
+  rather than carried across instruments.
 
 ### Still outstanding across phases
 *(none — the boot-time feed gap recorded here through phase 13 was closed in phase 14;
