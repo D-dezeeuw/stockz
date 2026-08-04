@@ -27,6 +27,8 @@ describe('makeAlert', () => {
       severity: 'warn',
       text: 'BUY BTC',
       instrument: '',
+      // The subtype slot: outputs style and sound off it rather than re-parsing the text.
+      kind: '',
       ts: 5,
     })
 

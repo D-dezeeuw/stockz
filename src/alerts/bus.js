@@ -53,6 +53,10 @@ export function makeAlert(raw) {
     severity,
     text,
     instrument: String(raw?.instrument ?? ''),
+    // A source-specific subtype: 'fill' vs 'reject', 'buy' vs 'exit'. The outputs style and
+    // sound off it, and without a slot for it every one of them would have to re-parse the
+    // text — which is the point at which "one shape" stops being one shape.
+    kind: String(raw?.kind ?? ''),
     ts: Number(raw?.ts) || 0,
   }
 }

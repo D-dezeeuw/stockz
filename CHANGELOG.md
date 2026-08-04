@@ -12,6 +12,19 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ### Added
 
+- **Execution event notifications** — a scalper clicks and looks away, and the worst state on
+  a fast desk is not knowing whether the order went: the trader who is unsure clicks again,
+  and now there are two. Fills, partials, cancels and rejects are announced from the single
+  place every lifecycle transition already passes. **Rejects get the loudest tier and the most
+  work**, because a reject is the only execution event where the desk did *not* do what was
+  asked and the trader has to decide something — OKX answers with `sCode: '51008'`, which
+  tells them nothing, and the lookup turns it into "not enough margin", which tells them
+  everything. Two rejects in a row are never collapsed: each is a separate decision, and
+  hiding the second would be the worst thing available to hide. Partials **coalesce** — a
+  market order filling in eleven pieces is one trade to the person who placed it, and eleven
+  toasts is the fastest way to make somebody stop reading toasts — with the merged price
+  volume-weighted, since averaging the prices misreports the fill whenever the pieces
+  differed in size.
 - **The alert bus, and strategy signal alerts** — everything that wants the trader's
   attention arrives in one shape, and everything that *delivers* attention subscribes to one
   door; otherwise each new source has to be wired into every output separately and the fourth
