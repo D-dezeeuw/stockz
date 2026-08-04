@@ -113,6 +113,36 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ### Fixed
 
+- **The autopilot never placed a trade — four separate reasons, each fatal alone.** Every
+  part reported success: strategies ran, signals fired, the gates passed, the decision log
+  filled with `taken: true`. No order existed at the end of it.
+  - **Nothing focused an instrument at boot.** `market.focus` shipped as `''` and only a
+    click ever set it, so an untouched desk gave the strategies nothing to read — and the
+    venue socket subscribes to the focused instrument, so it received no ticks at all. The
+    first watchlist row is focused when nothing else is, and a focus the trader chose is
+    never taken back.
+  - **Dry run was stacked on top of paper mode.** `botDryRun` defaults on, and it logs the
+    order and returns a fake id — so the paper desk produced no fills, no positions and no
+    P&L. Dry run predates paper mode and is the weaker of the two: paper books the fill and
+    cannot reach a venue by construction. The autopilot now turns dry run off while flying
+    on paper, and puts it back for live, where a hand-armed bot should start by saying what
+    it *would* do.
+  - **The bot's order shape and the engine's input shape disagreed.** `makeIntent` read
+    `input.symbol` (the qualified `okx:BTC-USDT` the ticket sends) while the bot's mapper
+    emits `instrument` plus an explicit `venue` — which is the shape `makeIntent` itself
+    *returns*. Every bot order died as "no instrument". Both are accepted now, so the
+    mapper's output can be fed back in.
+  - **The fill detail was thrown away on the ack.** `submit` passed only a timestamp to
+    `apply`, so a venue that fills synchronously — which is exactly what the paper adapter
+    does — booked a fill of zero at a price of zero and the position store saw no quantity.
+    The reported `filled` and `avgPx` are carried through.
+
+  Verified end to end in a browser: tick → strategy → signal → gates → order → paper fill at
+  the ask → position on the book.
+- **The watchlist highlight lagged the click by up to four seconds**, because rows were only
+  rebuilt on the quote timer — and on the first paint it was wrong outright, since the focus
+  `setValue` lands a tick after the rows that read it. A focus watcher repaints from the
+  quotes already in hand, with no extra round trip.
 - **Four blocks were stuck on the placeholder they shipped with.** `updateBlock` was pure
   and nothing ever committed its result, so a block's status was whatever `seed.js` declared
   at boot, forever. The watchlist, journal and analytics blocks were all seeded `empty` and

@@ -158,6 +158,23 @@ describe('submit', () => {
     // An intent the engine refuses never reaches the venue at all.
     expect(await submit(order({ size: 0 }))).toMatchObject({ ok: false, reason: 'no size' })
 
+    // A venue that fills synchronously reports the quantity and price in the submit
+    // response. Dropping them books a fill of zero at a price of zero - which is what
+    // happened to every paper trade: the order reached 'filled' with nothing in it, so the
+    // position store saw no quantity and the book stayed empty.
+    resetEngine()
+    resetState()
+    resetPositions()
+    registerAdapter(
+      fakeAdapter({
+        submit: { ok: true, clientId: 'insta', order: { state: 'filled', filled: 0.5, avgPx: 101 } },
+      }),
+    )
+    await submit(order({ clientId: 'insta' }), { now: () => 3000 })
+    tick()
+    expect(appState.trade.orders[0]).toMatchObject({ state: 'filled', filled: 0.5, avgPx: 101 })
+    expect(openPositions()[0]).toMatchObject({ instrument: 'BTC-USDT', qty: 0.5, avgPx: 101 })
+
     // A client id cannot be used twice: at the venue that is either a rejection or,
     // worse, a second order.
     resetEngine()

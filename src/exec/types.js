@@ -28,7 +28,12 @@ export const ORDER_TYPES = Object.freeze(['market', 'limit'])
  * @returns {{ok: boolean, intent: object|null, reason: string}} the validated intent.
  */
 export function makeIntent(input = {}) {
-  const qualified = String(input.symbol ?? '')
+  // `symbol` is the qualified form the ticket sends (`okx:BTC-USDT`); `instrument` is the
+  // bare one this function *returns*, and the bot's mapper emits that shape alongside an
+  // explicit `venue`. Accepting both is the symmetry that was missing: the mapper's output
+  // could not be fed back in, so every bot order died here as "no instrument" — which is
+  // why an armed, opted-in, un-dry bot with passing signals still never placed a trade.
+  const qualified = String(input.symbol ?? input.instrument ?? '')
   const { venue: fromSymbol, symbol } = splitSymbol(qualified)
   const instrument = symbol || qualified
   const venue = String(input.venue ?? fromSymbol ?? 'okx').toLowerCase() || 'okx'

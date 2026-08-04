@@ -63,6 +63,10 @@ describe('syncArm', () => {
     expect(appState.settings.botArmed).toBe(true)
     // An armed bot with nothing opted in is armed in name only — the runner gates on both.
     expect(appState.settings.botStrategies['momentum-burst']).toBe(true)
+    // And dry run comes off. Stacking dry run on paper means nothing happens twice over:
+    // dry run logs an order and returns a fake id, so a paper desk produced no fills, no
+    // positions and no P&L - the exact "why is nothing trading".
+    expect(appState.settings.botDryRun).toBe(false)
 
     // "It was trading a minute ago" is the worst possible reason for real money to start
     // moving, so going live disarms rather than carrying on.
@@ -72,6 +76,9 @@ describe('syncArm', () => {
     tick()
     expect(appState.settings.botArmed).toBe(false)
     expect(appState.settings.botStrategies['momentum-burst']).toBe(false)
+    // Live puts it back: a bot armed by hand against real money should start by saying
+    // what it would do.
+    expect(appState.settings.botDryRun).toBe(true)
 
     setValue(PATHS.trade.mode, 'paper')
     setValue(PATHS.settings.autopilot, false)
