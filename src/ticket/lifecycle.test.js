@@ -92,6 +92,20 @@ describe('ingestOrderEvent', () => {
     tick()
     expect(appState.trade.orders[0]).toMatchObject({ state: 'filled', filled: 1, avgPx: 100 })
 
+    // Reaching a terminal state announces it — once. A second identical event does not
+    // re-announce, which is what a watcher diffing the array would get wrong.
+    expect(appState.ui.toasts).toHaveLength(1)
+    ingestOrderEvent({ clOrdId: 'a', state: 'filled', filled: 1 })
+    tick()
+    expect(appState.ui.toasts).toHaveLength(1)
+
+    // Backfill and replay can ask for silence.
+    setValue('trade.orders', [{ clOrdId: 'z', state: 'pending', filled: 0 }])
+    tick()
+    ingestOrderEvent({ clOrdId: 'z', state: 'filled' }, { silent: true })
+    tick()
+    expect(appState.ui.toasts).toHaveLength(1)
+
     // An event with no id changes nothing.
     expect(ingestOrderEvent({ state: 'cancelled' })).toHaveLength(1)
   })

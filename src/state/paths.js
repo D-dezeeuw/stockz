@@ -78,6 +78,7 @@ export const PATHS = Object.freeze({
     priceGroups: 'settings.priceGroups',
     tapeFloors: 'settings.tapeFloors',
     qtyPresets: 'settings.qtyPresets',
+    volume: 'settings.volume',
   }),
   market: Object.freeze({
     venues: 'market.venues',

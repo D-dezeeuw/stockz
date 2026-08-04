@@ -119,6 +119,15 @@ export const SETTINGS_SCHEMA = Object.freeze([
     default: 4,
   },
   {
+    key: 'volume',
+    group: 'appearance',
+    label: 'Cue volume',
+    kind: 'number',
+    min: 0,
+    step: 0.05,
+    default: 0.2,
+  },
+  {
     key: 'qtyPresets',
     group: 'trading',
     label: 'Size presets (% of buying power)',

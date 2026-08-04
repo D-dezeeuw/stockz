@@ -12,6 +12,14 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ### Added
 
+- **Order feedback** — a toast for the trader who glances and a generated tone for the
+  one who does not, on fills, rejects and cancels only: a toast per partial on a sweeping
+  fill is noise, and interrupting for a working order teaches the trader to ignore
+  interruptions. Identical fills inside 500ms collapse into one card with a counter, so a
+  burst never becomes a wall over the chart. The announcement fires from the lifecycle
+  transition rather than from a watcher — a watcher diffing the order array would
+  announce the same fill again whenever an unrelated order moved in the same frame.
+  (F15.7)
 - **One-click submit** — the payload is assembled *before* the click, so the click reads
   it, paints an optimistic order row in the same frame, and sends. Waiting for the ack to
   paint would put a network round trip inside the one interaction that must feel instant.
