@@ -4404,16 +4404,16 @@
 **What:** Capture live tick streams to disk so any interesting market moment can be replayed later on demand.
 **How:** Buffer normalized ticks off the phase 11 pipeline in a Worker and batch-write chunks to an IndexedDB recordings database.
 
-- [ ] **T27.1.1 - Recorder feature branch** - What: Isolated line of work so recorder code never lands on main half-done. How: git switch -c feature/tick-recorder from a fresh main pull.
-- [ ] **T27.1.2 - Recordings DB schema** - What: A durable home for tick sessions in the browser. How: openRecordingDb() creating IndexedDB stockz-recordings with sessions and chunks object stores keyed by sessionId.
-- [ ] **T27.1.3 - Recorder core** - What: One call starts capturing every normalized tick crossing the desk. How: createTickRecorder() subscribing to the pipeline tick stream via Spektrum watch on ticks state.
-- [ ] **T27.1.4 - Chunk buffering** - What: Smooth writes that never stutter the UI during bursts. How: flushChunk() batches ticks into typed-array chunks every 500 ticks or 2 seconds, whichever first.
-- [ ] **T27.1.5 - Worker writer** - What: Recording costs zero main-thread frames while scalping. How: recorder-worker.js receives chunks via postMessage transferables and performs the IndexedDB puts.
-- [ ] **T27.1.6 - Session metadata** - What: Every recording is self-describing: what, where, when, how much. How: finalizeSession() writes instruments, venue, start/end timestamps, and tick count onto the session record.
-- [ ] **T27.1.7 - Record toggle block** - What: One-click REC from the dashboard with an unmissable live indicator. How: Grid block with data-action="toggleRecording" and a pulsing orange REC dot styled with design-system tokens.
-- [ ] **T27.1.8 - Storage quota guard** - What: Recording never silently eats the whole browser quota. How: checkStorageQuota() via navigator.storage.estimate; auto-stop and warn at 90% usage.
-- [ ] **T27.1.9 - Recorder unit tests** - What: Each recorder function proven correct in isolation. How: One Vitest test per new fn (openRecordingDb, flushChunk, finalizeSession, checkStorageQuota) run via vitest run -t per function.
-- [ ] **T27.1.10 - Recorder merge** - What: Recording ships to the desk. How: ESLint clean plus targeted Vitest green, then merge feature/tick-recorder into main.
+- [x] **T27.1.1 - Recorder feature branch** - What: Isolated line of work so recorder code never lands on main half-done. How: git switch -c feature/tick-recorder from a fresh main pull.
+- [x] **T27.1.2 - Recordings DB schema** - What: A durable home for tick sessions in the browser. How: openRecordingDb() creating IndexedDB stockz-recordings with sessions and chunks object stores keyed by sessionId.
+- [x] **T27.1.3 - Recorder core** - What: One call starts capturing every normalized tick crossing the desk. How: createTickRecorder() subscribing to the pipeline tick stream via Spektrum watch on ticks state.
+- [x] **T27.1.4 - Chunk buffering** - What: Smooth writes that never stutter the UI during bursts. How: flushChunk() batches ticks into typed-array chunks every 500 ticks or 2 seconds, whichever first.
+- [x] **T27.1.5 - Worker writer** - What: Recording costs zero main-thread frames while scalping. How: recorder-worker.js receives chunks via postMessage transferables and performs the IndexedDB puts.
+- [x] **T27.1.6 - Session metadata** - What: Every recording is self-describing: what, where, when, how much. How: finalizeSession() writes instruments, venue, start/end timestamps, and tick count onto the session record.
+- [x] **T27.1.7 - Record toggle block** - What: One-click REC from the dashboard with an unmissable live indicator. How: Grid block with data-action="toggleRecording" and a pulsing orange REC dot styled with design-system tokens.
+- [x] **T27.1.8 - Storage quota guard** - What: Recording never silently eats the whole browser quota. How: checkStorageQuota() via navigator.storage.estimate; auto-stop and warn at 90% usage.
+- [x] **T27.1.9 - Recorder unit tests** - What: Each recorder function proven correct in isolation. How: One Vitest test per new fn (openRecordingDb, flushChunk, finalizeSession, checkStorageQuota) run via vitest run -t per function.
+- [x] **T27.1.10 - Recorder merge** - What: Recording ships to the desk. How: ESLint clean plus targeted Vitest green, then merge feature/tick-recorder into main.
 
 ### F27.2 - Recording Library Manager
 
