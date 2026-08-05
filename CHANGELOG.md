@@ -12,6 +12,21 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ### Added
 
+- **The desk is a Docker container now.** A zero-dependency Node backend (`server/`)
+  serves the desk, relays all venue REST on the same origin (`/okx-eea`, `/okx`,
+  `/etoro` — which is what lets a browser reach OKX EU at all), and locks everything
+  behind a usr/admin login from the server's `.env` (usr = paper only; admin = the full
+  desk — the live-mode switch refuses non-admins and hides for them). No `.env` means
+  locked, never open; `/api/health` stays open for the deploy gate and reveals only the
+  build sha. Ships with the hardened image (non-root, read-only rootfs, cap-drop, V8
+  heap ceiling, provenance labels), the compose file on the NPM network at 172.22.0.41,
+  `scripts/docker/{build,rebuild,start,stop,logs}.sh`, a deploy-only GitHub Action
+  (owner-approved exception to the no-Actions rule), and the canonical health-gated,
+  self-rolling-back host deploy script (`docker/deploy-stockz.sh`). The Vite dev server
+  gains the same three proxies so dev and production behave identically. The short-lived
+  nginx-relay setting is retired (settings migration v3); GitHub Pages is retired as a
+  serving surface.
+
 - **Self-hosted OKX EU relay support.** OKX EU refuses browser REST on every hostname it
   has, so the desk can now reach it through the trader's own server: a new "OKX EU relay"
   field in the key modal (e.g. `/okx-eea`) re-aims all EU-private REST through a

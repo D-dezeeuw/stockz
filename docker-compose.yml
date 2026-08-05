@@ -1,0 +1,53 @@
+name: stockz
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+      args:
+        # The deploy script exports BUILD_SHA=$(git rev-parse HEAD) so the health gate
+        # can verify the new code is the one serving.
+        BUILD_SHA: ${BUILD_SHA:-dev}
+        # And TREE_SHA=$(git rev-parse HEAD^{tree}) — the exact file-content hash,
+        # recorded as an image label independent of the BUILD_SHA env var above.
+        TREE_SHA: ${TREE_SHA:-dev}
+    container_name: stockz
+    # .env lives next to this file on the server, never in git: the usr/admin passwords
+    # and the session secret. Until it exists the desk boots LOCKED, not open.
+    env_file: .env
+    environment:
+      # Must bind 0.0.0.0 inside the container — nginx-proxy-manager reaches it over the
+      # docker network, not via the container's own loopback.
+      STOCKZ_HOST: 0.0.0.0
+      STOCKZ_PORT: 8643
+    volumes:
+      - stockz-data:/srv/data
+    networks:
+      # The existing nginx-proxy-manager network. No host port is published — NPM proxies
+      # a hostname to stockz:8643. Static IP: NPM caches the upstream IP at config load,
+      # so a rebuild-assigned dynamic IP would 502 every proxied request.
+      # (.40 is newstrader; .41 is this desk.)
+      nginx-proxy-manager_default:
+        ipv4_address: 172.22.0.41
+    restart: unless-stopped
+    read_only: true
+    tmpfs:
+      - /tmp:size=32m
+    security_opt:
+      - no-new-privileges:true
+    cap_drop: [ALL]
+    # A static server plus a buffered venue relay: 256m is generous. Keep in lockstep
+    # with the Dockerfile's --max-old-space-size (V8's ceiling, set below this).
+    mem_limit: 256m
+    cpus: "0.5"
+    logging:
+      driver: json-file
+      options: { max-size: "10m", max-file: "3" }
+
+networks:
+  nginx-proxy-manager_default:
+    external: true
+
+volumes:
+  stockz-data:

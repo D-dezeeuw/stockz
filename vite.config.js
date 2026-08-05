@@ -10,6 +10,32 @@ import { defineConfig } from 'vite'
  * - Vitest config lives here too; coverage powers the >80% (incl. branches) merge gate.
  */
 export default defineConfig(({ mode }) => ({
+  // Dev-only venue proxies mirroring server/main.js, so the desk behaves identically
+  // under `npm run dev` and behind the real backend: same-origin prefixes, stripped
+  // before forwarding — the venue receives exactly the path the browser signed.
+  // Order matters: '/okx-eea' must be declared before '/okx' or the longer prefix
+  // would be swallowed by the shorter one.
+  server: {
+    port: 5173,
+    strictPort: true,
+    proxy: {
+      '/okx-eea': {
+        target: 'https://eea.okx.com',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/okx-eea/, ''),
+      },
+      '/okx': {
+        target: 'https://www.okx.com',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/okx/, ''),
+      },
+      '/etoro': {
+        target: 'https://api.etoro.com',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/etoro/, ''),
+      },
+    },
+  },
   base: mode === 'production' ? '/stockz/' : '/',
 
   // `envPrefix` is an ALLOWLIST FOR PUBLICATION, not a guard. Every matching var is
@@ -23,11 +49,6 @@ export default defineConfig(({ mode }) => ({
   // because a dev bundle is never published. Anything genuinely meant for the browser goes
   // under STOCKZ_PUBLIC_, where the name says so out loud.
   envPrefix: mode === 'production' ? 'STOCKZ_PUBLIC_' : 'STOCKZ_',
-
-  server: {
-    port: 5173,
-    strictPort: true,
-  },
 
   resolve: {
     alias: {
@@ -49,7 +70,7 @@ export default defineConfig(({ mode }) => ({
     // One test per function, colocated next to the source it covers
     // (.claude/context/testing-policy.md). Targeted runs stay sub-second.
     environment: 'node',
-    include: ['src/**/*.test.js'],
+    include: ['src/**/*.test.js', 'server/**/*.test.js'],
     globals: true,
     watch: false,
     passWithNoTests: true,

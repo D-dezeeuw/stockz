@@ -1,6 +1,6 @@
 import { okxRequest } from './rest.js'
 import { demoTrading } from './sign.js'
-import { eeaAccount, okxEeaRelay } from './region.js'
+import { eeaAccount } from './region.js'
 import { syncOkxClock } from './clock.js'
 import { hasKeys } from '../vault.js'
 import { setValue, watch } from '../../app/engine.js'
@@ -91,21 +91,6 @@ export async function checkOkxKeys(options = {}) {
   // and paper mode is meant to work without them.
   if (!hasKeys('okx')) return { ...NO_KEYS }
 
-  // The EU platform cannot be asked from a browser at all: no CORS headers, 405 on the
-  // OPTIONS preflight, on both of its hostnames (probed, not assumed). With a relay
-  // configured the check flows through the trader's own server below; without one, saying
-  // so beats both alternatives — firing the request produces console CORS errors and a
-  // false "OKX unreachable", and staying silent leaves the trader believing the keys were
-  // checked. Callers that inject a transport (tests) still get the REST path below.
-  if (eeaAccount() && !okxEeaRelay() && !('fetch' in options)) {
-    return {
-      ok: false,
-      code: '',
-      reason: 'OKX EU (my.okx.com) does not answer browsers over REST',
-      fix: 'Fill in “OKX EU relay” below — the path on your own server that forwards to eea.okx.com (e.g. /okx-eea) — and the desk will reach the EU platform through it. If this key is from global okx.com, untick “OKX EU account” instead.',
-    }
-  }
-
   const result = await okxRequest({ path: OKX_CONFIG_PATH, ...options })
   return keyVerdict(result, demoTrading(), eeaAccount())
 }
@@ -177,7 +162,7 @@ export function watchKeyAim(deps = {}) {
   const recheck = deps.recheck ?? (() => syncOkxClock().then(() => runKeyPreflight()).catch(() => {}))
 
   return watchImpl(
-    [PATHS.settings.okxEea, PATHS.settings.okxEeaRelay, PATHS.settings.okxDemo, PATHS.ui.keysPresent],
+    [PATHS.settings.okxEea, PATHS.settings.okxDemo, PATHS.ui.keysPresent],
     () => recheck(),
   )
 }

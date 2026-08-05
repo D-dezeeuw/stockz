@@ -1,7 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 import {
   RATE_LIMITS,
-  OKX_REST_BASE,
   withinRateLimit,
   recordCall,
   resetRateLimits,
@@ -107,30 +106,6 @@ describe('okxRequest', () => {
 
     setKeys('okx', OKX)
 
-    // On the EU platform (the default) with no injected transport, the request is refused
-    // locally with the true reason: both EU hostnames send no CORS headers, so a browser
-    // call dies before OKX reads it — firing it anyway would cost a console CORS error and
-    // report "unreachable" about a venue that is fine.
-    const refused = await okxRequest({ path: '/api/v5/account/config' })
-    expect(refused.ok).toBe(false)
-    expect(refused.error).toMatch(/does not accept browser API calls/)
-
-    // With a relay configured the request flows through the trader's own server, and the
-    // *signed* path stays the bare venue path — OKX signs the path, not the host, and the
-    // relay strips its own prefix before forwarding.
-    setValue(PATHS.settings.okxEeaRelay, '/okx-eea')
-    tick()
-    const relayed = []
-    await okxRequest({
-      path: '/api/v5/account/config',
-      ts: 1000,
-      fetch: fakeFetch({ code: '0', data: [] }, relayed),
-      subtle: webcrypto.subtle,
-    })
-    expect(relayed[0].url).toBe('/okx-eea/api/v5/account/config')
-    setValue(PATHS.settings.okxEeaRelay, '')
-    tick()
-
     const calls = []
     const ok = await okxRequest({
       path: '/api/v5/account/balance',
@@ -140,8 +115,9 @@ describe('okxRequest', () => {
     })
 
     expect(ok).toEqual({ ok: true, code: '0', data: [{ bal: '1' }] })
-    // EU-first: the default aim is the platform this desk's keys actually live on.
-    expect(calls[0].url).toBe('https://eea.okx.com/api/v5/account/balance')
+    // EU-first, through the desk's own backend: same-origin prefix, venue host never
+    // touched by the browser.
+    expect(calls[0].url).toBe('/okx-eea/api/v5/account/balance')
     expect(calls[0].init.headers['OK-ACCESS-KEY']).toBe('ak')
 
     // Unticking the EU checkbox re-aims the very next call at the global platform,
@@ -154,7 +130,7 @@ describe('okxRequest', () => {
       fetch: fakeFetch({ code: '0', data: [] }, calls),
       subtle: webcrypto.subtle,
     })
-    expect(calls[1].url).toBe(`${OKX_REST_BASE}/api/v5/account/balance`)
+    expect(calls[1].url).toBe('/okx/api/v5/account/balance')
     setValue(PATHS.settings.okxEea, true)
     tick()
 

@@ -14,7 +14,10 @@ import { createLogger } from '../../utils/log.js'
 
 const log = createLogger('etoro')
 
-export const ETORO_BASE = 'https://api.etoro.com'
+// The backend's same-origin prefix; server/main.js forwards it to https://api.etoro.com.
+// Same reason as OKX: venue REST from the browser is at the mercy of the venue's CORS
+// policy, and the desk's own origin is the one host that always answers it.
+export const ETORO_BASE = '/etoro'
 
 /** Poll intervals, in ms, by how much the trader is looking at something. */
 export const POLL_MS = Object.freeze({

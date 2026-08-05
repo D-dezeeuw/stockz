@@ -61,6 +61,7 @@ import { registerCompareActions, startCompareChart, refreshRuns } from '../backt
 import { setLevelSink } from '../strategy/builtin/range-fade.js'
 import { syncOkxClock } from '../venues/okx/clock.js'
 import { runKeyPreflight, watchKeyAim } from '../venues/okx/preflight.js'
+import { adoptRole } from './session.js'
 import { registerModeActions, applyModeParam, applyFirstRunMode } from '../exec/mode.js'
 import { startPaperBook } from '../exec/paper/engine.js'
 import { startPaperAccount } from '../exec/paper/account.js'
@@ -230,6 +231,9 @@ export function bootstrap(options = {}) {
   // thirty seconds off its own clock and refuses it as a 401 that reads exactly like a bad
   // key, so a drifted machine would otherwise spend the session being told its valid
   // credentials were rejected.
+  // Who is signed in gates the money controls; fetched alongside the clock, not before
+  // it — neither blocks the other and boot stays flat.
+  if (options.feeds !== false) adoptRole()
   if (options.feeds !== false) {
     // Chained, not fired alongside: the preflight is a *signed* call, so running it before
     // the drift measurement lands would sign it with the clock the sync exists to correct —

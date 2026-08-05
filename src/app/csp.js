@@ -117,10 +117,11 @@ export function cspMeta(options = {}) {
     "default-src 'self'",
     "script-src 'self' https://unpkg.com",
     "style-src 'self' 'unsafe-inline'",
-    // Every OKX universe the desk can be pointed at: global and EU platforms, live and
-    // demo sockets for each. A CSP that only knew the global live pair would turn the
-    // region/demo checkboxes into settings that silently connect to nothing.
-    "connect-src 'self' https://unpkg.com https://www.okx.com https://eea.okx.com" +
+    // REST is same-origin now (the Node backend relays to the venues), so 'self' covers
+    // it. The sockets stay direct — websockets are CORS-exempt — and every OKX universe
+    // the desk can aim at is listed, or the region/demo switches would silently connect
+    // to nothing.
+    "connect-src 'self' https://unpkg.com" +
       ' wss://ws.okx.com wss://wspap.okx.com wss://wseea.okx.com wss://wseeapap.okx.com',
     "img-src 'self' data:",
     "object-src 'none'",

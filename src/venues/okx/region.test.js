@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest'
-import { eeaAccount, okxRestBase, okxPublicBase, okxEeaRelay, OKX_REST_HOSTS } from './region.js'
+import { eeaAccount, okxRestBase, okxPublicBase, OKX_REST_HOSTS, OKX_PROXY_PREFIXES } from './region.js'
 import { setValue, tick, resetState } from '../../app/engine.js'
 import { PATHS } from '../../state/paths.js'
 
@@ -25,59 +25,36 @@ describe('eeaAccount', () => {
 })
 
 describe('okxRestBase', () => {
-  it('aims requests at the platform the keys were created on, EU first', () => {
-    expect(okxRestBase()).toBe(OKX_REST_HOSTS.eea)
-    expect(okxRestBase({ settings: { okxEea: false } })).toBe(OKX_REST_HOSTS.global)
+  it('aims requests at the backend prefix for the platform the keys live on, EU first', () => {
+    expect(okxRestBase()).toBe(OKX_PROXY_PREFIXES.eea)
+    expect(okxRestBase({ settings: { okxEea: false } })).toBe(OKX_PROXY_PREFIXES.global)
+    // Same-origin prefixes, not venue hosts: the browser only ever talks to its own
+    // backend, which is what lets it reach OKX EU (no CORS headers there) at all.
+    expect(OKX_PROXY_PREFIXES.eea).toBe('/okx-eea')
+    expect(OKX_PROXY_PREFIXES.global).toBe('/okx')
+    // The true hosts stay documented for the backend's side of the relay.
     expect(OKX_REST_HOSTS.eea).toBe('https://eea.okx.com')
 
     // Read from live state at call time: flipping the checkbox redirects the next request.
     setValue(PATHS.settings.okxEea, false)
     tick()
-    expect(okxRestBase()).toBe('https://www.okx.com')
+    expect(okxRestBase()).toBe('/okx')
 
-    // The write must be visible while still *queued*, before any tick lands it. Boot is
-    // exactly this moment: restoreSettings queues the persisted value and the clock sync
-    // fires in the same synchronous pass — reading only landed state there would probe the
-    // wrong platform's clock on every single boot.
+    // The write must be visible while still *queued*, before any tick lands it — boot is
+    // exactly this moment (restoreSettings queues, the clock sync fires pre-tick).
     setValue(PATHS.settings.okxEea, true)
-    expect(okxRestBase()).toBe('https://eea.okx.com')
+    expect(okxRestBase()).toBe('/okx-eea')
     tick()
   })
 })
 
 describe('okxPublicBase', () => {
-  it('always answers with the global platform, because it is the only one browsers may ask', () => {
-    // Probed, not assumed: www reflects any Origin; eea.okx.com and my.okx.com send no
-    // CORS headers and 405 the OPTIONS preflight. Public data is the shared global book,
-    // so asking the venue that answers costs nothing.
-    expect(okxPublicBase()).toBe(OKX_REST_HOSTS.global)
+  it('always answers with the global proxy — public data is the shared global book', () => {
+    expect(okxPublicBase()).toBe(OKX_PROXY_PREFIXES.global)
 
     setValue(PATHS.settings.okxEea, true)
     tick()
-    expect(okxPublicBase()).toBe('https://www.okx.com')
+    expect(okxPublicBase()).toBe('/okx')
   })
 })
 
-describe('okxEeaRelay', () => {
-  it('accepts only a deliberate same-origin path or absolute URL, never garbage', () => {
-    expect(okxEeaRelay({ settings: { okxEeaRelay: '/okx-eea' } })).toBe('/okx-eea')
-    expect(okxEeaRelay({ settings: { okxEeaRelay: '/okx-eea/' } })).toBe('/okx-eea')
-    expect(okxEeaRelay({ settings: { okxEeaRelay: ' https://okx.example.nl ' } })).toBe('https://okx.example.nl')
-
-    // A signed request must never be aimed somewhere that was not deliberately written
-    // down: protocol-relative, bare words and empties all read as unset.
-    expect(okxEeaRelay({ settings: { okxEeaRelay: '//evil.example' } })).toBe('')
-    expect(okxEeaRelay({ settings: { okxEeaRelay: 'okx-eea' } })).toBe('')
-    expect(okxEeaRelay({ settings: {} })).toBe('')
-    expect(okxEeaRelay()).toBe('')
-
-    // The live read sees a queued write before the tick lands it, same as eeaAccount.
-    setValue(PATHS.settings.okxEeaRelay, '/okx-eea')
-    expect(okxEeaRelay()).toBe('/okx-eea')
-    tick()
-    expect(okxRestBase()).toBe('/okx-eea')
-    setValue(PATHS.settings.okxEeaRelay, '')
-    tick()
-    expect(okxRestBase()).toBe(OKX_REST_HOSTS.eea)
-  })
-})

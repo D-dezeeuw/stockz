@@ -15,6 +15,7 @@ import {
   forgetCachedKeys,
 } from '../venues/vault.js'
 import { pushToast } from './toast.js'
+import { isAdmin } from '../app/session.js'
 
 /**
  * The key modal and the lock.
@@ -303,6 +304,14 @@ export function toggleLiveTrading(_state, payload = {}) {
     typeof payload?.value === 'boolean'
       ? payload.value
       : String(appState?.trade?.mode ?? 'paper') !== 'live'
+
+  // The usr account is the paper account. The server refuses its venue calls anyway;
+  // refusing here too keeps the desk from arming a mode whose every order would 401.
+  if (wantsLive && !isAdmin()) {
+    pushToast('live trading is admin-only — sign in as admin', 'warn')
+    setValue(PATHS.trade.mode, 'paper')
+    return 'paper'
+  }
 
   // Going live with no credentials would fill the screen with rejections and read as the
   // desk being broken. Refused, and said out loud.

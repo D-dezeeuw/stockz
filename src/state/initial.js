@@ -54,6 +54,9 @@ export function initialState(overrides = {}) {
     [PATHS.ui.keysPresent]: { okx: false, etoro: false },
     // what the venue said about those keys - prose only, and never the key itself
     [PATHS.ui.keyCheck]: { ok: false, code: '', reason: '', fix: '' },
+    // 'admin' until the backend says otherwise: dev has no backend, and production's
+    // adoptRole overwrites this within the first frames of boot.
+    [PATHS.ui.role]: 'admin',
     [PATHS.ui.candleInterval]: '1s',
     [PATHS.ui.chordSheet]: [],
     [PATHS.ui.paletteQuery]: '',

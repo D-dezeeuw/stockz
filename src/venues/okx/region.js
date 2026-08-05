@@ -21,10 +21,22 @@ import { PATHS } from '../../state/paths.js'
  * has to match both.
  */
 
-/** REST bases per platform. The EEA one is from OKX's own EEA docs, not guessed. */
+/** The true venue hosts, as documentation and for the backend. Browsers never call these. */
 export const OKX_REST_HOSTS = Object.freeze({
   global: 'https://www.okx.com',
   eea: 'https://eea.okx.com',
+})
+
+/**
+ * The desk's own backend prefixes. Every REST call is same-origin now: the Node backend
+ * (server/main.js) strips the prefix and forwards to the venue, which is what lets a
+ * browser reach OKX EU at all (it sends no CORS headers on any hostname it has) and what
+ * keeps signing intact — OKX signs the path, and the venue receives exactly the string
+ * the browser hashed.
+ */
+export const OKX_PROXY_PREFIXES = Object.freeze({
+  global: '/okx',
+  eea: '/okx-eea',
 })
 
 /**
@@ -64,60 +76,19 @@ export function okxRestBase(state) {
   // No `= appState` default here: filling the parameter in would hand `eeaAccount` a
   // concrete state and silently switch it onto the landed-only branch — exactly the boot
   // race the pending read exists to close.
-  if (!eeaAccount(state)) return OKX_REST_HOSTS.global
-
-  // The EU platform refuses browser REST outright, so an EU desk reaches it through its
-  // own server: a relay that forwards to eea.okx.com. Signing survives the indirection
-  // because OKX signs the *path*, not the host — the relay strips its own prefix and the
-  // venue receives exactly the string that was signed.
-  return okxEeaRelay(state) || OKX_REST_HOSTS.eea
+  return eeaAccount(state) ? OKX_PROXY_PREFIXES.eea : OKX_PROXY_PREFIXES.global
 }
 
-/**
- * The trader's own relay to the EU platform, when one is configured.
- *
- * A root-relative path (`/okx-eea`, the same-origin nginx location) or an absolute
- * https URL. Same-origin is the better shape — the browser is talking to the host that
- * served the page, so CORS never enters the picture at all.
- *
- * Anything else — a protocol-relative `//host`, a bare word, garbage from a corrupted
- * settings import — reads as *unset* rather than becoming a request target: a signed
- * request must never be aimed somewhere that was not deliberately written down.
- *
- * @param {object} [state] - engine state; pass one explicitly to bypass the pending read.
- * @returns {string} the normalised relay base, or '' when none is configured.
- */
-export function okxEeaRelay(state) {
-  const raw =
-    state !== undefined
-      ? state?.settings?.okxEeaRelay
-      : (() => {
-          const pending = pendingAt(PATHS.settings.okxEeaRelay)
-          return pending.found ? pending.value : ''
-        })()
-
-  const value = String(raw ?? '').trim().replace(/\/+$/, '')
-  if (/^https?:\/\//i.test(value)) return value
-  if (/^\/(?!\/)/.test(value)) return value
-
-  return ''
-}
 
 /**
- * The base for *public, unauthenticated* market endpoints — always the global platform.
+ * The base for *public, unauthenticated* market endpoints — always the global proxy.
  *
- * Probed, not assumed: `www.okx.com` reflects any Origin in `access-control-allow-origin`,
- * while `eea.okx.com` and `my.okx.com` send **no CORS headers at all** and answer 405 to
- * the OPTIONS preflight — the EU platform does not serve browser REST clients on either
- * hostname. Public data is the one place that costs nothing: the order book is the shared
- * global matching engine and `/public/time` is NTP either way, so the venue that lets a
- * browser ask is the right venue to ask.
+ * Public data is the shared global matching engine and `/public/time` is NTP on both
+ * platforms, so region never matters here. Private endpoints must not use this — a signed
+ * request belongs to the platform the key lives on, and `okxRestBase` keeps saying so.
  *
- * Private endpoints must not use this — a signed request belongs to the platform the key
- * lives on, reachable or not, and `okxRestBase` keeps saying so.
- *
- * @returns {string} the global REST base.
+ * @returns {string} the global proxy prefix.
  */
 export function okxPublicBase() {
-  return OKX_REST_HOSTS.global
+  return OKX_PROXY_PREFIXES.global
 }

@@ -24,8 +24,13 @@ optimized for trades-per-hour.
 2. **Exactly one Vitest unit test per function.** When testing, run only that function's
    test — never the whole suite as routine. The merge gate additionally requires
    **> 80% coverage including branches** on the feature's files. See `testing-policy.md`.
-3. **No GitHub Actions.** Ever. GitHub Pages serves the `main` branch root — pushing is
-   deploying. The app ships as raw ES modules: no build step in the deploy path.
+3. **The desk ships as a Docker container on the Hetzner host** (owner decision,
+   2026-08-05, superseding the GitHub Pages era): a zero-dependency Node backend
+   (`server/`) serves the desk, relays venue REST same-origin (OKX EU sends no CORS
+   headers — no browser may call it directly), and gates everything behind the usr/admin
+   login from the server's `.env`. Exactly ONE GitHub Action exists — deploy-only
+   (`.github/workflows/deploy.yml`), no CI test gate — and pushing `main` is still
+   deploying. The app itself remains raw ES modules: no build step, ever.
 4. **UI = Spektrum from unpkg CDN** (importmap, pinned major `spektrum@1`). No SPA framework.
 5. **Secrets never land in git.** Env vars `STOCKZ_OKX_*` / `STOCKZ_ETORO_*` are for local
    dev; in the browser keys come from URL params or the key modal.
@@ -52,6 +57,8 @@ the current phase in `.claude/context/masterplan.md`. That trio is the whole han
 ```bash
 npm run dev       # Vite dev server
 npm run build     # production build (GitHub Pages base path)
-npm run deploy    # push main (the site) + verify the live page — no CI, no build step
+node server/main.js   # the real backend locally (auth + venue relay + static desk)
+bash scripts/docker/build.sh     # build the container image (stamps BUILD_SHA/TREE_SHA)
+bash scripts/docker/start.sh     # start it; stop.sh / rebuild.sh / logs.sh likewise
 npx vitest run <file> -t "<functionName>"   # test exactly one function
 ```

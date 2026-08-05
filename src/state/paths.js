@@ -75,6 +75,8 @@ export const PATHS = Object.freeze({
     density: 'ui.density',
     keysPresent: 'ui.keysPresent',
     keyCheck: 'ui.keyCheck',
+    // Which backend account is signed in ('usr' | 'admin') — gates the money controls.
+    role: 'ui.role',
     candleInterval: 'ui.candleInterval',
     chordSheet: 'ui.chordSheet',
     paletteQuery: 'ui.paletteQuery',
@@ -157,7 +159,6 @@ export const PATHS = Object.freeze({
     // nobody tunes twice.
     okxDemo: 'settings.okxDemo',
     okxEea: 'settings.okxEea',
-    okxEeaRelay: 'settings.okxEeaRelay',
     modeChosen: 'settings.modeChosen',
     paperStartBalance: 'settings.paperStartBalance',
     paperLatencyMs: 'settings.paperLatencyMs',

@@ -1,7 +1,7 @@
 import { signRequest } from './sign.js'
 import { mapError, mapOrder, mapPosition } from './map.js'
 import { okxNow } from './clock.js'
-import { okxRestBase, eeaAccount, okxEeaRelay } from './region.js'
+import { okxRestBase } from './region.js'
 import { createLogger } from '../../utils/log.js'
 
 /**
@@ -137,21 +137,6 @@ export async function okxRequest(req) {
   const headers = await signRequest({ ts, method, path, body: payload, subtle })
   if (Object.keys(headers).length === 0) {
     return { ok: false, code: '', error: 'No OKX credentials — add keys to trade' }
-  }
-
-  // The EU platform sends no CORS headers and 405s the OPTIONS preflight (probed on both
-  // eea.okx.com and my.okx.com) — a browser request there dies before OKX reads it. With a
-  // relay configured the request goes through the trader's own server instead; without
-  // one, refuse locally with the true reason rather than spraying console CORS errors and
-  // reporting a healthy venue as "unreachable". The guard keys on falling back to the
-  // *real* browser fetch — an injected fetch (tests) is somebody who knows what they are
-  // doing.
-  if (fetchImpl === globalThis.fetch && eeaAccount() && !okxEeaRelay()) {
-    return {
-      ok: false,
-      code: '',
-      error: 'OKX EU (my.okx.com) does not accept browser API calls — set the EU relay in the key modal, or use the private websocket',
-    }
   }
 
   recordCall(path, ts)

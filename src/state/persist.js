@@ -19,7 +19,7 @@ import { transientSettings } from './settings-schema.js'
 const log = createLogger('persist')
 
 /** Bumped whenever the persisted shape changes; drives migration. */
-export const SETTINGS_VERSION = 2
+export const SETTINGS_VERSION = 3
 
 /** localStorage key. */
 export const STORAGE_KEY = 'stockz.settings.v1'
@@ -98,6 +98,12 @@ export function migrateSettings(payload) {
   // sets from here on; only the auto-stamped v1 value is discarded.
   if ((payload.version ?? 0) < 2) {
     delete settings.okxEea
+  }
+
+  // v2 → v3: the short-lived nginx-relay URL. The Docker backend made every desk
+  // same-origin with its venues, so the setting has nothing left to configure.
+  if ((payload.version ?? 0) < 3) {
+    delete settings.okxEeaRelay
   }
 
   return settings

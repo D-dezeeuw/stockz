@@ -113,7 +113,7 @@
         <button type="button" class="mode__seg mode__seg--paper" data-action="click"
                 data-fn="trade.setMode" data-mode="paper"
                 :class="{'is-on': trade.mode === 'paper'}">PAPER</button>
-        <button type="button" class="mode__seg mode__seg--live"
+        <button type="button" class="mode__seg mode__seg--live" data-if="ui.role === 'admin'"
                 :class="{'is-on': trade.mode === 'live'}"
                 :style="'--held:' + (trade.holdPct * 100) + '%'"
                 data-action="pointerdown" data-fn="trade.holdLive"
@@ -1338,18 +1338,6 @@
           <span class="label">My OKX account is on <b>my.okx.com</b> (EU / EEA)</span>
         </label>
 
-        <!-- OKX EU refuses browser REST on every hostname it has (no CORS headers, 405 on
-             the preflight), so an EU desk reaches it through its own server: nginx forwards
-             this path to eea.okx.com. Root-relative (`/okx-eea`) is the intended shape —
-             same origin as the page, so CORS never applies and the site's basic auth covers
-             the relay too. See scripts/hetzner/stockz.nginx.conf. -->
-        <label class="field keys__relay" data-if="settings.okxEea">
-          <span class="label">EU relay — your server path that forwards to eea.okx.com</span>
-          <input class="field__input" type="text" placeholder="/okx-eea"
-                 autocomplete="off" spellcheck="false"
-                 data-action="change" data-fn="settings.update"
-                 data-field="okxEeaRelay" :value="settings.okxEeaRelay">
-        </label>
 
         <!-- What the venue itself said about those keys. Every private OKX call
              authenticates by header, so a key OKX does not recognise comes back as a bare

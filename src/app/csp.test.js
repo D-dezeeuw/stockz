@@ -83,12 +83,13 @@ describe('cspMeta', () => {
     expect(enforced.content).toContain("object-src 'none'")
     expect(enforced.content).toContain('https://unpkg.com')
 
-    // All four OKX universes: global and EU platforms, live and demo sockets for each.
-    // A policy that only knew the global live pair would turn the region and demo
-    // checkboxes into settings that silently connect to nothing.
+    // REST is same-origin (the backend relays), so no venue https host may appear —
+    // its presence would mean the browser is calling a venue directly again. The four
+    // socket universes stay: websockets are CORS-exempt and connect direct.
+    expect(enforced.content).not.toContain('https://www.okx.com')
+    expect(enforced.content).not.toContain('https://eea.okx.com')
     expect(enforced.content).toContain('wss://ws.okx.com')
     expect(enforced.content).toContain('wss://wspap.okx.com')
-    expect(enforced.content).toContain('https://eea.okx.com')
     expect(enforced.content).toContain('wss://wseea.okx.com')
     expect(enforced.content).toContain('wss://wseeapap.okx.com')
 
