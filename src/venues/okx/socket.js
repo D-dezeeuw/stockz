@@ -1,7 +1,6 @@
 import { retryDelay } from '../../state/async.js'
 import { createLogger } from '../../utils/log.js'
 import { appState } from '../../app/engine.js'
-import { eeaAccount } from './region.js'
 
 /**
  * OKX WebSocket client.
@@ -157,11 +156,12 @@ export function isStale(lastMessageAt, now, limitMs = 10000) {
  */
 export function createOkxSocket(options = {}) {
   const {
-    // Resolved rather than hard-defaulted, so flipping demo trading or the EU region moves
-    // the socket with the REST side. Authenticating REST against one platform while the
-    // socket points at another is a worse failure than supporting neither, because half of
-    // it works.
-    url = okxSocketUrl('public', appState?.settings?.okxDemo === true, eeaAccount()),
+    // The default (public market data) feed stays on the global socket regardless of the
+    // region setting: the book is the shared global matching engine, websockets are exempt
+    // from CORS, and the global host is the one proven to accept browser connections. The
+    // region axis of `okxSocketUrl` exists for *private* sockets, whose caller resolves it
+    // explicitly — account data lives where the key lives.
+    url = okxSocketUrl('public', appState?.settings?.okxDemo === true, false),
     factory = (target) => new globalThis.WebSocket(target),
     onFrame = () => {},
     onState = () => {},

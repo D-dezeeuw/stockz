@@ -106,6 +106,15 @@ describe('okxRequest', () => {
     })
 
     setKeys('okx', OKX)
+
+    // On the EU platform (the default) with no injected transport, the request is refused
+    // locally with the true reason: both EU hostnames send no CORS headers, so a browser
+    // call dies before OKX reads it — firing it anyway would cost a console CORS error and
+    // report "unreachable" about a venue that is fine.
+    const refused = await okxRequest({ path: '/api/v5/account/config' })
+    expect(refused.ok).toBe(false)
+    expect(refused.error).toMatch(/does not accept browser API calls/)
+
     const calls = []
     const ok = await okxRequest({
       path: '/api/v5/account/balance',

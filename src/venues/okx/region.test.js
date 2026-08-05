@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest'
-import { eeaAccount, okxRestBase, OKX_REST_HOSTS } from './region.js'
+import { eeaAccount, okxRestBase, okxPublicBase, OKX_REST_HOSTS } from './region.js'
 import { setValue, tick, resetState } from '../../app/engine.js'
 import { PATHS } from '../../state/paths.js'
 
@@ -42,5 +42,18 @@ describe('okxRestBase', () => {
     setValue(PATHS.settings.okxEea, true)
     expect(okxRestBase()).toBe('https://eea.okx.com')
     tick()
+  })
+})
+
+describe('okxPublicBase', () => {
+  it('always answers with the global platform, because it is the only one browsers may ask', () => {
+    // Probed, not assumed: www reflects any Origin; eea.okx.com and my.okx.com send no
+    // CORS headers and 405 the OPTIONS preflight. Public data is the shared global book,
+    // so asking the venue that answers costs nothing.
+    expect(okxPublicBase()).toBe(OKX_REST_HOSTS.global)
+
+    setValue(PATHS.settings.okxEea, true)
+    tick()
+    expect(okxPublicBase()).toBe('https://www.okx.com')
   })
 })

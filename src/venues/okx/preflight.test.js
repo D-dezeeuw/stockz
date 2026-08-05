@@ -93,6 +93,14 @@ describe('checkOkxKeys', () => {
     })
     expect(bad.code).toBe('50119')
     expect(bad.fix).toMatch(/demo trading/)
+
+    // On the EU platform with no injected transport, the truth is told locally: the EU
+    // hosts refuse browser REST, so the keys cannot be checked from the page at all —
+    // which is a different message from "your key is wrong" and from "OKX is down".
+    const eu = await checkOkxKeys()
+    expect(eu.ok).toBe(false)
+    expect(eu.reason).toMatch(/does not answer browsers over REST/)
+    expect(eu.fix).toMatch(/untick “OKX EU account”/)
   })
 })
 

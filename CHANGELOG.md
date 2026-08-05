@@ -12,15 +12,19 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ### Changed
 
-- **The EU platform is now the default.** Every OKX call — REST, clock sync, tickers,
-  websockets — aims at `eea.okx.com`/`wseea` unless "OKX EU account" is explicitly
-  unticked, and only the deliberate boolean `false` leaves it: absent or corrupted
-  settings fail toward the platform the keys actually live on. Two escapes were closed to
-  make the default actually reach existing browsers: the watchlist's ticker poll was still
-  hardcoded to the global host, and every earlier boot had auto-stamped `okxEea: false`
-  into stored settings without anybody choosing it — a v1→v2 settings migration drops that
-  stamp (and only that stamp) so the new default applies, while every deliberate choice
-  made from v2 onward is kept.
+- **The EU platform is the default, and the desk now respects what it will and will not
+  serve.** Probing settled it: `www.okx.com` grants CORS to any origin, while the EU
+  platform sends no CORS headers and 405s the preflight on *both* its hostnames
+  (`eea.okx.com` and `my.okx.com`) — no browser may call OKX EU over REST at all. So
+  public, unauthenticated data (clock sync, watchlist tickers — the shared global order
+  book) always uses `www.okx.com`, private REST resolves to the platform the key lives on,
+  and on the EU platform a private call is refused locally with the true reason instead of
+  spraying CORS errors and reporting a healthy venue as "unreachable". The key preflight
+  says it plainly: keys cannot be verified from the page on OKX EU — account data and
+  orders there need the private websocket, which the desk does not speak yet. A v1→v2
+  settings migration drops the `okxEea: false` every earlier boot auto-stamped into
+  storage, so the EU default actually reaches existing browsers; deliberate choices made
+  from v2 on are kept.
 
 ### Fixed
 

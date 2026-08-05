@@ -193,9 +193,10 @@ describe('createOkxSocket', () => {
     const bare = createOkxSocket({ timer })
     const bareSocket = bare.connect()
 
-    // EU-first: with nothing configured, the bare socket points at the platform this
-    // desk's keys actually live on.
-    expect(built).toEqual([OKX_EEA_PUBLIC_URL])
+    // The bare default is the *global* public socket even on an EU desk: public data is
+    // the shared global book, and global is the host proven to accept browser sockets.
+    // The region axis exists for private sockets, whose caller resolves it explicitly.
+    expect(built).toEqual([OKX_PUBLIC_URL])
     expect(() => {
       bareSocket.onopen()
       bareSocket.onmessage({ data: 'pong' })

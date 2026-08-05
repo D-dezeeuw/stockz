@@ -91,6 +91,21 @@ export async function checkOkxKeys(options = {}) {
   // and paper mode is meant to work without them.
   if (!hasKeys('okx')) return { ...NO_KEYS }
 
+  // The EU platform cannot be asked from a browser at all: no CORS headers, 405 on the
+  // OPTIONS preflight, on both of its hostnames (probed, not assumed). Saying so beats
+  // both alternatives — firing the request produces console CORS errors and a false
+  // "OKX unreachable", and staying silent leaves the trader believing the keys were
+  // checked. Callers that inject a transport (tests, a future websocket check) still get
+  // the REST path below.
+  if (eeaAccount() && !('fetch' in options)) {
+    return {
+      ok: false,
+      code: '',
+      reason: 'OKX EU (my.okx.com) does not answer browsers over REST',
+      fix: 'Keys cannot be verified from the page on the EU platform — market data still streams, but account data and orders need the private websocket, which this desk does not speak yet. If this key is from global okx.com, untick “OKX EU account”.',
+    }
+  }
+
   const result = await okxRequest({ path: OKX_CONFIG_PATH, ...options })
   return keyVerdict(result, demoTrading(), eeaAccount())
 }

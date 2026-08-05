@@ -1,4 +1,4 @@
-import { okxRestBase } from './region.js'
+import { okxPublicBase } from './region.js'
 import { createLogger } from '../../utils/log.js'
 
 /**
@@ -96,10 +96,10 @@ export async function fetchTickers(options = {}) {
   const { fetch: fetchImpl = globalThis.fetch } = options
 
   try {
-    // Through the region resolver like every other OKX call — this was the one fetch left
-    // on the hardcoded global host, so the watchlist polled a different OKX than the desk
-    // was trading on.
-    const response = await fetchImpl(`${okxRestBase()}${TICKERS_PATH}`)
+    // The global platform on purpose, whatever the region setting: this is public data
+    // from the shared global order book, and the EU hosts send no CORS headers — a browser
+    // asking them gets nothing at all. The venue that answers browsers quotes the desk.
+    const response = await fetchImpl(`${okxPublicBase()}${TICKERS_PATH}`)
     const parsed = await response.json()
 
     if (String(parsed?.code ?? '') !== '0') {

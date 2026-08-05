@@ -66,3 +66,22 @@ export function okxRestBase(state) {
   // race the pending read exists to close.
   return eeaAccount(state) ? OKX_REST_HOSTS.eea : OKX_REST_HOSTS.global
 }
+
+/**
+ * The base for *public, unauthenticated* market endpoints — always the global platform.
+ *
+ * Probed, not assumed: `www.okx.com` reflects any Origin in `access-control-allow-origin`,
+ * while `eea.okx.com` and `my.okx.com` send **no CORS headers at all** and answer 405 to
+ * the OPTIONS preflight — the EU platform does not serve browser REST clients on either
+ * hostname. Public data is the one place that costs nothing: the order book is the shared
+ * global matching engine and `/public/time` is NTP either way, so the venue that lets a
+ * browser ask is the right venue to ask.
+ *
+ * Private endpoints must not use this — a signed request belongs to the platform the key
+ * lives on, reachable or not, and `okxRestBase` keeps saying so.
+ *
+ * @returns {string} the global REST base.
+ */
+export function okxPublicBase() {
+  return OKX_REST_HOSTS.global
+}
