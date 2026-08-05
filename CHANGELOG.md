@@ -10,6 +10,20 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ## [Unreleased]
 
+### Added
+
+- **Self-hosted OKX EU relay support.** OKX EU refuses browser REST on every hostname it
+  has, so the desk can now reach it through the trader's own server: a new "OKX EU relay"
+  field in the key modal (e.g. `/okx-eea`) re-aims all EU-private REST through a
+  same-origin nginx forward to `eea.okx.com` — same origin means CORS never applies, and
+  the site's basic auth covers the relay with zero app code. The signed path survives the
+  relay untouched because OKX signs the path, not the host. Ships with the complete
+  hardened nginx config (`scripts/hetzner/stockz.nginx.conf`): basic auth over the whole
+  desk, no CORS headers so no other site can use the relay even with the password, a rate
+  limit against proxy abuse, and pull-based push-is-deploy with no GitHub Actions.
+  Changing the relay (like the region and demo switches) re-runs the key preflight on the
+  spot.
+
 ### Changed
 
 - **The EU platform is the default, and the desk now respects what it will and will not

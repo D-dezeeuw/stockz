@@ -157,6 +157,7 @@ export const PATHS = Object.freeze({
     // nobody tunes twice.
     okxDemo: 'settings.okxDemo',
     okxEea: 'settings.okxEea',
+    okxEeaRelay: 'settings.okxEeaRelay',
     modeChosen: 'settings.modeChosen',
     paperStartBalance: 'settings.paperStartBalance',
     paperLatencyMs: 'settings.paperLatencyMs',

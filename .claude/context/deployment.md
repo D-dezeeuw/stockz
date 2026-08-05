@@ -75,3 +75,30 @@ minute. Verify with `npm run verify:pages`.
 - `https://<user>.github.io/stockz/` — key modal flow.
 - `https://<user>.github.io/stockz/?okxKey=...&okxSecret=...&okxPass=...` — instant
   session (URL is scrubbed on load; still prefer the modal on shared machines).
+
+## Hetzner (primary host once the EU relay matters)
+
+OKX's EU platform (`my.okx.com` / `eea.okx.com`) refuses browser REST outright — no CORS
+headers, 405 on the preflight, on every hostname it has. GitHub Pages can serve the desk
+but can never reach OKX EU's private API from the browser. The Hetzner box solves it by
+serving the desk **and** relaying `/okx-eea/…` to `eea.okx.com` on the same origin, so
+CORS never applies. Full config with the setup steps inline:
+`scripts/hetzner/stockz.nginx.conf`.
+
+Rules that carry over unchanged:
+
+- **Push is still deploy, and still no GitHub Actions.** The server pulls `main` once a
+  minute (`/etc/cron.d/stockz`, see the config header). Same repo, same raw ES modules,
+  no build step.
+- **The desk is private.** Basic auth covers the app *and* the relay (the browser attaches
+  it to same-origin fetches on its own); the relay sends no CORS headers, so no other
+  site's pages can use it even with the password; a rate limit keeps a leaked password
+  from turning the box into a proxy farm. The relay holds no secrets — requests arrive
+  pre-signed and the secret never leaves the browser.
+- **In the desk**, key modal → "OKX EU account" ticked → EU relay `/okx-eea`. The signed
+  path survives the relay because OKX signs the path, not the host, and nginx strips the
+  prefix before forwarding.
+
+GitHub Pages keeps serving `main` as before; it simply cannot reach EU-private data. The
+public repo means the app code is public either way — the private things are the relay,
+the password, and the keys, none of which are in git.

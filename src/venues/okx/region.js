@@ -64,7 +64,43 @@ export function okxRestBase(state) {
   // No `= appState` default here: filling the parameter in would hand `eeaAccount` a
   // concrete state and silently switch it onto the landed-only branch — exactly the boot
   // race the pending read exists to close.
-  return eeaAccount(state) ? OKX_REST_HOSTS.eea : OKX_REST_HOSTS.global
+  if (!eeaAccount(state)) return OKX_REST_HOSTS.global
+
+  // The EU platform refuses browser REST outright, so an EU desk reaches it through its
+  // own server: a relay that forwards to eea.okx.com. Signing survives the indirection
+  // because OKX signs the *path*, not the host — the relay strips its own prefix and the
+  // venue receives exactly the string that was signed.
+  return okxEeaRelay(state) || OKX_REST_HOSTS.eea
+}
+
+/**
+ * The trader's own relay to the EU platform, when one is configured.
+ *
+ * A root-relative path (`/okx-eea`, the same-origin nginx location) or an absolute
+ * https URL. Same-origin is the better shape — the browser is talking to the host that
+ * served the page, so CORS never enters the picture at all.
+ *
+ * Anything else — a protocol-relative `//host`, a bare word, garbage from a corrupted
+ * settings import — reads as *unset* rather than becoming a request target: a signed
+ * request must never be aimed somewhere that was not deliberately written down.
+ *
+ * @param {object} [state] - engine state; pass one explicitly to bypass the pending read.
+ * @returns {string} the normalised relay base, or '' when none is configured.
+ */
+export function okxEeaRelay(state) {
+  const raw =
+    state !== undefined
+      ? state?.settings?.okxEeaRelay
+      : (() => {
+          const pending = pendingAt(PATHS.settings.okxEeaRelay)
+          return pending.found ? pending.value : ''
+        })()
+
+  const value = String(raw ?? '').trim().replace(/\/+$/, '')
+  if (/^https?:\/\//i.test(value)) return value
+  if (/^\/(?!\/)/.test(value)) return value
+
+  return ''
 }
 
 /**

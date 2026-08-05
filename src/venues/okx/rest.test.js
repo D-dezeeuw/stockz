@@ -115,6 +115,22 @@ describe('okxRequest', () => {
     expect(refused.ok).toBe(false)
     expect(refused.error).toMatch(/does not accept browser API calls/)
 
+    // With a relay configured the request flows through the trader's own server, and the
+    // *signed* path stays the bare venue path — OKX signs the path, not the host, and the
+    // relay strips its own prefix before forwarding.
+    setValue(PATHS.settings.okxEeaRelay, '/okx-eea')
+    tick()
+    const relayed = []
+    await okxRequest({
+      path: '/api/v5/account/config',
+      ts: 1000,
+      fetch: fakeFetch({ code: '0', data: [] }, relayed),
+      subtle: webcrypto.subtle,
+    })
+    expect(relayed[0].url).toBe('/okx-eea/api/v5/account/config')
+    setValue(PATHS.settings.okxEeaRelay, '')
+    tick()
+
     const calls = []
     const ok = await okxRequest({
       path: '/api/v5/account/balance',

@@ -1,7 +1,7 @@
 import { signRequest } from './sign.js'
 import { mapError, mapOrder, mapPosition } from './map.js'
 import { okxNow } from './clock.js'
-import { okxRestBase, eeaAccount } from './region.js'
+import { okxRestBase, eeaAccount, okxEeaRelay } from './region.js'
 import { createLogger } from '../../utils/log.js'
 
 /**
@@ -140,16 +140,17 @@ export async function okxRequest(req) {
   }
 
   // The EU platform sends no CORS headers and 405s the OPTIONS preflight (probed on both
-  // eea.okx.com and my.okx.com) — a browser request there dies before OKX reads it. Firing
-  // it anyway costs a console CORS error every poll and reports "OKX unreachable", which
-  // is false: the venue is fine, it just does not serve browser REST. Refuse locally with
-  // the true reason instead. The guard keys on falling back to the *real* browser fetch —
-  // an injected fetch (tests, a future relay) is somebody who knows what they are doing.
-  if (fetchImpl === globalThis.fetch && eeaAccount()) {
+  // eea.okx.com and my.okx.com) — a browser request there dies before OKX reads it. With a
+  // relay configured the request goes through the trader's own server instead; without
+  // one, refuse locally with the true reason rather than spraying console CORS errors and
+  // reporting a healthy venue as "unreachable". The guard keys on falling back to the
+  // *real* browser fetch — an injected fetch (tests) is somebody who knows what they are
+  // doing.
+  if (fetchImpl === globalThis.fetch && eeaAccount() && !okxEeaRelay()) {
     return {
       ok: false,
       code: '',
-      error: 'OKX EU (my.okx.com) does not accept browser API calls — account data and orders need the private websocket',
+      error: 'OKX EU (my.okx.com) does not accept browser API calls — set the EU relay in the key modal, or use the private websocket',
     }
   }
 

@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest'
-import { eeaAccount, okxRestBase, okxPublicBase, OKX_REST_HOSTS } from './region.js'
+import { eeaAccount, okxRestBase, okxPublicBase, okxEeaRelay, OKX_REST_HOSTS } from './region.js'
 import { setValue, tick, resetState } from '../../app/engine.js'
 import { PATHS } from '../../state/paths.js'
 
@@ -55,5 +55,29 @@ describe('okxPublicBase', () => {
     setValue(PATHS.settings.okxEea, true)
     tick()
     expect(okxPublicBase()).toBe('https://www.okx.com')
+  })
+})
+
+describe('okxEeaRelay', () => {
+  it('accepts only a deliberate same-origin path or absolute URL, never garbage', () => {
+    expect(okxEeaRelay({ settings: { okxEeaRelay: '/okx-eea' } })).toBe('/okx-eea')
+    expect(okxEeaRelay({ settings: { okxEeaRelay: '/okx-eea/' } })).toBe('/okx-eea')
+    expect(okxEeaRelay({ settings: { okxEeaRelay: ' https://okx.example.nl ' } })).toBe('https://okx.example.nl')
+
+    // A signed request must never be aimed somewhere that was not deliberately written
+    // down: protocol-relative, bare words and empties all read as unset.
+    expect(okxEeaRelay({ settings: { okxEeaRelay: '//evil.example' } })).toBe('')
+    expect(okxEeaRelay({ settings: { okxEeaRelay: 'okx-eea' } })).toBe('')
+    expect(okxEeaRelay({ settings: {} })).toBe('')
+    expect(okxEeaRelay()).toBe('')
+
+    // The live read sees a queued write before the tick lands it, same as eeaAccount.
+    setValue(PATHS.settings.okxEeaRelay, '/okx-eea')
+    expect(okxEeaRelay()).toBe('/okx-eea')
+    tick()
+    expect(okxRestBase()).toBe('/okx-eea')
+    setValue(PATHS.settings.okxEeaRelay, '')
+    tick()
+    expect(okxRestBase()).toBe(OKX_REST_HOSTS.eea)
   })
 })

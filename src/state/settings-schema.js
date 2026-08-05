@@ -217,6 +217,17 @@ export const SETTINGS_SCHEMA = Object.freeze([
     default: true,
   },
   {
+    key: 'okxEeaRelay',
+    group: 'trading',
+    // OKX EU refuses browser REST on every hostname it has, so an EU desk reaches it
+    // through its own server: nginx forwards this path to eea.okx.com. Same-origin
+    // (a root-relative path) is the intended shape — the browser talks to the host that
+    // served the page, CORS never applies, and basic auth on the site covers the relay.
+    label: 'OKX EU relay (your server path that forwards to eea.okx.com)',
+    kind: 'text',
+    default: '',
+  },
+  {
     key: 'modeChosen',
     group: 'trading',
     // Not a preference anybody sets deliberately — it records that the trader has met the

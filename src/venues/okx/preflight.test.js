@@ -100,7 +100,20 @@ describe('checkOkxKeys', () => {
     const eu = await checkOkxKeys()
     expect(eu.ok).toBe(false)
     expect(eu.reason).toMatch(/does not answer browsers over REST/)
+    expect(eu.fix).toMatch(/OKX EU relay/)
     expect(eu.fix).toMatch(/untick “OKX EU account”/)
+
+    // With a relay configured, the check goes through it like any other private call —
+    // the local refusal is only for a desk with no road to the EU platform at all.
+    setValue(PATHS.settings.okxEeaRelay, '/okx-eea')
+    tick()
+    const viaRelay = await checkOkxKeys({
+      fetch: fakeFetch({ code: '0', data: [{ uid: '1' }] }),
+      subtle: webcrypto.subtle,
+    })
+    expect(viaRelay.ok).toBe(true)
+    setValue(PATHS.settings.okxEeaRelay, '')
+    tick()
   })
 })
 
@@ -166,6 +179,7 @@ describe('watchKeyAim', () => {
     // there is to verify (key presence — which is how submitting new keys re-triggers).
     expect(registered[0].paths).toEqual([
       PATHS.settings.okxEea,
+      PATHS.settings.okxEeaRelay,
       PATHS.settings.okxDemo,
       PATHS.ui.keysPresent,
     ])
