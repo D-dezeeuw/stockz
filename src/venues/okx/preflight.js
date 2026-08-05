@@ -1,5 +1,6 @@
 import { okxRequest } from './rest.js'
 import { demoTrading } from './sign.js'
+import { eeaAccount } from './region.js'
 import { hasKeys } from '../vault.js'
 import { setValue } from '../../app/engine.js'
 import { PATHS } from '../../state/paths.js'
@@ -44,21 +45,24 @@ export const NO_KEYS = Object.freeze({ ok: false, code: '', reason: 'No OKX keys
  *
  * @param {{ok?: boolean, code?: string, error?: string, data?: unknown[]}} result - an `okxRequest` outcome.
  * @param {boolean} [demo] - whether the desk is pointed at demo trading.
+ * @param {boolean} [eea] - whether the desk is pointed at the EU platform.
  * @returns {{ok: boolean, code: string, reason: string, fix: string}} the verdict; `fix` is
  *   empty when there is nothing for the trader to do.
  */
-export function keyVerdict(result = {}, demo = false) {
+export function keyVerdict(result = {}, demo = false, eea = false) {
   const code = String(result.code ?? '')
   if (result.ok) return { ok: true, code: '0', reason: 'OKX keys accepted', fix: '' }
 
+  // 50119 arrives *before* the signature is examined — verified by probe: a garbage
+  // signature on a garbage key still gets 50119, never the bad-signature 50113. So this
+  // failure is purely "the platform the desk asked has no key by that name", and the fix is
+  // always about *where* the request went: OKX runs four separate key universes (global and
+  // EU platforms, live and demo each) and a key exists in exactly one of them. Naming the
+  // universe the desk just asked stops the trader regenerating a key that was never wrong.
+  const asked = `${eea ? 'OKX EU (my.okx.com)' : 'OKX global (okx.com)'}${demo ? ' demo' : ''}`
+
   const fixes = {
-    // The one the desk actually keeps hitting. OKX keeps demo and live keys in separate
-    // universes: a demo key on the live endpoint is not "wrong", it does not exist there.
-    // Which way to point the trader depends on which universe the desk is already aimed at,
-    // and getting that backwards sends them to regenerate a key that was never the problem.
-    '50119': demo
-      ? 'This key is not on OKX’s demo books — untick “OKX demo trading” if it is a live key, otherwise create a new one under Demo Trading.'
-      : 'Tick “OKX demo trading” in the key modal if this key came from Demo Trading. If it is a live key, it has been deleted or revoked — create a new one.',
+    '50119': `This key does not exist on ${asked}. Keys work only on the platform that made them — set “OKX EU account” and “demo trading” below to match where this key was created, or create a new key there.`,
     '50113': 'The secret key does not match the API key — they must come from the same OKX key pair.',
     '50105': 'The passphrase is missing — it is the one you chose when creating the key, not your login password.',
     '50102': 'This machine’s clock is off. The desk re-syncs against OKX at boot; reload to measure it again.',
@@ -87,7 +91,7 @@ export async function checkOkxKeys(options = {}) {
   if (!hasKeys('okx')) return { ...NO_KEYS }
 
   const result = await okxRequest({ path: OKX_CONFIG_PATH, ...options })
-  return keyVerdict(result, demoTrading())
+  return keyVerdict(result, demoTrading(), eeaAccount())
 }
 
 /**

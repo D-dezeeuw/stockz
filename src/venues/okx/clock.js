@@ -1,4 +1,5 @@
 import { createLogger } from '../../utils/log.js'
+import { okxRestBase } from './region.js'
 
 /**
  * The venue's clock, not the browser's.
@@ -98,7 +99,9 @@ export async function syncOkxClock(deps = {}) {
   // that quietly makes a live call, and a caller that cannot switch this off.
   const fetchImpl = 'fetch' in deps ? deps.fetch : globalThis.fetch
   const now = typeof deps.now === 'function' ? deps.now : () => Date.now()
-  const base = String(deps.base ?? 'https://www.okx.com')
+  // The platform the desk will sign against, not a hardcoded one: an EEA account measures
+  // its drift against the clock that will judge its timestamps.
+  const base = String(deps.base ?? okxRestBase())
   if (typeof fetchImpl !== 'function') return offsetMs
 
   const sentAt = now()

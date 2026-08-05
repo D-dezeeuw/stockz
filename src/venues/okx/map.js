@@ -192,11 +192,11 @@ export function mapError(raw) {
     '50113': 'OKX rejected the signature — the secret key does not match the API key',
     '50114': 'OKX rejected the request — the key may be IP-restricted, or a demo key used live',
     '50115': 'OKX rejected the request method',
-    // The commonest real cause of this one is a **demo-trading key used against the live
-    // endpoint**: OKX keeps the two key sets in separate universes, so a demo key is not
-    // "wrong" on live, it does not exist there at all. Named that way because "API key
-    // doesn't exist" sends people to regenerate a key that was fine.
-    '50119': 'OKX does not recognise this key — if it is a demo key, tick "OKX demo trading" in the key modal',
+    // The commonest real causes of this one are a **demo key used against live** or an
+    // **EU-platform key used against global** (or vice versa): OKX runs four separate key
+    // universes and a key exists in exactly one. Named that way because "API key doesn't
+    // exist" sends people to regenerate a key that was fine all along.
+    '50119': 'OKX does not recognise this key here — match "OKX demo trading" and "OKX EU account" in the key modal to where the key was created',
     '50120': 'OKX key lacks trading permission — enable Trade on the key',
     '51008': 'Insufficient balance for this order',
     '51400': 'Order already cancelled',

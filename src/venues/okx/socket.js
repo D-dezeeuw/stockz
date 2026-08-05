@@ -36,14 +36,36 @@ export const OKX_DEMO_PUBLIC_URL = 'wss://wspap.okx.com:8443/ws/v5/public'
 export const OKX_DEMO_PRIVATE_URL = 'wss://wspap.okx.com:8443/ws/v5/private'
 
 /**
+ * The EU/EEA platform's sockets — a third and fourth universe, same trap as demo.
+ *
+ * EEA accounts live on a separately-regulated OKX (my.okx.com, REST base eea.okx.com) and
+ * their streams come from `wseea` — with a `wseeapap` demo variant mirroring the global
+ * `wspap` split. Hosts are from OKX's EEA docs, not inferred from the naming pattern.
+ */
+export const OKX_EEA_PUBLIC_URL = 'wss://wseea.okx.com:8443/ws/v5/public'
+export const OKX_EEA_PRIVATE_URL = 'wss://wseea.okx.com:8443/ws/v5/private'
+export const OKX_EEA_DEMO_PUBLIC_URL = 'wss://wseeapap.okx.com:8443/ws/v5/public'
+export const OKX_EEA_DEMO_PRIVATE_URL = 'wss://wseeapap.okx.com:8443/ws/v5/private'
+
+/**
  * Which socket to open.
+ *
+ * Region and environment are independent axes — a key lives in exactly one of the four
+ * combinations, and the desk has to match both or half of it silently points at a venue
+ * that has never heard of the key.
  *
  * @param {string} kind - 'public' or 'private'.
  * @param {boolean} demo - whether the desk is on demo trading.
+ * @param {boolean} [eea] - whether the account is on the EU platform.
  * @returns {string} the URL.
  */
-export function okxSocketUrl(kind, demo) {
+export function okxSocketUrl(kind, demo, eea) {
   const isPrivate = String(kind) === 'private'
+
+  if (eea === true) {
+    if (demo === true) return isPrivate ? OKX_EEA_DEMO_PRIVATE_URL : OKX_EEA_DEMO_PUBLIC_URL
+    return isPrivate ? OKX_EEA_PRIVATE_URL : OKX_EEA_PUBLIC_URL
+  }
   if (demo === true) return isPrivate ? OKX_DEMO_PRIVATE_URL : OKX_DEMO_PUBLIC_URL
 
   return isPrivate ? OKX_PRIVATE_URL : OKX_PUBLIC_URL
@@ -134,10 +156,15 @@ export function isStale(lastMessageAt, now, limitMs = 10000) {
  */
 export function createOkxSocket(options = {}) {
   const {
-    // Resolved rather than hard-defaulted, so flipping demo trading moves the socket with
-    // the REST header. Authenticating REST against demo while the socket still points at
-    // live is a worse failure than no demo support at all, because half of it works.
-    url = okxSocketUrl('public', appState?.settings?.okxDemo === true),
+    // Resolved rather than hard-defaulted, so flipping demo trading or the EU region moves
+    // the socket with the REST side. Authenticating REST against one platform while the
+    // socket points at another is a worse failure than supporting neither, because half of
+    // it works.
+    url = okxSocketUrl(
+      'public',
+      appState?.settings?.okxDemo === true,
+      appState?.settings?.okxEea === true,
+    ),
     factory = (target) => new globalThis.WebSocket(target),
     onFrame = () => {},
     onState = () => {},

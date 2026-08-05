@@ -2,6 +2,14 @@ import { describe, it, expect } from 'vitest'
 import {
   WS_STATE,
   OKX_PUBLIC_URL,
+  OKX_PRIVATE_URL,
+  OKX_DEMO_PUBLIC_URL,
+  OKX_DEMO_PRIVATE_URL,
+  OKX_EEA_PUBLIC_URL,
+  OKX_EEA_PRIVATE_URL,
+  OKX_EEA_DEMO_PUBLIC_URL,
+  OKX_EEA_DEMO_PRIVATE_URL,
+  okxSocketUrl,
   subscribeFrame,
   parseFrame,
   isStale,
@@ -33,6 +41,30 @@ function fakeTimer() {
     },
   }
 }
+
+describe('okxSocketUrl', () => {
+  it('matches the socket to the one key universe out of four the desk is aimed at', () => {
+    // Region and environment are independent axes; a key exists in exactly one of the
+    // four combinations, and half-matching silently points at a venue that has never
+    // heard of the key.
+    expect(okxSocketUrl('public', false, false)).toBe(OKX_PUBLIC_URL)
+    expect(okxSocketUrl('private', false, false)).toBe(OKX_PRIVATE_URL)
+    expect(okxSocketUrl('public', true, false)).toBe(OKX_DEMO_PUBLIC_URL)
+    expect(okxSocketUrl('private', true, false)).toBe(OKX_DEMO_PRIVATE_URL)
+    expect(okxSocketUrl('public', false, true)).toBe(OKX_EEA_PUBLIC_URL)
+    expect(okxSocketUrl('private', false, true)).toBe(OKX_EEA_PRIVATE_URL)
+    expect(okxSocketUrl('public', true, true)).toBe(OKX_EEA_DEMO_PUBLIC_URL)
+    expect(okxSocketUrl('private', true, true)).toBe(OKX_EEA_DEMO_PRIVATE_URL)
+
+    // The EEA hosts come from OKX's EEA docs, not the naming pattern.
+    expect(OKX_EEA_PUBLIC_URL).toBe('wss://wseea.okx.com:8443/ws/v5/public')
+    expect(OKX_EEA_DEMO_PRIVATE_URL).toBe('wss://wseeapap.okx.com:8443/ws/v5/private')
+
+    // Anything short of boolean true stays on global live — same guard as the settings.
+    expect(okxSocketUrl('public', 'yes', 'yes')).toBe(OKX_PUBLIC_URL)
+    expect(okxSocketUrl('nonsense', false, false)).toBe(OKX_PUBLIC_URL)
+  })
+})
 
 describe('subscribeFrame', () => {
   it('builds a subscribe op and returns nothing when there is nothing to ask for', () => {

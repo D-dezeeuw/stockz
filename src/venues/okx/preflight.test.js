@@ -37,15 +37,24 @@ describe('keyVerdict', () => {
       fix: '',
     })
 
-    // 50119 points in opposite directions depending on which universe the desk is aimed at.
-    // Getting this backwards sends a trader to regenerate a key that was never the problem.
-    const live = keyVerdict({ ok: false, code: '50119', error: 'OKX does not recognise this key' }, false)
+    // 50119 arrives before the signature is ever examined — the platform simply has no key
+    // by that name — so the fix always names the universe the desk just asked, out of the
+    // four OKX runs (global/EU × live/demo). Getting this wrong sends a trader off to
+    // regenerate a key that was never the problem.
+    const live = keyVerdict({ ok: false, code: '50119', error: 'OKX does not recognise this key' }, false, false)
     expect(live.ok).toBe(false)
     expect(live.code).toBe('50119')
-    expect(live.fix).toMatch(/Tick “OKX demo trading”/)
+    expect(live.fix).toMatch(/does not exist on OKX global \(okx\.com\)\./)
+    expect(live.fix).toMatch(/OKX EU account/)
 
-    const demo = keyVerdict({ ok: false, code: '50119', error: 'x' }, true)
-    expect(demo.fix).toMatch(/untick “OKX demo trading”/)
+    const demo = keyVerdict({ ok: false, code: '50119', error: 'x' }, true, false)
+    expect(demo.fix).toMatch(/OKX global \(okx\.com\) demo/)
+
+    const eea = keyVerdict({ ok: false, code: '50119', error: 'x' }, false, true)
+    expect(eea.fix).toMatch(/OKX EU \(my\.okx\.com\)/)
+
+    const eeaDemo = keyVerdict({ ok: false, code: '50119', error: 'x' }, true, true)
+    expect(eeaDemo.fix).toMatch(/OKX EU \(my\.okx\.com\) demo/)
 
     expect(keyVerdict({ ok: false, code: '50113' }).fix).toMatch(/secret key does not match/)
     expect(keyVerdict({ ok: false, code: '50102' }).fix).toMatch(/clock is off/)

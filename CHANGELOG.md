@@ -10,6 +10,23 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ## [Unreleased]
 
+### Fixed
+
+- **The persistent 50119 was a different OKX, not a bad signature.** Probing the venue
+  showed `50119 "API key doesn't exist"` is returned *before* the signature is examined —
+  a garbage signature on a garbage key gets 50119, never the bad-signature 50113 — so no
+  amount of signing work could ever have fixed it. The actual cause: OKX runs a separately
+  regulated EU platform (`my.okx.com`, API base `eea.okx.com`) and **keys do not cross
+  platforms**, so a key created there simply does not exist on `www.okx.com`. The key
+  modal now has an "OKX EU account" checkbox beside the demo one; it re-aims REST, the
+  clock sync and the websockets (live `wseea`, demo `wseeapap`, both from OKX's EEA docs)
+  at the platform the key lives on, persists across reloads, and the 50119 preflight
+  verdict now names which of the four key universes (global/EU × live/demo) just denied
+  the key. The signing path itself was verified bit-for-bit against the example in OKX's
+  own docs with an independently computed vector. Also hardened while proving that: the
+  request body is now serialised exactly once and the same string is signed and sent, and
+  the CSP allowlist knows all four OKX universes.
+
 ### Changed
 
 - **The desk gets 2× more market data through the same frame budget.** Profiled under a

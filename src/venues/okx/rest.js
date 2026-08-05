@@ -1,6 +1,7 @@
 import { signRequest } from './sign.js'
 import { mapError, mapOrder, mapPosition } from './map.js'
 import { okxNow } from './clock.js'
+import { okxRestBase } from './region.js'
 import { createLogger } from '../../utils/log.js'
 
 /**
@@ -17,6 +18,9 @@ import { createLogger } from '../../utils/log.js'
 
 const log = createLogger('okx-rest')
 
+// The *global* platform's base, kept as a named constant for callers and tests. Requests
+// themselves resolve the base per call through `okxRestBase()`, because EEA accounts live
+// on a different platform entirely and their keys do not exist on this one.
 export const OKX_REST_BASE = 'https://www.okx.com'
 
 /** Requests allowed per endpoint per two seconds, per OKX's published limits. */
@@ -125,7 +129,12 @@ export async function okxRequest(req) {
     return { ok: false, code: '', error: 'Rate limit reached for this endpoint — slow down' }
   }
 
-  const headers = await signRequest({ ts, method, path, body, subtle })
+  // Serialised exactly once, and the same string is signed and sent. Serialising in two
+  // places invites the one divergence a venue cannot forgive: a signature over a body the
+  // request does not carry, rejected as a 401 that reads like a bad key.
+  const payload = typeof body === 'string' ? body : body ? JSON.stringify(body) : ''
+
+  const headers = await signRequest({ ts, method, path, body: payload, subtle })
   if (Object.keys(headers).length === 0) {
     return { ok: false, code: '', error: 'No OKX credentials — add keys to trade' }
   }
@@ -133,10 +142,12 @@ export async function okxRequest(req) {
   recordCall(path, ts)
 
   try {
-    const response = await fetchImpl(`${OKX_REST_BASE}${path}`, {
+    // The base is resolved per call: an EEA account's keys exist only on the EU platform,
+    // and flipping that setting must redirect the very next request.
+    const response = await fetchImpl(`${okxRestBase()}${path}`, {
       method,
       headers,
-      body: body ? JSON.stringify(body) : undefined,
+      body: payload || undefined,
     })
     const parsed = await response.json()
     return readEnvelope(parsed)

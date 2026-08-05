@@ -117,7 +117,11 @@ export function cspMeta(options = {}) {
     "default-src 'self'",
     "script-src 'self' https://unpkg.com",
     "style-src 'self' 'unsafe-inline'",
-    "connect-src 'self' https://unpkg.com https://www.okx.com wss://ws.okx.com",
+    // Every OKX universe the desk can be pointed at: global and EU platforms, live and
+    // demo sockets for each. A CSP that only knew the global live pair would turn the
+    // region/demo checkboxes into settings that silently connect to nothing.
+    "connect-src 'self' https://unpkg.com https://www.okx.com https://eea.okx.com" +
+      ' wss://ws.okx.com wss://wspap.okx.com wss://wseea.okx.com wss://wseeapap.okx.com',
     "img-src 'self' data:",
     "object-src 'none'",
     "base-uri 'self'",

@@ -82,7 +82,15 @@ describe('cspMeta', () => {
     expect(enforced.content).not.toContain('unsafe-eval')
     expect(enforced.content).toContain("object-src 'none'")
     expect(enforced.content).toContain('https://unpkg.com')
+
+    // All four OKX universes: global and EU platforms, live and demo sockets for each.
+    // A policy that only knew the global live pair would turn the region and demo
+    // checkboxes into settings that silently connect to nothing.
     expect(enforced.content).toContain('wss://ws.okx.com')
+    expect(enforced.content).toContain('wss://wspap.okx.com')
+    expect(enforced.content).toContain('https://eea.okx.com')
+    expect(enforced.content).toContain('wss://wseea.okx.com')
+    expect(enforced.content).toContain('wss://wseeapap.okx.com')
 
     expect(cspMeta({ reportOnly: true }).name).toBe('Content-Security-Policy-Report-Only')
   })

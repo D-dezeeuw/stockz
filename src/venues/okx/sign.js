@@ -31,9 +31,13 @@ export function okxTimestamp(ms) {
  */
 export function prehashString({ ts, method = 'GET', path, body = '' }) {
   const verb = String(method).toUpperCase()
-  const payload = typeof body === 'string' ? body : JSON.stringify(body)
+  const payload = typeof body === 'string' ? body : body ? JSON.stringify(body) : ''
 
-  return `${ts}${verb}${path}${payload && payload !== '{}' ? payload : ''}`
+  // The body is signed *verbatim* — whatever string goes on the wire goes into the hash,
+  // including a literal '{}' if that is genuinely sent. This used to special-case '{}'
+  // out of the prehash, which meant an empty-object POST would sign one thing and send
+  // another; `okxRequest` now serialises once and shares the exact string with both.
+  return `${ts}${verb}${path}${payload}`
 }
 
 /**

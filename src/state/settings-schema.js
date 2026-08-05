@@ -204,6 +204,16 @@ export const SETTINGS_SCHEMA = Object.freeze([
     default: false,
   },
   {
+    key: 'okxEea',
+    group: 'trading',
+    // The second axis of the same trap: EEA customers live on a separately-regulated
+    // platform (my.okx.com, API base eea.okx.com) and keys do not cross between the two.
+    // A EU key sent to www.okx.com gets the identical 50119 a demo key does.
+    label: 'OKX EU account (keys created on my.okx.com)',
+    kind: 'toggle',
+    default: false,
+  },
+  {
     key: 'modeChosen',
     group: 'trading',
     // Not a preference anybody sets deliberately — it records that the trader has met the

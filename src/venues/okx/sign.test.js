@@ -35,10 +35,21 @@ describe('prehashString', () => {
       prehashString({ ts: 'T', method: 'POST', path: '/api/v5/trade/order', body: { a: 1 } }),
     ).toBe('TPOST/api/v5/trade/order{"a":1}')
 
-    // An empty object body must not become '{}' — that would sign something the request
-    // does not send, and the 401 looks exactly like a bad key.
-    expect(prehashString({ ts: 'T', path: '/p', body: {} })).toBe('TGET/p')
+    // The body goes into the hash exactly as it goes on the wire — even a literal '{}'.
+    // The old special case dropped '{}' from the prehash while the request still carried
+    // it, which is a signature over a different message and a 401 that reads as a bad key.
+    expect(prehashString({ ts: 'T', path: '/p', body: {} })).toBe('TGET/p{}')
+    expect(prehashString({ ts: 'T', path: '/p', body: '' })).toBe('TGET/p')
     expect(prehashString({ ts: 'T', path: '/p?limit=5' })).toBe('TGET/p?limit=5')
+
+    // The exact example from OKX's own docs, verifiable end-to-end in hmacSha256's test.
+    expect(
+      prehashString({
+        ts: '2020-12-08T09:08:57.715Z',
+        method: 'get',
+        path: '/api/v5/account/balance?ccy=BTC',
+      }),
+    ).toBe('2020-12-08T09:08:57.715ZGET/api/v5/account/balance?ccy=BTC')
   })
 })
 
@@ -56,6 +67,16 @@ describe('hmacSha256', () => {
     await expect(hmacSha256('message', 'secret', webcrypto.subtle)).resolves.toBe(
       'i19IcCmVwVmMVz2x4hhmqbgl1KeU0WnXBgoDYFeWNgs=',
     )
+
+    // The OKX docs' own signing example, expected value computed independently with Node's
+    // createHmac — proves this signer and the venue's reference agree end to end.
+    await expect(
+      hmacSha256(
+        '2020-12-08T09:08:57.715ZGET/api/v5/account/balance?ccy=BTC',
+        'test-secret-key',
+        webcrypto.subtle,
+      ),
+    ).resolves.toBe('aCsBgsrAUQSCOQRSWb0FS4QZu/1RLrWcurndoXOEp+w=')
 
     expect(await hmacSha256('message', '', webcrypto.subtle)).toBe('')
     // Explicit null, not undefined: a default parameter only fires on undefined, and

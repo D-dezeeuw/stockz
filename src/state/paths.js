@@ -156,6 +156,7 @@ export const PATHS = Object.freeze({
     // the only persisted branch, and assumptions that reset on reload are assumptions
     // nobody tunes twice.
     okxDemo: 'settings.okxDemo',
+    okxEea: 'settings.okxEea',
     modeChosen: 'settings.modeChosen',
     paperStartBalance: 'settings.paperStartBalance',
     paperLatencyMs: 'settings.paperLatencyMs',

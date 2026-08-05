@@ -12,6 +12,8 @@ import {
   fetchPositions,
 } from './rest.js'
 import { setKeys, clearKeys } from '../vault.js'
+import { setValue, tick, resetState } from '../../app/engine.js'
+import { PATHS } from '../../state/paths.js'
 import { webcrypto } from 'node:crypto'
 
 const OKX = { apiKey: 'ak', secretKey: 'sk', passphrase: 'pp' }
@@ -27,6 +29,8 @@ function fakeFetch(body, calls = []) {
 beforeEach(() => {
   clearKeys()
   resetRateLimits()
+  // The request base is resolved from live settings per call; start each test on global.
+  resetState()
 })
 
 describe('withinRateLimit', () => {
@@ -115,6 +119,20 @@ describe('okxRequest', () => {
     expect(ok).toEqual({ ok: true, code: '0', data: [{ bal: '1' }] })
     expect(calls[0].url).toBe(`${OKX_REST_BASE}/api/v5/account/balance`)
     expect(calls[0].init.headers['OK-ACCESS-KEY']).toBe('ak')
+
+    // An EEA account's keys exist only on the EU platform; the base follows the setting
+    // on the very next call, no reload in between.
+    setValue(PATHS.settings.okxEea, true)
+    tick()
+    await okxRequest({
+      path: '/api/v5/account/balance',
+      ts: 1000,
+      fetch: fakeFetch({ code: '0', data: [] }, calls),
+      subtle: webcrypto.subtle,
+    })
+    expect(calls[1].url).toBe('https://eea.okx.com/api/v5/account/balance')
+    setValue(PATHS.settings.okxEea, false)
+    tick()
 
     // A network failure becomes an error result, never an exception: an exception on the
     // order path leaves the trader unsure whether the order went.

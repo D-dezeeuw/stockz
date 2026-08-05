@@ -1327,6 +1327,17 @@
           <span class="label">These are OKX <b>demo trading</b> keys</span>
         </label>
 
+        <!-- The second axis of the same trap. EEA customers live on a separately-regulated
+             OKX (my.okx.com, API base eea.okx.com) and keys do not cross platforms: a EU
+             key sent to www.okx.com gets the identical "doesn't exist" (50119) a demo key
+             does. Two checkboxes, four key universes — the pair must match where the key
+             was created. -->
+        <label class="field field--row keys__demo">
+          <input type="checkbox" data-action="change" data-fn="settings.update"
+                 data-field="okxEea" :checked="settings.okxEea">
+          <span class="label">My OKX account is on <b>my.okx.com</b> (EU / EEA)</span>
+        </label>
+
         <!-- What the venue itself said about those keys. Every private OKX call
              authenticates by header, so a key OKX does not recognise comes back as a bare
              401 from whichever poller fired first — five different causes wearing one
