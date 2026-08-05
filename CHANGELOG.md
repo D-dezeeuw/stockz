@@ -12,6 +12,14 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ### Added
 
+- **The server's `.env` is the venue key store now** (owner decision, single-user desk).
+  The backend hands the `STOCKZ_OKX_*` / `STOCKZ_ETORO_*` keys to a signed-in **admin**
+  session over `/api/keys` (no-store; `usr` receives an empty bag; signed-out callers a
+  401), and the desk adopts them into its in-memory vault at boot — no key modal, no URL
+  params, no typing credentials into a browser again. The presence flip re-runs the key
+  preflight automatically, so adopted keys verify themselves within a second of login.
+  Signing stays in the browser; the server stores and hands over, never signs.
+
 - **The desk is a Docker container now.** A zero-dependency Node backend (`server/`)
   serves the desk, relays all venue REST on the same origin (`/okx-eea`, `/okx`,
   `/etoro` — which is what lets a browser reach OKX EU at all), and locks everything

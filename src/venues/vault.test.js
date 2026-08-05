@@ -17,6 +17,7 @@ import {
   forgetCachedKeys,
   adoptKeysFromUrl,
   adoptKeysFromEnv,
+  adoptKeysFromServer,
 } from './vault.js'
 import { serialize, appState, resetState, tick } from '../app/engine.js'
 
@@ -171,6 +172,47 @@ describe('adoptKeysFromUrl', () => {
       scrubbed: false,
     })
     expect(adoptKeysFromUrl({})).toEqual({ loaded: 0, scrubbed: false })
+  })
+})
+
+describe('adoptKeysFromServer', () => {
+  it('adopts what the backend hands over and stays quiet on every failure', async () => {
+    // An admin session gets the server's .env keys straight into the vault.
+    const adopted = await adoptKeysFromServer({
+      fetch: async () => ({
+        ok: true,
+        json: async () => ({
+          okx: { apiKey: 'k', secretKey: 's', passphrase: 'p' },
+          etoro: { apiKey: 'ek', userKey: 'eu' },
+        }),
+      }),
+    })
+    expect(adopted).toBe(2)
+    expect(hasKeys('okx')).toBe(true)
+    expect(hasKeys('etoro')).toBe(true)
+
+    clearKeys()
+
+    // A usr session receives an empty bag; no backend, a refusal and a dead network all
+    // adopt nothing — the desk must open regardless.
+    expect(await adoptKeysFromServer({ fetch: async () => ({ ok: true, json: async () => ({}) }) })).toBe(0)
+    expect(await adoptKeysFromServer({ fetch: async () => ({ ok: false }) })).toBe(0)
+    expect(
+      await adoptKeysFromServer({
+        fetch: async () => {
+          throw new Error('offline')
+        },
+      }),
+    ).toBe(0)
+    expect(await adoptKeysFromServer({ fetch: null })).toBe(0)
+    expect(hasKeys('okx')).toBe(false)
+
+    // A hostile bag cannot invent venues or smuggle non-object fields.
+    expect(
+      await adoptKeysFromServer({
+        fetch: async () => ({ ok: true, json: async () => ({ evil: { x: 1 }, okx: 'not-an-object' }) }),
+      }),
+    ).toBe(0)
   })
 })
 

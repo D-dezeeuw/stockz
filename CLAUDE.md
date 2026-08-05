@@ -32,8 +32,11 @@ optimized for trades-per-hour.
    (`.github/workflows/deploy.yml`), no CI test gate — and pushing `main` is still
    deploying. The app itself remains raw ES modules: no build step, ever.
 4. **UI = Spektrum from unpkg CDN** (importmap, pinned major `spektrum@1`). No SPA framework.
-5. **Secrets never land in git.** Env vars `STOCKZ_OKX_*` / `STOCKZ_ETORO_*` are for local
-   dev; in the browser keys come from URL params or the key modal.
+5. **Secrets never land in git.** The venue keys live in the server's `.env`
+   (`STOCKZ_OKX_*` / `STOCKZ_ETORO_*` — owner decision 2026-08-05, single-user desk):
+   the backend hands them to a signed-in **admin** session at boot and the desk adopts
+   them into its in-memory vault. The key modal and URL params remain as overrides, and
+   keys still never enter engine state.
 6. **Speed first.** Every interaction targets <100ms perceived latency; every hot path is O(1)
    or rAF-batched. If a change adds a confirmation step, it is wrong.
 7. **Keep `CHANGELOG.md`.** Every feature adds a line under `[Unreleased]` in its merge;

@@ -13,6 +13,7 @@ import {
 } from './auth.js'
 import { serveStatic } from './static.js'
 import { loginPage, parseForm } from './pages.js'
+import { venueKeys } from './keys.js'
 
 /**
  * The STOCKZ backend: one process, three jobs.
@@ -95,6 +96,14 @@ export function createHandler(deps = {}) {
 
     if (path === '/api/session') {
       return sendJson(res, 200, { role, build: env.BUILD_SHA ?? 'dev' })
+    }
+
+    // The venue keys, for the signed-in ADMIN alone (owner decision: the server's .env is
+    // the key store on this single-user desk). `usr` is the paper account and receives an
+    // empty bag — same shape, nothing in it — so the client's adoption code has one path.
+    // sendJson marks this no-store like every API reply; nothing caches a credential.
+    if (path === '/api/keys') {
+      return sendJson(res, 200, role === 'admin' ? venueKeys(env) : {})
     }
 
     for (const proxy of PROXIES) {

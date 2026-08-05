@@ -14,7 +14,7 @@ import { registerHeaderActions, mountSectionBlocks } from '../ui/header.js'
 import { registerThemeActions, applyTheme, preferredTheme } from '../ui/theme.js'
 import { restoreSettings, persistSettings } from '../state/persist.js'
 import { registerSettingsActions } from '../ui/settings.js'
-import { registerKeyActions, adoptKeys, promptForKeys, showKeyUrl } from '../ui/keys.js'
+import { registerKeyActions, adoptKeys, promptForKeys, showKeyUrl, syncKeyPresence } from '../ui/keys.js'
 import { registerListActions } from '../lists/state.js'
 import { startWatchlist, registerWatchActions } from '../lists/watch.js'
 import { startAutopilot } from '../bot/autopilot.js'
@@ -62,6 +62,7 @@ import { setLevelSink } from '../strategy/builtin/range-fade.js'
 import { syncOkxClock } from '../venues/okx/clock.js'
 import { runKeyPreflight, watchKeyAim } from '../venues/okx/preflight.js'
 import { adoptRole } from './session.js'
+import { adoptKeysFromServer } from '../venues/vault.js'
 import { registerModeActions, applyModeParam, applyFirstRunMode } from '../exec/mode.js'
 import { startPaperBook } from '../exec/paper/engine.js'
 import { startPaperAccount } from '../exec/paper/account.js'
@@ -232,8 +233,18 @@ export function bootstrap(options = {}) {
   // key, so a drifted machine would otherwise spend the session being told its valid
   // credentials were rejected.
   // Who is signed in gates the money controls; fetched alongside the clock, not before
-  // it — neither blocks the other and boot stays flat.
-  if (options.feeds !== false) adoptRole()
+  // it — neither blocks the other and boot stays flat. Once the role is known, the
+  // backend hands an admin session the venue keys from the server's .env — the key
+  // store on this single-user desk. The presence flip re-runs the key preflight
+  // through the armed aim-watch, so adopted keys verify themselves within a second.
+  if (options.feeds !== false) {
+    adoptRole()
+      .then(() => adoptKeysFromServer())
+      .then((adopted) => {
+        if (adopted > 0) syncKeyPresence()
+      })
+      .catch(() => {})
+  }
   if (options.feeds !== false) {
     // Chained, not fired alongside: the preflight is a *signed* call, so running it before
     // the drift measurement lands would sign it with the clock the sync exists to correct —

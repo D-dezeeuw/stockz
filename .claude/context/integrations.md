@@ -7,8 +7,8 @@ unified internal schema (`pipeline/`); nothing outside that folder knows venue q
 
 | Venue | Local dev (env vars) | Browser (production) |
 | --- | --- | --- |
-| OKX | `STOCKZ_OKX_API_KEY`, `STOCKZ_OKX_SECRET_KEY`, `STOCKZ_OKX_PASSPHRASE` | URL params or key modal |
-| EToro | `STOCKZ_ETORO_API_KEY`, `STOCKZ_ETORO_USER_KEY` | URL params or key modal |
+| OKX | `STOCKZ_OKX_API_KEY`, `STOCKZ_OKX_SECRET_KEY`, `STOCKZ_OKX_PASSPHRASE` | server `.env` via `/api/keys` (admin session); modal/URL as overrides |
+| EToro | `STOCKZ_ETORO_API_KEY`, `STOCKZ_ETORO_USER_KEY` | server `.env` via `/api/keys` (admin session); modal/URL as overrides |
 
 - Env vars are exposed to dev builds via Vite (`envPrefix: 'STOCKZ_'` →
   `import.meta.env.STOCKZ_OKX_API_KEY`). `.env*` files are gitignored. **Values never

@@ -9,6 +9,9 @@ const ENV = {
   STOCKZ_ADMIN_PASSWORD: 'admin-pass',
   STOCKZ_SESSION_SECRET: 'a-long-enough-secret',
   BUILD_SHA: 'abc1234',
+  STOCKZ_OKX_API_KEY: 'venue-key',
+  STOCKZ_OKX_SECRET_KEY: 'venue-secret',
+  STOCKZ_OKX_PASSPHRASE: 'venue-pass',
 }
 
 function fakeRes() {
@@ -97,6 +100,25 @@ describe('createHandler', () => {
     await handle(fakeReq('/okx-eea/api/v5/account/config', { cookie: asAdmin }), relayed)
     expect(fetched[0]).toBe('https://eea.okx.com/api/v5/account/config')
     expect(relayed.body).toBe('{"code":"0"}')
+
+    // The venue keys: admin receives the server's .env keys, usr receives an empty
+    // bag (paper account), and signed-out callers were already refused above like any
+    // /api route. The reply is no-store like every JSON route — nothing caches a key.
+    const asUsr = `${SESSION_COOKIE}=${signSession('usr', ENV.STOCKZ_SESSION_SECRET)}`
+    const adminKeys = fakeRes()
+    await handle(fakeReq('/api/keys', { cookie: asAdmin }), adminKeys)
+    expect(JSON.parse(adminKeys.body)).toEqual({
+      okx: { apiKey: 'venue-key', secretKey: 'venue-secret', passphrase: 'venue-pass' },
+    })
+    expect(adminKeys.headers['cache-control']).toBe('no-store')
+
+    const usrKeys = fakeRes()
+    await handle(fakeReq('/api/keys', { cookie: asUsr }), usrKeys)
+    expect(JSON.parse(usrKeys.body)).toEqual({})
+
+    const anonKeys = fakeRes()
+    await handle(fakeReq('/api/keys'), anonKeys)
+    expect(anonKeys.status).toBe(401)
 
     // Logout clears the cookie and the next page view is the form again.
     const logout = fakeRes()

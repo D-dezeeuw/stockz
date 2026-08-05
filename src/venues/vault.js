@@ -188,6 +188,44 @@ export function adoptKeysFromUrl(win = globalThis) {
 }
 
 /**
+ * Adopt the venue keys the backend holds.
+ *
+ * Owner decision (2026-08-05, single-user desk): the server's `.env` is the key store.
+ * The backend hands the keys only to a signed-in **admin** session (`usr` and the Vite
+ * dev server both receive nothing), they go straight into this vault — never through
+ * engine state — and the trader stops ever typing a credential into a browser.
+ *
+ * Async and boot-tolerant: any failure (no backend, signed out, network) adopts nothing
+ * and returns quietly, because the desk must open regardless and the modal/URL paths
+ * still exist as overrides.
+ *
+ * @param {{fetch?: Function}} [deps] - injectable transport.
+ * @returns {Promise<number>} how many venues received keys.
+ */
+export async function adoptKeysFromServer(deps = {}) {
+  const fetchImpl = deps.fetch ?? globalThis.fetch
+  if (typeof fetchImpl !== 'function') return 0
+
+  try {
+    const reply = await fetchImpl('/api/keys')
+    if (!reply?.ok) return 0
+
+    const bag = await reply.json()
+    let adopted = 0
+    for (const venue of Object.keys(VENUE_FIELDS)) {
+      const fields = bag?.[venue]
+      if (!fields || typeof fields !== 'object') continue
+      if (setKeys(venue, fields).length > 0) adopted += 1
+    }
+
+    if (adopted > 0) log.info(`adopted keys for ${adopted} venue(s) from the server`)
+    return adopted
+  } catch {
+    return 0
+  }
+}
+
+/**
  * Fall back to local dev credentials.
  *
  * @param {Record<string, unknown>} [bag] - env bag; defaults to the Vite env.
