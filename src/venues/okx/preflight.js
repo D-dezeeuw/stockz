@@ -1,8 +1,9 @@
 import { okxRequest } from './rest.js'
 import { demoTrading } from './sign.js'
 import { eeaAccount } from './region.js'
+import { syncOkxClock } from './clock.js'
 import { hasKeys } from '../vault.js'
-import { setValue } from '../../app/engine.js'
+import { setValue, watch } from '../../app/engine.js'
 import { PATHS } from '../../state/paths.js'
 import { pushToast } from '../../ui/toast.js'
 import { createLogger } from '../../utils/log.js'
@@ -135,4 +136,33 @@ export function announceKeyCheck(verdict) {
  */
 export async function runKeyPreflight(options = {}) {
   return announceKeyCheck(await checkOkxKeys(options))
+}
+
+/**
+ * Re-verify whenever the desk is re-aimed.
+ *
+ * A verdict describes one (platform, environment, key) combination, and all three of its
+ * inputs can change without a reload: the EU and demo checkboxes re-aim the requests, and
+ * submitting keys changes what there is to verify (surfaced as `ui.keysPresent`). Without
+ * this, ticking "OKX EU account" changed where the *next* call would go and then made no
+ * call — the stale `www.okx.com` 401 stayed in the console looking current, which reads as
+ * "the fix did nothing".
+ *
+ * The clock is re-measured before each re-check for the same reason it is measured at
+ * boot: the re-aim changes which venue's clock will judge the timestamps.
+ *
+ * Armed *after* the boot preflight completes, so the flurry of writes boot itself makes —
+ * settings restore, key adoption — cannot trigger a second, concurrent first-check.
+ *
+ * @param {{watch?: Function, recheck?: Function}} [deps] - injectable for tests.
+ * @returns {Function} unsubscribe.
+ */
+export function watchKeyAim(deps = {}) {
+  const watchImpl = deps.watch ?? watch
+  const recheck = deps.recheck ?? (() => syncOkxClock().then(() => runKeyPreflight()).catch(() => {}))
+
+  return watchImpl(
+    [PATHS.settings.okxEea, PATHS.settings.okxDemo, PATHS.ui.keysPresent],
+    () => recheck(),
+  )
 }

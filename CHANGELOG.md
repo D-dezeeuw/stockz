@@ -12,6 +12,14 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ### Fixed
 
+- **Re-aiming the desk now re-checks the keys immediately.** Ticking "OKX EU account" (or
+  demo, or submitting new keys) re-runs the clock sync and key preflight against the newly
+  aimed platform on the spot — previously the setting redirected only the *next* call and
+  made none, leaving the old `www.okx.com` 401 in the console looking current. Also closed
+  a boot race: the persisted region setting is now visible to the clock sync while still
+  queued in the engine's delta, so an EU desk measures the EU platform's clock from the
+  very first probe of every boot.
+
 - **The persistent 50119 was a different OKX, not a bad signature.** Probing the venue
   showed `50119 "API key doesn't exist"` is returned *before* the signature is examined —
   a garbage signature on a garbage key gets 50119, never the bad-signature 50113 — so no

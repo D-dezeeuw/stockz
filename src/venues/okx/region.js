@@ -1,4 +1,5 @@
-import { appState } from '../../app/engine.js'
+import { appState, pendingAt } from '../../app/engine.js'
+import { PATHS } from '../../state/paths.js'
 
 /**
  * Which OKX the desk is talking to.
@@ -29,11 +30,21 @@ export const OKX_REST_HOSTS = Object.freeze({
 /**
  * Is the desk pointed at the EU/EEA platform?
  *
- * @param {object} [state] - engine state.
+ * The live read goes through `pendingAt` — the delta first, then landed state — because
+ * the one moment this most matters is the one moment plain `appState` is wrong: boot.
+ * `restoreSettings()` queues the persisted value into the delta, and the clock sync fires
+ * in the same synchronous pass, *before* the engine's first tick lands it. Reading
+ * `appState` there would probe the global platform's clock for an EU account on every
+ * single boot, and no reload would ever fix it because every reload is that same moment.
+ *
+ * @param {object} [state] - engine state; pass one explicitly to bypass the pending read.
  * @returns {boolean} true when keys were created on my.okx.com.
  */
-export function eeaAccount(state = appState) {
-  return state?.settings?.okxEea === true
+export function eeaAccount(state) {
+  if (state !== undefined) return state?.settings?.okxEea === true
+
+  const pending = pendingAt(PATHS.settings.okxEea)
+  return pending.found ? pending.value === true : appState?.settings?.okxEea === true
 }
 
 /**
@@ -42,9 +53,12 @@ export function eeaAccount(state = appState) {
  * Read at call time, never cached: flipping the region checkbox must redirect the very
  * next request, not the ones after a reload.
  *
- * @param {object} [state] - engine state.
+ * @param {object} [state] - engine state; omit for the live pending-aware read.
  * @returns {string} the base URL.
  */
-export function okxRestBase(state = appState) {
+export function okxRestBase(state) {
+  // No `= appState` default here: filling the parameter in would hand `eeaAccount` a
+  // concrete state and silently switch it onto the landed-only branch — exactly the boot
+  // race the pending read exists to close.
   return eeaAccount(state) ? OKX_REST_HOSTS.eea : OKX_REST_HOSTS.global
 }

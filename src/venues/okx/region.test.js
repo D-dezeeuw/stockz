@@ -30,5 +30,13 @@ describe('okxRestBase', () => {
     setValue(PATHS.settings.okxEea, true)
     tick()
     expect(okxRestBase()).toBe('https://eea.okx.com')
+
+    // The write must be visible while still *queued*, before any tick lands it. Boot is
+    // exactly this moment: restoreSettings queues the persisted value and the clock sync
+    // fires in the same synchronous pass — reading only landed state there would probe the
+    // global platform's clock for an EU account on every single boot.
+    setValue(PATHS.settings.okxEea, false)
+    expect(okxRestBase()).toBe('https://www.okx.com')
+    tick()
   })
 })

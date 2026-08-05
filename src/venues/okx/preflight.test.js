@@ -6,6 +6,7 @@ import {
   runKeyPreflight,
   OKX_CONFIG_PATH,
   NO_KEYS,
+  watchKeyAim,
 } from './preflight.js'
 import { setKeys, clearKeys } from '../vault.js'
 import { setValue, appState, tick } from '../../app/engine.js'
@@ -138,6 +139,34 @@ describe('runKeyPreflight', () => {
     expect(verdict.code).toBe('50113')
     tick()
     expect(appState.ui.keyCheck.fix).toMatch(/secret key does not match/)
+  })
+})
+
+describe('watchKeyAim', () => {
+  it('re-checks the keys whenever the desk is re-aimed, and unsubscribes cleanly', () => {
+    const registered = []
+    const recheck = vi.fn()
+    const unsub = watchKeyAim({
+      watch: (paths, fn) => {
+        registered.push({ paths, fn })
+        return () => registered.pop()
+      },
+      recheck,
+    })
+
+    // All three inputs a verdict depends on: where requests go (both checkboxes) and what
+    // there is to verify (key presence — which is how submitting new keys re-triggers).
+    expect(registered[0].paths).toEqual([
+      PATHS.settings.okxEea,
+      PATHS.settings.okxDemo,
+      PATHS.ui.keysPresent,
+    ])
+
+    registered[0].fn()
+    expect(recheck).toHaveBeenCalledTimes(1)
+
+    unsub()
+    expect(registered).toHaveLength(0)
   })
 })
 
