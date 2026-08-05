@@ -19,7 +19,7 @@ import { transientSettings } from './settings-schema.js'
 const log = createLogger('persist')
 
 /** Bumped whenever the persisted shape changes; drives migration. */
-export const SETTINGS_VERSION = 1
+export const SETTINGS_VERSION = 2
 
 /** localStorage key. */
 export const STORAGE_KEY = 'stockz.settings.v1'
@@ -88,6 +88,16 @@ export function migrateSettings(payload) {
       settings.theme = settings.dark ? 'night' : 'day'
       delete settings.dark
     }
+  }
+
+  // v1 → v2: drop the stored `okxEea` so the new EU-first default applies. The persist
+  // watcher saves the *whole* settings branch on any change, so every v1 boot stamped
+  // `okxEea: false` into storage without anybody choosing it — and a stored value beats a
+  // schema default on restore, which would have made "the EU platform is now the default"
+  // a change no existing browser could ever receive. A v2 store keeps whatever the trader
+  // sets from here on; only the auto-stamped v1 value is discarded.
+  if ((payload.version ?? 0) < 2) {
+    delete settings.okxEea
   }
 
   return settings

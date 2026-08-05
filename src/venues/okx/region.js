@@ -1,4 +1,4 @@
-import { appState, pendingAt } from '../../app/engine.js'
+import { pendingAt } from '../../app/engine.js'
 import { PATHS } from '../../state/paths.js'
 
 /**
@@ -30,21 +30,25 @@ export const OKX_REST_HOSTS = Object.freeze({
 /**
  * Is the desk pointed at the EU/EEA platform?
  *
+ * **EU unless explicitly unticked.** This desk's owner trades from the EU, so the EU
+ * platform is home; only the boolean `false` the checkbox writes when deliberately
+ * unticked aims at global. Absent, corrupted or half-seeded settings all land on the
+ * default — the platform the keys actually live on — rather than silently re-aiming
+ * every signed request at a venue that has never heard of them.
+ *
  * The live read goes through `pendingAt` — the delta first, then landed state — because
  * the one moment this most matters is the one moment plain `appState` is wrong: boot.
  * `restoreSettings()` queues the persisted value into the delta, and the clock sync fires
- * in the same synchronous pass, *before* the engine's first tick lands it. Reading
- * `appState` there would probe the global platform's clock for an EU account on every
- * single boot, and no reload would ever fix it because every reload is that same moment.
+ * in the same synchronous pass, *before* the engine's first tick lands it.
  *
  * @param {object} [state] - engine state; pass one explicitly to bypass the pending read.
- * @returns {boolean} true when keys were created on my.okx.com.
+ * @returns {boolean} true when the desk should talk to my.okx.com / eea.okx.com.
  */
 export function eeaAccount(state) {
-  if (state !== undefined) return state?.settings?.okxEea === true
+  if (state !== undefined) return state?.settings?.okxEea !== false
 
   const pending = pendingAt(PATHS.settings.okxEea)
-  return pending.found ? pending.value === true : appState?.settings?.okxEea === true
+  return pending.found ? pending.value !== false : true
 }
 
 /**

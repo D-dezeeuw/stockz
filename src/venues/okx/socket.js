@@ -1,6 +1,7 @@
 import { retryDelay } from '../../state/async.js'
 import { createLogger } from '../../utils/log.js'
 import { appState } from '../../app/engine.js'
+import { eeaAccount } from './region.js'
 
 /**
  * OKX WebSocket client.
@@ -160,11 +161,7 @@ export function createOkxSocket(options = {}) {
     // the socket with the REST side. Authenticating REST against one platform while the
     // socket points at another is a worse failure than supporting neither, because half of
     // it works.
-    url = okxSocketUrl(
-      'public',
-      appState?.settings?.okxDemo === true,
-      appState?.settings?.okxEea === true,
-    ),
+    url = okxSocketUrl('public', appState?.settings?.okxDemo === true, eeaAccount()),
     factory = (target) => new globalThis.WebSocket(target),
     onFrame = () => {},
     onState = () => {},

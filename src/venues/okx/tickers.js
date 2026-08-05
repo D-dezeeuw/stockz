@@ -1,4 +1,4 @@
-import { OKX_REST_BASE } from './rest.js'
+import { okxRestBase } from './region.js'
 import { createLogger } from '../../utils/log.js'
 
 /**
@@ -96,7 +96,10 @@ export async function fetchTickers(options = {}) {
   const { fetch: fetchImpl = globalThis.fetch } = options
 
   try {
-    const response = await fetchImpl(`${OKX_REST_BASE}${TICKERS_PATH}`)
+    // Through the region resolver like every other OKX call — this was the one fetch left
+    // on the hardcoded global host, so the watchlist polled a different OKX than the desk
+    // was trading on.
+    const response = await fetchImpl(`${okxRestBase()}${TICKERS_PATH}`)
     const parsed = await response.json()
 
     if (String(parsed?.code ?? '') !== '0') {

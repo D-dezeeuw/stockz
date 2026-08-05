@@ -7,7 +7,7 @@ import {
   rankBlueChips,
   fetchTickers,
 } from './tickers.js'
-import { OKX_REST_BASE } from './rest.js'
+import { okxRestBase } from './region.js'
 
 /** One raw OKX ticker row. */
 const row = (instId, last, open24h, volCcy24h) => ({ instId, last, open24h, volCcy24h })
@@ -78,8 +78,9 @@ describe('fetchTickers', () => {
 
     expect(ok).toEqual({ ok: true, rows: [row('BTC-USDT', '1', '1', '1')] })
     // Unsigned and public: this is what lets the watchlist quote itself before any key
-    // has been entered.
-    expect(calls[0]).toBe(`${OKX_REST_BASE}${TICKERS_PATH}`)
+    // has been entered. The base comes from the region resolver, so the watchlist polls
+    // the same OKX the desk trades on.
+    expect(calls[0]).toBe(`${okxRestBase()}${TICKERS_PATH}`)
 
     const refused = await fetchTickers({
       fetch: async () => ({ json: async () => ({ code: '1', msg: 'nope' }) }),

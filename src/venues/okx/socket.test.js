@@ -193,7 +193,9 @@ describe('createOkxSocket', () => {
     const bare = createOkxSocket({ timer })
     const bareSocket = bare.connect()
 
-    expect(built).toEqual([OKX_PUBLIC_URL])
+    // EU-first: with nothing configured, the bare socket points at the platform this
+    // desk's keys actually live on.
+    expect(built).toEqual([OKX_EEA_PUBLIC_URL])
     expect(() => {
       bareSocket.onopen()
       bareSocket.onmessage({ data: 'pong' })

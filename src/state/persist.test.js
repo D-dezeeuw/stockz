@@ -75,12 +75,19 @@ describe('migrateSettings', () => {
     expect(migrateSettings({ version: 0, settings: { dark: true } })).toEqual({ theme: 'night' })
     expect(migrateSettings({ version: 0, settings: { dark: false } })).toEqual({ theme: 'day' })
 
-    // Current-version payloads pass through untouched.
-    const current = { version: 1, settings: { theme: 'day', blocks: [] } }
-    expect(migrateSettings(current)).toEqual({ theme: 'day', blocks: [] })
+    // v1 → v2 drops the stored okxEea: every v1 boot auto-stamped `false` into storage
+    // without anybody choosing it, and a stored value beats a schema default on restore —
+    // so the EU-first default could never reach an existing browser without this.
+    expect(
+      migrateSettings({ version: 1, settings: { theme: 'day', blocks: [], okxEea: false } }),
+    ).toEqual({ theme: 'day', blocks: [] })
+
+    // A v2 payload keeps what the trader actually set — only the v1 stamp is discarded.
+    const current = { version: 2, settings: { theme: 'day', blocks: [], okxEea: false } }
+    expect(migrateSettings(current)).toEqual({ theme: 'day', blocks: [], okxEea: false })
 
     expect(migrateSettings(null)).toEqual({})
-    expect(migrateSettings({ version: 1 })).toEqual({})
+    expect(migrateSettings({ version: 2 })).toEqual({})
   })
 })
 

@@ -209,9 +209,12 @@ export const SETTINGS_SCHEMA = Object.freeze([
     // The second axis of the same trap: EEA customers live on a separately-regulated
     // platform (my.okx.com, API base eea.okx.com) and keys do not cross between the two.
     // A EU key sent to www.okx.com gets the identical 50119 a demo key does.
+    //
+    // Default **true**: this desk's owner trades from the EU, so the EU platform is the
+    // one a fresh boot should assume. Untick for a global okx.com account.
     label: 'OKX EU account (keys created on my.okx.com)',
     kind: 'toggle',
-    default: false,
+    default: true,
   },
   {
     key: 'modeChosen',

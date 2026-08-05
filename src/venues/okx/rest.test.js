@@ -29,7 +29,8 @@ function fakeFetch(body, calls = []) {
 beforeEach(() => {
   clearKeys()
   resetRateLimits()
-  // The request base is resolved from live settings per call; start each test on global.
+  // The request base is resolved from live settings per call; a wiped state means the
+  // EU-first default, same as a fresh boot.
   resetState()
 })
 
@@ -87,9 +88,6 @@ describe('readEnvelope', () => {
     // The per-item code travels out with the message, so a caller that must *branch* on the
     // failure is not left matching on prose.
     expect(rejected.code).toBe('51008')
-    // The per-item code travels out with the message, so a caller that must *branch* on the
-    // failure is not left matching on prose.
-    expect(rejected.code).toBe('51008')
 
     const envelopeError = readEnvelope({ code: '50011', msg: 'too many requests', data: [] })
     expect(envelopeError.error).toMatch(/Rate limited/)
@@ -117,12 +115,13 @@ describe('okxRequest', () => {
     })
 
     expect(ok).toEqual({ ok: true, code: '0', data: [{ bal: '1' }] })
-    expect(calls[0].url).toBe(`${OKX_REST_BASE}/api/v5/account/balance`)
+    // EU-first: the default aim is the platform this desk's keys actually live on.
+    expect(calls[0].url).toBe('https://eea.okx.com/api/v5/account/balance')
     expect(calls[0].init.headers['OK-ACCESS-KEY']).toBe('ak')
 
-    // An EEA account's keys exist only on the EU platform; the base follows the setting
-    // on the very next call, no reload in between.
-    setValue(PATHS.settings.okxEea, true)
+    // Unticking the EU checkbox re-aims the very next call at the global platform,
+    // no reload in between.
+    setValue(PATHS.settings.okxEea, false)
     tick()
     await okxRequest({
       path: '/api/v5/account/balance',
@@ -130,8 +129,8 @@ describe('okxRequest', () => {
       fetch: fakeFetch({ code: '0', data: [] }, calls),
       subtle: webcrypto.subtle,
     })
-    expect(calls[1].url).toBe('https://eea.okx.com/api/v5/account/balance')
-    setValue(PATHS.settings.okxEea, false)
+    expect(calls[1].url).toBe(`${OKX_REST_BASE}/api/v5/account/balance`)
+    setValue(PATHS.settings.okxEea, true)
     tick()
 
     // A network failure becomes an error result, never an exception: an exception on the

@@ -10,6 +10,18 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ## [Unreleased]
 
+### Changed
+
+- **The EU platform is now the default.** Every OKX call — REST, clock sync, tickers,
+  websockets — aims at `eea.okx.com`/`wseea` unless "OKX EU account" is explicitly
+  unticked, and only the deliberate boolean `false` leaves it: absent or corrupted
+  settings fail toward the platform the keys actually live on. Two escapes were closed to
+  make the default actually reach existing browsers: the watchlist's ticker poll was still
+  hardcoded to the global host, and every earlier boot had auto-stamped `okxEea: false`
+  into stored settings without anybody choosing it — a v1→v2 settings migration drops that
+  stamp (and only that stamp) so the new default applies, while every deliberate choice
+  made from v2 onward is kept.
+
 ### Fixed
 
 - **Re-aiming the desk now re-checks the keys immediately.** Ticking "OKX EU account" (or
