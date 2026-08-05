@@ -20,7 +20,21 @@ REPO=/nebula/apps/stockz
 PROJECT=stockz
 IMAGE="${PROJECT}-app"
 
+# Root runs git inside a clone it may not own (a sudo-less `git clone` leaves it owned by
+# the login user), and modern git then refuses every command with "dubious ownership" —
+# which killed this script at its very first fetch. Command-scoped config, not --global:
+# the trust is this script's, for this path, and it should not outlive either.
+export GIT_CONFIG_COUNT=1 GIT_CONFIG_KEY_0=safe.directory GIT_CONFIG_VALUE_0="$REPO"
+
 cd "$REPO"
+
+# Compose refuses to start without its env_file, and its own error message does not say
+# what to do about it. Say it here instead, before any time is spent building.
+if [ ! -f "$REPO/.env" ]; then
+  echo "==> FATAL: $REPO/.env is missing — copy .env.example beside docker-compose.yml,"
+  echo "    fill in the STOCKZ_* passwords and venue keys, chmod 600 it, and rerun."
+  exit 1
+fi
 
 echo "==> pull (deterministic: the deploy IS origin/main, local edits lose)"
 git fetch origin main
