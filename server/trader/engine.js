@@ -4,6 +4,7 @@ import { vwapRevertStrategy } from '../../src/strategy/builtin/vwap-revert.js'
 import { bookImbalanceStrategy } from '../../src/strategy/builtin/book-imbalance.js'
 import { tapePressureStrategy } from '../../src/strategy/builtin/tape-pressure.js'
 import { signalGate, throttleGate, capGate, cooldownGate } from './gates.js'
+import { tunedParams, tunedMinStrength } from './tuning.js'
 import { placeMarketOrder } from './venue.js'
 import { createLogger } from '../../src/utils/log.js'
 
@@ -46,7 +47,7 @@ export const COOLDOWN_MS = 10 * 60 * 1000
  * @param {string} instrument - the instrument id.
  * @returns {object} the record.
  */
-export function createDesk(instrument) {
+export function createDesk(instrument, sensitivity = 0) {
   return {
     instrument,
     position: 0,
@@ -55,7 +56,15 @@ export function createDesk(instrument) {
     book: { bid: 0, ask: 0, bidSize: 0, askSize: 0, mid: 0, ts: 0 },
     // Each strategy keeps its own scratchpad — a ring buffer, a running baseline. Shared
     // state between two strategies on one instrument would make them one strategy.
-    runs: STRATEGIES.map((strategy) => ({ strategy, state: {}, started: false })),
+    // Params are resolved once, here: the dial is a deployment setting, and recomputing
+    // the same overrides on every print would be work done thousands of times a minute to
+    // reach the same answer.
+    runs: STRATEGIES.map((strategy) => ({
+      strategy,
+      state: {},
+      started: false,
+      params: tunedParams(strategy, sensitivity),
+    })),
     streak: 0,
     cooldownUntil: 0,
   }
@@ -106,9 +115,12 @@ export function applyFill(desk, fill) {
  * @param {object} desk - the instrument's record, mutated.
  * @param {number} realized - the realised amount.
  * @param {number} now - epoch ms.
+ * @param {{cooldownAfter?: number, cooldownMs?: number}} [limits] - the configured bench.
  * @returns {boolean} whether the instrument is now benched.
  */
-export function recordOutcome(desk, realized, now) {
+export function recordOutcome(desk, realized, now, limits = {}) {
+  const after = Math.max(1, Number(limits.cooldownAfter) || COOLDOWN_AFTER)
+  const benchMs = Number.isFinite(Number(limits.cooldownMs)) ? Number(limits.cooldownMs) : COOLDOWN_MS
   const amount = Number(realized) || 0
   if (amount === 0) return desk.cooldownUntil > now
 
@@ -119,8 +131,8 @@ export function recordOutcome(desk, realized, now) {
   }
 
   desk.streak += 1
-  if (desk.streak >= COOLDOWN_AFTER) {
-    desk.cooldownUntil = (Number(now) || 0) + COOLDOWN_MS
+  if (desk.streak >= after) {
+    desk.cooldownUntil = (Number(now) || 0) + benchMs
     desk.streak = 0
     return true
   }
@@ -157,6 +169,7 @@ export function strongestSignal(desk, tick, now) {
       strategy: run.strategy,
       instrument: desk.instrument,
       state: run.state,
+      params: run.params,
       now,
       // The book goes in as an indicator reading, which is how book-imbalance sees depth
       // without the contract growing a second argument.
@@ -193,7 +206,25 @@ export function decide(desk, signal, context) {
   const now = Number(context?.now) || 0
   const config = context?.config ?? {}
 
-  const strength = signalGate(signal)
+  // 'flat' is an exit, and an exit is not subject to the gates that govern *entering*
+  // risk. Ignoring it — as this did at first — meant every strategy's carefully written
+  // exit was discarded, positions only ever grew, and the loop built to its cap and then
+  // refused everything forever. A trader who cannot close is not being protected.
+  if (String(signal?.action ?? '').toLowerCase() === 'flat') {
+    if (desk.position === 0) return { send: false, reason: 'already flat' }
+
+    return {
+      send: true,
+      reason: signal.reason || 'exit',
+      order: {
+        instId: desk.instrument,
+        side: desk.position > 0 ? 'sell' : 'buy',
+        size: Math.abs(desk.position),
+      },
+    }
+  }
+
+  const strength = signalGate(signal, tunedMinStrength(config.sensitivity))
   if (!strength.pass) return { send: false, reason: strength.reason }
 
   const bench = cooldownGate(desk.cooldownUntil, now)

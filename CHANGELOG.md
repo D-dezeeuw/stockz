@@ -10,6 +10,46 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ## [Unreleased]
 
+## [0.28.3] - 2026-08-07 — Trades-per-hour dial, and the race it uncovered
+
+### Added
+
+- **One dial for trades-per-hour** (`STOCKZ_TRADER_SENSITIVITY`, 0..1). The four shipped
+  strategies were tuned to disagree with each other, not to fire often — right for a set
+  whose value is that a momentum burst and a VWAP fade take opposite sides of the same
+  stretch, but it leaves a quiet book indistinguishable from a broken loop. Zero is each
+  strategy exactly as its author shipped it; one puts every threshold-shaped param at its
+  floor. Only thresholds move — windows, tick sizes and time stops change what a strategy
+  *measures*, not how readily it acts, and scaling those would quietly turn one strategy
+  into a different one. The gate chain's own conviction floor slides with the dial, or the
+  strategies would be made chattier only for `signalGate` to throw the extra signals away.
+
+- **The loss-streak bench is configurable** (`STOCKZ_TRADER_COOLDOWN_AFTER` /
+  `_MINUTES`). Measured, not assumed: with the shipped 3-losses/10-minutes defaults,
+  sensitivity 1.0 produced *fewer* orders than 0.5, because a chattier loop takes more
+  losers, hits three in a row sooner, and then sits out ten minutes. The bench, not the
+  thresholds, is what actually caps trades-per-hour once the dial is up.
+
+### Fixed
+
+- **The loop could race its own position past the cap.** Handling a feed event is `async`
+  (it awaits the venue) and the socket calls it once per message, so a print arriving while
+  an order was still in flight started a second handler that read `desk.position` before
+  the first had written it — both sized against the same stale number, both passed the cap.
+  Invisible on paper, where the await resolves immediately; against a real venue, where a
+  market order is a ~100ms round trip and prints arrive every few milliseconds, it meant
+  dozens of concurrent handlers and a position orders of magnitude past its limit. Events
+  are now chained per instrument (per instrument, not globally — BTC and ETH share no
+  state, and one slow venue call must not stall the other's book). Caught by a replay that
+  fired events without awaiting them, which is exactly what a socket does; the regression
+  test reproduces it at 4x over cap without the fix.
+
+- **Strategy exits were being thrown away.** Every strategy emits `action: 'flat'` to close
+  a position, and `decide()` only acted on buy/sell — so exits were discarded, positions
+  only ever grew, and the loop built to its cap and then refused everything forever. An
+  exit now bypasses the entry gates entirely: cooldown, throttle and cap all govern
+  *entering* risk, and a trader who cannot close is not being protected.
+
 ## [0.28.2] - 2026-08-07 — Server-side trading
 
 ### Added

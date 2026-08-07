@@ -87,6 +87,15 @@ export function traderConfig(env = process.env) {
       env.STOCKZ_TRADER_MAX_PER_INSTRUMENT,
       DEFAULT_MAX_PER_INSTRUMENT,
     ),
+    // 0 = the strategies exactly as shipped; 1 = every threshold at the floor its own
+    // schema declares legal. The one dial for trades-per-hour — see tuning.js.
+    sensitivity: Math.min(1, positiveNumber(env.STOCKZ_TRADER_SENSITIVITY, 0)),
+    // The loss-streak bench. Tunable because measurement showed it, not the thresholds,
+    // is what actually caps trades-per-hour once the dial is up: a chattier loop takes
+    // more losers, hits three in a row sooner, and then sits out ten minutes — so at
+    // sensitivity 1 the shipped defaults produced *fewer* orders than at 0.5.
+    cooldownAfter: Math.max(1, positiveNumber(env.STOCKZ_TRADER_COOLDOWN_AFTER, 3)),
+    cooldownMs: positiveNumber(env.STOCKZ_TRADER_COOLDOWN_MINUTES, 10) * 60_000,
     // The venue axes, shared with the browser desk's two checkboxes. Defaults match the
     // desk's: EU platform, live environment — the owner's actual account.
     eea: String(env.STOCKZ_OKX_EEA ?? 'true').toLowerCase() !== 'false',

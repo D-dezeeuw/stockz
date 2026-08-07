@@ -29,13 +29,41 @@ export const DECISION_LOG = 200
  */
 export function createTrader(config, deps = {}) {
   const now = deps.now ?? (() => Date.now())
-  const desks = new Map(config.symbols.map((instrument) => [instrument, createDesk(instrument)]))
+  const desks = new Map(
+    config.symbols.map((instrument) => [instrument, createDesk(instrument, config.sensitivity)]),
+  )
 
   // Order timestamps for the throttle, and the decision ring the dashboard renders.
   const sent = []
   const decisions = []
   const stats = { signals: 0, orders: 0, blocked: 0, errors: 0, startedAt: 0 }
   let feed = null
+
+  /**
+   * One in-flight handler per instrument, chained.
+   *
+   * Handling an event is `async` — it awaits the venue — and the socket calls it once per
+   * message. Without this, a trade arriving while the previous order is still in flight
+   * starts a *second* handler that reads `desk.position` before the first has written it,
+   * so both size against the same stale number and both pass the cap. On paper that is
+   * invisible (the await resolves immediately); against a real venue, where a market order
+   * is a ~100ms round trip and prints arrive every few milliseconds, it means dozens of
+   * concurrent handlers and a position orders of magnitude past its limit. Caught by a
+   * replay that fired events without awaiting them, which is exactly what a socket does.
+   *
+   * Per instrument rather than globally: BTC and ETH share no state, and serialising them
+   * together would make a slow venue call on one stall the other's book updates.
+   */
+  const chains = new Map()
+
+  const enqueue = (instrument, task) => {
+    const previous = chains.get(instrument) ?? Promise.resolve()
+    // `.then(task, task)` — a failed predecessor must not cancel its successors. The chain
+    // is for ordering, not for propagating outcomes.
+    const next = previous.then(task, task)
+    chains.set(instrument, next.catch(() => {}))
+    return next
+  }
 
   const remember = (entry) => {
     decisions.push(entry)
@@ -62,13 +90,13 @@ export function createTrader(config, deps = {}) {
     for (const trade of event.trades) {
       const at = Number(trade.ts) || now()
       const signal = strongestSignal(desk, trade, at)
-      if (signal.action === 'buy' || signal.action === 'sell') stats.signals += 1
+      if (signal.action !== 'none') stats.signals += 1
 
       const verdict = decide(desk, signal, { now: at, sent, config })
       if (!verdict.send) {
         // Only a real opinion that was refused is worth recording. Logging every neutral
         // tick would bury the one line that explains a quiet session.
-        if (signal.action === 'buy' || signal.action === 'sell') {
+        if (signal.action !== 'none') {
           stats.blocked += 1
           remember({ ts: at, instrument: desk.instrument, strategy: signal.strategy,
             action: signal.action, taken: false, reason: verdict.reason })
@@ -87,7 +115,7 @@ export function createTrader(config, deps = {}) {
       sent.push(at)
       stats.orders += 1
       const realized = applyFill(desk, { side: verdict.order.side, size: verdict.order.size, px: fill.px })
-      recordOutcome(desk, realized, at)
+      recordOutcome(desk, realized, at, config)
       remember({ ts: at, instrument: desk.instrument, strategy: signal.strategy,
         action: signal.action, taken: true, reason: verdict.reason, px: fill.px,
         size: verdict.order.size, realized })
@@ -110,10 +138,12 @@ export function createTrader(config, deps = {}) {
         // Errors are swallowed rather than allowed to reject into the socket's message
         // handler, where nothing would catch them and the feed would look healthy.
         onEvent: (event) => {
-          onEvent(event).catch((err) => {
-            stats.errors += 1
-            log.warn(`event failed: ${err?.message ?? err}`)
-          })
+          enqueue(String(event?.instrument ?? ''), () =>
+            onEvent(event).catch((err) => {
+              stats.errors += 1
+              log.warn(`event failed: ${err?.message ?? err}`)
+            }),
+          )
         },
       })
 
