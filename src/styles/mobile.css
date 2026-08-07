@@ -1,0 +1,155 @@
+/*
+ * Mobile and touch.
+ *
+ * Loaded last so it overrides without any component knowing it exists — the desk's
+ * layout is one uniform grid and the whole point of that is that it re-flows on its own.
+ * What does NOT re-flow on its own is everything below: touch targets sized for a mouse,
+ * a minimum block width wider than a phone, inputs that make iOS zoom the page, and hover
+ * states that stick on a finger. Those are the four things that make an otherwise
+ * responsive desk unusable in a hand.
+ *
+ * The desk stays the desk on a phone. Nothing is hidden that a trader needs — the
+ * hotkeys are the only thing a phone cannot offer, and every action they fire has an
+ * on-screen control already (BUY/SELL, arm, cancel-all, flatten, KILL).
+ */
+
+/*
+ * Touch targets, on any coarse pointer at any width.
+ *
+ * Keyed on the pointer, not the viewport: a tablet in landscape is wide and still has no
+ * mouse, and a narrow desktop window has a mouse and wants the dense layout. 2.75rem
+ * (44px) is the smallest reliably-hittable target with a thumb — below it the miss rate
+ * on a moving market is not a UX problem, it is a wrong-button problem.
+ */
+@media (pointer: coarse) {
+  .icon-btn {
+    inline-size: 2.75rem;
+    block-size: 2.75rem;
+  }
+
+  .btn,
+  .chip {
+    min-block-size: 2.75rem;
+    padding-inline: var(--sp-3);
+  }
+
+  /* Checkboxes are the smallest thing on the desk and gate the most (demo, EU, live). */
+  input[type='checkbox'] {
+    inline-size: 1.25rem;
+    block-size: 1.25rem;
+  }
+
+  /*
+   * No 300ms tap delay and no double-tap zoom on anything that acts. On a scalping desk
+   * a third of a second between the tap and the order is the difference between the
+   * price you saw and the price you get.
+   */
+  button,
+  .chip,
+  [data-action='click'] {
+    touch-action: manipulation;
+  }
+
+  /*
+   * Hover is a lie on a touch screen: the browser fakes it on tap and then leaves it
+   * stuck until something else is tapped, so a "hovered" row stays highlighted and reads
+   * as selected. Nothing is lost by dropping it — the active state below is the honest
+   * feedback, and it ends when the finger lifts.
+   */
+  .icon-btn:hover,
+  .btn:hover,
+  .chip:hover,
+  .watch__row:hover,
+  .ladder__row:hover {
+    color: inherit;
+    border-color: inherit;
+    background: inherit;
+  }
+
+  .btn:active,
+  .chip:active,
+  .icon-btn:active {
+    background: var(--bg-raised);
+    border-color: var(--green-dim);
+  }
+}
+
+/*
+ * Phones. The grid's `auto-fit` already collapses to one column — what it cannot do is
+ * make the column narrower than `--block-w`, which at 22rem (352px) is wider than the
+ * content box of a 360px phone. The overflow was then clipped by `overflow-x: hidden` on
+ * body, so the right edge of every block was silently cut off rather than visibly broken.
+ */
+@media (max-width: 40rem) {
+  :root {
+    /* Narrow enough for a 320px phone once the grid gap is taken off both sides. */
+    --block-w: 15rem;
+    /* Taller, not shorter: one column means vertical space is the only thing being spent,
+       and a 15rem block that scrolls internally on a phone shows almost nothing. */
+    --block-h: 18rem;
+    --grid-gap: var(--sp-1);
+  }
+
+  /*
+   * The notch and the home indicator. `viewport-fit=cover` in the meta tag lets the page
+   * paint under both, which is what keeps the desk edge-to-edge — these put the content
+   * back inside the safe area so the LEDs are not under a camera cutout.
+   */
+  .app-header {
+    padding-inline: max(var(--sp-2), env(safe-area-inset-left))
+      max(var(--sp-2), env(safe-area-inset-right));
+  }
+
+  .app-footer {
+    padding-inline: max(var(--sp-2), env(safe-area-inset-left))
+      max(var(--sp-2), env(safe-area-inset-right));
+    padding-block-end: env(safe-area-inset-bottom);
+  }
+
+  .app-grid {
+    padding-inline: max(var(--grid-gap), env(safe-area-inset-left))
+      max(var(--grid-gap), env(safe-area-inset-right));
+    padding-block-end: max(var(--grid-gap), env(safe-area-inset-bottom));
+  }
+
+  /*
+   * iOS zooms the whole page when a focused input is under 16px, and it does not zoom
+   * back out. On a desk where the next thing you do is read a price, that is the single
+   * most disruptive mobile bug there is — so every field that can take focus is 16px on
+   * a phone regardless of the density tokens.
+   */
+  .field__input,
+  input[type='text'],
+  input[type='number'],
+  input[type='password'],
+  input[type='search'],
+  select,
+  textarea {
+    font-size: 1rem;
+  }
+
+  /* Full-bleed drawer: 22rem on a 360px phone left a useless sliver of dimmed desk. */
+  .drawer {
+    inline-size: 100vw;
+  }
+
+  /*
+   * Wide content scrolls inside its own block rather than pushing the page sideways —
+   * the same rule the desktop grid already follows, restated for the tables that are
+   * only too wide on a phone.
+   */
+  .block__body {
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+  }
+}
+
+/*
+ * Landscape phones: the height is the scarce axis, not the width. A block taller than the
+ * viewport cannot be read at all, so the phone-portrait bump above is walked back.
+ */
+@media (max-width: 60rem) and (orientation: landscape) and (max-height: 30rem) {
+  :root {
+    --block-h: 13rem;
+  }
+}

@@ -2,7 +2,17 @@
 <html lang="en" data-theme="night">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- `viewport-fit=cover` lets the desk paint under a notch and the home indicator;
+       mobile.css puts the content back inside the safe area. `maximum-scale` is
+       deliberately NOT set — pinch-zoom is an accessibility control and capping it to
+       stop iOS focus-zoom would be fixing the wrong thing (mobile.css sizes inputs at
+       16px instead, which is what actually stops the zoom). -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <!-- Standalone-capable, so a desk added to the home screen opens without browser
+       chrome — on a phone that chrome is a third of the vertical space. -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#070a07">
   <title>STOCKZ</title>
   <meta name="description" content="STOCKZ - hyper-scalping micro-trading desk.">
   <meta name="theme-color" content="#0a0e0a">
@@ -52,6 +62,9 @@
   <link rel="stylesheet" href="./src/styles/backtest.css">
   <link rel="stylesheet" href="./src/styles/mode.css">
   <link rel="stylesheet" href="./src/styles/utilities.css">
+  <!-- Last, deliberately: the mobile layer overrides touch targets, block metrics and
+       input sizing without any component knowing it exists. -->
+  <link rel="stylesheet" href="./src/styles/mobile.css">
 
   <!-- The UI engine, straight from the CDN. Pinned to an exact version: the live page
        must never shift under a trader because unpkg published a new minor. The same
