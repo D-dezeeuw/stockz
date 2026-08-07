@@ -10,7 +10,26 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ## [Unreleased]
 
+## [0.28.1] - 2026-08-07 — OKX key aiming, IPv4 egress, mobile
+
+A patch release cut between phase closes, for fixes that shipped to the live desk today.
+
 ### Added
+
+- **The desk works on a phone.** A dedicated `src/styles/mobile.css`, loaded last so no
+  component knows it exists. Touch targets go to 44px on any coarse pointer (keyed on the
+  pointer, not the viewport — a tablet in landscape is wide and still has no mouse), tap
+  delay and double-tap zoom are off on anything that acts, and sticky fake-hover is
+  replaced by an active state that ends when the finger lifts. On phones the minimum block
+  width drops from 22rem to 15rem — at 22rem a 360px phone was wider than the grid column
+  and `overflow-x: hidden` silently *clipped* the right edge of every block rather than
+  showing it broken — blocks get taller since one column makes height the only cost, inputs
+  render at 16px so iOS stops zooming the page on focus and never zooming back, the
+  settings drawer goes full-bleed, and header/footer/grid respect the notch and home
+  indicator via `viewport-fit=cover` plus safe-area insets. Landscape phones walk the
+  height bump back, because there the scarce axis is vertical. Every hotkey-only action
+  already had an on-screen control (BUY/SELL, arm, cancel-all, flatten-all, KILL), so
+  nothing is unreachable without a keyboard.
 
 - **The server's `.env` is the venue key store now** (owner decision, single-user desk).
   The backend hands the `STOCKZ_OKX_*` / `STOCKZ_ETORO_*` keys to a signed-in **admin**
