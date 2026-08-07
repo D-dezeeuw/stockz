@@ -92,6 +92,14 @@
 }
 
 /*
+ * A substitution the loop made for itself. Green rather than orange: nothing is wrong and
+ * nothing needs doing — but the desk is trading a pair nobody typed, which is worth a line.
+ */
+.trader__adopted {
+  color: var(--green);
+}
+
+/*
  * The breakdown: ring on the left, legend on the right.
  *
  * Two columns rather than a stack, because the ring is only useful next to the labels —

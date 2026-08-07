@@ -59,6 +59,84 @@ describe('createTrader', () => {
     expect(trader.snapshot().running).toBe(false)
   })
 
+  it('trades a quote the account can actually use instead of refusing', async () => {
+    const subscribed = []
+    const closed = []
+    const captured = {}
+    // A feed double that records every subscription, so the test can prove the socket was
+    // re-pointed and not merely that a variable changed.
+    const feed = (options) => {
+      subscribed.push([...options.symbols])
+      captured.emit = options.onEvent
+      const handle = { close: () => closed.push(true), state: () => 'live', attempts: () => 0 }
+      return handle
+    }
+
+    const fetch = async (url) => ({
+      json: async () =>
+        String(url).includes('/account/instruments')
+          ? { code: '0', data: [
+              { instId: 'BTC-EUR', state: 'live' },
+              { instId: 'ETH-EUR', state: 'live' },
+            ] }
+          : { code: '0', data: [{ perm: 'read_only,trade', uid: '1' }] },
+    })
+
+    const config = { ...CONFIG, symbols: ['BTC-USDT'], live: true, hasKeys: true,
+      keys: { apiKey: 'ak', secretKey: 'sk', passphrase: 'pp' }, eea: true }
+    const trader = createTrader(config, { feed, fetch, now: () => 5000 }).start()
+    expect(subscribed[0]).toEqual(['BTC-USDT'])
+
+    const venue = await trader.preflight()
+
+    // The whole point: an account that cannot trade USDT gets traded in EUR rather than
+    // being switched to paper until somebody edits .env and rebuilds the container.
+    expect(venue.adopted).toEqual([{ from: 'BTC-USDT', to: 'BTC-EUR' }])
+    expect(venue.blocked).toBe('')
+    expect(venue.unlisted).toEqual([])
+
+    // Desk, subscription and snapshot all move together — a desk with no subscription sits
+    // at zero forever, and a subscription with no desk drops every print.
+    expect([...trader.desks.keys()]).toEqual(['BTC-EUR'])
+    expect(closed).toHaveLength(1)
+    expect(subscribed[1]).toEqual(['BTC-EUR'])
+    expect(trader.snapshot().symbols).toEqual(['BTC-EUR'])
+
+    // And the adopted instrument is the one that actually trades.
+    captured.emit({
+      kind: 'book',
+      instrument: 'BTC-EUR',
+      book: { bid: 99, ask: 101, bids: [['99', '5']], asks: [['101', '1']], mid: 100, ts: 1 },
+    })
+    await settle()
+    expect(trader.desks.get('BTC-EUR').book.ask).toBe(101)
+    trader.stop()
+  })
+
+  it('keeps refusing when there is no tradable quote to adopt', async () => {
+    const captured = {}
+    const fetch = async (url) => ({
+      json: async () =>
+        String(url).includes('/account/instruments')
+          ? { code: '0', data: [{ instId: 'SOL-EUR', state: 'live' }] }
+          : { code: '0', data: [{ perm: 'read_only,trade', uid: '1' }] },
+    })
+
+    const config = { ...CONFIG, symbols: ['BTC-USDT'], live: true, hasKeys: true,
+      keys: { apiKey: 'ak', secretKey: 'sk', passphrase: 'pp' }, eea: true }
+    const trader = createTrader(config, { feed: fakeFeed(captured), fetch, now: () => 5000 }).start()
+
+    const venue = await trader.preflight()
+
+    // No BTC pair at all, so there is nothing to swap to and the desk says so plainly
+    // rather than silently trading something the owner never named.
+    expect(venue.adopted).toEqual([])
+    expect(venue.unlisted).toEqual(['BTC-USDT'])
+    expect(venue.blocked).toContain('cannot trade BTC-USDT')
+    expect(trader.snapshot().symbols).toEqual(['BTC-USDT'])
+    trader.stop()
+  })
+
   it('records a taken decision, its fill and its P&L', async () => {
     const captured = {}
     const trader = createTrader(CONFIG, { feed: fakeFeed(captured), now: () => 5000 }).start()

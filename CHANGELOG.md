@@ -10,6 +10,42 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ## [Unreleased]
 
+## [0.28.10] - 2026-08-07 — The loop fixes its own symbols
+
+### Changed
+
+- **The trader now adopts a tradable quote currency instead of refusing.** 0.28.9 could
+  finally *see* that the account cannot trade `BTC-USDT` and printed instructions: edit
+  `STOCKZ_TRADER_SYMBOLS`, rebuild the container. That is a fix that only works while
+  somebody is watching, on a desk whose entire premise is that nobody has to be. The
+  preflight now swaps the refused pair for the same base in a quote the account holds —
+  `BTC-USDT` → `BTC-EUR` — and trades it.
+
+  Safe because the clip is denominated in the **base** currency (`tgtCcy: 'base_ccy'`):
+  the substituted desk trades the identical 0.001 BTC, and the per-instrument exposure cap
+  keeps meaning exactly what it meant.
+
+  Adoption rebuilds the desks *and* re-points the socket subscription together — a desk
+  with no subscription sits at zero forever, and a subscription with no desk drops every
+  print. It refuses while any desk holds a position: substitution happens before the first
+  print, but discarding a desk that holds inventory would strand a real position at the
+  venue with nothing left in the process that knows it exists.
+
+  All or nothing. If any configured symbol has no tradable substitute, nothing is swapped
+  and the desk reports the refusal as before — a partial swap would leave it trading a mix
+  of what was asked for and what was guessed.
+
+### Added
+
+- `bestAlternative()` — the single substitute, chosen deterministically. Quotes rank
+  `USDT > USDC > EUR > USD` with unranked ones still eligible behind them and alphabetical
+  tie-breaks, so two boots of the same config never pick differently. A scalper lives on
+  the spread; "whatever OKX listed first" is not a basis for choosing what to trade.
+- The desk shows `↻ adopted BTC-USDT → BTC-EUR` in green — not a warning, since nothing
+  needs doing, but the desk is trading a pair nobody typed and that should never be
+  discovered from a fill. `/api/trader` carries it as `venue.adopted`, and `symbols` now
+  reports what is actually being traded rather than what was configured.
+
 ## [0.28.9] - 2026-08-07 — Ask the account which markets it may trade
 
 ### Fixed

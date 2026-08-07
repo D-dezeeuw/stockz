@@ -2,6 +2,7 @@ import { describe, it, expect, vi } from 'vitest'
 import {
   fetchAccountInstruments,
   alternativeQuotes,
+  bestAlternative,
   fetchAccountConfig,
   canTrade,
   fetchInstruments,
@@ -246,6 +247,27 @@ describe('alternativeQuotes', () => {
     expect(alternativeQuotes('DOGE-USDT', tradable)).toEqual([])
     expect(alternativeQuotes('', tradable)).toEqual([])
     expect(alternativeQuotes('BTC-USDT', undefined)).toEqual([])
+  })
+})
+
+describe('bestAlternative', () => {
+  it('picks the deepest tradable quote, deterministically', () => {
+    // Ranked quotes beat unranked ones, whatever order the venue listed them in — this
+    // decides what the loop trades with real money, so "first in the response" is not an
+    // acceptable basis for it.
+    expect(bestAlternative('BTC-USDT', ['BTC-BRL', 'BTC-EUR', 'BTC-USDC'])).toBe('BTC-USDC')
+    expect(bestAlternative('BTC-EUR', ['BTC-USDT', 'BTC-USDC'])).toBe('BTC-USDT')
+
+    // An account that only holds the EUR pair gets the EUR pair.
+    expect(bestAlternative('BTC-USDT', ['BTC-EUR', 'ETH-EUR'])).toBe('BTC-EUR')
+
+    // Unranked quotes are eligible rather than discarded — a tradable odd pair beats no
+    // pair — and tie-break inside one rank is alphabetical so two boots agree.
+    expect(bestAlternative('BTC-USDT', ['BTC-TRY', 'BTC-BRL'])).toBe('BTC-BRL')
+
+    // Nothing to swap to is '' rather than undefined: the caller tests it as a value.
+    expect(bestAlternative('DOGE-USDT', ['BTC-EUR'])).toBe('')
+    expect(bestAlternative('BTC-USDT', [])).toBe('')
   })
 })
 
