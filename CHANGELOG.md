@@ -10,6 +10,45 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ## [Unreleased]
 
+## [0.28.8] - 2026-08-07 — Why it isn't trading, in one shape
+
+### Fixed
+
+- **vwap-revert was entering on nonsense and stopping out in the same second.** `sigma > 0`
+  was the whole warmup test, and it is a divide-by-zero guard that does not guard: early in
+  a session the VWAP hugs price, so `distance` is tiny and its standard deviation tinier, and
+  the z-score explodes. A live session produced entries at **814σ, 144σ and 22σ**, each
+  followed immediately by `stretched past stop` — because the stop is built from that same
+  near-zero sigma and any tick at all clears it. Enter, stop out, lose; three of those and
+  the instrument benches itself. That is the whole reason a log fills with `benched 45s` and
+  the desk looks like it never trades.
+
+  `MIN_SIGMA_FRACTION` (1e-5 of price, i.e. 0.1 basis points) now sits alongside the sample
+  count in the warmup test. Price-relative so it holds across instruments, and deliberately
+  **not** a tunable: it is a floor on whether a number means anything, not a view about how
+  eagerly to trade.
+
+### Added
+
+- **A breakdown of where every opinion went**, as a ring plus a legend in the Server Trader
+  block. The decision feed answers "what just happened"; this answers "what has been
+  happening", which is the question a desk that looks idle actually raises. A session can
+  produce thousands of lines and two orders, and reading that off a scrolling list is not
+  possible — the eye needs the proportion.
+
+  Each refusal is categorised **by the gate that refused it, at the moment it refused** —
+  never re-derived from the reason text. That mistake has already been made once in this
+  codebase's history, and prose is the strategy's (or the venue's) to reword.
+
+  `already flat` is counted but excluded from the chart and dropped from the feed: a flat
+  signal with nothing to close is not a trade passed on, and it is by far the most frequent
+  line the loop produces. Left in, it was both the noisiest thing in the log and would have
+  been the largest wedge in the chart while meaning nothing.
+
+  Colours are the desk's own — green taken, orange a refusal that cost something, muted a
+  limit doing its job. Never a categorical rainbow: on this desk colour already means profit
+  and loss, and a third meaning would break both.
+
 ## [0.28.7] - 2026-08-07 — Report the facts, not the prose
 
 ### Fixed

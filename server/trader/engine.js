@@ -211,10 +211,14 @@ export function decide(desk, signal, context) {
   // exit was discarded, positions only ever grew, and the loop built to its cap and then
   // refused everything forever. A trader who cannot close is not being protected.
   if (String(signal?.action ?? '').toLowerCase() === 'flat') {
-    if (desk.position === 0) return { send: false, reason: 'already flat' }
+    // Not a refusal and not a missed trade: there was nothing to close. Categorised as
+    // 'noop' so it can be left out of "what did we pass on", where it would otherwise be
+    // the single biggest slice and mean nothing.
+    if (desk.position === 0) return { send: false, why: 'noop', reason: 'already flat' }
 
     return {
       send: true,
+      why: 'exit',
       reason: signal.reason || 'exit',
       order: {
         instId: desk.instrument,
@@ -225,25 +229,25 @@ export function decide(desk, signal, context) {
   }
 
   const strength = signalGate(signal, tunedMinStrength(config.sensitivity))
-  if (!strength.pass) return { send: false, reason: strength.reason }
+  if (!strength.pass) return { send: false, why: 'weak', reason: strength.reason }
 
   const bench = cooldownGate(desk.cooldownUntil, now)
-  if (!bench.pass) return { send: false, reason: bench.reason }
+  if (!bench.pass) return { send: false, why: 'benched', reason: bench.reason }
 
   const throttle = throttleGate(context?.sent, now, config.maxPerMin)
-  if (!throttle.pass) return { send: false, reason: throttle.reason }
+  if (!throttle.pass) return { send: false, why: 'throttled', reason: throttle.reason }
 
   const order = {
     instId: desk.instrument,
     side: String(signal.action).toLowerCase(),
     size: Number(config.size) || 0,
   }
-  if (order.size <= 0) return { send: false, reason: 'size is zero' }
+  if (order.size <= 0) return { send: false, why: 'misconfigured', reason: 'size is zero' }
 
   const cap = capGate(order, desk.position, config.maxPerInstrument)
-  if (!cap.pass) return { send: false, reason: cap.reason }
+  if (!cap.pass) return { send: false, why: 'cap', reason: cap.reason }
 
-  return { send: true, reason: signal.reason, order }
+  return { send: true, why: 'entry', reason: signal.reason, order }
 }
 
 /**

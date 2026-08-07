@@ -35,6 +35,7 @@ export const TRADER_OFF = Object.freeze({
   uptimeMs: 0,
   symbols: [],
   stats: { signals: 0, orders: 0, blocked: 0, errors: 0 },
+  breakdown: [],
   decisions: [],
   desks: [],
 })
@@ -75,6 +76,7 @@ export function toTraderView(raw) {
       blocked: Number(stats.blocked) || 0,
       errors: Number(stats.errors) || 0,
     },
+    breakdown: decisionBreakdown(raw.tally),
     decisions: (Array.isArray(raw.decisions) ? raw.decisions : []).map((d, i) => ({
       // The server's monotonic sequence is the row's identity — a timestamp is not one,
       // because OKX stamps several prints in the same millisecond. Falls back to the index
@@ -86,6 +88,7 @@ export function toTraderView(raw) {
       strategy: String(d?.strategy ?? ''),
       action: String(d?.action ?? ''),
       taken: d?.taken === true,
+      why: String(d?.why ?? ''),
       reason: String(d?.reason ?? ''),
       px: Number(d?.px) || 0,
       realized: Number(d?.realized) || 0,
@@ -99,6 +102,48 @@ export function toTraderView(raw) {
       benched: Number(desk?.benchedFor) > 0,
     })),
   }
+}
+
+/**
+ * How every actionable opinion ended up, ordered and labelled for reading.
+ *
+ * Two slices are taken (an entry and an exit), the rest are passes. Sorted with the taken
+ * ones first and the largest refusal next, because the question this answers is "did it
+ * trade, and if not what stopped it" — and the answer to the second half is almost always
+ * one dominant category.
+ *
+ * `noop` is dropped: a flat signal with nothing to close is not a trade passed on, and it
+ * is the most frequent line the loop produces. Left in, it would be the biggest slice on
+ * the chart and would mean nothing at all.
+ *
+ * @param {object} tally - the server's per-category counts.
+ * @returns {object[]} slices with label, count, share and tone.
+ */
+export function decisionBreakdown(tally) {
+  const counts = tally && typeof tally === 'object' ? tally : {}
+  const rows = [
+    { key: 'entry', label: 'entered', tone: 'up' },
+    { key: 'exit', label: 'exited', tone: 'up' },
+    { key: 'benched', label: 'benched', tone: 'down' },
+    { key: 'weak', label: 'too weak', tone: 'muted' },
+    { key: 'cap', label: 'at cap', tone: 'muted' },
+    { key: 'throttled', label: 'throttled', tone: 'muted' },
+    { key: 'venue', label: 'venue refused', tone: 'down' },
+    { key: 'misconfigured', label: 'misconfigured', tone: 'down' },
+  ]
+    .map((row) => ({ ...row, count: Number(counts[row.key]) || 0 }))
+    .filter((row) => row.count > 0)
+
+  const total = rows.reduce((sum, row) => sum + row.count, 0)
+  if (total === 0) return []
+
+  return rows.map((row) => ({
+    ...row,
+    share: row.count / total,
+    // Rendered here rather than in the template: a percentage is read, not computed.
+    pct: `${Math.round((row.count / total) * 100)}%`,
+    taken: row.key === 'entry' || row.key === 'exit',
+  }))
 }
 
 /**

@@ -1239,6 +1239,22 @@
                   <span class="num" :class="d.realized >= 0 ? 'num is-up' : 'num is-down'">{{d.realized}}</span>
                 </div>
               </div>
+              <!-- Where every opinion went, as one shape. A scrolling feed answers "what
+                   just happened"; this answers "what has been happening", which is the
+                   question a desk that looks idle actually raises. -->
+              <div class="trader__split" data-if="trader.view.breakdown.length > 0">
+                <canvas id="trader-donut" class="trader__donut"></canvas>
+                <div class="trader__legend" data-each="trader.view.breakdown" data-as="slice"
+                     data-key="slice.key">
+                  <div class="trader__slice">
+                    <i :class="'trader__dot trader__dot--' + slice.tone"
+                       :style="slice.taken ? 'opacity:1' : 'opacity:0.55'"></i>
+                    <span class="trader__slice-label">{{slice.label}}</span>
+                    <span class="num">{{slice.count}}</span>
+                    <span class="num trader__slice-pct">{{slice.pct}}</span>
+                  </div>
+                </div>
+              </div>
               <p class="label" data-if="trader.view.decisions.length === 0">no decisions yet</p>
               <!-- Keyed on the server's monotonic sequence. (ts, strategy, action) is not
                    unique: OKX stamps several prints in the same millisecond, so one
