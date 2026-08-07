@@ -1,4 +1,5 @@
 import { okxPublicBase } from './region.js'
+import { OKX_ENDPOINTS } from './endpoints.js'
 import { createLogger } from '../../utils/log.js'
 
 /**
@@ -17,7 +18,7 @@ import { createLogger } from '../../utils/log.js'
 const log = createLogger('okx-tickers')
 
 /** The public tickers endpoint. Unsigned — deliberately not routed through `okxRequest`. */
-export const TICKERS_PATH = '/api/v5/market/tickers?instType=SPOT'
+export const TICKERS_PATH = `${OKX_ENDPOINTS.tickers}?instType=SPOT`
 
 /**
  * What counts as a quote currency worth ranking.

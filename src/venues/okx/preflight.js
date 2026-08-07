@@ -1,6 +1,7 @@
 import { okxRequest } from './rest.js'
 import { demoTrading } from './sign.js'
 import { eeaAccount, okxProxyFor } from './region.js'
+import { OKX_ENDPOINTS } from './endpoints.js'
 import { syncOkxClock } from './clock.js'
 import { hasKeys } from '../vault.js'
 import { setValue, watch } from '../../app/engine.js'
@@ -26,8 +27,9 @@ import { createLogger } from '../../utils/log.js'
 
 const log = createLogger('okx-preflight')
 
-/** Authenticated, cheap, and side-effect free — the smallest "do you know me". */
-export const OKX_CONFIG_PATH = '/api/v5/account/config'
+/** Authenticated, cheap, and side-effect free — the smallest "do you know me". Named here
+ *  for callers; defined with every other path in endpoints.js. */
+export const OKX_CONFIG_PATH = OKX_ENDPOINTS.config
 
 /**
  * The verdict for a desk that was simply never given credentials.
@@ -239,13 +241,75 @@ export function announceKeyCheck(verdict) {
 }
 
 /**
- * Verify the keys at boot, once, and say what to do if they are wrong.
+ * The (platform, environment, keys) combination a verdict describes, as one string.
+ *
+ * Both axes are read pending-aware, because the moment this is recorded is exactly the
+ * moment the probe's own corrective writes are still queued in the engine's delta.
+ *
+ * @returns {string} e.g. `eea:true demo:false keys:true`.
+ */
+export function aimSignature() {
+  return `eea:${eeaAccount()} demo:${demoTrading()} keys:${hasKeys('okx')}`
+}
+
+/** The single in-flight preflight, so concurrent triggers share one check. */
+let inFlight = null
+
+/** The aim the last *successful* verdict described, and when it was reached. */
+let lastGood = { sig: '', at: 0 }
+
+/** A good verdict younger than this answers a re-check without a network call. */
+export const VERDICT_FRESH_MS = 10000
+
+/**
+ * Does the current aim already hold a fresh, successful verdict?
+ *
+ * This is what stops the boot flurry: the probe's own re-aim writes land a tick after the
+ * verdict and wake the aim-watch, which would immediately re-verify the very combination
+ * the probe just proved. A verdict is an answer to "does this exact aim work" — as long as
+ * the aim has not changed and the answer is seconds old, asking again buys nothing.
+ *
+ * Freshness is bounded so this can never mask a real change: ten seconds later a re-aimed
+ * checkbox re-verifies as before.
+ *
+ * @param {number} [now] - epoch ms, injectable for tests.
+ * @returns {boolean} true when the last good verdict still answers for the current aim.
+ */
+export function verdictFresh(now = Date.now()) {
+  return lastGood.sig !== '' && lastGood.sig === aimSignature() && now - lastGood.at < VERDICT_FRESH_MS
+}
+
+/** Forget the in-flight check and the last verdict (tests). */
+export function resetPreflight() {
+  inFlight = null
+  lastGood = { sig: '', at: 0 }
+  return true
+}
+
+/**
+ * Verify the keys, once, and say what to do if they are wrong.
+ *
+ * Single-flight: a second caller while a check runs gets the same promise rather than a
+ * second set of venue calls. Boot fires this from several directions at once — the boot
+ * chain itself, key adoption flipping `ui.keysPresent`, the probe's re-aim writes waking
+ * the aim-watch — and every one of them is asking the same question of the same venue.
  *
  * @param {object} [options] - injectable plumbing, forwarded to `checkOkxKeys`.
  * @returns {Promise<object>} the verdict.
  */
 export async function runKeyPreflight(options = {}) {
-  return announceKeyCheck(await checkOkxKeys(options))
+  if (inFlight) return inFlight
+
+  inFlight = (async () => {
+    const verdict = announceKeyCheck(await checkOkxKeys(options))
+    // Recorded pending-aware, so the signature includes any re-aim the probe just queued.
+    if (verdict?.ok === true) lastGood = { sig: aimSignature(), at: Date.now() }
+    return verdict
+  })().finally(() => {
+    inFlight = null
+  })
+
+  return inFlight
 }
 
 /**
@@ -269,7 +333,15 @@ export async function runKeyPreflight(options = {}) {
  */
 export function watchKeyAim(deps = {}) {
   const watchImpl = deps.watch ?? watch
-  const recheck = deps.recheck ?? (() => syncOkxClock().then(() => runKeyPreflight()).catch(() => {}))
+  const recheck =
+    deps.recheck ??
+    (() => {
+      // The probe's own corrective writes wake this watcher one tick after the verdict
+      // they belong to. A fresh good verdict for this exact aim IS the answer — re-asking
+      // spends venue calls to learn what was proved milliseconds ago.
+      if (verdictFresh()) return Promise.resolve()
+      return syncOkxClock().then(() => runKeyPreflight()).catch(() => {})
+    })
 
   return watchImpl(
     [PATHS.settings.okxEea, PATHS.settings.okxDemo, PATHS.ui.keysPresent],

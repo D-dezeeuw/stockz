@@ -65,6 +65,18 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ### Fixed
 
+- **Boot makes one key check, not a flurry.** The preflight is single-flight (concurrent
+  triggers — the boot chain, key adoption, the aim-watch — share one in-flight check), and
+  the aim-watch answers the wake caused by the probe's *own* corrective writes from the
+  fresh verdict instead of re-verifying the combination just proved (10s freshness window,
+  so a real re-aim still re-checks). The positions reconciler is gated on a green key
+  verdict: it no longer races the probe at boot spraying 401s from an aim still being
+  corrected, and returns on its own thirty seconds after the verdict lands. `demoTrading`
+  reads pending-aware like `eeaAccount` always has, closing the twin boot race on the
+  demo axis. And every OKX REST path now lives in one map (`src/venues/okx/endpoints.js`)
+  — rest, preflight, clock and tickers all read from it, so a signed path, its rate-limit
+  budget entry and its request can never drift apart.
+
 - **The venue relay egresses over IPv4, so OKX's IP allowlist can actually be satisfied.**
   On the dual-stack Hetzner host, Node's fetch dialled whichever family DNS listed first —
   IPv6 — while the key's allowlist held the IPv4 everybody knows the box by, and OKX

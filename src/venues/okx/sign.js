@@ -1,6 +1,7 @@
-import { appState } from '../../app/engine.js'
+import { appState, pendingAt } from '../../app/engine.js'
 import { getKey } from '../vault.js'
 import { okxNow } from './clock.js'
+import { PATHS } from '../../state/paths.js'
 
 /**
  * OKX request signing.
@@ -129,11 +130,21 @@ export async function signRequest(req) {
 /**
  * Is the desk pointed at OKX's demo environment?
  *
- * @param {object} [state] - engine state.
+ * The live read goes through `pendingAt` — the delta first, then landed state — for the
+ * same reason `eeaAccount` does: the moments this most matters are the ones where plain
+ * `appState` is a tick behind. At boot the persisted value is still queued when the first
+ * signed call fires, and right after the key probe re-aims the desk, the corrected value
+ * is queued while the verdict is being recorded — a landed-only read signs both against
+ * the environment the write was correcting.
+ *
+ * @param {object} [state] - engine state; pass one explicitly to bypass the pending read.
  * @returns {boolean} true when demo keys should be announced as such.
  */
-export function demoTrading(state = appState) {
-  return state?.settings?.okxDemo === true
+export function demoTrading(state) {
+  if (state !== undefined) return state?.settings?.okxDemo === true
+
+  const pending = pendingAt(PATHS.settings.okxDemo)
+  return pending.found ? pending.value === true : appState?.settings?.okxDemo === true
 }
 
 /**

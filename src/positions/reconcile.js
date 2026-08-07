@@ -1,6 +1,7 @@
 import { fetchPositions } from '../venues/okx/rest.js'
 import { openPositions, upsertPosition, positionKey } from './store.js'
 import { pushToast } from '../ui/toast.js'
+import { appState } from '../app/engine.js'
 import { createLogger } from '../utils/log.js'
 
 const log = createLogger('reconcile')
@@ -125,7 +126,23 @@ export function adoptVenueTruth(diff, remote, venue = 'okx') {
  * @returns {Promise<{ok: boolean, corrected: number, reason: string}>} the outcome.
  */
 export async function reconcile(deps = {}) {
-  const { fetch = fetchPositions, venue = 'okx', now = () => Date.now() } = deps
+  const {
+    fetch = fetchPositions,
+    venue = 'okx',
+    now = () => Date.now(),
+    // Whether the venue has verified the keys — the preflight's verdict. Injectable so
+    // tests (and other venues) are not tied to OKX's key-check state.
+    ready = () => appState?.ui?.keyCheck?.ok === true,
+  } = deps
+
+  // Until the preflight has a green verdict, a signed snapshot can only repeat the
+  // refusal the preflight is already diagnosing — and at boot it raced the key probe,
+  // spraying 401s from an aim that was still being corrected. Skipped silently: the
+  // preflight owns telling the trader what is wrong with the keys, and this poller
+  // returns on its own thirty seconds after the verdict goes green.
+  if (venue === 'okx' && !ready()) {
+    return { ok: false, corrected: 0, reason: 'keys not verified yet' }
+  }
 
   const snapshot = await fetch().catch((error) => ({ ok: false, error }))
   // A failed snapshot changes nothing. Treating "I could not ask" as "there is nothing

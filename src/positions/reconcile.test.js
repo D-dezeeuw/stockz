@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'vitest'
+import { describe, it, expect, beforeEach, vi } from 'vitest'
 import {
   diffPositions,
   adoptVenueTruth,
@@ -8,12 +8,17 @@ import {
   DRIFT_EPSILON,
 } from './reconcile.js'
 import { ingestFill, openPositions, resetPositions } from './store.js'
-import { appState, tick, resetState } from '../app/engine.js'
+import { appState, tick, setValue, resetState } from '../app/engine.js'
+import { PATHS } from '../state/paths.js'
 
 beforeEach(() => {
   resetReconciler()
   resetPositions()
   resetState()
+  // The poller is gated on the key preflight's verdict; these tests are about the diffing,
+  // so they run with the keys already verified. The gate has its own assertion below.
+  setValue(PATHS.ui.keyCheck, { ok: true, code: '0', reason: 'OKX keys accepted', fix: '' })
+  tick()
 })
 
 describe('diffPositions', () => {
@@ -96,6 +101,14 @@ describe('adoptVenueTruth', () => {
 describe('reconcile', () => {
   it('adopts the venue and does nothing at all when it cannot ask', async () => {
     ingestFill({ venue: 'okx', instrument: 'BTC-USDT', side: 'buy', qty: 2, px: 100 })
+
+    // Until the preflight's verdict is green, a signed snapshot can only repeat the
+    // refusal — and at boot it raced the key probe, spraying 401s from an aim still being
+    // corrected. Skipped silently: the preflight owns explaining key failures.
+    const untouched = vi.fn()
+    const gated = await reconcile({ fetch: untouched, now: () => 500, ready: () => false })
+    expect(gated).toEqual({ ok: false, corrected: 0, reason: 'keys not verified yet' })
+    expect(untouched).not.toHaveBeenCalled()
 
     const result = await reconcile({
       fetch: async () => ({ ok: true, positions: [{ instrument: 'BTC-USDT', qty: 5, avgPx: 100 }] }),
