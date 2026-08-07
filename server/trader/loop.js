@@ -1,5 +1,5 @@
 import { startFeed } from './feed.js'
-import { fetchAccountConfig, canTrade, fetchInstruments } from './venue.js'
+import { fetchAccountConfig, canTrade, fetchAccountInstruments, alternativeQuotes } from './venue.js'
 import { createDesk, applyFill, recordOutcome, strongestSignal, decide, sendOrder } from './engine.js'
 import { createLogger } from '../../src/utils/log.js'
 
@@ -69,7 +69,7 @@ export function createTrader(config, deps = {}) {
    * keeps deciding — the strategies are still worth watching — but books its fills on paper
    * instead of asking the venue again.
    */
-  const venue = { checked: false, perm: '', canTrade: false, blocked: '', unlisted: [] }
+  const venue = { checked: false, perm: '', canTrade: false, blocked: '', unlisted: [], suggest: [] }
 
   /** Rejections that will never succeed however many times they are retried. */
   const PERMANENT = /permission|not have trading|does not exist|not supported|unavailable/i
@@ -251,11 +251,33 @@ export function createTrader(config, deps = {}) {
         log.warn(venue.blocked)
       }
 
-      const listed = await fetchInstruments(config, 'SPOT', deps)
+      // The ACCOUNT's instrument list, not the public one. The public list is identical on
+      // the EEA and global platforms and marks everything `live` — verified by probe — so it
+      // cannot answer "may I trade this". Access is per-market and account-specific, which
+      // is exactly what `...does not have trading permission for the market` means, and what
+      // was misread twice here as a key-wide permission problem.
+      const listed = await fetchAccountInstruments(config, 'SPOT', deps)
       if (listed.ok) {
-        venue.unlisted = config.symbols.filter((s) => !listed.live.includes(s))
+        venue.unlisted = config.symbols.filter((s) => !listed.tradable.includes(s))
         if (venue.unlisted.length > 0) {
-          log.warn(`not tradable on this venue: ${venue.unlisted.join(', ')}`)
+          // The same base quoted in something the account CAN trade. A desk configured for
+          // BTC-USDT on a EUR account does not need to be told the symbol is wrong; it
+          // needs to be told which symbol is right.
+          venue.suggest = venue.unlisted.flatMap((s) => alternativeQuotes(s, listed.tradable).slice(0, 3))
+          log.warn(
+            `this account cannot trade ${venue.unlisted.join(', ')}` +
+              (venue.suggest.length > 0 ? ` — it can trade ${venue.suggest.join(', ')}` : ''),
+          )
+          // Every configured symbol refused is the whole desk refused, and it deserves the
+          // headline rather than a footnote under a permission message that is not the
+          // real cause.
+          if (venue.unlisted.length === config.symbols.length && venue.canTrade) {
+            venue.blocked =
+              `this account cannot trade ${venue.unlisted.join(', ')}` +
+              (venue.suggest.length > 0
+                ? ` — set STOCKZ_TRADER_SYMBOLS to something it can, e.g. ${venue.suggest.join(', ')}`
+                : '')
+          }
         }
       }
 

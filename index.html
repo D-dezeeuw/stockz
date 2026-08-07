@@ -1225,8 +1225,13 @@
                    the desk would look like it was trading. -->
               <p class="trader__blocked" data-if="trader.view.venue.blocked">
                 ⚠ venue refused: {{trader.view.venue.blocked}}</p>
-              <p class="label" data-if="trader.view.venue.unlisted.length > 0">
-                not tradable here: {{trader.view.venue.unlisted.join(', ')}}</p>
+              <!-- Per-MARKET, not per-key. An EEA account under MiCA does not hold the
+                   same set as a global one, and the venue refuses the difference with a
+                   message that reads like a key problem. -->
+              <p class="trader__blocked" data-if="trader.view.venue.unlisted.length > 0">
+                this account cannot trade {{trader.view.venue.unlisted.join(', ')}}</p>
+              <p class="label" data-if="trader.view.venue.suggest.length > 0">
+                it can trade: {{trader.view.venue.suggest.join(', ')}}</p>
               <!-- The four numbers that answer "is it working": opinions formed, orders
                    sent, opinions refused, and things that broke. -->
               <p class="label">{{trader.view.stats.signals}} signals · {{trader.view.stats.orders}} sent ·

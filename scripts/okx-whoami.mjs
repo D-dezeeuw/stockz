@@ -28,13 +28,24 @@ import process from 'node:process'
 const CONFIG_PATH = '/api/v5/account/config'
 
 /**
+ * The instruments THIS ACCOUNT may trade. Authenticated, and a strict subset of the public
+ * list — which is identical on the EEA and global platforms and marks everything `live`,
+ * so it can only say a market exists, never that you may trade it.
+ */
+const ACCOUNT_INSTRUMENTS = '/api/v5/account/instruments?instType=SPOT'
+
+/**
  * What a `perm` string means for trading.
  *
- * OKX permissions belong to the KEY, not to an instrument: there is no "instruments you may
- * trade" endpoint. A key either carries `trade` and can reach everything the account can, or
- * it carries none of it. This is the field to check when orders are refused for permission —
- * and, just as usefully, it says whether the key in THIS .env is the key you edited on the
- * website, which is the commonest reason a permission that was ticked appears not to be.
+ * This is the KEY-wide half of trading permission, and only half. A key without `trade`
+ * can place nothing at all — but a key WITH it can still be refused on a particular pair,
+ * because access is also per-market: see `tradableFor` and
+ * `/api/v5/account/instruments`. `...no trading permission for **the market**` is the
+ * per-market refusal, and reading it as this field is a mistake made twice here.
+ *
+ * Also worth having because it says whether the key in THIS .env is the key whose
+ * permissions were edited on the website — the commonest reason a ticked box appears not
+ * to have taken.
  */
 function permits(perm) {
   return String(perm ?? '')
@@ -117,6 +128,45 @@ async function ask(universe, keys) {
     }
   } catch (err) {
     return { ok: false, code: '', msg: `unreachable: ${err?.message ?? err}` }
+  }
+}
+
+/**
+ * Ask the accepting universe what it will actually let this account trade.
+ *
+ * `does not have trading permission for **the market**` is a per-market refusal, not a
+ * key-wide one — the wording is the tell, and it was misread twice before this existed.
+ *
+ * @param {{host: string, demo: boolean}} universe - the one that accepted the key.
+ * @param {object} keys - the credential.
+ * @returns {Promise<{ok: boolean, tradable: string[], quotes: object}>} what it may trade.
+ */
+async function tradableFor(universe, keys) {
+  const ts = new Date().toISOString().replace(/(\.\d{3})\d*Z$/, '$1Z')
+  const sign = createHmac('sha256', keys.secretKey)
+    .update(`${ts}GET${ACCOUNT_INSTRUMENTS}`)
+    .digest('base64')
+
+  try {
+    const response = await fetch(`${universe.host}${ACCOUNT_INSTRUMENTS}`, {
+      headers: {
+        'OK-ACCESS-KEY': keys.apiKey,
+        'OK-ACCESS-SIGN': sign,
+        'OK-ACCESS-TIMESTAMP': ts,
+        'OK-ACCESS-PASSPHRASE': keys.passphrase,
+        'Content-Type': 'application/json',
+        ...(universe.demo ? { 'x-simulated-trading': '1' } : {}),
+      },
+    })
+    const body = await response.json()
+    if (String(body?.code) !== '0') return { ok: false, tradable: [], quotes: {} }
+
+    const rows = (body.data ?? []).filter((r) => String(r?.state ?? 'live') === 'live')
+    const quotes = {}
+    for (const r of rows) quotes[r.quoteCcy] = (quotes[r.quoteCcy] ?? 0) + 1
+    return { ok: true, tradable: rows.map((r) => String(r.instId)), quotes }
+  } catch {
+    return { ok: false, tradable: [], quotes: {} }
   }
 }
 
@@ -235,6 +285,25 @@ async function main(envPath = process.argv[2] ?? '.env') {
   }
 
   console.log(conclude(verdicts))
+
+  // The per-market half. A key can be perfectly configured and still be unable to touch a
+  // given pair — an EEA account under MiCA does not hold the same set as a global one.
+  const accepted = verdicts.find((v) => v.result.ok)
+  if (accepted) {
+    const listed = await tradableFor(accepted.universe, keys)
+    if (listed.ok) {
+      const quotes = Object.entries(listed.quotes).sort((a, b) => b[1] - a[1])
+      console.log(`\n  This account may trade ${listed.tradable.length} spot markets.`)
+      console.log(`  by quote currency: ${quotes.slice(0, 8).map(([q, n]) => `${q}:${n}`).join('  ')}`)
+      for (const want of ['BTC-USDT', 'ETH-USDT', 'BTC-EUR', 'ETH-EUR', 'BTC-USDC']) {
+        console.log(`    ${want.padEnd(10)} ${listed.tradable.includes(want) ? 'yes' : 'NO'}`)
+      }
+      console.log('\n  Put tradable ones in STOCKZ_TRADER_SYMBOLS. A pair missing here is')
+      console.log('  refused as "...no trading permission for the market", which reads like')
+      console.log('  a key problem and is not one.')
+    }
+  }
+
   console.log('')
   return verdicts.some((v) => v.result.ok) ? 0 : 1
 }
