@@ -31,7 +31,8 @@ export const TRADER_OFF = Object.freeze({
   live: false,
   signedOut: false,
   feed: 'off',
-  venue: { checked: false, perm: '', canTrade: false, blocked: '', unlisted: [], suggest: [] },
+  venue: { checked: false, perm: '', canTrade: false, blocked: '', unlisted: [], suggest: [],
+    adopted: [] },
   uptimeMs: 0,
   symbols: [],
   stats: { signals: 0, orders: 0, blocked: 0, errors: 0 },
@@ -68,6 +69,14 @@ export function toTraderView(raw) {
       blocked: String(raw.venue?.blocked ?? ''),
       unlisted: Array.isArray(raw.venue?.unlisted) ? raw.venue.unlisted : [],
       suggest: Array.isArray(raw.venue?.suggest) ? raw.venue.suggest : [],
+      // Substitutions the loop made for itself. Pre-rendered as text here rather than in
+      // the template: the block binds one string per row, and building it in the markup
+      // would put the arrow glyph somewhere no test can reach it.
+      adopted: (Array.isArray(raw.venue?.adopted) ? raw.venue.adopted : []).map((swap) => ({
+        from: String(swap?.from ?? ''),
+        to: String(swap?.to ?? ''),
+        label: `${swap?.from ?? ''} → ${swap?.to ?? ''}`,
+      })),
     },
     uptimeMs: Number(raw.uptimeMs) || 0,
     symbols: Array.isArray(raw.symbols) ? raw.symbols : [],

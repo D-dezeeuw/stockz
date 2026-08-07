@@ -1,5 +1,11 @@
 import { startFeed } from './feed.js'
-import { fetchAccountConfig, canTrade, fetchAccountInstruments, alternativeQuotes } from './venue.js'
+import {
+  fetchAccountConfig,
+  canTrade,
+  fetchAccountInstruments,
+  alternativeQuotes,
+  bestAlternative,
+} from './venue.js'
 import { createDesk, applyFill, recordOutcome, strongestSignal, decide, sendOrder } from './engine.js'
 import { createLogger } from '../../src/utils/log.js'
 
@@ -30,8 +36,15 @@ export const DECISION_LOG = 200
  */
 export function createTrader(config, deps = {}) {
   const now = deps.now ?? (() => Date.now())
+
+  // What the loop is *actually* trading, which is not necessarily what was configured: the
+  // preflight may substitute a quote currency the account can trade (see `adopt`). Held
+  // separately from the frozen config so the snapshot can report the truth rather than the
+  // intent — a dashboard showing BTC-USDT while the orders say BTC-EUR would be worse than
+  // useless.
+  let symbols = [...config.symbols]
   const desks = new Map(
-    config.symbols.map((instrument) => [instrument, createDesk(instrument, config.sensitivity)]),
+    symbols.map((instrument) => [instrument, createDesk(instrument, config.sensitivity)]),
   )
 
   // Order timestamps for the throttle, and the decision ring the dashboard renders.
@@ -69,7 +82,8 @@ export function createTrader(config, deps = {}) {
    * keeps deciding — the strategies are still worth watching — but books its fills on paper
    * instead of asking the venue again.
    */
-  const venue = { checked: false, perm: '', canTrade: false, blocked: '', unlisted: [], suggest: [] }
+  const venue = { checked: false, perm: '', canTrade: false, blocked: '', unlisted: [],
+    suggest: [], adopted: [] }
 
   /** Rejections that will never succeed however many times they are retried. */
   const PERMANENT = /permission|not have trading|does not exist|not supported|unavailable/i
@@ -183,6 +197,53 @@ export function createTrader(config, deps = {}) {
     }
   }
 
+  const openFeed = () =>
+    (deps.feed ?? startFeed)({
+      symbols,
+      demo: config.demo,
+      // Errors are swallowed rather than allowed to reject into the socket's message
+      // handler, where nothing would catch them and the feed would look healthy.
+      onEvent: (event) => {
+        enqueue(String(event?.instrument ?? ''), () =>
+          onEvent(event).catch((err) => {
+            stats.errors += 1
+            log.warn(`event failed: ${err?.message ?? err}`)
+          }),
+        )
+      },
+    })
+
+  /**
+   * Trade a different set of instruments than the one configured.
+   *
+   * The desks and the subscription are both built from the symbol list, so switching means
+   * rebuilding both — a desk for an instrument no longer subscribed would sit at zero
+   * forever, and a subscription with no desk drops every print on the floor.
+   *
+   * Refuses while any desk holds a position. Substitution happens at preflight, before the
+   * first print, so in practice nothing is open; the guard is here because throwing away a
+   * desk that holds inventory would strand a real position at the venue with nothing left
+   * in the process that knows it exists.
+   *
+   * @param {string[]} next - the instruments to trade instead.
+   * @returns {boolean} whether the swap happened.
+   */
+  const adopt = (next) => {
+    if ([...desks.values()].some((desk) => desk.position !== 0)) return false
+
+    symbols = [...next]
+    desks.clear()
+    chains.clear()
+    for (const instrument of symbols) {
+      desks.set(instrument, createDesk(instrument, config.sensitivity))
+    }
+    if (feed) {
+      feed.close?.()
+      feed = openFeed()
+    }
+    return true
+  }
+
   return {
     /**
      * Open the feed and begin trading.
@@ -200,23 +261,10 @@ export function createTrader(config, deps = {}) {
         this.preflight().catch((err) => log.warn(`preflight failed: ${err?.message ?? err}`))
       }
 
-      feed = (deps.feed ?? startFeed)({
-        symbols: config.symbols,
-        demo: config.demo,
-        // Errors are swallowed rather than allowed to reject into the socket's message
-        // handler, where nothing would catch them and the feed would look healthy.
-        onEvent: (event) => {
-          enqueue(String(event?.instrument ?? ''), () =>
-            onEvent(event).catch((err) => {
-              stats.errors += 1
-              log.warn(`event failed: ${err?.message ?? err}`)
-            }),
-          )
-        },
-      })
+      feed = openFeed()
 
       log.info(
-        `trader up: ${config.symbols.join(', ')} · ${config.live ? 'LIVE' : 'paper'} · ` +
+        `trader up: ${symbols.join(', ')} · ${config.live ? 'LIVE' : 'paper'} · ` +
           `clip ${config.size} · ${config.maxPerMin}/min`,
       )
       return this
@@ -258,25 +306,54 @@ export function createTrader(config, deps = {}) {
       // was misread twice here as a key-wide permission problem.
       const listed = await fetchAccountInstruments(config, 'SPOT', deps)
       if (listed.ok) {
-        venue.unlisted = config.symbols.filter((s) => !listed.tradable.includes(s))
+        venue.unlisted = symbols.filter((s) => !listed.tradable.includes(s))
         if (venue.unlisted.length > 0) {
           // The same base quoted in something the account CAN trade. A desk configured for
           // BTC-USDT on a EUR account does not need to be told the symbol is wrong; it
           // needs to be told which symbol is right.
-          venue.suggest = venue.unlisted.flatMap((s) => alternativeQuotes(s, listed.tradable).slice(0, 3))
-          log.warn(
-            `this account cannot trade ${venue.unlisted.join(', ')}` +
-              (venue.suggest.length > 0 ? ` — it can trade ${venue.suggest.join(', ')}` : ''),
+          venue.suggest = venue.unlisted.flatMap((s) =>
+            alternativeQuotes(s, listed.tradable).slice(0, 3),
           )
-          // Every configured symbol refused is the whole desk refused, and it deserves the
-          // headline rather than a footnote under a permission message that is not the
-          // real cause.
-          if (venue.unlisted.length === config.symbols.length && venue.canTrade) {
-            venue.blocked =
+
+          // And then it should just trade it. Telling the owner to edit .env and rebuild is
+          // a fix that only works while somebody is watching, on a desk whose entire point
+          // is that nobody has to be. The clip is denominated in the BASE currency
+          // (`tgtCcy: 'base_ccy'`), so BTC-USDT → BTC-EUR trades the identical 0.001 BTC and
+          // the exposure cap keeps meaning what it meant.
+          const swaps = venue.unlisted.map((from) => ({
+            from,
+            to: bestAlternative(from, listed.tradable),
+          }))
+          // All or nothing. A partial swap would leave the desk trading a mix of what was
+          // asked for and what was guessed, which is the hardest kind of configuration to
+          // reason about later.
+          const complete = swaps.every((swap) => swap.to !== '')
+          const usable = symbols.map(
+            (s) => swaps.find((swap) => swap.from === s)?.to ?? s,
+          )
+
+          if (complete && adopt(usable)) {
+            venue.adopted = swaps
+            venue.unlisted = []
+            venue.suggest = []
+            log.warn(
+              `adopted tradable symbols: ${venue.adopted.map((s) => `${s.from} → ${s.to}`).join(', ')}`,
+            )
+          } else {
+            log.warn(
               `this account cannot trade ${venue.unlisted.join(', ')}` +
-              (venue.suggest.length > 0
-                ? ` — set STOCKZ_TRADER_SYMBOLS to something it can, e.g. ${venue.suggest.join(', ')}`
-                : '')
+                (venue.suggest.length > 0 ? ` — it can trade ${venue.suggest.join(', ')}` : ''),
+            )
+            // Every configured symbol refused, with nothing to swap to, is the whole desk
+            // refused — it deserves the headline rather than a footnote under a permission
+            // message that is not the real cause.
+            if (venue.unlisted.length === symbols.length && venue.canTrade) {
+              venue.blocked =
+                `this account cannot trade ${venue.unlisted.join(', ')}` +
+                (venue.suggest.length > 0
+                  ? ` — set STOCKZ_TRADER_SYMBOLS to something it can, e.g. ${venue.suggest.join(', ')}`
+                  : '')
+            }
           }
         }
       }
@@ -316,7 +393,8 @@ export function createTrader(config, deps = {}) {
         feed: feed?.state?.() ?? 'dead',
         startedAt: stats.startedAt,
         uptimeMs: stats.startedAt ? at - stats.startedAt : 0,
-        symbols: config.symbols,
+        // What is being traded, not what was configured — see `adopt`.
+        symbols: [...symbols],
         size: config.size,
         stats: { ...stats },
         tally: { ...tally },

@@ -304,3 +304,39 @@ export function alternativeQuotes(instId, tradable) {
     (id) => id.startsWith(`${base}-`) && id !== instId,
   )
 }
+
+/**
+ * Quote currencies in the order this desk would rather scalp them, deepest book first.
+ *
+ * Only ever a tie-break among quotes the account *already* has — an EEA account that holds
+ * no USDT pair is not going to acquire one by being asked first. Ordering matters because
+ * a scalper lives on the spread, and an obscure quote with a thin book turns a 4bp edge
+ * into a 20bp round trip.
+ */
+export const QUOTE_PREFERENCE = Object.freeze(['USDT', 'USDC', 'EUR', 'USD'])
+
+/**
+ * The single best substitute for an instrument this account cannot trade.
+ *
+ * Deterministic on purpose: this picks what the loop will actually trade with real money,
+ * and "whatever OKX happened to list first" is not a basis for that. Unranked quotes are
+ * still eligible — they sort after every ranked one rather than being discarded, because a
+ * tradable odd pair beats no pair at all — and ties inside a rank break alphabetically so
+ * two boots of the same config never diverge.
+ *
+ * @param {string} instId - the refused instrument, e.g. 'BTC-USDT'.
+ * @param {string[]} tradable - what the account may trade.
+ * @returns {string} the substitute, or '' when the account holds no pair for this base.
+ */
+export function bestAlternative(instId, tradable) {
+  const rank = (id) => {
+    const index = QUOTE_PREFERENCE.indexOf(String(id).split('-')[1] ?? '')
+    return index === -1 ? QUOTE_PREFERENCE.length : index
+  }
+
+  return (
+    alternativeQuotes(instId, tradable).sort(
+      (a, b) => rank(a) - rank(b) || a.localeCompare(b),
+    )[0] ?? ''
+  )
+}

@@ -34,6 +34,14 @@ describe('toTraderView', () => {
       desks: [{ instrument: 'BTC-USDT', position: 0.001, avgPx: 60000, realized: 1.5, unrealized: -0.2, benchedFor: 0 }],
     })
     expect(full.stats.signals).toBe(10)
+
+    // A substitution arrives as {from, to} and reaches the template as one printable
+    // string, so the block never has to build the arrow itself.
+    const swapped = toTraderView({ venue: { adopted: [{ from: 'BTC-USDT', to: 'BTC-EUR' }] } })
+    expect(swapped.venue.adopted).toEqual([
+      { from: 'BTC-USDT', to: 'BTC-EUR', label: 'BTC-USDT → BTC-EUR' },
+    ])
+    expect(toTraderView({ venue: {} }).venue.adopted).toEqual([])
     expect(full.desks[0]).toMatchObject({ instrument: 'BTC-USDT', position: 0.001, benched: false })
     // Rendered clock-time, because a decision list is scanned for "when", not parsed.
     expect(full.decisions[0].time).toMatch(/^\d{2}:\d{2}:\d{2}$/)

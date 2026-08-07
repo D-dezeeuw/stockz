@@ -1232,6 +1232,12 @@
                 this account cannot trade {{trader.view.venue.unlisted.join(', ')}}</p>
               <p class="label" data-if="trader.view.venue.suggest.length > 0">
                 it can trade: {{trader.view.venue.suggest.join(', ')}}</p>
+              <!-- Not a warning: the loop already fixed this one itself. Shown anyway
+                   because the desk is trading an instrument nobody configured, and that is
+                   never something to discover from a fill. -->
+              <p class="label trader__adopted" data-each="trader.view.venue.adopted" data-as="s"
+                 data-key="s.from">↻ adopted {{s.label}} — the configured pair is not tradable
+                 on this account</p>
               <!-- The four numbers that answer "is it working": opinions formed, orders
                    sent, opinions refused, and things that broke. -->
               <p class="label">{{trader.view.stats.signals}} signals · {{trader.view.stats.orders}} sent ·
