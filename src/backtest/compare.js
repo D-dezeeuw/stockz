@@ -5,6 +5,7 @@ import { ACTIONS } from '../actions/names.js'
 import { pushToast } from '../ui/toast.js'
 import { sizeCanvas, chartPalette } from '../charts/canvas.js'
 import { listRuns } from './archive.js'
+import { blockCanvas } from '../charts/canvas.js'
 
 /**
  * Two runs, side by side.
@@ -244,7 +245,7 @@ export function mountCompareChart(canvas, deps = {}) {
  */
 export function startCompareChart(deps = {}) {
   const doc = deps.doc ?? globalThis.document
-  const canvas = doc?.getElementById?.('compare-canvas')
+  const canvas = blockCanvas('backtest', 'compare-canvas', doc)
   if (!canvas) return null
 
   const redraw = mountCompareChart(canvas, deps)

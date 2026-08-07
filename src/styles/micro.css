@@ -1,0 +1,42 @@
+/*
+ * The micro chart.
+ *
+ * A canvas inside a fixed-height block, which is the whole layout problem: the canvas must
+ * take the space the interval row leaves and no more, or it grows on every resize as the
+ * renderer sizes the backing store from the element's own box.
+ */
+
+.micro {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  gap: var(--sp-1);
+  block-size: 100%;
+  min-block-size: 0;
+  padding: var(--sp-1);
+}
+
+.micro__intervals {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-1);
+}
+
+/* The instrument, pushed to the far end — it labels the chart rather than competing with
+   the controls. */
+.micro__symbol {
+  margin-inline-start: auto;
+  color: var(--ink-muted);
+}
+
+/*
+ * `min-*: 0` on both axes and a block-size the grid row decides. Without them the canvas
+ * reports its own intrinsic 300x150, the row grows to fit it, the renderer sizes to the
+ * new box, and the block creeps taller on every frame.
+ */
+.micro__canvas {
+  inline-size: 100%;
+  block-size: 100%;
+  min-inline-size: 0;
+  min-block-size: 0;
+  display: block;
+}

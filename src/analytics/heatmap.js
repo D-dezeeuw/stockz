@@ -1,6 +1,7 @@
 import { setValue, appState, watch } from '../app/engine.js'
 import { PATHS } from '../state/paths.js'
 import { sizeCanvas, chartPalette } from '../charts/canvas.js'
+import { blockCanvas } from '../charts/canvas.js'
 
 /**
  * When the money is actually made.
@@ -207,7 +208,7 @@ export function refreshHeatmap(trades = appState.analytics?.trades) {
  */
 export function startHeatmap(deps = {}) {
   const doc = deps.doc ?? globalThis.document
-  const canvas = doc?.getElementById?.('hours-canvas')
+  const canvas = blockCanvas('analytics', 'hours-canvas', doc)
   if (!canvas) return null
 
   const read = deps.cells ?? (() => bucketByHour(appState.analytics?.trades))

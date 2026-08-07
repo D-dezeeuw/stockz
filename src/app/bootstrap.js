@@ -47,6 +47,7 @@ import { registerCsvActions } from '../journal/csv.js'
 import { registerSummaryActions } from '../journal/summary.js'
 import { registerRetentionActions, scheduleRetention, storageUsage } from '../journal/retention.js'
 import { startEquityChart } from '../analytics/equity.js'
+import { startMicroChart } from '../charts/micro.js'
 import { startHeatmap } from '../analytics/heatmap.js'
 import { registerRankingActions } from '../analytics/instruments.js'
 import { registerPeriodActions, mountPeriod } from '../analytics/period.js'
@@ -323,6 +324,14 @@ export function bootstrap(options = {}) {
 
   const cleanup = bindDOM(doc)
   tick()
+
+  // The price chart mounts HERE, not with the other charts above: its canvas lives inside
+  // the grid's repeated block template, so it does not exist in the document until the
+  // blocks are seeded, bound and painted. Mounting earlier finds no canvas and marks the
+  // block errored — which is the same class of bug as the block sitting on 'loading'
+  // forever, just louder.
+  const unmicro =
+    options.feeds === false ? { stop: () => {} } : startMicroChart() ?? { stop: () => {} }
   observeLayout({ doc })
   const unkey = mountKeymap(doc?.defaultView ?? globalThis.window)
   const unfocus = trackBlockFocus(doc)
@@ -364,6 +373,7 @@ export function bootstrap(options = {}) {
       unrepeat()
       unreconcile()
       untrader()
+      unmicro.stop()
       unwatchlist()
       unautopilot()
       unperiod?.()

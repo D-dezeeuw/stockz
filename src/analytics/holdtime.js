@@ -3,6 +3,7 @@ import { PATHS } from '../state/paths.js'
 import { sizeCanvas, chartPalette } from '../charts/canvas.js'
 import { cellColor } from './heatmap.js'
 import { formatHold } from '../journal/metrics.js'
+import { blockCanvas } from '../charts/canvas.js'
 
 /**
  * How long the edge actually lives.
@@ -190,7 +191,7 @@ export function refreshHoldTimes(trades = appState.analytics?.trades) {
  */
 export function startHistogram(deps = {}) {
   const doc = deps.doc ?? globalThis.document
-  const canvas = doc?.getElementById?.('holds-canvas')
+  const canvas = blockCanvas('analytics', 'holds-canvas', doc)
   if (!canvas) return null
 
   const read = deps.buckets ?? (() => appState.analytics?.holds ?? [])

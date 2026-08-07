@@ -15,6 +15,31 @@ import { onThemeRepaint } from '../state/systems.js'
  */
 
 /**
+ * The canvas belonging to one dashboard block.
+ *
+ * **Never `getElementById` for anything inside a block.** The grid is a `data-each` over
+ * the block registry, so the whole `<section class="block">` — and every id inside it — is
+ * cloned once per block. Fifteen blocks meant fifteen elements sharing `id="equity-canvas"`,
+ * and `getElementById` always returns the first: the *watchlist* block's hidden copy,
+ * measuring 0x0. Every canvas chart on this desk was mounted on that invisible element and
+ * drew nothing, which is why they all showed as blank or stuck.
+ *
+ * Scoping by the owning block picks the one real canvas. The bare-id fallback keeps tests
+ * working, where a canvas is injected on its own with no block around it.
+ *
+ * @param {string} blockId - the block the canvas lives in, e.g. 'chart'.
+ * @param {string} canvasId - the canvas element id.
+ * @param {Document} [doc] - the document to search.
+ * @returns {HTMLCanvasElement|null} the canvas, or null when it is not in the DOM.
+ */
+export function blockCanvas(blockId, canvasId, doc = globalThis.document) {
+  if (!doc) return null
+
+  const scoped = doc.querySelector?.(`[data-block-id="${blockId}"] #${canvasId}`)
+  return scoped ?? doc.getElementById?.(canvasId) ?? null
+}
+
+/**
  * Size a canvas for its container and the display's pixel ratio.
  *
  * @param {HTMLCanvasElement} canvas - the canvas.
