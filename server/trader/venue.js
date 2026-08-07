@@ -174,3 +174,72 @@ export async function fetchVenuePositions(config, deps = {}) {
     error: '',
   }
 }
+
+/**
+ * What this key is actually allowed to do.
+ *
+ * OKX permissions are a property of the **key**, not of an instrument: `perm` comes back as
+ * a comma list like `read_only,trade`. There is no "instruments you may trade" endpoint,
+ * because that is not how the model works — a key either carries `trade` and can touch
+ * everything the account can reach, or it does not and can touch none of it.
+ *
+ * Asked once at startup rather than discovered per order. Without it the loop learns the
+ * answer from the venue's rejection, on every signal, forever: 1795 orders in one session,
+ * every one of them impossible before it was sent.
+ *
+ * @param {object} config - the trader config.
+ * @param {object} [deps] - injectable plumbing.
+ * @returns {Promise<{ok: boolean, perm: string, uid: string, error: string}>} the account's
+ *   permissions.
+ */
+export async function fetchAccountConfig(config, deps = {}) {
+  const result = await venueRequest({ path: OKX_ENDPOINTS.config }, config, deps)
+  if (!result.ok) return { ok: false, perm: '', uid: '', error: result.error }
+
+  const row = result.data?.[0] ?? {}
+  return { ok: true, perm: String(row.perm ?? ''), uid: String(row.uid ?? ''), error: '' }
+}
+
+/**
+ * Does this permission string allow placing orders?
+ *
+ * @param {string} perm - the `perm` field, e.g. 'read_only,trade'.
+ * @returns {boolean} true when orders may be sent.
+ */
+export function canTrade(perm) {
+  return String(perm ?? '')
+    .split(',')
+    .map((p) => p.trim().toLowerCase())
+    .includes('trade')
+}
+
+/**
+ * The instruments the venue will actually accept orders for.
+ *
+ * Not a permission list — see `canTrade` for that — but the other half of "why did this
+ * order fail": a symbol that is delisted, suspended or simply mistyped is refused just as
+ * flatly as one the key may not trade, and the two are worth telling apart before the loop
+ * spends a session finding out.
+ *
+ * @param {object} config - the trader config.
+ * @param {string} [instType] - the instrument family.
+ * @param {object} [deps] - injectable plumbing.
+ * @returns {Promise<{ok: boolean, live: string[], error: string}>} instrument ids in the
+ *   `live` state.
+ */
+export async function fetchInstruments(config, instType = 'SPOT', deps = {}) {
+  const result = await venueRequest(
+    { path: `${OKX_ENDPOINTS.instruments}?instType=${instType}` },
+    config,
+    deps,
+  )
+  if (!result.ok) return { ok: false, live: [], error: result.error }
+
+  return {
+    ok: true,
+    // `state` matters: a suspended or pre-open instrument is listed and untradable, which
+    // would otherwise look exactly like a working symbol until the first order.
+    live: result.data.filter((row) => String(row?.state ?? '') === 'live').map((row) => String(row?.instId ?? '')),
+    error: '',
+  }
+}

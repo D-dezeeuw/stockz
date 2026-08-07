@@ -84,3 +84,9 @@
 .trader__action {
   text-transform: uppercase;
 }
+
+/* The venue's refusal. Orange, because it means the desk is not doing what it says. */
+.trader__blocked {
+  color: var(--orange);
+  font-size: var(--fs-0);
+}
