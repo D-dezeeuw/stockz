@@ -142,10 +142,52 @@ export function createHandler(deps = {}) {
  * @param {{env?: object, root?: string}} [deps] - injectable environment.
  * @returns {import('node:http').Server} the listening server.
  */
+/**
+ * Make a fatal crash say something before it goes.
+ *
+ * Node kills the process on an uncaught exception or an unhandled rejection, Docker's
+ * `restart: unless-stopped` brings it back, and with an ephemeral session secret every
+ * signed-in browser is silently logged out — which is what a restart looks like from the
+ * outside: a desk that worked a minute ago answering 401 to everything, with nothing in
+ * the log to say why. This does not prevent the exit; it makes it leave a note.
+ *
+ * Deliberately still exits. A trading daemon that survives an unknown failure is a daemon
+ * whose position bookkeeping may no longer be true, and continuing to size orders against
+ * a book it is not sure about is worse than being restarted.
+ *
+ * @param {{on: Function, exit: Function}} [proc] - injectable process.
+ * @returns {string[]} the events now handled.
+ */
+export function reportFatal(proc = process) {
+  proc.on('uncaughtException', (err) => {
+    console.error(`[stockz] FATAL uncaughtException: ${err?.stack ?? err}`)
+    proc.exit(1)
+  })
+  proc.on('unhandledRejection', (reason) => {
+    console.error(`[stockz] FATAL unhandledRejection: ${reason?.stack ?? reason}`)
+    proc.exit(1)
+  })
+
+  return ['uncaughtException', 'unhandledRejection']
+}
+
 export function startServer(deps = {}) {
   const env = deps.env ?? process.env
   const host = env.STOCKZ_HOST ?? '127.0.0.1'
   const port = Number(env.STOCKZ_PORT) || 8643
+
+  reportFatal()
+
+  // Said out loud, every boot, because the consequence is invisible until it bites: without
+  // a configured secret every restart mints a new one, so every signed-in browser is logged
+  // out and starts answering 401 to its own polling with no explanation anywhere.
+  if (!(typeof env.STOCKZ_SESSION_SECRET === 'string' && env.STOCKZ_SESSION_SECRET.length >= 16)) {
+    console.log(
+      '[stockz] WARNING: STOCKZ_SESSION_SECRET is unset (or under 16 chars) — sessions are ' +
+        'signed with a per-boot secret, so every restart signs everyone out. Set it in .env: ' +
+        'openssl rand -base64 32',
+    )
+  }
 
   // The trader starts with the process, not with a browser. That is the entire point of
   // moving it here: the loop must survive a locked phone, and a loop that waited for a

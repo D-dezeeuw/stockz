@@ -1,7 +1,7 @@
 // @vitest-environment node
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 import { EventEmitter } from 'node:events'
-import { createHandler, startServer, PROXIES } from './main.js'
+import { createHandler, startServer, reportFatal, PROXIES } from './main.js'
 import { signSession, SESSION_COOKIE } from './auth.js'
 
 const ENV = {
@@ -133,6 +133,39 @@ describe('PROXIES', () => {
     expect(PROXIES[0].target).toBe('https://eea.okx.com')
     expect(PROXIES[1].target).toBe('https://www.okx.com')
     expect(PROXIES[2].target).toBe('https://api.etoro.com')
+  })
+})
+
+describe('reportFatal', () => {
+  it('makes a fatal crash leave a note before it exits', () => {
+    const handlers = {}
+    const exits = []
+    const logged = []
+    const spy = vi.spyOn(console, 'error').mockImplementation((m) => logged.push(String(m)))
+
+    const events = reportFatal({
+      on: (event, fn) => {
+        handlers[event] = fn
+      },
+      exit: (code) => exits.push(code),
+    })
+
+    // Both ways a Node process dies without anyone asking it to. Docker restarts it, and
+    // with an ephemeral session secret every browser is silently logged out — so from the
+    // outside a crash looks like a desk that suddenly 401s with nothing in the log.
+    expect(events.sort()).toEqual(['uncaughtException', 'unhandledRejection'])
+
+    handlers.uncaughtException(new Error('boom'))
+    expect(logged.at(-1)).toMatch(/FATAL uncaughtException.*boom/s)
+
+    handlers.unhandledRejection(new Error('nope'))
+    expect(logged.at(-1)).toMatch(/FATAL unhandledRejection.*nope/s)
+
+    // Still exits, deliberately: a trading daemon that survives an unknown failure may no
+    // longer have true position bookkeeping, and sizing orders against a book it is not
+    // sure about is worse than being restarted.
+    expect(exits).toEqual([1, 1])
+    spy.mockRestore()
   })
 })
 

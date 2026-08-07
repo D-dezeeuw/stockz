@@ -29,6 +29,7 @@ export const POLL_MS = 2000
 export const TRADER_OFF = Object.freeze({
   running: false,
   live: false,
+  signedOut: false,
   feed: 'off',
   uptimeMs: 0,
   symbols: [],
@@ -54,6 +55,7 @@ export function toTraderView(raw) {
   return {
     running: raw.running === true,
     live: raw.live === true,
+    signedOut: raw.signedOut === true,
     feed: String(raw.feed ?? 'dead'),
     uptimeMs: Number(raw.uptimeMs) || 0,
     symbols: Array.isArray(raw.symbols) ? raw.symbols : [],
@@ -63,7 +65,11 @@ export function toTraderView(raw) {
       blocked: Number(stats.blocked) || 0,
       errors: Number(stats.errors) || 0,
     },
-    decisions: (Array.isArray(raw.decisions) ? raw.decisions : []).map((d) => ({
+    decisions: (Array.isArray(raw.decisions) ? raw.decisions : []).map((d, i) => ({
+      // The server's monotonic sequence is the row's identity — a timestamp is not one,
+      // because OKX stamps several prints in the same millisecond. Falls back to the index
+      // only for a server too old to send it, which still beats a colliding key.
+      seq: Number(d?.seq) || i,
       ts: Number(d?.ts) || 0,
       time: new Date(Number(d?.ts) || 0).toISOString().slice(11, 19),
       instrument: String(d?.instrument ?? ''),
@@ -92,6 +98,10 @@ export function toTraderView(raw) {
  * @returns {string} e.g. 'server: LIVE · 12 orders · 340 signals'.
  */
 export function traderSummary(view) {
+  // Signed out is not "off". The loop is almost certainly still trading on the host; it is
+  // this browser that has lost its session, and saying "off" would send somebody to the
+  // server logs to look for a loop that never stopped.
+  if (view?.signedOut) return 'signed out — reload to sign in'
   if (!view?.running) return 'server trader: off'
 
   const mode = view.live ? 'LIVE' : 'paper'
@@ -111,7 +121,12 @@ export async function pollTrader(deps = {}) {
   let view
   try {
     const response = await fetchImpl(TRADER_ENDPOINT, { headers: { accept: 'application/json' } })
-    view = toTraderView(await response.json())
+    // A 401 is its own answer, not a failed request. The session died — usually because the
+    // backend restarted with an ephemeral signing secret — and every other poller on the
+    // page is about to discover the same thing. Reported once, plainly, instead of parsed
+    // as a snapshot and rendered as an idle trader.
+    if (response?.status === 401) view = { ...TRADER_OFF, signedOut: true }
+    else view = toTraderView(await response.json())
   } catch (err) {
     // An unreachable server is "off", not an error the trader has to dismiss — the desk
     // is a viewer here, and a failed poll is fixed by the next one.

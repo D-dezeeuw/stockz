@@ -36,6 +36,11 @@ export function createTrader(config, deps = {}) {
   // Order timestamps for the throttle, and the decision ring the dashboard renders.
   const sent = []
   const decisions = []
+  // A monotonic counter, because a timestamp is not an identity. OKX stamps several prints
+  // in the same millisecond, so two decisions from one strategy on one instrument can share
+  // (ts, strategy, action) exactly — which the dashboard was using as its render key, and
+  // which the engine warned about on every frame ("duplicate key ...:vwap-revert:flat").
+  let seq = 0
   const stats = { signals: 0, orders: 0, blocked: 0, errors: 0, startedAt: 0 }
   let feed = null
 
@@ -66,7 +71,8 @@ export function createTrader(config, deps = {}) {
   }
 
   const remember = (entry) => {
-    decisions.push(entry)
+    seq += 1
+    decisions.push({ seq, ...entry })
     // A ring, not a growing array: this process is meant to run for weeks.
     if (decisions.length > DECISION_LOG) decisions.splice(0, decisions.length - DECISION_LOG)
   }
@@ -113,6 +119,15 @@ export function createTrader(config, deps = {}) {
       }
 
       sent.push(at)
+      // Pruned here, not just measured. `throttleGate` returns the surviving window and
+      // `decide` discarded it, so this array grew for the life of the process — a slow leak
+      // and, worse, an O(n) filter re-run on every single signal, which gets more expensive
+      // the longer the desk stays up. Trimmed in place so the array identity the throttle
+      // reads stays the same one.
+      const cutoff = at - 60000
+      let keep = 0
+      while (keep < sent.length && sent[keep] < cutoff) keep += 1
+      if (keep > 0) sent.splice(0, keep)
       stats.orders += 1
       const realized = applyFill(desk, { side: verdict.order.side, size: verdict.order.size, px: fill.px })
       recordOutcome(desk, realized, at, config)

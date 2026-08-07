@@ -17,6 +17,24 @@
   background: var(--bg);
 }
 
+/*
+ * Every row of the shell may shrink to the viewport.
+ *
+ * A grid item's `min-width` defaults to `auto`, which means it refuses to shrink below its
+ * own content's min-content width — so one long title or one wide canvas anywhere inside
+ * pushes its whole row wider than the screen, and `overflow-x: hidden` on body then *hides*
+ * the result rather than showing it. Measured on a 390px phone before this rule: the shell
+ * was correctly 390px and every child of it — header, strip, grid, and so every block —
+ * was 1883px, so roughly four fifths of the desk was clipped off the right edge with no
+ * scrollbar to reveal it. 269 elements overflowed; this one line fixes 264 of them.
+ *
+ * `.block` has carried this same rule since the grid was built, for the same reason one
+ * level down. It was simply never applied to the rows above it.
+ */
+.app-shell > * {
+  min-inline-size: 0;
+}
+
 .app-header {
   grid-row: 1;
   display: flex;
