@@ -1220,6 +1220,13 @@
                 <span data-if="trader.view.signedOut">◇ SIGNED OUT — reload to sign in</span>
               </p>
               <p class="label">{{trader.view.symbols.join(', ')}} · feed {{trader.view.feed}}</p>
+              <!-- The one failure the loop cannot fix and the owner can, in the words the
+                   venue used. Orders fall back to paper while this is set, so without it
+                   the desk would look like it was trading. -->
+              <p class="trader__blocked" data-if="trader.view.venue.blocked">
+                ⚠ venue refused: {{trader.view.venue.blocked}}</p>
+              <p class="label" data-if="trader.view.venue.unlisted.length > 0">
+                not tradable here: {{trader.view.venue.unlisted.join(', ')}}</p>
               <!-- The four numbers that answer "is it working": opinions formed, orders
                    sent, opinions refused, and things that broke. -->
               <p class="label">{{trader.view.stats.signals}} signals · {{trader.view.stats.orders}} sent ·

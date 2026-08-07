@@ -31,6 +31,7 @@ export const TRADER_OFF = Object.freeze({
   live: false,
   signedOut: false,
   feed: 'off',
+  venue: { checked: false, perm: '', canTrade: false, blocked: '', unlisted: [] },
   uptimeMs: 0,
   symbols: [],
   stats: { signals: 0, orders: 0, blocked: 0, errors: 0 },
@@ -57,6 +58,15 @@ export function toTraderView(raw) {
     live: raw.live === true,
     signedOut: raw.signedOut === true,
     feed: String(raw.feed ?? 'dead'),
+    // What the venue said about the key itself. The one failure the trader cannot fix and
+    // the owner can, so it is carried all the way to the screen rather than left in a log.
+    venue: {
+      checked: raw.venue?.checked === true,
+      perm: String(raw.venue?.perm ?? ''),
+      canTrade: raw.venue?.canTrade === true,
+      blocked: String(raw.venue?.blocked ?? ''),
+      unlisted: Array.isArray(raw.venue?.unlisted) ? raw.venue.unlisted : [],
+    },
     uptimeMs: Number(raw.uptimeMs) || 0,
     symbols: Array.isArray(raw.symbols) ? raw.symbols : [],
     stats: {
@@ -103,6 +113,9 @@ export function traderSummary(view) {
   // server logs to look for a loop that never stopped.
   if (view?.signedOut) return 'signed out — reload to sign in'
   if (!view?.running) return 'server trader: off'
+  // The blocker first, always. A loop that is running and cannot trade is the state most
+  // easily mistaken for a working one.
+  if (view.venue?.blocked) return `server BLOCKED — ${view.venue.blocked}`
 
   const mode = view.live ? 'LIVE' : 'paper'
   const { orders, signals, blocked } = view.stats

@@ -10,6 +10,37 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ## [Unreleased]
 
+## [0.28.6] - 2026-08-07 — Ask the venue what the key may do, once
+
+### Added
+
+- **A venue preflight, before the first signal can become an order.** `/api/v5/account/config`
+  returns a `perm` field (`read_only,trade`), so the loop now asks at startup whether the key
+  may trade at all, and asks `/api/v5/public/instruments` whether the configured symbols are
+  actually in the `live` state. Both halves of "why was my order refused" — a key without
+  trade permission, and a symbol that is delisted, suspended or mistyped — fail identically
+  at the order endpoint and have completely different fixes.
+
+  Worth stating plainly, because it is a common misreading of OKX's model: **permissions
+  belong to the key, not to an instrument.** There is no "instruments you have permission to
+  trade" endpoint. A key either carries `trade` and can reach everything the account can, or
+  it carries none of it. The instrument list answers a different question — what the venue
+  will accept an order for — and is worth checking for exactly that reason.
+
+### Fixed
+
+- **A permanent venue refusal is learned once, not re-sent on every signal.** A key without
+  trade permission produced **1795 rejected orders in a single session**, each one impossible
+  before it was sent, each one spending a request against the rate limit to be told so again.
+  The loop now recognises a permanent rejection, stops asking, and falls back to booking its
+  fills on paper — the strategies keep running and the decision feed keeps filling, because
+  what the desk *would* have done is still worth watching.
+
+  The snapshot stops reporting `live` while blocked, since it no longer is, and carries the
+  venue's own words to the dashboard. A loop that is running and cannot trade is the state
+  most easily mistaken for a working one, so the Server Trader block says so in orange above
+  everything else.
+
 ## [0.28.5] - 2026-08-07 — The Micro Chart, and every other canvas
 
 ### Added

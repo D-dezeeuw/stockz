@@ -181,6 +181,55 @@ describe('createTrader', () => {
     trader.stop()
   })
 
+  it('learns a permanent venue refusal once, instead of on every signal', async () => {
+    const captured = {}
+    const placeOrder = vi.fn(async () => ({
+      ok: false,
+      id: '',
+      error: 'This API Key does not have trading permission for the market',
+    }))
+    const trader = createTrader(
+      { ...CONFIG, live: true, hasKeys: false },
+      { feed: fakeFeed(captured), now: () => 5000, placeOrder },
+    ).start()
+
+    trader.desks.get('BTC-USDT').runs = [
+      {
+        strategy: { id: 'always', onTick: () => ({ action: 'buy', strength: 1, reason: 'test' }) },
+        state: {},
+        started: true,
+      },
+    ]
+    captured.emit({
+      kind: 'book',
+      instrument: 'BTC-USDT',
+      book: { bid: 99, ask: 101, bids: [], asks: [], mid: 100, ts: 1 },
+    })
+
+    for (let i = 0; i < 12; i += 1) {
+      captured.emit({
+        kind: 'trades',
+        instrument: 'BTC-USDT',
+        trades: [{ px: 100, size: 1, side: 'buy', ts: 1000 + i }],
+      })
+    }
+    await settle()
+
+    // A permission refusal is permanent. Re-sending it per signal is how one session
+    // produced 1795 impossible orders and nothing else — the venue is asked once.
+    expect(placeOrder).toHaveBeenCalledTimes(1)
+
+    const snap = trader.snapshot()
+    expect(snap.venue.blocked).toMatch(/trading permission/)
+    // And the snapshot stops claiming to be live, because it no longer is: orders fall back
+    // to paper, and a dashboard still reading LIVE would be lying to the one person who
+    // needs to know.
+    expect(snap.live).toBe(false)
+    // The strategies keep running and keep booking — the desk is still worth watching.
+    expect(snap.stats.orders).toBeGreaterThan(0)
+    trader.stop()
+  })
+
   it('records a refusal with its reason, and never grows without bound', async () => {
     const captured = {}
     // A cap of zero refuses every entry, which is the cheapest way to exercise the

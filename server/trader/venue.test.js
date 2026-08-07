@@ -1,5 +1,8 @@
 import { describe, it, expect, vi } from 'vitest'
 import {
+  fetchAccountConfig,
+  canTrade,
+  fetchInstruments,
   okxTimestamp,
   signHeaders,
   venueRequest,
@@ -160,5 +163,66 @@ describe('fetchVenuePositions', () => {
       now: () => 1000,
     })
     expect(failed).toEqual({ ok: false, positions: [], error: "API key doesn't exist" })
+  })
+})
+
+describe('canTrade', () => {
+  it('reads the permission list OKX actually returns', () => {
+    // Permissions belong to the KEY, not to an instrument. There is no "instruments you may
+    // trade" endpoint — a key either carries `trade` and can reach everything the account
+    // can, or it carries none of it.
+    expect(canTrade('read_only,trade')).toBe(true)
+    expect(canTrade('trade')).toBe(true)
+    expect(canTrade(' read_only , TRADE ')).toBe(true)
+
+    expect(canTrade('read_only')).toBe(false)
+    expect(canTrade('read_only,withdraw')).toBe(false)
+    expect(canTrade('')).toBe(false)
+    expect(canTrade(undefined)).toBe(false)
+    // Not a substring match: 'trade' must be its own entry.
+    expect(canTrade('no_trade_permission')).toBe(false)
+  })
+})
+
+describe('fetchAccountConfig', () => {
+  it('reports what the key may do, once, instead of per order', async () => {
+    const ok = await fetchAccountConfig(CONFIG, {
+      fetch: fakeFetch({ code: '0', data: [{ uid: '42', perm: 'read_only,trade' }] }),
+      now: () => 1000,
+    })
+    expect(ok).toEqual({ ok: true, perm: 'read_only,trade', uid: '42', error: '' })
+
+    const refused = await fetchAccountConfig(CONFIG, {
+      fetch: fakeFetch({ code: '50119', msg: "API key doesn't exist" }),
+      now: () => 1000,
+    })
+    expect(refused).toMatchObject({ ok: false, perm: '', error: "API key doesn't exist" })
+  })
+})
+
+describe('fetchInstruments', () => {
+  it('lists only what the venue will actually accept an order for', async () => {
+    const calls = []
+    const result = await fetchInstruments(CONFIG, 'SPOT', {
+      fetch: fakeFetch({ code: '0', data: [
+        { instId: 'BTC-USDT', state: 'live' },
+        // Listed and untradable, which looks exactly like a working symbol right up until
+        // the first order is refused.
+        { instId: 'OLD-USDT', state: 'suspend' },
+        { instId: 'NEW-USDT', state: 'preopen' },
+        { instId: 'ETH-USDT', state: 'live' },
+      ] }, calls),
+      now: () => 1000,
+    })
+
+    expect(result.ok).toBe(true)
+    expect(result.live).toEqual(['BTC-USDT', 'ETH-USDT'])
+    expect(calls[0].url).toContain('instType=SPOT')
+
+    const failed = await fetchInstruments(CONFIG, 'SPOT', {
+      fetch: fakeFetch({ code: '1', msg: 'nope' }),
+      now: () => 1000,
+    })
+    expect(failed).toEqual({ ok: false, live: [], error: 'nope' })
   })
 })

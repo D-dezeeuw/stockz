@@ -1,4 +1,5 @@
 import { startFeed } from './feed.js'
+import { fetchAccountConfig, canTrade, fetchInstruments } from './venue.js'
 import { createDesk, applyFill, recordOutcome, strongestSignal, decide, sendOrder } from './engine.js'
 import { createLogger } from '../../src/utils/log.js'
 
@@ -43,6 +44,20 @@ export function createTrader(config, deps = {}) {
   let seq = 0
   const stats = { signals: 0, orders: 0, blocked: 0, errors: 0, startedAt: 0 }
   let feed = null
+
+  /**
+   * What the venue said about this key before a single order was sent.
+   *
+   * `blocked` is the important one: a permission refusal is *permanent*, and a loop that
+   * treats it as a per-order failure re-sends the same impossible order on every signal.
+   * One session produced 1795 of them. Once blocked, the loop keeps reading the market and
+   * keeps deciding — the strategies are still worth watching — but books its fills on paper
+   * instead of asking the venue again.
+   */
+  const venue = { checked: false, perm: '', canTrade: false, blocked: '', unlisted: [] }
+
+  /** Rejections that will never succeed however many times they are retried. */
+  const PERMANENT = /permission|not have trading|does not exist|not supported|unavailable/i
 
   /**
    * One in-flight handler per instrument, chained.
@@ -110,9 +125,18 @@ export function createTrader(config, deps = {}) {
         continue
       }
 
-      const fill = await sendOrder(verdict.order, desk, config, deps)
+      // Blocked means paper, not silence: the desk keeps showing what the strategies would
+      // have done, and the snapshot says plainly why nothing reached the venue.
+      const routing = venue.blocked ? { ...config, live: false } : config
+      const fill = await sendOrder(verdict.order, desk, routing, deps)
       if (!fill.ok) {
         stats.errors += 1
+        // A permanent refusal is learned once. Retrying it per signal is how a key with no
+        // trade permission produced a four-figure error count and nothing else.
+        if (config.live && !venue.blocked && PERMANENT.test(fill.error ?? '')) {
+          venue.blocked = fill.error
+          log.warn(`venue refused permanently — falling back to paper: ${fill.error}`)
+        }
         remember({ ts: at, instrument: desk.instrument, strategy: signal.strategy,
           action: signal.action, taken: false, reason: fill.error })
         continue
@@ -147,6 +171,13 @@ export function createTrader(config, deps = {}) {
       if (feed) return this
       stats.startedAt = now()
 
+      // Asked once, before the first signal can turn into an order. Not awaited: the feed
+      // and the strategies have nothing to do with the answer, and blocking the loop's
+      // start on a venue round trip would mean a slow OKX delays the market data too.
+      if (config.live && config.hasKeys) {
+        this.preflight().catch((err) => log.warn(`preflight failed: ${err?.message ?? err}`))
+      }
+
       feed = (deps.feed ?? startFeed)({
         symbols: config.symbols,
         demo: config.demo,
@@ -169,6 +200,46 @@ export function createTrader(config, deps = {}) {
       return this
     },
 
+    /**
+     * Ask the venue what this key may do, and whether the symbols exist.
+     *
+     * Both halves of "why was my order refused", answered up front instead of once per
+     * signal: a key without `trade` permission, and a symbol that is delisted, suspended or
+     * mistyped. They fail identically at the order endpoint and have completely different
+     * fixes.
+     *
+     * @returns {Promise<object>} the venue findings.
+     */
+    async preflight() {
+      const account = await fetchAccountConfig(config, deps)
+      venue.checked = true
+
+      if (!account.ok) {
+        venue.blocked = account.error
+        log.warn(`venue preflight failed: ${account.error}`)
+        return venue
+      }
+
+      venue.perm = account.perm
+      venue.canTrade = canTrade(account.perm)
+      if (!venue.canTrade) {
+        // Named exactly, because the fix is two minutes on OKX's API page and impossible to
+        // guess from a rejected order.
+        venue.blocked = `key has no trade permission (perm: ${account.perm || 'none'}) — enable Trade on the API key`
+        log.warn(venue.blocked)
+      }
+
+      const listed = await fetchInstruments(config, 'SPOT', deps)
+      if (listed.ok) {
+        venue.unlisted = config.symbols.filter((s) => !listed.live.includes(s))
+        if (venue.unlisted.length > 0) {
+          log.warn(`not tradable on this venue: ${venue.unlisted.join(', ')}`)
+        }
+      }
+
+      return venue
+    },
+
     /** Stop trading and close the feed. */
     stop() {
       feed?.close?.()
@@ -185,7 +256,11 @@ export function createTrader(config, deps = {}) {
       const at = now()
       return {
         running: Boolean(feed),
-        live: config.live === true,
+        // The *effective* mode. A blocked venue means orders are being booked on paper
+        // however the config reads, and a snapshot that still said LIVE would be lying to
+        // the one person who needs to know.
+        live: config.live === true && !venue.blocked,
+        venue: { ...venue },
         feed: feed?.state?.() ?? 'dead',
         startedAt: stats.startedAt,
         uptimeMs: stats.startedAt ? at - stats.startedAt : 0,
