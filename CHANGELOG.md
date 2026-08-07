@@ -80,6 +80,14 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
   this: `okxRequest` takes per-call `base`/`demo` overrides and `signRequest` a `demo`
   override, so the probe can ask all four without re-aiming the live desk four times.
 
+- **`scripts/okx-whoami.mjs`** answers "which OKX do these keys belong to" from the host,
+  with no browser and no desk in the way: it signs one `account/config` at each of the four
+  universes and names the one that accepts, plus the two checkbox settings that follow from
+  it. Zero dependencies, reads `.env` (the named file wins over the shell, so a diagnostic
+  never silently probes a different credential), and prints only a four-character key
+  fingerprint — never the credential. It also distinguishes the one result that really does
+  mean "make a new key" (`50119` on all four) from every result that does not.
+
 - **Re-aiming the desk now re-checks the keys immediately.** Ticking "OKX EU account" (or
   demo, or submitting new keys) re-runs the clock sync and key preflight against the newly
   aimed platform on the spot — previously the setting redirected only the *next* call and
