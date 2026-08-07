@@ -96,6 +96,7 @@ import { registerCaptureActions } from '../keys/capture.js'
 import { startEngine, submit as execSubmit } from '../exec/engine.js'
 import { registerFlattenActions } from '../positions/flatten.js'
 import { startReconciler } from '../positions/reconcile.js'
+import { startTraderMirror } from '../trader/mirror.js'
 import { createRepeater, guardRepeat } from '../keys/repeat.js'
 import { appVersion } from './version.js'
 
@@ -347,6 +348,9 @@ export function bootstrap(options = {}) {
   // it arms the bot when the desk is simulating and grounds it the instant the desk goes
   // live, so real money always takes a deliberate second decision.
   const unautopilot = options.feeds === false ? () => {} : startAutopilot({ now })
+  // The server-side loop is mirrored, never driven: it is already running on the host and
+  // this page is a reader. Gated with the other feeds so no test polls the backend.
+  const untrader = options.feeds === false ? () => {} : startTraderMirror()
 
   if (autoRun) run()
 
@@ -359,6 +363,7 @@ export function bootstrap(options = {}) {
       unfocus()
       unrepeat()
       unreconcile()
+      untrader()
       unwatchlist()
       unautopilot()
       unperiod?.()

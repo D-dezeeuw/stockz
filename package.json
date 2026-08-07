@@ -1,6 +1,6 @@
 {
   "name": "stockz",
-  "version": "0.28.1",
+  "version": "0.28.2",
   "private": true,
   "type": "module",
   "description": "STOCKZ - hyper-scalping micro-trading desk",

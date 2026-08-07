@@ -23,6 +23,9 @@ export const DEFAULT_BLOCKS = Object.freeze([
   { id: 'analytics', title: 'Analytics', icon: 'chart', order: 12, status: BLOCK_STATUS.empty },
   { id: 'backtest', title: 'Backtest', icon: 'bolt', order: 13, status: BLOCK_STATUS.ready },
   { id: 'paper', title: 'Practice Account', icon: 'chart', order: 14, status: BLOCK_STATUS.ready },
+  // The server-side loop. Distinct from 'bot' on purpose: that block is this browser's
+  // autopilot, this one is a process on the host that keeps trading with every tab closed.
+  { id: 'trader', title: 'Server Trader', icon: 'bolt', order: 15, status: BLOCK_STATUS.ready },
 ])
 
 /**
@@ -36,7 +39,29 @@ export const DEFAULT_BLOCKS = Object.freeze([
  */
 export function seedBlocks(force = false) {
   const existing = currentBlocks()
-  if (existing.length > 0 && !force) return existing
+  if (existing.length === 0 || force) return commitBlocks(DEFAULT_BLOCKS.map(makeBlock))
 
-  return commitBlocks(DEFAULT_BLOCKS.map(makeBlock))
+  const missing = missingBlocks(existing)
+  if (missing.length === 0) return existing
+
+  // A returning trader keeps their own order and visibility; blocks added since their last
+  // visit are appended. Without this a saved layout was frozen at the shape it had on the
+  // trader's first ever load — every block shipped afterwards was seeded into an object
+  // that was never consulted again, so the feature existed, rendered nowhere, and looked
+  // like it had failed to build.
+  return commitBlocks([...existing, ...missing.map(makeBlock)])
+}
+
+/**
+ * Default blocks a saved layout has never seen.
+ *
+ * Matched on id alone — a trader who hid, moved or renamed a block has *seen* it, and
+ * re-adding it would undo a deliberate choice on every deploy.
+ *
+ * @param {object[]} existing - the layout in state.
+ * @returns {object[]} the defaults not present, in their declared order.
+ */
+export function missingBlocks(existing) {
+  const known = new Set((Array.isArray(existing) ? existing : []).map((block) => block?.id))
+  return DEFAULT_BLOCKS.filter((block) => !known.has(block.id))
 }

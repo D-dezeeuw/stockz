@@ -10,6 +10,51 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ## [Unreleased]
 
+## [0.28.2] - 2026-08-07 — Server-side trading
+
+### Added
+
+- **The trading loop runs on the server now.** The desk was born on GitHub Pages, so the
+  browser tab *was* the desk: strategies, gates and the order path all lived in one
+  animation frame. Browsers throttle `requestAnimationFrame` to zero in a background tab,
+  so a locked phone did not slow the desk down — it stopped it. On one account on one
+  dedicated host that arrangement had outlived its reason, so the loop moved into the Node
+  process (`server/trader/`) and the dashboard became what it should always have been: a
+  window onto something already running.
+
+  The strategies are **the same modules the browser runs**, imported straight out of
+  `src/strategy/` rather than reimplemented — possible because the strategy contract was
+  written decoupled from the start (a strategy is handed a context and returns a signal; it
+  never touches state and never places an order). So the one thing that must never differ
+  between the desk you watch and the loop that trades is one module imported twice, not two
+  implementations that drift.
+
+  The loop keeps its own book from the OKX public WebSocket (no credentials — a key problem
+  must never also be a data blackout), signs its own orders with `node:crypto`, and runs the
+  same gate chain the browser desk does: conviction, cooldown, a sliding-minute throttle,
+  and a per-instrument cap that binds in both directions but never blocks an exit.
+
+  **Off unless switched on, and on paper unless told otherwise** — `STOCKZ_TRADER=on` and
+  `STOCKZ_TRADER_MODE=live` are deliberately two switches, because starting the loop and
+  letting it spend money are two decisions. Paper still crosses the real spread on the real
+  book; it just books the fill locally.
+
+  `/api/trader` serves the snapshot — positions, realised and unrealised P&L, and the
+  decision feed with the reason each signal was taken or refused. It is read-only for both
+  roles and names no credential: a phone glancing at the desk must never be able to halt a
+  loop it is only observing. A new **Server Trader** block mirrors it, polled every two
+  seconds.
+
+### Fixed
+
+- **A saved block layout now receives blocks shipped after it was saved.** `seedBlocks()`
+  returned early whenever the registry was non-empty, which froze every returning trader's
+  layout at the shape it had on their first ever load — the Auto-Trade block, among others,
+  was seeded into an object nobody consulted again, so the feature existed, rendered
+  nowhere, and looked like it had failed to build. Missing defaults are now appended by id,
+  keeping the trader's own order and visibility; a block they hid or moved is left alone,
+  because hiding it is a choice and re-adding it every deploy would overrule it.
+
 ## [0.28.1] - 2026-08-07 — OKX key aiming, IPv4 egress, mobile
 
 A patch release cut between phase closes, for fixes that shipped to the live desk today.

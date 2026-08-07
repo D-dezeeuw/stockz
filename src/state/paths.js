@@ -39,6 +39,11 @@ export const NAMESPACES = Object.freeze([
   'replay',
   'playback',
   'backtest',
+  // The server-side trading loop's mirror. A namespace of its own rather than a corner of
+  // `bot`: `bot.*` is this browser's autopilot, `trader.*` is a process on the host that
+  // keeps trading with every tab closed, and conflating the two would make "armed" mean
+  // two different things.
+  'trader',
 ])
 
 /** Namespaces that survive a reload (written to localStorage by spektrum/persist). */
@@ -269,6 +274,12 @@ export const PATHS = Object.freeze({
     cooldownUntil: 'bot.cooldownUntil',
     capped: 'bot.capped',
     session: 'bot.session',
+  }),
+  // Read-only mirror of the server-side loop. Nothing in the browser writes these except
+  // the poller in `src/trader/mirror.js`.
+  trader: Object.freeze({
+    view: 'trader.view',
+    summary: 'trader.summary',
   }),
   breaker: Object.freeze({
     tripped: 'breaker.tripped',

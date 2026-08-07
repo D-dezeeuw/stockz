@@ -61,6 +61,7 @@
   <link rel="stylesheet" href="./src/styles/analytics.css">
   <link rel="stylesheet" href="./src/styles/backtest.css">
   <link rel="stylesheet" href="./src/styles/mode.css">
+  <link rel="stylesheet" href="./src/styles/trader.css">
   <link rel="stylesheet" href="./src/styles/utilities.css">
   <!-- Last, deliberately: the mobile layer overrides touch targets, block metrics and
        input sizing without any component knowing it exists. -->
@@ -1182,6 +1183,40 @@
                 </div>
                 <button type="button" class="chip" data-action="click" data-fn="backtest.clearSlots"
                         data-if="backtest.slots.length > 0">clear slots</button>
+              </div>
+            </div>
+            <!-- The loop that does not need this page. It runs in the Node process on the
+                 host and keeps trading with every tab shut, so this block is a window, not
+                 a control panel: there is deliberately nothing here that can stop it. -->
+            <div class="trader" data-if="block.id === 'trader'">
+              <p class="trader__state"
+                 :class="trader.view.running ? (trader.view.live ? 'trader__state is-live' : 'trader__state is-paper') : 'trader__state is-off'">
+                <span data-if="trader.view.running &amp;&amp; trader.view.live">● SERVER LIVE</span>
+                <span data-if="trader.view.running &amp;&amp; !trader.view.live">● SERVER PAPER</span>
+                <span data-if="!trader.view.running">○ SERVER TRADER OFF</span>
+              </p>
+              <p class="label">{{trader.view.symbols.join(', ')}} · feed {{trader.view.feed}}</p>
+              <!-- The four numbers that answer "is it working": opinions formed, orders
+                   sent, opinions refused, and things that broke. -->
+              <p class="label">{{trader.view.stats.signals}} signals · {{trader.view.stats.orders}} sent ·
+                {{trader.view.stats.blocked}} blocked · {{trader.view.stats.errors}} errors</p>
+              <div class="trader__desks" data-each="trader.view.desks" data-as="d" data-key="d.instrument">
+                <div class="trader__desk">
+                  <span class="trader__inst">{{d.instrument}}</span>
+                  <span class="num" :class="d.position > 0 ? 'num is-long' : (d.position < 0 ? 'num is-short' : 'num')">{{d.position}}</span>
+                  <span class="num">@ {{d.avgPx}}</span>
+                  <span class="num" :class="d.realized >= 0 ? 'num is-up' : 'num is-down'">{{d.realized}}</span>
+                </div>
+              </div>
+              <p class="label" data-if="trader.view.decisions.length === 0">no decisions yet</p>
+              <div class="trader__rows" data-each="trader.view.decisions" data-as="row"
+                   data-key="row.ts + ':' + row.strategy + ':' + row.action">
+                <div class="trader__row" :class="row.taken ? 'trader__row is-taken' : 'trader__row'">
+                  <span class="trader__time num">{{row.time}}</span>
+                  <span class="trader__strategy">{{row.strategy}}</span>
+                  <span class="trader__action">{{row.action}}</span>
+                  <span class="trader__reason truncate">{{row.reason}}</span>
+                </div>
               </div>
             </div>
             <!-- Cash, equity, exposure. The three numbers that decide whether a session
