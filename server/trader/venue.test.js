@@ -128,7 +128,7 @@ describe('placeMarketOrder', () => {
       { fetch: fakeFetch({ code: '0', data: [{ ordId: '99' }] }, calls), now: () => 1000 },
     )
 
-    expect(result).toEqual({ ok: true, id: '99', error: '' })
+    expect(result).toEqual({ ok: true, id: '99', code: '0', error: '' })
 
     const body = JSON.parse(calls[0].init.body)
     expect(body.ordType).toBe('market')
@@ -144,7 +144,10 @@ describe('placeMarketOrder', () => {
       fetch: fakeFetch({ code: '1', data: [{ sCode: '51008', sMsg: 'Insufficient balance' }] }),
       now: () => 1000,
     })
-    expect(refused).toEqual({ ok: false, id: '', error: 'Insufficient balance' })
+    // The numeric code travels with the message. Diagnosing from prose alone is exactly
+    // what the browser client warns against — a message is the venue's to reword, the code
+    // is the contract, and two rounds of this were spent guessing which refusal it was.
+    expect(refused).toEqual({ ok: false, id: '', code: '51008', error: 'Insufficient balance' })
   })
 })
 

@@ -10,6 +10,28 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ## [Unreleased]
 
+## [0.28.7] - 2026-08-07 — Report the facts, not the prose
+
+### Fixed
+
+- **The venue's error code now travels with its message.** `placeMarketOrder` had the code
+  from `venueRequest` and threw it away, so every rejection reached the decision feed as
+  prose alone — and two rounds of diagnosis were spent guessing which refusal a sentence
+  described. That is precisely what the browser client's own comment warns against: a
+  message is the venue's to reword, the code is the contract. Decisions carry `code` now.
+
+- **The snapshot says which OKX the orders are actually going to.** Read back from the
+  config the signer uses rather than from what anyone believes is set:
+  `environment: { demo, eea, platform }`. A demo key with `demo: false` — the server's
+  `STOCKZ_OKX_DEMO` unset while the browser desk auto-detected demo for itself — is a whole
+  class of confusion answered at a glance, and was previously invisible.
+
+- **`scripts/okx-whoami.mjs` reports the key's permissions.** It already found which of
+  OKX's four universes a key lives in; it now also prints `perm`, whether that permits
+  trading, and the account uid. Because it reads the same `.env` the server does, it answers
+  the question a website screenshot cannot: whether the key the server is using is the key
+  whose permissions were edited.
+
 ## [0.28.6] - 2026-08-07 — Ask the venue what the key may do, once
 
 ### Added
