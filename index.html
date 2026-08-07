@@ -1193,7 +1193,10 @@
                  :class="trader.view.running ? (trader.view.live ? 'trader__state is-live' : 'trader__state is-paper') : 'trader__state is-off'">
                 <span data-if="trader.view.running &amp;&amp; trader.view.live">● SERVER LIVE</span>
                 <span data-if="trader.view.running &amp;&amp; !trader.view.live">● SERVER PAPER</span>
-                <span data-if="!trader.view.running">○ SERVER TRADER OFF</span>
+                <span data-if="!trader.view.running &amp;&amp; !trader.view.signedOut">○ SERVER TRADER OFF</span>
+                <!-- Not "off": the loop is almost certainly still trading on the host. It is
+                     this browser that lost its session. -->
+                <span data-if="trader.view.signedOut">◇ SIGNED OUT — reload to sign in</span>
               </p>
               <p class="label">{{trader.view.symbols.join(', ')}} · feed {{trader.view.feed}}</p>
               <!-- The four numbers that answer "is it working": opinions formed, orders
@@ -1209,8 +1212,11 @@
                 </div>
               </div>
               <p class="label" data-if="trader.view.decisions.length === 0">no decisions yet</p>
+              <!-- Keyed on the server's monotonic sequence. (ts, strategy, action) is not
+                   unique: OKX stamps several prints in the same millisecond, so one
+                   strategy can reach the same verdict twice inside one tick. -->
               <div class="trader__rows" data-each="trader.view.decisions" data-as="row"
-                   data-key="row.ts + ':' + row.strategy + ':' + row.action">
+                   data-key="row.seq">
                 <div class="trader__row" :class="row.taken ? 'trader__row is-taken' : 'trader__row'">
                   <span class="trader__time num">{{row.time}}</span>
                   <span class="trader__strategy">{{row.strategy}}</span>

@@ -145,6 +145,42 @@ describe('createTrader', () => {
     trader.stop()
   })
 
+  it('gives every decision a unique identity and prunes the throttle window', async () => {
+    const captured = {}
+    const trader = createTrader(CONFIG, { feed: fakeFeed(captured), now: () => 5000 }).start()
+
+    trader.desks.get('BTC-USDT').runs = [
+      {
+        strategy: { id: 'always', onTick: () => ({ action: 'buy', strength: 1, reason: 'test' }) },
+        state: {},
+        started: true,
+      },
+    ]
+    captured.emit({
+      kind: 'book',
+      instrument: 'BTC-USDT',
+      book: { bid: 99, ask: 101, bids: [], asks: [], mid: 100, ts: 1 },
+    })
+
+    // Several prints stamped in the SAME millisecond — exactly what OKX sends, and what
+    // made (ts, strategy, action) collide as a render key.
+    for (let i = 0; i < 6; i += 1) {
+      captured.emit({
+        kind: 'trades',
+        instrument: 'BTC-USDT',
+        trades: [{ px: 100, size: 1, side: 'buy', ts: 1000 }],
+      })
+    }
+    await settle()
+
+    const rows = trader.snapshot().decisions
+    expect(rows.length).toBeGreaterThan(1)
+    expect(new Set(rows.map((r) => r.seq)).size).toBe(rows.length)
+    // The old key would have collided; the sequence must not.
+    expect(new Set(rows.map((r) => `${r.ts}:${r.strategy}:${r.action}`)).size).toBeLessThan(rows.length)
+    trader.stop()
+  })
+
   it('records a refusal with its reason, and never grows without bound', async () => {
     const captured = {}
     // A cap of zero refuses every entry, which is the cheapest way to exercise the

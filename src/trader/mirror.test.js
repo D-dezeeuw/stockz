@@ -29,13 +29,18 @@ describe('toTraderView', () => {
       uptimeMs: 5000,
       symbols: ['BTC-USDT'],
       stats: { signals: 10, orders: 2, blocked: 8, errors: 0 },
-      decisions: [{ ts: 1_700_000_000_000, instrument: 'BTC-USDT', strategy: 'momentum-burst', action: 'buy', taken: true, reason: 'burst', px: 60000 }],
+      decisions: [{ seq: 7, ts: 1_700_000_000_000, instrument: 'BTC-USDT', strategy: 'momentum-burst', action: 'buy', taken: true, reason: 'burst', px: 60000 }],
       desks: [{ instrument: 'BTC-USDT', position: 0.001, avgPx: 60000, realized: 1.5, unrealized: -0.2, benchedFor: 0 }],
     })
     expect(full.stats.signals).toBe(10)
     expect(full.desks[0]).toMatchObject({ instrument: 'BTC-USDT', position: 0.001, benched: false })
     // Rendered clock-time, because a decision list is scanned for "when", not parsed.
     expect(full.decisions[0].time).toMatch(/^\d{2}:\d{2}:\d{2}$/)
+    // The server's sequence is the row identity. A timestamp is not one — OKX stamps
+    // several prints in the same millisecond, which is what made the render key collide.
+    expect(full.decisions[0].seq).toBe(7)
+    const noSeq = toTraderView({ decisions: [{ ts: 1 }, { ts: 1 }] })
+    expect(noSeq.decisions[0].seq).not.toBe(noSeq.decisions[1].seq)
 
     expect(toTraderView({ desks: [{ benchedFor: 5000 }] }).desks[0].benched).toBe(true)
   })
@@ -72,6 +77,16 @@ describe('pollTrader', () => {
     expect(appState.trader.view.running).toBe(true)
     expect(appState.trader.summary).toMatch(/server paper/)
 
+    // A 401 is its own answer, not a failed request: the session died (usually a backend
+    // restart with an ephemeral signing secret) and the loop is almost certainly still
+    // trading on the host. Reporting "off" would send somebody to the server logs to look
+    // for a loop that never stopped.
+    await pollTrader({ fetch: async () => ({ status: 401, json: async () => ({ msg: 'not signed in' }) }) })
+    tick()
+    expect(appState.trader.view.signedOut).toBe(true)
+    expect(appState.trader.view.running).toBe(false)
+    expect(appState.trader.summary).toMatch(/signed out/i)
+
     // An unreachable server is "off", not an error to dismiss — the desk is a viewer, and
     // a failed poll is fixed by the next one.
     await pollTrader({
@@ -81,6 +96,7 @@ describe('pollTrader', () => {
     })
     tick()
     expect(appState.trader.view.running).toBe(false)
+    expect(appState.trader.view.signedOut).toBe(false)
     expect(appState.trader.summary).toBe('server trader: off')
   })
 })

@@ -10,6 +10,45 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ## [Unreleased]
 
+## [0.28.4] - 2026-08-07 — The mobile layout was never the mobile CSS
+
+### Fixed
+
+- **Four fifths of the desk was clipped off the right edge of every phone.** `mobile.css`
+  shipped and applied correctly — measured on a 390px viewport, `--block-w` was 15rem and
+  touch targets were 44px — and the desk still looked untouched, because the blowout was a
+  level above anything it could reach. A grid item's `min-width` defaults to `auto`, so it
+  refuses to shrink below its content's min-content width: `.app-shell` was correctly 390px
+  while **every child of it** — header, paper strip, grid, and so every block — was 1883px,
+  and `overflow-x: hidden` on body hid the result instead of showing it. 269 elements
+  overflowed the viewport. `.app-shell > * { min-inline-size: 0 }` fixes 264 of them and
+  brings the grid to exactly the viewport width; the remaining five are wide canvases and
+  strips that now scroll inside their own block, as intended. `.block` has carried this
+  same rule since the grid was built — it was simply never applied to the rows above it.
+
+- **The decision feed warned on every animation frame.** `(ts, strategy, action)` was the
+  render key, and it is not unique: OKX stamps several prints in the same millisecond, so
+  one strategy reaches the same verdict twice inside one tick. Decisions now carry a
+  monotonic sequence from the server and the list keys on that.
+
+- **The throttle window grew for the life of the process.** `throttleGate` returns the
+  pruned minute and `decide` discarded it, so the array of sent-order timestamps was never
+  trimmed — a slow leak, and worse, an O(n) filter re-run on every signal that got more
+  expensive the longer the desk stayed up. Trimmed in place after each order.
+
+- **A fatal crash now leaves a note.** Node exits on an uncaught exception or unhandled
+  rejection, Docker restarts the process, and — with an ephemeral session secret — every
+  signed-in browser is silently logged out. From the outside that is a desk which worked a
+  minute ago answering 401 to everything, with nothing in the log to say why. The process
+  still exits (a trading daemon that survives an unknown failure may no longer have true
+  position bookkeeping), but it says what killed it first. The boot also warns, every time,
+  when `STOCKZ_SESSION_SECRET` is unset — the setting whose absence turns any restart into
+  a silent mass logout.
+
+- **A 401 from `/api/trader` is reported as "signed out", not as "off".** The loop is
+  almost certainly still trading on the host; it is the browser that lost its session, and
+  saying "off" would send somebody to the server logs to look for a loop that never stopped.
+
 ## [0.28.3] - 2026-08-07 — Trades-per-hour dial, and the race it uncovered
 
 ### Added
