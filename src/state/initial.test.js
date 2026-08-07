@@ -25,6 +25,7 @@ describe('initialState', () => {
       'settings',
       'strategy',
       'trade',
+      'trader',
       'ui',
     ])
 

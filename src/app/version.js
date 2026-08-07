@@ -6,7 +6,7 @@
  * is a build-tool feature the browser would not resolve. `appVersion`'s single test
  * asserts this constant still matches package.json, so the two cannot drift.
  */
-export const APP_VERSION = '0.28.1'
+export const APP_VERSION = '0.28.2'
 
 /**
  * @returns {string} semver string, e.g. '0.1.0'.

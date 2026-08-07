@@ -232,6 +232,20 @@ export function initialState(overrides = {}) {
     [PATHS.bot.capped]: [],
     [PATHS.bot.session]: { signals: 0, orders: 0, dry: 0, blocked: 0, startedAt: 0 },
 
+    // The server-side loop, mirrored. Seeded 'off' rather than empty so the block renders
+    // an honest state on the very first frame instead of blank bindings that look broken.
+    [PATHS.trader.view]: {
+      running: false,
+      live: false,
+      feed: 'off',
+      uptimeMs: 0,
+      symbols: [],
+      stats: { signals: 0, orders: 0, blocked: 0, errors: 0 },
+      decisions: [],
+      desks: [],
+    },
+    [PATHS.trader.summary]: 'server trader: off',
+
     // recorded markets, and the transport that plays them back
     [PATHS.playback.recording]: null,
     [PATHS.playback.source]: 'live',

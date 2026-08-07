@@ -14,6 +14,8 @@ import {
 import { serveStatic } from './static.js'
 import { loginPage, parseForm } from './pages.js'
 import { venueKeys } from './keys.js'
+import { traderConfig } from './trader/config.js'
+import { createTrader } from './trader/loop.js'
 
 /**
  * The STOCKZ backend: one process, three jobs.
@@ -38,7 +40,8 @@ export const PROXIES = Object.freeze([
 /**
  * Build the request handler.
  *
- * @param {{env?: object, root?: string, fetch?: Function, now?: () => number}} [deps]
+ * @param {{env?: object, root?: string, fetch?: Function, now?: () => number,
+ *   trader?: object}} [deps]
  * @returns {(req: object, res: object) => Promise<unknown>} the handler.
  */
 export function createHandler(deps = {}) {
@@ -46,6 +49,7 @@ export function createHandler(deps = {}) {
   const root = deps.root ?? resolve(dirname(fileURLToPath(import.meta.url)), '..')
   const now = deps.now ?? (() => Date.now())
   const secret = sessionSecret(env)
+  const trader = deps.trader ?? null
 
   return async function handle(req, res) {
     const url = String(req.url ?? '/')
@@ -106,6 +110,20 @@ export function createHandler(deps = {}) {
       return sendJson(res, 200, role === 'admin' ? venueKeys(env) : {})
     }
 
+    // What the server-side loop is doing right now. Read-only and open to both roles: the
+    // snapshot is positions, P&L and decisions — things `usr` may watch — and it names no
+    // credential. Nothing here can start, stop or steer the trader; that is deliberate,
+    // because a browser must not be able to halt trading it is merely observing.
+    if (path === '/api/trader') {
+      return sendJson(
+        res,
+        200,
+        trader
+          ? trader.snapshot()
+          : { running: false, live: false, feed: 'off', symbols: [], stats: {}, decisions: [], desks: [] },
+      )
+    }
+
     for (const proxy of PROXIES) {
       const target = proxyTarget(url, proxy.prefix, proxy.target)
       if (target) return relay(req, res, target, deps)
@@ -129,7 +147,18 @@ export function startServer(deps = {}) {
   const host = env.STOCKZ_HOST ?? '127.0.0.1'
   const port = Number(env.STOCKZ_PORT) || 8643
 
-  const server = createServer(createHandler(deps))
+  // The trader starts with the process, not with a browser. That is the entire point of
+  // moving it here: the loop must survive a locked phone, and a loop that waited for a
+  // page load would be the old arrangement with extra steps.
+  const config = traderConfig(env)
+  let trader = null
+  if (config.enabled && config.hasKeys) {
+    trader = createTrader(config).start()
+  } else if (config.enabled) {
+    console.log('[stockz] trader enabled but no OKX keys in .env — not started')
+  }
+
+  const server = createServer(createHandler({ ...deps, trader }))
   server.listen(port, host, () => {
     console.log(`[stockz] serving on http://${host}:${port} (build ${env.BUILD_SHA ?? 'dev'})`)
   })

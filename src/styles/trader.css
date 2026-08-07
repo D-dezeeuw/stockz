@@ -1,0 +1,86 @@
+/*
+ * The server-trader block.
+ *
+ * Reads like the alert log on purpose — a timestamped stream of things that happened,
+ * newest first — because that is what it is. The one visual difference is that a taken
+ * decision is green and a refused one is muted: on a glance from a phone the question is
+ * never "what did it think", it is "did it trade".
+ */
+
+.trader {
+  display: grid;
+  align-content: start;
+  gap: var(--sp-1);
+  padding: var(--sp-2);
+  min-block-size: 0;
+}
+
+/* The state line carries the whole answer, so it is the only loud thing in the block. */
+.trader__state {
+  font-weight: var(--fw-bold);
+  letter-spacing: 0.04em;
+}
+
+.trader__state.is-live {
+  color: var(--orange);
+}
+
+.trader__state.is-paper {
+  color: var(--green);
+}
+
+.trader__state.is-off {
+  color: var(--ink-faint);
+}
+
+.trader__desks {
+  display: grid;
+  gap: var(--sp-1);
+  padding-block: var(--sp-1);
+  border-block: var(--border);
+}
+
+.trader__desk {
+  display: grid;
+  grid-template-columns: 1fr auto auto auto;
+  gap: var(--sp-2);
+  align-items: baseline;
+  font-size: var(--fs-0);
+}
+
+.trader__inst {
+  color: var(--ink-strong);
+}
+
+.trader__rows {
+  display: grid;
+  gap: 1px;
+  overflow-y: auto;
+  min-block-size: 0;
+}
+
+.trader__row {
+  display: grid;
+  grid-template-columns: auto auto auto 1fr;
+  gap: var(--sp-2);
+  align-items: baseline;
+  font-size: var(--fs-0);
+  /* Refused decisions are the common case and must not compete with the taken ones. */
+  color: var(--ink-muted);
+}
+
+.trader__row.is-taken {
+  color: var(--green);
+}
+
+.trader__time {
+  color: var(--ink-faint);
+}
+
+.trader__strategy {
+  color: var(--ink);
+}
+
+.trader__action {
+  text-transform: uppercase;
+}

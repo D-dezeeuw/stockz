@@ -1,0 +1,171 @@
+import { startFeed } from './feed.js'
+import { createDesk, applyFill, recordOutcome, strongestSignal, decide, sendOrder } from './engine.js'
+import { createLogger } from '../../src/utils/log.js'
+
+/**
+ * The running trader: feed in, orders out, a snapshot for anyone watching.
+ *
+ * This is the piece that makes the desk a desk rather than a page. It owns no UI, reads no
+ * DOM and never waits for a browser — a phone opening the dashboard is a reader joining
+ * something already in progress, and closing it changes nothing.
+ *
+ * Everything it knows is in `snapshot()`, which is what `/api/trader` serves. Deliberately
+ * a plain object rebuilt on demand rather than a stream: the dashboard polls it a few
+ * times a second at most, and a pull model means a slow or absent reader can never apply
+ * back-pressure to the order path.
+ */
+
+const log = createLogger('trader-loop')
+
+/** How many recent decisions to keep for the dashboard's feed. */
+export const DECISION_LOG = 200
+
+/**
+ * Create the trader. Nothing happens until `start()`.
+ *
+ * @param {object} config - the trader config.
+ * @param {{feed?: Function, send?: Function, now?: () => number}} [deps] - injectable plumbing.
+ * @returns {object} the trader.
+ */
+export function createTrader(config, deps = {}) {
+  const now = deps.now ?? (() => Date.now())
+  const desks = new Map(config.symbols.map((instrument) => [instrument, createDesk(instrument)]))
+
+  // Order timestamps for the throttle, and the decision ring the dashboard renders.
+  const sent = []
+  const decisions = []
+  const stats = { signals: 0, orders: 0, blocked: 0, errors: 0, startedAt: 0 }
+  let feed = null
+
+  const remember = (entry) => {
+    decisions.push(entry)
+    // A ring, not a growing array: this process is meant to run for weeks.
+    if (decisions.length > DECISION_LOG) decisions.splice(0, decisions.length - DECISION_LOG)
+  }
+
+  /**
+   * Handle one parsed feed event.
+   *
+   * @param {object} event - from `parseFeedFrame`.
+   * @returns {Promise<void>} resolves once any order has been sent.
+   */
+  const onEvent = async (event) => {
+    const desk = desks.get(String(event?.instrument ?? ''))
+    if (!desk) return
+
+    if (event.kind === 'book') {
+      desk.book = event.book
+      return
+    }
+    if (event.kind !== 'trades') return
+
+    for (const trade of event.trades) {
+      const at = Number(trade.ts) || now()
+      const signal = strongestSignal(desk, trade, at)
+      if (signal.action === 'buy' || signal.action === 'sell') stats.signals += 1
+
+      const verdict = decide(desk, signal, { now: at, sent, config })
+      if (!verdict.send) {
+        // Only a real opinion that was refused is worth recording. Logging every neutral
+        // tick would bury the one line that explains a quiet session.
+        if (signal.action === 'buy' || signal.action === 'sell') {
+          stats.blocked += 1
+          remember({ ts: at, instrument: desk.instrument, strategy: signal.strategy,
+            action: signal.action, taken: false, reason: verdict.reason })
+        }
+        continue
+      }
+
+      const fill = await sendOrder(verdict.order, desk, config, deps)
+      if (!fill.ok) {
+        stats.errors += 1
+        remember({ ts: at, instrument: desk.instrument, strategy: signal.strategy,
+          action: signal.action, taken: false, reason: fill.error })
+        continue
+      }
+
+      sent.push(at)
+      stats.orders += 1
+      const realized = applyFill(desk, { side: verdict.order.side, size: verdict.order.size, px: fill.px })
+      recordOutcome(desk, realized, at)
+      remember({ ts: at, instrument: desk.instrument, strategy: signal.strategy,
+        action: signal.action, taken: true, reason: verdict.reason, px: fill.px,
+        size: verdict.order.size, realized })
+    }
+  }
+
+  return {
+    /**
+     * Open the feed and begin trading.
+     *
+     * @returns {object} the trader, for chaining.
+     */
+    start() {
+      if (feed) return this
+      stats.startedAt = now()
+
+      feed = (deps.feed ?? startFeed)({
+        symbols: config.symbols,
+        demo: config.demo,
+        // Errors are swallowed rather than allowed to reject into the socket's message
+        // handler, where nothing would catch them and the feed would look healthy.
+        onEvent: (event) => {
+          onEvent(event).catch((err) => {
+            stats.errors += 1
+            log.warn(`event failed: ${err?.message ?? err}`)
+          })
+        },
+      })
+
+      log.info(
+        `trader up: ${config.symbols.join(', ')} · ${config.live ? 'LIVE' : 'paper'} · ` +
+          `clip ${config.size} · ${config.maxPerMin}/min`,
+      )
+      return this
+    },
+
+    /** Stop trading and close the feed. */
+    stop() {
+      feed?.close?.()
+      feed = null
+      return this
+    },
+
+    /**
+     * Everything a dashboard needs, in one object.
+     *
+     * @returns {object} the snapshot.
+     */
+    snapshot() {
+      const at = now()
+      return {
+        running: Boolean(feed),
+        live: config.live === true,
+        feed: feed?.state?.() ?? 'dead',
+        startedAt: stats.startedAt,
+        uptimeMs: stats.startedAt ? at - stats.startedAt : 0,
+        symbols: config.symbols,
+        size: config.size,
+        stats: { ...stats },
+        // Newest first: a decision list is read top-down, and the interesting row is the
+        // one that just happened.
+        decisions: decisions.slice(-100).reverse(),
+        desks: [...desks.values()].map((desk) => ({
+          instrument: desk.instrument,
+          position: desk.position,
+          avgPx: desk.avgPx,
+          realized: desk.realized,
+          unrealized: desk.position !== 0 && desk.book.mid > 0
+            ? (desk.book.mid - desk.avgPx) * desk.position
+            : 0,
+          bid: desk.book.bid,
+          ask: desk.book.ask,
+          benchedFor: Math.max(0, desk.cooldownUntil - at),
+        })),
+      }
+    },
+
+    /** The instrument records, for tests. */
+    desks,
+  }
+}
