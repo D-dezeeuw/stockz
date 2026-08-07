@@ -64,6 +64,22 @@ describe('traderConfig', () => {
     expect(on.demo).toBe(true)
     expect(on.hasKeys).toBe(true)
 
+    // The trades-per-hour dial. Absent means the strategies exactly as shipped, and it is
+    // clamped at 1 so a typo cannot ask for a threshold below what a schema allows.
+    expect(bare.sensitivity).toBe(0)
+    expect(traderConfig({ STOCKZ_TRADER_SENSITIVITY: '0.8' }).sensitivity).toBe(0.8)
+    expect(traderConfig({ STOCKZ_TRADER_SENSITIVITY: '5' }).sensitivity).toBe(1)
+    expect(traderConfig({ STOCKZ_TRADER_SENSITIVITY: 'hot' }).sensitivity).toBe(0)
+
+    // The loss-streak bench, in minutes on the outside and ms on the inside.
+    expect(bare.cooldownAfter).toBe(3)
+    expect(bare.cooldownMs).toBe(600_000)
+    expect(traderConfig({ STOCKZ_TRADER_COOLDOWN_MINUTES: '2' }).cooldownMs).toBe(120_000)
+    // Zero minutes is a real instruction — never bench — not a missing value.
+    expect(traderConfig({ STOCKZ_TRADER_COOLDOWN_MINUTES: '0' }).cooldownMs).toBe(0)
+    // But a streak of zero is meaningless: every scratch would bench the instrument.
+    expect(traderConfig({ STOCKZ_TRADER_COOLDOWN_AFTER: '0' }).cooldownAfter).toBe(1)
+
     // Enabled with only a partial credential set is not "has keys" — the loop must refuse
     // to start rather than fail on its first signed call.
     expect(traderConfig({ STOCKZ_TRADER: 'on', STOCKZ_OKX_API_KEY: 'ak' }).hasKeys).toBe(false)

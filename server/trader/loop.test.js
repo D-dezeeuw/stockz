@@ -99,6 +99,52 @@ describe('createTrader', () => {
     expect(snap.decisions[0]).toMatchObject({ instrument: 'BTC-USDT', taken: true, strategy: 'always' })
   })
 
+  it('never lets a slow venue call race the position past its cap', async () => {
+    const captured = {}
+    // A venue that takes a moment, like a real one. This is the shape that used to break
+    // it: `onEvent` awaits the order, the socket fires the next print regardless, and two
+    // handlers both read `desk.position` before either has written it.
+    const slowPlace = () =>
+      new Promise((resolve) => setTimeout(() => resolve({ ok: true, id: 'x', error: '' }), 5))
+
+    const trader = createTrader(
+      { ...CONFIG, live: true, maxPerInstrument: 0.005 },
+      { feed: fakeFeed(captured), now: () => 5000, placeOrder: slowPlace },
+    ).start()
+
+    trader.desks.get('BTC-USDT').runs = [
+      {
+        strategy: { id: 'always', onTick: () => ({ action: 'buy', strength: 1, reason: 'test' }) },
+        state: {},
+        started: true,
+      },
+    ]
+
+    captured.emit({
+      kind: 'book',
+      instrument: 'BTC-USDT',
+      book: { bid: 99, ask: 101, bids: [], asks: [], mid: 100, ts: 1 },
+    })
+
+    // Fired without awaiting — exactly how a socket delivers messages. Twenty prints, a
+    // cap of 0.005 and a clip of 0.001: at most five may ever be filled.
+    for (let i = 0; i < 20; i += 1) {
+      captured.emit({
+        kind: 'trades',
+        instrument: 'BTC-USDT',
+        trades: [{ px: 100, size: 1, side: 'buy', ts: 1000 + i }],
+      })
+    }
+    await new Promise((resolve) => setTimeout(resolve, 300))
+
+    const snap = trader.snapshot()
+    expect(snap.desks[0].position).toBeLessThanOrEqual(0.005)
+    expect(snap.stats.orders).toBeLessThanOrEqual(5)
+    // And the rest were refused by the cap, not silently dropped.
+    expect(snap.stats.blocked).toBeGreaterThan(0)
+    trader.stop()
+  })
+
   it('records a refusal with its reason, and never grows without bound', async () => {
     const captured = {}
     // A cap of zero refuses every entry, which is the cheapest way to exercise the

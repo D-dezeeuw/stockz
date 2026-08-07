@@ -40,6 +40,12 @@ describe('createDesk', () => {
     const other = createDesk('ETH-USDT')
     expect(desk.runs[0].state).not.toBe(other.runs[0].state)
     expect(desk.runs[0].state).not.toBe(desk.runs[1].state)
+
+    // Params are resolved once per desk, not per print: the dial is a deployment setting,
+    // and recomputing the same overrides thousands of times a minute is work for nothing.
+    expect(desk.runs.every((run) => Object.keys(run.params).length === 0)).toBe(true)
+    const hot = createDesk('BTC-USDT', 1)
+    expect(hot.runs.some((run) => Object.keys(run.params).length > 0)).toBe(true)
   })
 })
 
@@ -100,6 +106,20 @@ describe('recordOutcome', () => {
     // A scratch is not an outcome.
     expect(recordOutcome(fresh, 0, 1000)).toBe(false)
     expect(fresh.streak).toBe(0)
+
+    // Both the streak and the bench are configurable. Measurement showed this, not the
+    // strategy thresholds, is what actually caps trades-per-hour once sensitivity is up:
+    // a chattier loop takes more losers, hits the streak sooner, and sits out the bench.
+    const tuned = createDesk('SOL-USDT')
+    expect(recordOutcome(tuned, -1, 1000, { cooldownAfter: 2, cooldownMs: 60_000 })).toBe(false)
+    expect(recordOutcome(tuned, -1, 1000, { cooldownAfter: 2, cooldownMs: 60_000 })).toBe(true)
+    expect(tuned.cooldownUntil).toBe(61_000)
+
+    // A cooldown of zero minutes is a legitimate "never bench" — it must not fall back to
+    // the default, which is exactly the silent-override bug `positiveNumber` exists to stop.
+    const never = createDesk('XRP-USDT')
+    recordOutcome(never, -1, 5000, { cooldownAfter: 1, cooldownMs: 0 })
+    expect(never.cooldownUntil).toBe(5000)
   })
 })
 
@@ -167,6 +187,50 @@ describe('decide', () => {
     // A zero clip is a misconfiguration, and saying so beats sending an empty order.
     expect(decide(desk, buy, { now: 1000, sent: [], config: { ...CONFIG, size: 0 } }).reason)
       .toBe('size is zero')
+  })
+
+  it('always lets an exit through, whatever the entry gates say', () => {
+    const desk = createDesk('BTC-USDT')
+    const flat = { action: 'flat', strength: 1, reason: 'target hit' }
+
+    // Nothing to close is not an order.
+    expect(decide(desk, flat, { now: 1000, sent: [], config: CONFIG }).send).toBe(false)
+
+    // Closing sells a long for exactly what is held — every strategy writes an exit, and
+    // discarding them meant positions only ever grew until the cap refused everything
+    // forever. A trader who cannot close is not being protected.
+    desk.position = 0.004
+    const exit = decide(desk, flat, { now: 1000, sent: [], config: CONFIG })
+    expect(exit.send).toBe(true)
+    expect(exit.order).toEqual({ instId: 'BTC-USDT', side: 'sell', size: 0.004 })
+
+    desk.position = -0.002
+    expect(decide(desk, flat, { now: 1000, sent: [], config: CONFIG }).order)
+      .toEqual({ instId: 'BTC-USDT', side: 'buy', size: 0.002 })
+
+    // Benched, throttled and capped all block *entering* risk. None may block the exit.
+    desk.position = 0.004
+    desk.cooldownUntil = 9_000_000
+    const gated = decide(desk, flat, {
+      now: 1000,
+      sent: Array.from({ length: 500 }, () => 1000),
+      config: { ...CONFIG, maxPerInstrument: 0 },
+    })
+    expect(gated.send).toBe(true)
+  })
+
+  it('acts sooner as the sensitivity dial rises', () => {
+    const desk = createDesk('BTC-USDT')
+    const modest = { action: 'buy', strength: 0.3, reason: 'faint' }
+
+    // As shipped, a 0.3-conviction signal is noise.
+    expect(decide(desk, modest, { now: 1000, sent: [], config: CONFIG }).send).toBe(false)
+
+    // Turned up, the gate's own floor moves with the strategies — otherwise they would be
+    // made chattier only for signalGate to throw the extra signals away, and the decision
+    // feed would fill with "weak" and look broken.
+    expect(decide(desk, modest, { now: 1000, sent: [], config: { ...CONFIG, sensitivity: 1 } }).send)
+      .toBe(true)
   })
 })
 
