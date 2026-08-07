@@ -3,6 +3,7 @@ import { PATHS } from '../state/paths.js'
 import { sizeCanvas, chartPalette } from '../charts/canvas.js'
 import { mapRange } from '../charts/scale.js'
 import { equitySeries } from './equity.js'
+import { blockCanvas } from '../charts/canvas.js'
 
 /**
  * The worst pain the strategy inflicts.
@@ -174,7 +175,7 @@ export function refreshDrawdown(trades = appState.analytics?.trades) {
  */
 export function startUnderwater(deps = {}) {
   const doc = deps.doc ?? globalThis.document
-  const canvas = doc?.getElementById?.('underwater-canvas')
+  const canvas = blockCanvas('analytics', 'underwater-canvas', doc)
   if (!canvas) return null
 
   const read = deps.series ?? (() => appState.analytics?.underwater ?? [])

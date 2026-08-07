@@ -61,6 +61,7 @@
   <link rel="stylesheet" href="./src/styles/analytics.css">
   <link rel="stylesheet" href="./src/styles/backtest.css">
   <link rel="stylesheet" href="./src/styles/mode.css">
+  <link rel="stylesheet" href="./src/styles/micro.css">
   <link rel="stylesheet" href="./src/styles/trader.css">
   <link rel="stylesheet" href="./src/styles/utilities.css">
   <!-- Last, deliberately: the mobile layer overrides touch targets, block metrics and
@@ -268,6 +269,26 @@
             <span>{{block.error}}</span>
           </div>
           <div data-if="block.status === 'ready'">
+            <!-- The micro chart. A canvas, unlike the ladder: nothing here is a click
+                 target, and sixty candles of DOM would cost a repaint the desk cannot
+                 spare. The chart engine has existed since phase 6 with every renderer unit
+                 tested; until now nothing mounted it, so this block showed a loading
+                 shimmer forever. -->
+            <div class="micro" data-if="block.id === 'chart'">
+              <div class="micro__intervals">
+                <button type="button" class="chip" data-action="click"
+                        data-fn="ui.setCandleInterval" data-interval="1s"
+                        :class="ui.candleInterval === '1s' ? 'chip is-active' : 'chip'">1s</button>
+                <button type="button" class="chip" data-action="click"
+                        data-fn="ui.setCandleInterval" data-interval="5s"
+                        :class="ui.candleInterval === '5s' ? 'chip is-active' : 'chip'">5s</button>
+                <button type="button" class="chip" data-action="click"
+                        data-fn="ui.setCandleInterval" data-interval="1m"
+                        :class="ui.candleInterval === '1m' ? 'chip is-active' : 'chip'">1m</button>
+                <span class="label micro__symbol">{{market.focus}}</span>
+              </div>
+              <canvas id="micro-canvas" class="micro__canvas"></canvas>
+            </div>
             <!-- The ladder block. Rows are DOM, not canvas: they are click targets for
                  the order ticket, and a canvas row cannot be one. -->
             <div class="ladder" data-if="block.id === 'book'"

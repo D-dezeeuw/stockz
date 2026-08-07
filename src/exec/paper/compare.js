@@ -3,6 +3,7 @@ import { PATHS } from '../../state/paths.js'
 import { computeExpectancy, computeDrawdown, equityCurve } from '../../backtest/stats.js'
 import { drawCompare } from '../../backtest/compare.js'
 import { sizeCanvas } from '../../charts/canvas.js'
+import { blockCanvas } from '../../charts/canvas.js'
 
 /**
  * Is the practice translating?
@@ -134,7 +135,7 @@ export function startBookCompare(deps = {}) {
   const doc = deps.doc ?? globalThis.document
   const watcher = typeof deps.watch === 'function' ? deps.watch : watch
   const raf = deps.raf ?? globalThis.requestAnimationFrame?.bind(globalThis) ?? ((fn) => fn())
-  const canvas = doc?.getElementById?.('book-canvas')
+  const canvas = blockCanvas('paper', 'book-canvas', doc)
   const redraw = canvas ? mountBookChart(canvas, deps) : () => {}
 
   const stop = watcher([PATHS.analytics.trades], () => {

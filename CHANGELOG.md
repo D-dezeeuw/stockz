@@ -10,6 +10,39 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ## [Unreleased]
 
+## [0.28.5] - 2026-08-07 — The Micro Chart, and every other canvas
+
+### Added
+
+- **The Micro Chart is connected.** Everything it needed already existed and none of it was
+  wired: eight chart modules — candles, axis, tick line, volume band, auto-range, crosshair,
+  markers, a render loop — each with its own unit test, and `mountCandleChart` had **no
+  callers anywhere**. The block was seeded `status: 'loading'` and nothing ever moved it
+  off, so the desk's main price chart showed a shimmer skeleton for the life of every
+  session. Not a broken chart: an unbuilt wire, the same shape of gap `startStrategy` had
+  before the autopilot. `src/charts/micro.js` mounts it, follows the focused instrument,
+  offers 1s/5s/1m interval chips, and owns the block status — `ready`, `empty` or `error`,
+  never a shimmer that resolves to nothing.
+
+### Fixed
+
+- **Every canvas chart on the desk was drawing on a hidden element.** The grid is a
+  `data-each` over the block registry, so the whole `<section class="block">` is cloned
+  once per block — and with it every `id` inside. Measured in a real browser: fifteen
+  elements sharing `id="equity-canvas"`, and `getElementById` returning the first every
+  time, which is the **watchlist** block's hidden copy measuring **0×0**. All ten canvases
+  (`equity`, `hours`, `holds`, `streak`, `fees`, `underwater`, `backtest`, `compare`,
+  `book`, and the new `micro`) mounted on that invisible node and painted nothing. They now
+  resolve through `blockCanvas(blockId, canvasId)`, scoped to the block that owns them.
+
+- **A chart could keep drawing onto a node the grid had replaced.** Spektrum re-renders the
+  block list and swaps the subtree; a chart holding the old element goes on painting
+  perfectly onto a detached canvas while the one on screen stays blank at its default
+  300×150. Verified end to end in Chromium: before, the mounted chart reported `ready` with
+  a 300×150 backing store and zero painted pixels while a fresh probe on the live canvas
+  painted 2159; after, the boot-time mount itself sizes to 443×222 and paints. The canvas
+  is now re-acquired on every remount, and a grid re-render that orphans it triggers one.
+
 ## [0.28.4] - 2026-08-07 — The mobile layout was never the mobile CSS
 
 ### Fixed

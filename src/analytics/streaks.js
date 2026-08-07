@@ -1,6 +1,7 @@
 import { setValue, appState, watch } from '../app/engine.js'
 import { PATHS } from '../state/paths.js'
 import { sizeCanvas, chartPalette } from '../charts/canvas.js'
+import { blockCanvas } from '../charts/canvas.js'
 
 /**
  * Runs, and the one that is happening now.
@@ -174,7 +175,7 @@ export function refreshStreaks(trades = appState.analytics?.trades) {
  */
 export function startStreakStrip(deps = {}) {
   const doc = deps.doc ?? globalThis.document
-  const canvas = doc?.getElementById?.('streak-canvas')
+  const canvas = blockCanvas('analytics', 'streak-canvas', doc)
   if (!canvas) return null
 
   const read = deps.trades ?? (() => [...(appState.analytics?.trades ?? [])].reverse())

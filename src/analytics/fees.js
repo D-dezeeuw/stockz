@@ -1,6 +1,7 @@
 import { setValue, appState, watch } from '../app/engine.js'
 import { PATHS } from '../state/paths.js'
 import { sizeCanvas, chartPalette } from '../charts/canvas.js'
+import { blockCanvas } from '../charts/canvas.js'
 
 /**
  * How much of the edge the exchanges are eating.
@@ -145,7 +146,7 @@ export function refreshFees(trades = appState.analytics?.trades) {
  */
 export function startFeeBars(deps = {}) {
   const doc = deps.doc ?? globalThis.document
-  const canvas = doc?.getElementById?.('fees-canvas')
+  const canvas = blockCanvas('analytics', 'fees-canvas', doc)
   if (!canvas) return null
 
   const read = deps.totals ?? (() => appState.analytics?.fees ?? {})

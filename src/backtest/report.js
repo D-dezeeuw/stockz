@@ -8,6 +8,7 @@ import { sizeCanvas } from '../charts/canvas.js'
 import { summariseRun } from './stats.js'
 import { saveRunResult } from './archive.js'
 import { refreshRuns } from './compare.js'
+import { blockCanvas } from '../charts/canvas.js'
 
 /**
  * The backtest report: does this strategy earn?
@@ -128,7 +129,7 @@ export function mountReportChart(canvas, deps = {}) {
  */
 export function startReportChart(deps = {}) {
   const doc = deps.doc ?? globalThis.document
-  const canvas = doc?.getElementById?.('backtest-canvas')
+  const canvas = blockCanvas('backtest', 'backtest-canvas', doc)
   if (!canvas) return null
 
   const redraw = mountReportChart(canvas, deps)

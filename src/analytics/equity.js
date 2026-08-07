@@ -2,6 +2,7 @@ import { setValue, appState, watch } from '../app/engine.js'
 import { PATHS } from '../state/paths.js'
 import { sizeCanvas, chartPalette } from '../charts/canvas.js'
 import { mapRange, gridLines } from '../charts/scale.js'
+import { blockCanvas } from '../charts/canvas.js'
 
 /**
  * The shape of the session.
@@ -223,7 +224,7 @@ export function mountEquity(canvas, deps = {}) {
  */
 export function startEquityChart(deps = {}) {
   const doc = deps.doc ?? globalThis.document
-  const canvas = doc?.getElementById?.('equity-canvas')
+  const canvas = blockCanvas('analytics', 'equity-canvas', doc)
   if (!canvas) return null
 
   const redraw = mountEquity(canvas, deps)
