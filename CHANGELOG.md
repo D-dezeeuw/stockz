@@ -65,6 +65,19 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ### Fixed
 
+- **The venue relay egresses over IPv4, so OKX's IP allowlist can actually be satisfied.**
+  On the dual-stack Hetzner host, Node's fetch dialled whichever family DNS listed first —
+  IPv6 — while the key's allowlist held the IPv4 everybody knows the box by, and OKX
+  refused every call with both sides looking correctly configured (observed live,
+  2026-08-07). The container now runs Node with `--dns-result-order=ipv4first`: v4 egress
+  whenever v4 works, v6 kept as fallback rather than banned. With it, the preflight's
+  allowlist verdicts stop lying about whose address matters: `50110` is newly mapped and
+  `50114` reworded — OKX judges the **server's** egress (every call relays through the
+  backend), never the browser's, and the old text sent the owner to allowlist an address
+  the venue never sees. `50110` is deliberately left out of `mapError`'s canned table so
+  the venue's own message — which quotes the exact address it saw — survives into the
+  verdict. `scripts/okx-whoami.mjs` explains the same trap when run on the host.
+
 - **`50101 "APIKey does not match current environment"` now fixes itself.** OKX runs four
   separate key universes — global and EU platforms, live and demo each — and a key exists
   in exactly one. Ask the wrong one and the venue answers `50119` ("never heard of it") or,

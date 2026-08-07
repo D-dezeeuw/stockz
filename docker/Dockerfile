@@ -23,7 +23,14 @@ ENV NODE_ENV=production
 # memory handling ever runs — no stack trace, just a silent restart. 192m under the
 # compose file's 256m mem_limit leaves headroom for buffers and native overhead; keep
 # the two numbers in lockstep if either changes.
-ENV NODE_OPTIONS="--max-old-space-size=192"
+#
+# --dns-result-order=ipv4first pins the venue relay's egress to a *predictable* address.
+# On a dual-stack host Node's fetch dials whichever family DNS lists first — usually
+# IPv6 — and OKX's key allowlist compares the literal address it sees. A trader who
+# allowlists the host's IPv4 then watches the venue refuse an address they never knew
+# the box had; observed live on this desk, 2026-08-07. IPv4-first (not v4-only) keeps
+# a v6-only network functional while making "allowlist the host's IPv4" actually true.
+ENV NODE_OPTIONS="--max-old-space-size=192 --dns-result-order=ipv4first"
 
 # The deployed commit, baked in so the post-deploy health gate can confirm the NEW code
 # is serving (/api/health.build), not a stale image.

@@ -140,8 +140,16 @@ function conclude(verdicts) {
   if (codes.has('50105')) {
     return '\n  ✗ Wrong passphrase (50105) — it is the one you chose when creating the key, not your login password.'
   }
-  if (codes.has('50114')) {
-    return `\n  ✗ The key is restricted to an IP this host is not on (50114). Clear the allowlist on the key, or add this machine's public IP.`
+  if (codes.has('50110') || codes.has('50114')) {
+    return [
+      `\n  ✗ The key's IP allowlist does not include this machine's egress address (50110/50114).`,
+      '',
+      "  OKX compares the literal address it sees — and on a dual-stack host that can be",
+      '  the IPv6, not the IPv4 you allowlisted. The 50110 line above quotes the address',
+      "  the venue saw; allowlist exactly that (plus this machine's public IPv4), or clear",
+      '  the allowlist. The desk container pins its relay IPv4-first, so for the deployed',
+      "  desk the server's public IPv4 is the one that matters.",
+    ].join('\n')
   }
   if (codes.has('50102') || codes.has('50112')) {
     return `\n  ✗ This host's clock is too far off OKX's (50102/50112). Fix NTP on the host.`

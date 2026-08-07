@@ -74,7 +74,13 @@ export function keyVerdict(result = {}, demo = false, eea = false) {
     '50105': 'The passphrase is missing — it is the one you chose when creating the key, not your login password.',
     '50102': 'This machine’s clock is off. The desk re-syncs against OKX at boot; reload to measure it again.',
     '50112': 'This machine’s clock is off. The desk re-syncs against OKX at boot; reload to measure it again.',
-    '50114': 'The key is restricted to an IP this browser is not on — clear the IP allowlist on the key, or add this one.',
+    // The IP the venue judges is the *server's*, not the browser's: every call relays
+    // through the desk's backend, so the allowlist must hold that machine's egress
+    // address. And on a dual-stack host that egress was IPv6 until the relay was pinned
+    // IPv4-first — an allowlisted IPv4 with the venue seeing v6 refuses every call while
+    // both sides look correctly configured.
+    '50110': 'The key’s IP allowlist does not include the desk server’s address. OKX judges the SERVER’s IP (every call relays through it), not this browser’s — add the server’s public IPv4 to the allowlist, or clear the allowlist. OKX’s own message above names the address it saw.',
+    '50114': 'The key is restricted to an IP the desk server is not on — clear the IP allowlist on the key, or add the server’s public IPv4 (OKX judges the server’s address, not this browser’s).',
     '50120': 'The key has no trading permission — enable Trade on it in OKX’s API settings.',
   }
 
