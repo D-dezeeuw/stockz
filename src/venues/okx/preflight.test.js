@@ -82,7 +82,14 @@ describe('keyVerdict', () => {
 
     expect(keyVerdict({ ok: false, code: '50113' }).fix).toMatch(/secret key does not match/)
     expect(keyVerdict({ ok: false, code: '50102' }).fix).toMatch(/clock is off/)
-    expect(keyVerdict({ ok: false, code: '50114' }).fix).toMatch(/IP/)
+    // Both allowlist refusals blame the SERVER's address, never the browser's: every call
+    // relays through the backend, and on a dual-stack host the venue can see an IPv6 the
+    // trader never allowlisted. Saying "this browser's IP" here sent the owner to
+    // allowlist an address OKX never sees.
+    expect(keyVerdict({ ok: false, code: '50114' }).fix).toMatch(/server/)
+    expect(keyVerdict({ ok: false, code: '50114' }).fix).not.toMatch(/this browser is/)
+    expect(keyVerdict({ ok: false, code: '50110' }).fix).toMatch(/SERVER/)
+    expect(keyVerdict({ ok: false, code: '50110' }).fix).toMatch(/IPv4/)
     expect(keyVerdict({ ok: false, code: '50120' }).fix).toMatch(/trading permission/)
 
     // An unmapped code still reports the venue's own message rather than inventing advice.
@@ -217,7 +224,7 @@ describe('AIM_CODES', () => {
     expect([...AIM_CODES].sort()).toEqual(['50101', '50119'])
     // Bad signature, passphrase, clock, IP and permissions are about the key itself — a
     // probe would spend three extra requests collecting the same refusal.
-    for (const code of ['50113', '50105', '50102', '50114', '50120']) {
+    for (const code of ['50113', '50105', '50102', '50110', '50114', '50120']) {
       expect(AIM_CODES).not.toContain(code)
     }
   })
