@@ -1,5 +1,6 @@
 import { createLogger } from '../../utils/log.js'
 import { okxPublicBase } from './region.js'
+import { OKX_ENDPOINTS } from './endpoints.js'
 
 /**
  * The venue's clock, not the browser's.
@@ -20,8 +21,9 @@ import { okxPublicBase } from './region.js'
 
 const log = createLogger('okx-clock')
 
-/** OKX's own clock, unauthenticated. */
-export const OKX_TIME_PATH = '/api/v5/public/time'
+/** OKX's own clock, unauthenticated. Named here for callers; defined with every other
+ *  path in endpoints.js. */
+export const OKX_TIME_PATH = OKX_ENDPOINTS.time
 
 /** Past this much drift the browser clock alone would have been rejected. */
 export const DRIFT_WARN_MS = 20000

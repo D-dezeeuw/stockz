@@ -2,6 +2,7 @@ import { signRequest } from './sign.js'
 import { mapError, mapOrder, mapPosition } from './map.js'
 import { okxNow } from './clock.js'
 import { okxRestBase } from './region.js'
+import { OKX_ENDPOINTS } from './endpoints.js'
 import { createLogger } from '../../utils/log.js'
 
 /**
@@ -23,14 +24,16 @@ const log = createLogger('okx-rest')
 // on a different platform entirely and their keys do not exist on this one.
 export const OKX_REST_BASE = 'https://www.okx.com'
 
-/** Requests allowed per endpoint per two seconds, per OKX's published limits. */
+/** Requests allowed per endpoint per two seconds, per OKX's published limits. Keys come
+ *  from the endpoint map so a budget entry can never drift out of step with the path the
+ *  requests actually use. */
 export const RATE_LIMITS = Object.freeze({
-  '/api/v5/trade/order': 60,
-  '/api/v5/trade/cancel-order': 60,
-  '/api/v5/trade/orders-pending': 60,
-  '/api/v5/account/balance': 10,
-  '/api/v5/account/positions': 10,
-  '/api/v5/public/instruments': 20,
+  [OKX_ENDPOINTS.order]: 60,
+  [OKX_ENDPOINTS.cancelOrder]: 60,
+  [OKX_ENDPOINTS.ordersPending]: 60,
+  [OKX_ENDPOINTS.balance]: 10,
+  [OKX_ENDPOINTS.positions]: 10,
+  [OKX_ENDPOINTS.instruments]: 20,
 })
 
 /** path -> timestamps of recent calls, for the budget tracker. */
@@ -177,7 +180,7 @@ export async function okxRequest(req) {
 export async function placeOrder(order, options = {}) {
   const result = await okxRequest({
     method: 'POST',
-    path: '/api/v5/trade/order',
+    path: OKX_ENDPOINTS.order,
     body: {
       instId: order?.symbol,
       tdMode: order?.tdMode ?? 'cash',
@@ -204,7 +207,7 @@ export async function placeOrder(order, options = {}) {
 export async function cancelOrder(order, options = {}) {
   const result = await okxRequest({
     method: 'POST',
-    path: '/api/v5/trade/cancel-order',
+    path: OKX_ENDPOINTS.cancelOrder,
     body: { instId: order?.symbol, ordId: order?.id, clOrdId: order?.clientId },
     ...options,
   })
@@ -219,7 +222,7 @@ export async function cancelOrder(order, options = {}) {
  * @returns {Promise<{ok: boolean, positions?: object[], error?: string}>} the outcome.
  */
 export async function fetchPositions(options = {}) {
-  const result = await okxRequest({ path: '/api/v5/account/positions', ...options })
+  const result = await okxRequest({ path: OKX_ENDPOINTS.positions, ...options })
 
   if (!result.ok) return { ok: false, error: result.error }
   return { ok: true, positions: result.data.map(mapPosition).filter(Boolean) }

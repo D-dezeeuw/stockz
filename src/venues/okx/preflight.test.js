@@ -9,8 +9,12 @@ import {
   watchKeyAim,
   probeKeyUniverses,
   applyKeyAim,
+  aimSignature,
+  verdictFresh,
+  resetPreflight,
   OKX_UNIVERSES,
   AIM_CODES,
+  VERDICT_FRESH_MS,
 } from './preflight.js'
 import { setKeys, clearKeys } from '../vault.js'
 import { setValue, appState, tick } from '../../app/engine.js'
@@ -46,6 +50,7 @@ function universeFetch(accepts) {
 beforeEach(() => {
   clearKeys()
   resetRateLimits()
+  resetPreflight()
   setValue(PATHS.settings.okxEea, true)
   setValue(PATHS.settings.okxDemo, false)
   setValue(PATHS.ui.keyCheck, { ok: false, code: '', reason: '', fix: '' })
@@ -283,6 +288,80 @@ describe('runKeyPreflight', () => {
     expect(verdict.code).toBe('50113')
     tick()
     expect(appState.ui.keyCheck.fix).toMatch(/secret key does not match/)
+
+    // Single-flight: boot fires this from several directions inside one tick — the boot
+    // chain, key adoption, the aim-watch — and every caller is asking the venue the same
+    // question. Two concurrent calls must share one set of venue requests.
+    const calls = vi.fn(async () => ({ json: async () => ({ code: '0', data: [{ uid: '1' }] }) }))
+    const [first, second] = await Promise.all([
+      runKeyPreflight({ fetch: calls, subtle: webcrypto.subtle }),
+      runKeyPreflight({ fetch: calls, subtle: webcrypto.subtle }),
+    ])
+    expect(first).toBe(second)
+    expect(calls).toHaveBeenCalledTimes(1)
+
+    // And once resolved, the next call is a fresh check again, not a cached promise.
+    await runKeyPreflight({ fetch: calls, subtle: webcrypto.subtle })
+    expect(calls).toHaveBeenCalledTimes(2)
+  })
+})
+
+describe('aimSignature', () => {
+  it('names the exact (platform, environment, keys) combination in force', () => {
+    expect(aimSignature()).toBe('eea:true demo:false keys:false')
+
+    setKeys('okx', OKX)
+    // Pending-aware on both axes: the signature is recorded at the exact moment the
+    // probe's corrective writes are still queued, and a landed-only read would stamp the
+    // verdict with the aim it just corrected away from.
+    setValue(PATHS.settings.okxEea, false)
+    setValue(PATHS.settings.okxDemo, true)
+    expect(aimSignature()).toBe('eea:false demo:true keys:true')
+    tick()
+    expect(aimSignature()).toBe('eea:false demo:true keys:true')
+  })
+})
+
+describe('verdictFresh', () => {
+  it('answers a re-check from a recent verdict for the same aim, and only then', async () => {
+    // Nothing verified yet: never fresh.
+    expect(verdictFresh()).toBe(false)
+
+    setKeys('okx', OKX)
+    await runKeyPreflight({
+      fetch: fakeFetch({ code: '0', data: [{ uid: '1' }] }),
+      subtle: webcrypto.subtle,
+    })
+    tick()
+
+    // The aim the verdict described, seconds old — the boot flurry case, answered free.
+    expect(verdictFresh()).toBe(true)
+
+    // Stale is stale: past the window the same aim re-verifies over the network.
+    expect(verdictFresh(Date.now() + VERDICT_FRESH_MS + 1)).toBe(false)
+
+    // A different aim is a different question, whatever the age.
+    setValue(PATHS.settings.okxDemo, true)
+    tick()
+    expect(verdictFresh()).toBe(false)
+
+    // A failed verdict never answers for anything.
+    resetPreflight()
+    expect(verdictFresh()).toBe(false)
+  })
+})
+
+describe('resetPreflight', () => {
+  it('forgets the in-flight check and the last verdict', async () => {
+    setKeys('okx', OKX)
+    await runKeyPreflight({
+      fetch: fakeFetch({ code: '0', data: [{ uid: '1' }] }),
+      subtle: webcrypto.subtle,
+    })
+    expect(verdictFresh()).toBe(true)
+
+    expect(resetPreflight()).toBe(true)
+    expect(verdictFresh()).toBe(false)
   })
 })
 
@@ -311,6 +390,29 @@ describe('watchKeyAim', () => {
 
     unsub()
     expect(registered).toHaveLength(0)
+  })
+
+  it('answers the wake its own re-aim caused from the fresh verdict, not the network', async () => {
+    // The probe's corrective writes land a tick after the verdict and wake this watcher.
+    // With the verdict seconds old and the aim unchanged, the default recheck must spend
+    // zero venue calls.
+    setKeys('okx', OKX)
+    await runKeyPreflight({
+      fetch: fakeFetch({ code: '0', data: [{ uid: '1' }] }),
+      subtle: webcrypto.subtle,
+    })
+    tick()
+
+    const registered = []
+    watchKeyAim({
+      watch: (paths, fn) => {
+        registered.push({ paths, fn })
+        return () => {}
+      },
+    })
+
+    // The default recheck path: fresh verdict → resolved promise, no clock sync, no fetch.
+    await expect(registered[0].fn()).resolves.toBeUndefined()
   })
 })
 
