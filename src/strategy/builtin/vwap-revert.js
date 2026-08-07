@@ -22,6 +22,26 @@ import { createVwap, createStddev, zscore } from '../indicators/index.js'
 export const REVERT_WARMUP = 30
 
 /**
+ * The smallest dispersion that counts as a measurement, as a fraction of price.
+ *
+ * `sigma > 0` is not a warmup test — it is a divide-by-zero guard that does not guard.
+ * Early in a session the VWAP hugs price, so `distance` is tiny and its standard deviation
+ * is tinier, and the z-score explodes: a live session produced entries at **814σ, 144σ and
+ * 22σ**, each one followed in the same second by `stretched past stop`, because the stop is
+ * built from the same near-zero sigma and any tick at all clears it. Enter, stop out, lose;
+ * three of those and the instrument benches itself — which is how a log fills with
+ * `benched 45s` and the desk looks like it never trades.
+ *
+ * Price-relative because it has to hold across instruments: a meaningful dispersion on BTC
+ * is not a meaningful dispersion on a token worth a cent. 1e-5 is 0.1 basis points — far
+ * below any real micro-structure, and far above the rounding error this exists to reject.
+ *
+ * Deliberately NOT a tunable parameter: this is a floor on whether a number means anything,
+ * not a view about how eagerly to trade.
+ */
+export const MIN_SIGMA_FRACTION = 1e-5
+
+/**
  * Fold a print into the session VWAP and its dispersion.
  *
  * @param {object} state - the run's scratchpad.
@@ -42,7 +62,10 @@ export function foldPrint(state, px, size) {
   const sigma = state.spread.update(distance)
   state.samples = (Number(state.samples) || 0) + 1
 
-  return { vwap, sigma, distance, warm: state.samples >= REVERT_WARMUP && sigma > 0 }
+  // Warm needs both: enough samples, and a dispersion big enough to divide by. See
+  // MIN_SIGMA_FRACTION — the second half is what stops 814σ entries that stop out instantly.
+  const meaningful = sigma >= Math.abs(price) * MIN_SIGMA_FRACTION
+  return { vwap, sigma, distance, warm: state.samples >= REVERT_WARMUP && meaningful }
 }
 
 /**

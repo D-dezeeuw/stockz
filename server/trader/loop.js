@@ -43,6 +43,21 @@ export function createTrader(config, deps = {}) {
   // which the engine warned about on every frame ("duplicate key ...:vwap-revert:flat").
   let seq = 0
   const stats = { signals: 0, orders: 0, blocked: 0, errors: 0, startedAt: 0 }
+
+  /**
+   * Where every actionable opinion ended up, by category.
+   *
+   * Categorised by the gate that decided, at the moment it decided — never re-derived from
+   * the reason text later. That mistake has already been made once in this file's history:
+   * prose is the venue's (or the strategy's) to reword, and a tally built by matching on it
+   * silently mis-bins the day somebody improves a sentence.
+   *
+   * `noop` is counted but deliberately excluded from "what did we pass on": a flat signal
+   * with no position is not a missed trade, and it is by far the most common line in the
+   * log — left in, it would be the biggest slice of the chart and mean nothing.
+   */
+  const tally = { entry: 0, exit: 0, weak: 0, benched: 0, throttled: 0, cap: 0,
+    misconfigured: 0, venue: 0, noop: 0 }
   let feed = null
 
   /**
@@ -115,12 +130,16 @@ export function createTrader(config, deps = {}) {
 
       const verdict = decide(desk, signal, { now: at, sent, config })
       if (!verdict.send) {
-        // Only a real opinion that was refused is worth recording. Logging every neutral
-        // tick would bury the one line that explains a quiet session.
         if (signal.action !== 'none') {
-          stats.blocked += 1
-          remember({ ts: at, instrument: desk.instrument, strategy: signal.strategy,
-            action: signal.action, taken: false, reason: verdict.reason })
+          const why = verdict.why ?? 'other'
+          tally[why] = (tally[why] ?? 0) + 1
+          // A flat signal with nothing to close is not a refusal, so it is neither counted
+          // as blocked nor written to the feed — it was the single noisiest line there.
+          if (why !== 'noop') {
+            stats.blocked += 1
+            remember({ ts: at, instrument: desk.instrument, strategy: signal.strategy,
+              action: signal.action, taken: false, why, reason: verdict.reason })
+          }
         }
         continue
       }
@@ -137,8 +156,10 @@ export function createTrader(config, deps = {}) {
           venue.blocked = fill.error
           log.warn(`venue refused permanently — falling back to paper: ${fill.error}`)
         }
+        tally.venue += 1
         remember({ ts: at, instrument: desk.instrument, strategy: signal.strategy,
-          action: signal.action, taken: false, code: fill.code ?? '', reason: fill.error })
+          action: signal.action, taken: false, why: 'venue', code: fill.code ?? '',
+          reason: fill.error })
         continue
       }
 
@@ -155,9 +176,10 @@ export function createTrader(config, deps = {}) {
       stats.orders += 1
       const realized = applyFill(desk, { side: verdict.order.side, size: verdict.order.size, px: fill.px })
       recordOutcome(desk, realized, at, config)
+      tally[verdict.why] = (tally[verdict.why] ?? 0) + 1
       remember({ ts: at, instrument: desk.instrument, strategy: signal.strategy,
-        action: signal.action, taken: true, reason: verdict.reason, px: fill.px,
-        size: verdict.order.size, realized })
+        action: signal.action, taken: true, why: verdict.why, reason: verdict.reason,
+        px: fill.px, size: verdict.order.size, realized })
     }
   }
 
@@ -275,6 +297,7 @@ export function createTrader(config, deps = {}) {
         symbols: config.symbols,
         size: config.size,
         stats: { ...stats },
+        tally: { ...tally },
         // Newest first: a decision list is read top-down, and the interesting row is the
         // one that just happened.
         decisions: decisions.slice(-100).reverse(),

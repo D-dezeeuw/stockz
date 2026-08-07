@@ -98,6 +98,7 @@ import { startEngine, submit as execSubmit } from '../exec/engine.js'
 import { registerFlattenActions } from '../positions/flatten.js'
 import { startReconciler } from '../positions/reconcile.js'
 import { startTraderMirror } from '../trader/mirror.js'
+import { startTraderDonut } from '../trader/donut.js'
 import { createRepeater, guardRepeat } from '../keys/repeat.js'
 import { appVersion } from './version.js'
 
@@ -332,6 +333,8 @@ export function bootstrap(options = {}) {
   // forever, just louder.
   const unmicro =
     options.feeds === false ? { stop: () => {} } : startMicroChart() ?? { stop: () => {} }
+  // Same place, same reason: its canvas lives inside the grid's repeated block template.
+  const undonut = options.feeds === false ? { stop: () => {} } : startTraderDonut()
   observeLayout({ doc })
   const unkey = mountKeymap(doc?.defaultView ?? globalThis.window)
   const unfocus = trackBlockFocus(doc)
@@ -374,6 +377,7 @@ export function bootstrap(options = {}) {
       unreconcile()
       untrader()
       unmicro.stop()
+      undonut.stop()
       unwatchlist()
       unautopilot()
       unperiod?.()

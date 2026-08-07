@@ -7,6 +7,7 @@ import {
   revertTick,
   vwapRevertStrategy,
   REVERT_WARMUP,
+  MIN_SIGMA_FRACTION,
 } from './vwap-revert.js'
 import { createStrategyContext } from '../contract.js'
 
@@ -20,6 +21,37 @@ function armed(params = {}) {
   vwapRevertStrategy.init(ctx)
   return ctx
 }
+
+describe('MIN_SIGMA_FRACTION', () => {
+  it('refuses to call a rounding error a dispersion', () => {
+    const ctx = armed()
+
+    // A price that barely moves: VWAP hugs it, `distance` is tiny, and its standard
+    // deviation is tinier still. `sigma > 0` was the whole warmup test, so the z-score
+    // exploded — a live session produced entries at 814σ, 144σ and 22σ, each followed in
+    // the SAME SECOND by "stretched past stop", because the stop is built from that same
+    // near-zero sigma and any tick at all clears it. Enter, stop out, lose; three of those
+    // benches the instrument, and the log fills with `benched 45s` instead of trades.
+    let reading
+    for (let i = 0; i < REVERT_WARMUP + 20; i += 1) {
+      // Sub-micro wobble around 60000 — well under the 0.1bp floor.
+      reading = foldPrint(ctx.state, 60000 + (i % 2) * 1e-4, 1)
+    }
+    expect(reading.sigma).toBeGreaterThan(0)
+    // Samples are plentiful, so the OLD test would have called this warm.
+    expect(ctx.state.samples).toBeGreaterThan(REVERT_WARMUP)
+    expect(reading.warm).toBe(false)
+
+    // A real dispersion warms normally.
+    const live = armed()
+    let real
+    for (let i = 0; i < REVERT_WARMUP + 20; i += 1) {
+      real = foldPrint(live.state, 60000 + (i % 7) * 12, 1)
+    }
+    expect(real.warm).toBe(true)
+    expect(real.sigma).toBeGreaterThanOrEqual(60000 * MIN_SIGMA_FRACTION)
+  })
+})
 
 describe('foldPrint', () => {
   it('defaults a sizeless print to one lot rather than leaving VWAP dead at zero', () => {

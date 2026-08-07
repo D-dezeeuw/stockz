@@ -1,5 +1,6 @@
 import { describe, it, expect, vi } from 'vitest'
 import {
+  decisionBreakdown,
   toTraderView,
   traderSummary,
   pollTrader,
@@ -43,6 +44,35 @@ describe('toTraderView', () => {
     expect(noSeq.decisions[0].seq).not.toBe(noSeq.decisions[1].seq)
 
     expect(toTraderView({ desks: [{ benchedFor: 5000 }] }).desks[0].benched).toBe(true)
+  })
+})
+
+describe('decisionBreakdown', () => {
+  it('drops the non-event that would otherwise be the biggest slice', () => {
+    // `noop` is a flat signal with nothing to close. It is the most frequent line the loop
+    // produces and it is not a trade passed on — left in, it is the largest wedge on the
+    // chart and means nothing at all.
+    const rows = decisionBreakdown({ entry: 3, exit: 2, benched: 40, weak: 5, noop: 900 })
+    expect(rows.some((r) => r.key === 'noop')).toBe(false)
+    expect(rows.reduce((sum, r) => sum + r.count, 0)).toBe(50)
+
+    // Taken first, so "did it trade" is answered before "what stopped it".
+    expect(rows[0].key).toBe('entry')
+    expect(rows[0].taken).toBe(true)
+    expect(rows.find((r) => r.key === 'benched').taken).toBe(false)
+
+    // Shares sum to one and the percentages are pre-rendered — a percentage is read, not
+    // computed in a template.
+    expect(rows.reduce((sum, r) => sum + r.share, 0)).toBeCloseTo(1, 10)
+    expect(rows.find((r) => r.key === 'benched').pct).toBe('80%')
+
+    // Categories that never happened are absent rather than zero rows cluttering a legend.
+    expect(rows.some((r) => r.key === 'cap')).toBe(false)
+
+    // Nothing at all is an empty list, which the block renders as "nothing yet".
+    expect(decisionBreakdown({})).toEqual([])
+    expect(decisionBreakdown({ noop: 500 })).toEqual([])
+    expect(decisionBreakdown(undefined)).toEqual([])
   })
 })
 

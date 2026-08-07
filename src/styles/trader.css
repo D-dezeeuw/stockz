@@ -90,3 +90,55 @@
   color: var(--orange);
   font-size: var(--fs-0);
 }
+
+/*
+ * The breakdown: ring on the left, legend on the right.
+ *
+ * Two columns rather than a stack, because the ring is only useful next to the labels —
+ * an arc nobody can name is decoration.
+ */
+.trader__split {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--sp-2);
+  align-items: center;
+  padding-block: var(--sp-1);
+  border-block: var(--border);
+}
+
+/* Square and modest: this competes with the decision feed for a fixed-height block. */
+.trader__donut {
+  inline-size: 4.5rem;
+  block-size: 4.5rem;
+  min-inline-size: 0;
+  display: block;
+}
+
+.trader__legend {
+  display: grid;
+  gap: 1px;
+  min-inline-size: 0;
+}
+
+.trader__slice {
+  display: grid;
+  grid-template-columns: auto 1fr auto auto;
+  gap: var(--sp-1);
+  align-items: baseline;
+  font-size: var(--fs-0);
+}
+
+.trader__dot {
+  inline-size: 0.5rem;
+  block-size: 0.5rem;
+  border-radius: 50%;
+}
+
+/* Green is taken, orange is a refusal that cost something, muted is a limit doing its job.
+   Never a categorical rainbow: on this desk colour already means profit and loss. */
+.trader__dot--up { background: var(--green); }
+.trader__dot--down { background: var(--orange); }
+.trader__dot--muted { background: var(--ink-muted); }
+
+.trader__slice-label { color: var(--ink-muted); }
+.trader__slice-pct { color: var(--ink-faint); }
