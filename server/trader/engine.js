@@ -272,5 +272,11 @@ export async function sendOrder(order, desk, config, deps = {}) {
   const result = await place(order, config, deps)
   // The venue's market order fills at whatever it fills at; the touch is the honest
   // estimate until a fills feed says otherwise.
-  return { ok: result.ok, px: result.ok ? px : 0, id: result.id, error: result.error }
+  return {
+    ok: result.ok,
+    px: result.ok ? px : 0,
+    id: result.id,
+    code: result.code ?? '',
+    error: result.error,
+  }
 }

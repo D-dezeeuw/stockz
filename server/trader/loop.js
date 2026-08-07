@@ -138,7 +138,7 @@ export function createTrader(config, deps = {}) {
           log.warn(`venue refused permanently — falling back to paper: ${fill.error}`)
         }
         remember({ ts: at, instrument: desk.instrument, strategy: signal.strategy,
-          action: signal.action, taken: false, reason: fill.error })
+          action: signal.action, taken: false, code: fill.code ?? '', reason: fill.error })
         continue
       }
 
@@ -261,6 +261,14 @@ export function createTrader(config, deps = {}) {
         // the one person who needs to know.
         live: config.live === true && !venue.blocked,
         venue: { ...venue },
+        // The environment the orders are ACTUALLY going to, read back from the config the
+        // signer uses rather than from what anyone believes is set. `demo: false` here with
+        // a demo key is a whole class of confusion answered at a glance.
+        environment: {
+          demo: config.demo === true,
+          eea: config.eea === true,
+          platform: `${config.eea ? 'OKX EU (eea.okx.com)' : 'OKX global (okx.com)'} ${config.demo ? 'demo' : 'live'}`,
+        },
         feed: feed?.state?.() ?? 'dead',
         startedAt: stats.startedAt,
         uptimeMs: stats.startedAt ? at - stats.startedAt : 0,

@@ -149,6 +149,10 @@ export async function placeMarketOrder(order, config, deps = {}) {
   return {
     ok: result.ok,
     id: String(result.data?.[0]?.ordId ?? ''),
+    // The venue's numeric code travels with the message. Two rounds of diagnosis were spent
+    // reasoning from the prose alone — exactly what the browser client's own comment warns
+    // against, because a message is the venue's to reword and the code is the contract.
+    code: result.code,
     error: result.error,
   }
 }

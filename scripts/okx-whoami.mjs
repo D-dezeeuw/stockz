@@ -27,6 +27,22 @@ import process from 'node:process'
 /** Authenticated, cheap, side-effect free — the smallest "do you know me". */
 const CONFIG_PATH = '/api/v5/account/config'
 
+/**
+ * What a `perm` string means for trading.
+ *
+ * OKX permissions belong to the KEY, not to an instrument: there is no "instruments you may
+ * trade" endpoint. A key either carries `trade` and can reach everything the account can, or
+ * it carries none of it. This is the field to check when orders are refused for permission —
+ * and, just as usefully, it says whether the key in THIS .env is the key you edited on the
+ * website, which is the commonest reason a permission that was ticked appears not to be.
+ */
+function permits(perm) {
+  return String(perm ?? '')
+    .split(',')
+    .map((p) => p.trim().toLowerCase())
+    .includes('trade')
+}
+
 /** The four cells of OKX's grid, and the settings each one implies for the desk. */
 const UNIVERSES = [
   { host: 'https://eea.okx.com', demo: false, label: 'OKX EU (my.okx.com) live', okxEea: true, okxDemo: false },
@@ -90,7 +106,15 @@ async function ask(universe, keys) {
       },
     })
     const body = await response.json()
-    return { ok: String(body?.code) === '0', code: String(body?.code ?? ''), msg: String(body?.msg ?? '') }
+    const row = body?.data?.[0] ?? {}
+    return {
+      ok: String(body?.code) === '0',
+      code: String(body?.code ?? ''),
+      msg: String(body?.msg ?? ''),
+      perm: String(row.perm ?? ''),
+      uid: String(row.uid ?? ''),
+      acctLv: String(row.acctLv ?? ''),
+    }
   } catch (err) {
     return { ok: false, code: '', msg: `unreachable: ${err?.message ?? err}` }
   }
@@ -108,8 +132,18 @@ async function ask(universe, keys) {
 function conclude(verdicts) {
   const found = verdicts.find((v) => v.result.ok)
   if (found) {
+    const perm = found.result.perm || '(not reported)'
+    const trade = permits(found.result.perm)
     return [
       `\n  ✓ Your key lives on ${found.universe.label}.`,
+      '',
+      `  permissions : ${perm}`,
+      `  can trade   : ${trade ? 'YES' : 'NO  <-- orders will be refused'}`,
+      `  account uid : ${found.result.uid || '(not reported)'}`,
+      trade
+        ? ''
+        : '  Enable Trade on THIS key in OKX API settings. If you already did, the key in\n' +
+          '  this .env is not the key you edited — copy the new one across.',
       '',
       '  In the desk (settings → keys), these two boxes should be:',
       `    “My OKX account is on my.okx.com (EU / EEA)”  →  ${found.universe.okxEea ? 'TICKED' : 'unticked'}`,
@@ -192,7 +226,12 @@ async function main(envPath = process.argv[2] ?? '.env') {
     const result = await ask(universe, keys)
     verdicts.push({ universe, result })
     const mark = result.ok ? '✓' : '·'
-    console.log(`  ${mark} ${universe.label.padEnd(30)} ${result.ok ? 'ACCEPTED' : `${result.code} ${result.msg}`}`)
+    // The code first, then the message: the code is the contract, the prose is the venue's
+    // to reword.
+    const detail = result.ok
+      ? `ACCEPTED  perm=${result.perm || '?'}`
+      : `${result.code} ${result.msg}`
+    console.log(`  ${mark} ${universe.label.padEnd(30)} ${detail}`)
   }
 
   console.log(conclude(verdicts))
