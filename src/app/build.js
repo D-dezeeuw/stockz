@@ -16,10 +16,10 @@
  */
 
 /** Short SHA of the commit this build was cut from. */
-export const BUILD_SHA = '3c85138'
+export const BUILD_SHA = '67305ad'
 
 /** When it was stamped, ISO-8601 to the minute. */
-export const BUILD_AT = '2026-08-07T18:02'
+export const BUILD_AT = '2026-08-07T18:27'
 
 /**
  * The build stamp as the footer shows it.
