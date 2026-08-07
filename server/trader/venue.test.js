@@ -1,5 +1,7 @@
 import { describe, it, expect, vi } from 'vitest'
 import {
+  fetchAccountInstruments,
+  alternativeQuotes,
   fetchAccountConfig,
   canTrade,
   fetchInstruments,
@@ -200,6 +202,50 @@ describe('fetchAccountConfig', () => {
       now: () => 1000,
     })
     expect(refused).toMatchObject({ ok: false, perm: '', error: "API key doesn't exist" })
+  })
+})
+
+describe('fetchAccountInstruments', () => {
+  it('asks what THIS ACCOUNT may trade, not what exists', async () => {
+    const calls = []
+    const result = await fetchAccountInstruments(CONFIG, 'SPOT', {
+      fetch: fakeFetch({ code: '0', data: [
+        { instId: 'BTC-EUR', state: 'live', quoteCcy: 'EUR' },
+        { instId: 'ETH-EUR', state: 'live', quoteCcy: 'EUR' },
+        { instId: 'OLD-EUR', state: 'suspend', quoteCcy: 'EUR' },
+      ] }, calls),
+      now: () => 1000,
+    })
+
+    // The AUTHENTICATED path. The public list is identical on the EEA and global platforms
+    // and marks everything live — verified by probe — so it can say a market exists and
+    // never that this account may trade it.
+    expect(calls[0].url).toContain('/api/v5/account/instruments')
+    expect(calls[0].init.headers['OK-ACCESS-KEY']).toBe('ak')
+    expect(result.tradable).toEqual(['BTC-EUR', 'ETH-EUR'])
+
+    const refused = await fetchAccountInstruments(CONFIG, 'SPOT', {
+      fetch: fakeFetch({ code: '50119', msg: "API key doesn't exist" }),
+      now: () => 1000,
+    })
+    expect(refused).toEqual({ ok: false, tradable: [], error: "API key doesn't exist" })
+  })
+})
+
+describe('alternativeQuotes', () => {
+  it('offers the same base in a currency the account can actually trade', () => {
+    const tradable = ['BTC-EUR', 'BTC-USDC', 'ETH-EUR', 'SOL-EUR', 'BTC-USDT']
+
+    // A desk configured for BTC-USDT on a EUR account does not need to be told the symbol
+    // is wrong; it needs to be told which symbol is right.
+    expect(alternativeQuotes('BTC-USDT', tradable)).toEqual(['BTC-EUR', 'BTC-USDC'])
+    expect(alternativeQuotes('ETH-USDT', tradable)).toEqual(['ETH-EUR'])
+
+    // Never suggests the instrument that was refused, and never a different base.
+    expect(alternativeQuotes('BTC-USDT', tradable)).not.toContain('BTC-USDT')
+    expect(alternativeQuotes('DOGE-USDT', tradable)).toEqual([])
+    expect(alternativeQuotes('', tradable)).toEqual([])
+    expect(alternativeQuotes('BTC-USDT', undefined)).toEqual([])
   })
 })
 

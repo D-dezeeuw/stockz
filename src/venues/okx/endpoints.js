@@ -19,6 +19,12 @@ export const OKX_ENDPOINTS = Object.freeze({
   cancelOrder: '/api/v5/trade/cancel-order',
   ordersPending: '/api/v5/trade/orders-pending',
   instruments: '/api/v5/public/instruments',
+  /**
+   * The instruments THIS ACCOUNT may trade — authenticated, and a subset of the public
+   * list. The public one is identical on the EEA and global platforms and lists everything
+   * as `live`, so it cannot answer "may I trade this"; only this one can.
+   */
+  accountInstruments: '/api/v5/account/instruments',
   /** Unauthenticated NTP on both platforms — the boot clock sync. */
   time: '/api/v5/public/time',
   /** The instrument universe; callers append their instType query. */

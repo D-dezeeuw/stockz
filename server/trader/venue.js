@@ -247,3 +247,60 @@ export async function fetchInstruments(config, instType = 'SPOT', deps = {}) {
     error: '',
   }
 }
+
+/**
+ * The instruments **this account** may trade.
+ *
+ * Not the public list. `/api/v5/public/instruments` is identical on the EEA and global
+ * platforms and marks everything `live` — verified by probe — so it answers "does this
+ * market exist", never "may I trade it". Access is per-market and account-specific: an EEA
+ * account under MiCA does not hold the same set as a global one, and the venue refuses the
+ * difference with `This API Key does not have trading permission for **the market**`.
+ *
+ * That wording is the tell, and it was misread twice in this project's history as a
+ * key-wide permission problem. It is not. The key can be perfectly configured and still be
+ * unable to touch a particular pair.
+ *
+ * @param {object} config - the trader config.
+ * @param {string} [instType] - the instrument family.
+ * @param {object} [deps] - injectable plumbing.
+ * @returns {Promise<{ok: boolean, tradable: string[], error: string}>} instrument ids the
+ *   account may actually send orders for.
+ */
+export async function fetchAccountInstruments(config, instType = 'SPOT', deps = {}) {
+  const result = await venueRequest(
+    { path: `${OKX_ENDPOINTS.accountInstruments}?instType=${instType}` },
+    config,
+    deps,
+  )
+  if (!result.ok) return { ok: false, tradable: [], error: result.error }
+
+  return {
+    ok: true,
+    tradable: result.data
+      .filter((row) => String(row?.state ?? 'live') === 'live')
+      .map((row) => String(row?.instId ?? ''))
+      .filter(Boolean),
+    error: '',
+  }
+}
+
+/**
+ * The same base currency, quoted in something this account can actually trade.
+ *
+ * The useful half of "you cannot trade that": a desk configured for `BTC-USDT` on an
+ * account that only holds EUR and USDC pairs does not need to be told the symbol is wrong,
+ * it needs to be told which symbol is right.
+ *
+ * @param {string} instId - the refused instrument, e.g. 'BTC-USDT'.
+ * @param {string[]} tradable - what the account may trade.
+ * @returns {string[]} same base, different quote, in the order the venue listed them.
+ */
+export function alternativeQuotes(instId, tradable) {
+  const base = String(instId ?? '').split('-')[0]
+  if (!base) return []
+
+  return (Array.isArray(tradable) ? tradable : []).filter(
+    (id) => id.startsWith(`${base}-`) && id !== instId,
+  )
+}

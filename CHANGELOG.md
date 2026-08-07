@@ -10,6 +10,32 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ## [Unreleased]
 
+## [0.28.9] - 2026-08-07 — Ask the account which markets it may trade
+
+### Fixed
+
+- **"This API Key does not have trading permission for the market" was diagnosed against
+  the wrong list.** The preflight checked `/api/v5/public/instruments`, which is *identical*
+  on the EEA and global platforms — 1336 live spot markets on both, `BTC-USDT` listed as
+  `live` on each — so it could never answer the question actually being asked, which is
+  "may **this account** trade this market". The authenticated
+  `/api/v5/account/instruments` returns the account-scoped subset and does answer it. The
+  preflight now calls that one, so an account that holds only EUR/USDC pairs is identified
+  as such **before** the first order instead of after 1795 refusals.
+
+### Added
+
+- `fetchAccountInstruments()` — the authenticated instrument list, filtered to `state:
+  live`. Suspended markets are excluded: listed-but-suspended is not tradable, and treating
+  it as tradable reproduces the exact failure this endpoint exists to prevent.
+- `alternativeQuotes()` — given an untradable `BTC-USDT`, the other quote currencies the
+  account *can* pair that base with. When every configured symbol is untradable the trader
+  now says which ones it could use instead (`… e.g. BTC-EUR, BTC-USDC`) rather than
+  reporting a bare refusal, and the desk renders both lines.
+- `scripts/okx-whoami.mjs` reports the account's tradable spot markets broken down by quote
+  currency, so the right value for `STOCKZ_TRADER_SYMBOLS` is readable off the host without
+  guessing.
+
 ## [0.28.8] - 2026-08-07 — Why it isn't trading, in one shape
 
 ### Fixed
