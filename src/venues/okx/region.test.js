@@ -1,5 +1,12 @@
 import { describe, it, expect, beforeEach } from 'vitest'
-import { eeaAccount, okxRestBase, okxPublicBase, OKX_REST_HOSTS, OKX_PROXY_PREFIXES } from './region.js'
+import {
+  eeaAccount,
+  okxRestBase,
+  okxPublicBase,
+  okxProxyFor,
+  OKX_REST_HOSTS,
+  OKX_PROXY_PREFIXES,
+} from './region.js'
 import { setValue, tick, resetState } from '../../app/engine.js'
 import { PATHS } from '../../state/paths.js'
 
@@ -45,6 +52,24 @@ describe('okxRestBase', () => {
     setValue(PATHS.settings.okxEea, true)
     expect(okxRestBase()).toBe('/okx-eea')
     tick()
+  })
+})
+
+describe('okxProxyFor', () => {
+  it('names a platform’s prefix without consulting — or disturbing — the setting', () => {
+    expect(okxProxyFor(true)).toBe('/okx-eea')
+    expect(okxProxyFor(false)).toBe('/okx')
+
+    // Strictly the boolean: the key probe passes an explicit universe, so anything else is
+    // a caller mistake and must not silently become "EU", the aim the probe is testing.
+    expect(okxProxyFor(undefined)).toBe('/okx')
+    expect(okxProxyFor('true')).toBe('/okx')
+
+    // Deaf to the setting, unlike okxRestBase — that is the whole point: the probe asks
+    // every platform while the desk is still aimed at the wrong one.
+    setValue(PATHS.settings.okxEea, true)
+    tick()
+    expect(okxProxyFor(false)).toBe('/okx')
   })
 })
 

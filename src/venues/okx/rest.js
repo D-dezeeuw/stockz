@@ -103,8 +103,13 @@ export function readEnvelope(body) {
 /**
  * Make a signed REST call.
  *
+ * `base` and `demo` aim one call explicitly, overriding the settings the desk normally
+ * reads. Only the key probe uses them: working out which of OKX's four key universes a key
+ * belongs to means asking all four, and it cannot ask by flipping the settings it is trying
+ * to determine.
+ *
  * @param {{method?: string, path: string, body?: object, ts?: number, fetch?: Function,
- *   subtle?: object}} req - the request.
+ *   subtle?: object, base?: string, demo?: boolean}} req - the request.
  * @returns {Promise<{ok: boolean, data?: unknown[], error?: string}>} the outcome.
  */
 export async function okxRequest(req) {
@@ -123,6 +128,8 @@ export async function okxRequest(req) {
     ts = okxNow(),
     fetch: fetchImpl = globalThis.fetch,
     subtle,
+    base,
+    demo,
   } = req
 
   if (!withinRateLimit(path, ts)) {
@@ -134,7 +141,7 @@ export async function okxRequest(req) {
   // request does not carry, rejected as a 401 that reads like a bad key.
   const payload = typeof body === 'string' ? body : body ? JSON.stringify(body) : ''
 
-  const headers = await signRequest({ ts, method, path, body: payload, subtle })
+  const headers = await signRequest({ ts, method, path, body: payload, subtle, demo })
   if (Object.keys(headers).length === 0) {
     return { ok: false, code: '', error: 'No OKX credentials — add keys to trade' }
   }
@@ -144,7 +151,7 @@ export async function okxRequest(req) {
   try {
     // The base is resolved per call: an EEA account's keys exist only on the EU platform,
     // and flipping that setting must redirect the very next request.
-    const response = await fetchImpl(`${okxRestBase()}${path}`, {
+    const response = await fetchImpl(`${base ?? okxRestBase()}${path}`, {
       method,
       headers,
       body: payload || undefined,

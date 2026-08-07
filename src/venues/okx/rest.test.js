@@ -134,6 +134,20 @@ describe('okxRequest', () => {
     setValue(PATHS.settings.okxEea, true)
     tick()
 
+    // `base` and `demo` aim one call explicitly, against the settings — the seam the key
+    // probe uses to ask all four OKX universes while the desk is still aimed at whichever
+    // one is refusing it.
+    await okxRequest({
+      path: '/api/v5/account/config',
+      ts: 1000,
+      base: '/okx',
+      demo: true,
+      fetch: fakeFetch({ code: '0', data: [] }, calls),
+      subtle: webcrypto.subtle,
+    })
+    expect(calls[2].url).toBe('/okx/api/v5/account/config')
+    expect(calls[2].init.headers['x-simulated-trading']).toBe('1')
+
     // A network failure becomes an error result, never an exception: an exception on the
     // order path leaves the trader unsure whether the order went.
     const dead = await okxRequest({

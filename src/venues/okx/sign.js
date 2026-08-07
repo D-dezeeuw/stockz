@@ -84,7 +84,12 @@ export async function hmacSha256(message, secret, subtle = globalThis.crypto?.su
 /**
  * Build the headers a signed OKX REST call needs.
  *
- * @param {{ts?: number, method?: string, path: string, body?: string|object, subtle?: object}} req
+ * `demo` overrides the setting for one call. The key probe needs to *ask* both environments
+ * before the desk knows which one is right, and it cannot do that by flipping the setting —
+ * that would re-aim the whole desk, and the watcher on it, four times per probe.
+ *
+ * @param {{ts?: number, method?: string, path: string, body?: string|object, subtle?: object,
+ *   demo?: boolean, state?: object}} req
  * @returns {Promise<Record<string, string>>} headers; empty object when keys are missing.
  */
 export async function signRequest(req) {
@@ -99,6 +104,7 @@ export async function signRequest(req) {
   // from a bad key — so a signature dated 1970, or one from a laptop that drifted while
   // asleep, both fail the same way and neither says why.
   const ts = okxTimestamp(req.ts ?? okxNow())
+  const demo = req.demo === undefined ? demoTrading(req.state) : req.demo === true
   const sign = await hmacSha256(
     prehashString({ ts, method: req.method, path: req.path, body: req.body }),
     secret,
@@ -111,10 +117,12 @@ export async function signRequest(req) {
     'OK-ACCESS-TIMESTAMP': ts,
     'OK-ACCESS-PASSPHRASE': passphrase,
     'Content-Type': 'application/json',
-    // OKX keeps demo and live keys in *separate universes*. A demo key sent without this
-    // header is not rejected as wrong — the venue reports that it "doesn't exist" (50119),
-    // which reads as a deleted key and sends people off to regenerate one that was fine.
-    ...(demoTrading(req.state) ? { 'x-simulated-trading': '1' } : {}),
+    // OKX keeps demo and live keys in *separate universes*. Announcing the wrong one is
+    // never reported as "wrong header": on the platform the key lives on the venue says
+    // `50101 "APIKey does not match current environment"`, and on a platform it does not
+    // live on it says `50119 "API key doesn't exist"` — a deleted-key message that sends
+    // people off to regenerate a key that was fine.
+    ...(demo ? { 'x-simulated-trading': '1' } : {}),
   }
 }
 
