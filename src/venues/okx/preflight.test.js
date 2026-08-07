@@ -7,6 +7,10 @@ import {
   OKX_CONFIG_PATH,
   NO_KEYS,
   watchKeyAim,
+  probeKeyUniverses,
+  applyKeyAim,
+  OKX_UNIVERSES,
+  AIM_CODES,
 } from './preflight.js'
 import { setKeys, clearKeys } from '../vault.js'
 import { setValue, appState, tick } from '../../app/engine.js'
@@ -21,9 +25,28 @@ function fakeFetch(body) {
   return async () => ({ json: async () => body })
 }
 
+/**
+ * A fetch double that answers per (base, x-simulated-trading) pair, so a test can say
+ * "the key lives on global-live" and let every other universe refuse it the way OKX does.
+ */
+function universeFetch(accepts) {
+  return async (url, init) => {
+    const eea = String(url).startsWith('/okx-eea')
+    const demo = init?.headers?.['x-simulated-trading'] === '1'
+    const hit = eea === accepts.eea && demo === accepts.demo
+    return {
+      json: async () =>
+        hit
+          ? { code: '0', data: [{ uid: '1' }] }
+          : { code: '50101', msg: 'APIKey does not match current environment.', data: [] },
+    }
+  }
+}
+
 beforeEach(() => {
   clearKeys()
   resetRateLimits()
+  setValue(PATHS.settings.okxEea, true)
   setValue(PATHS.settings.okxDemo, false)
   setValue(PATHS.ui.keyCheck, { ok: false, code: '', reason: '', fix: '' })
   tick()
@@ -93,7 +116,120 @@ describe('checkOkxKeys', () => {
     })
     expect(bad.code).toBe('50119')
     expect(bad.fix).toMatch(/demo trading/)
+  })
 
+  it('resolves a wrong-aim refusal itself instead of reporting it', async () => {
+    setKeys('okx', OKX)
+    // The desk boots aimed at EU-live (the default) and the key is a global-live one, so
+    // the first call gets 50101 — "APIKey does not match current environment", the failure
+    // that reads as a broken key and is really a checkbox.
+    const verdict = await checkOkxKeys({
+      fetch: universeFetch({ eea: false, demo: false }),
+      subtle: webcrypto.subtle,
+    })
+    tick()
+
+    expect(verdict.ok).toBe(true)
+    expect(verdict.reason).toMatch(/re-aimed to OKX global \(okx\.com\) live/)
+    // Re-aimed in settings, not just in the message: the next signed call, the sockets and
+    // the reload after it all have to follow.
+    expect(appState.settings.okxEea).toBe(false)
+    expect(appState.settings.okxDemo).toBe(false)
+
+    // A key no universe accepts is still a failure, and the aim is left alone — guessing at
+    // it would hide a genuinely bad key behind a setting that changed for no reason.
+    const nowhere = await checkOkxKeys({
+      fetch: fakeFetch({ code: '50101', msg: 'APIKey does not match current environment.', data: [] }),
+      subtle: webcrypto.subtle,
+    })
+    tick()
+    expect(nowhere.ok).toBe(false)
+    expect(nowhere.code).toBe('50101')
+    expect(nowhere.fix).toMatch(/belongs to a different OKX/)
+    expect(appState.settings.okxEea).toBe(false)
+
+    // A failure that is about the key rather than the aim must not spend four requests
+    // learning that every platform also dislikes it.
+    const calls = vi.fn(async () => ({ json: async () => ({ code: '50113', msg: 'bad sign', data: [] }) }))
+    const badSign = await checkOkxKeys({ fetch: calls, subtle: webcrypto.subtle })
+    expect(badSign.code).toBe('50113')
+    expect(calls).toHaveBeenCalledTimes(1)
+  })
+})
+
+describe('probeKeyUniverses', () => {
+  it('finds the one of OKX’s four runs the key belongs to', async () => {
+    setKeys('okx', OKX)
+
+    for (const universe of OKX_UNIVERSES) {
+      const found = await probeKeyUniverses({
+        fetch: universeFetch(universe),
+        subtle: webcrypto.subtle,
+      })
+      expect(found).toEqual(universe)
+    }
+
+    // All four asked, every time — the answer is only trustworthy because none was skipped.
+    const seen = []
+    await probeKeyUniverses({
+      fetch: async (url, init) => {
+        seen.push(`${String(url).startsWith('/okx-eea') ? 'eea' : 'global'}:${init?.headers?.['x-simulated-trading'] ?? '0'}`)
+        return { json: async () => ({ code: '50119', data: [] }) }
+      },
+      subtle: webcrypto.subtle,
+    })
+    expect(seen.sort()).toEqual(['eea:0', 'eea:1', 'global:0', 'global:1'])
+
+    // Nothing accepted is null, never a guess.
+    expect(
+      await probeKeyUniverses({
+        fetch: fakeFetch({ code: '50119', data: [] }),
+        subtle: webcrypto.subtle,
+      }),
+    ).toBeNull()
+  })
+})
+
+describe('applyKeyAim', () => {
+  it('writes the found universe into the settings the whole desk reads', () => {
+    applyKeyAim({ eea: false, demo: true })
+    tick()
+    expect(appState.settings.okxEea).toBe(false)
+    expect(appState.settings.okxDemo).toBe(true)
+
+    applyKeyAim({ eea: true, demo: false })
+    tick()
+    expect(appState.settings.okxEea).toBe(true)
+    expect(appState.settings.okxDemo).toBe(false)
+
+    // Booleans, never undefined: these paths feed `!== false` and `=== true` reads, and a
+    // missing value would land on a default instead of on what was probed.
+    applyKeyAim(undefined)
+    tick()
+    expect(appState.settings.okxEea).toBe(false)
+    expect(appState.settings.okxDemo).toBe(false)
+  })
+})
+
+describe('AIM_CODES', () => {
+  it('lists only the refusals that are about where the request went', () => {
+    // 50119: the platform never heard of the key. 50101: it did, in another environment.
+    expect([...AIM_CODES].sort()).toEqual(['50101', '50119'])
+    // Bad signature, passphrase, clock, IP and permissions are about the key itself — a
+    // probe would spend three extra requests collecting the same refusal.
+    for (const code of ['50113', '50105', '50102', '50114', '50120']) {
+      expect(AIM_CODES).not.toContain(code)
+    }
+  })
+})
+
+describe('OKX_UNIVERSES', () => {
+  it('covers region × environment exactly once each', () => {
+    expect(OKX_UNIVERSES).toHaveLength(4)
+    expect(new Set(OKX_UNIVERSES.map((u) => `${u.eea}:${u.demo}`)).size).toBe(4)
+    // EU-live first: this desk's home, and the answer that wins a tie.
+    expect(OKX_UNIVERSES[0]).toMatchObject({ eea: true, demo: false })
+    for (const universe of OKX_UNIVERSES) expect(universe.label).toBeTruthy()
   })
 })
 

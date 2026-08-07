@@ -65,6 +65,29 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ### Fixed
 
+- **`50101 "APIKey does not match current environment"` now fixes itself.** OKX runs four
+  separate key universes — global and EU platforms, live and demo each — and a key exists
+  in exactly one. Ask the wrong one and the venue answers `50119` ("never heard of it") or,
+  when it *has* heard of the key but under the other environment, `50101`. Neither was
+  something a trader could act on: `50101` had no mapped fix at all, and both left two
+  checkboxes to guess at. The preflight now settles the question itself — on either code it
+  fires `account/config` at all four universes in parallel (authenticated, cheap,
+  side-effect free), and the one that accepts the key becomes the desk's aim: the region
+  and demo settings are re-written, persisted and announced ("re-aimed to OKX global
+  (okx.com) live"). Nothing is guessed — if no universe accepts, the aim is left alone and
+  the failure is reported, and codes that are about the *key* rather than the aim (bad
+  signature, passphrase, clock, IP, permissions) never spend the extra requests. Backing
+  this: `okxRequest` takes per-call `base`/`demo` overrides and `signRequest` a `demo`
+  override, so the probe can ask all four without re-aiming the live desk four times.
+
+- **`scripts/okx-whoami.mjs`** answers "which OKX do these keys belong to" from the host,
+  with no browser and no desk in the way: it signs one `account/config` at each of the four
+  universes and names the one that accepts, plus the two checkbox settings that follow from
+  it. Zero dependencies, reads `.env` (the named file wins over the shell, so a diagnostic
+  never silently probes a different credential), and prints only a four-character key
+  fingerprint — never the credential. It also distinguishes the one result that really does
+  mean "make a new key" (`50119` on all four) from every result that does not.
+
 - **Re-aiming the desk now re-checks the keys immediately.** Ticking "OKX EU account" (or
   demo, or submitting new keys) re-runs the clock sync and key preflight against the newly
   aimed platform on the spot — previously the setting redirected only the *next* call and

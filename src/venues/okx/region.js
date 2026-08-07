@@ -76,7 +76,22 @@ export function okxRestBase(state) {
   // No `= appState` default here: filling the parameter in would hand `eeaAccount` a
   // concrete state and silently switch it onto the landed-only branch — exactly the boot
   // race the pending read exists to close.
-  return eeaAccount(state) ? OKX_PROXY_PREFIXES.eea : OKX_PROXY_PREFIXES.global
+  return okxProxyFor(eeaAccount(state))
+}
+
+/**
+ * The proxy prefix for one platform, named rather than derived from settings.
+ *
+ * The settings-driven read above answers "where should this desk's requests go". This one
+ * answers "where would a request to *that* platform go", which is what the key probe needs:
+ * it asks every platform in turn without touching — or waiting on — the setting it is
+ * trying to work out.
+ *
+ * @param {boolean} eea - true for the EU platform.
+ * @returns {string} the proxy prefix.
+ */
+export function okxProxyFor(eea) {
+  return eea === true ? OKX_PROXY_PREFIXES.eea : OKX_PROXY_PREFIXES.global
 }
 
 

@@ -102,6 +102,24 @@ describe('signRequest', () => {
     expect(headers['OK-ACCESS-TIMESTAMP']).toBe('2026-08-03T14:05:09.000Z')
     expect(headers['OK-ACCESS-SIGN']).toMatch(/^[A-Za-z0-9+/]+=*$/)
     expect(headers['Content-Type']).toBe('application/json')
+    // The desk is on live by default, so no environment is announced.
+    expect(headers['x-simulated-trading']).toBeUndefined()
+
+    // `demo` overrides the setting for one call — the seam the key probe uses to ask both
+    // environments without re-aiming the whole desk four times.
+    const simulated = await signRequest({ path: '/p', subtle: webcrypto.subtle, demo: true })
+    expect(simulated['x-simulated-trading']).toBe('1')
+    const live = await signRequest({ path: '/p', subtle: webcrypto.subtle, demo: false })
+    expect(live['x-simulated-trading']).toBeUndefined()
+
+    // Only an explicit override wins; omitting it falls back to the setting, which is what
+    // every ordinary call does.
+    const fromState = await signRequest({
+      path: '/p',
+      subtle: webcrypto.subtle,
+      state: { settings: { okxDemo: true } },
+    })
+    expect(fromState['x-simulated-trading']).toBe('1')
 
     // A partial credential set signs nothing rather than sending a broken request.
     clearKeys()
