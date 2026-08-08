@@ -21,20 +21,36 @@ const log = createLogger('trader-feed')
 /** The public stream. Global host: public data is not region-split. */
 export const PUBLIC_WS_URL = 'wss://ws.okx.com:8443/ws/v5/public'
 
-/** Demo trading streams from a separate host entirely — the header trick is REST-only. */
+/**
+ * Demo's public stream. Kept named because it is a real host, and unused on purpose.
+ *
+ * The demo tape is not the market. It carries simulated flow for a subset of instruments,
+ * and a strategy that reads it is not reading anything — a hyper-scalper starved of prints
+ * simply never decides, which is indistinguishable on screen from a strategy that decided
+ * to do nothing. See `feedUrl`.
+ */
 export const DEMO_WS_URL = 'wss://wspap.okx.com:8443/ws/v5/public'
 
 /** Reconnect backoff, capped so a long outage still retries briskly when it clears. */
 export const BACKOFF_MS = Object.freeze([250, 500, 1000, 2000, 4000, 8000])
 
 /**
- * Which socket to open.
+ * Which socket to open. Always the live one.
  *
- * @param {boolean} demo - whether the desk is on OKX demo trading.
+ * Market data and order routing are separate decisions, and `STOCKZ_OKX_DEMO` is about the
+ * second. This feed needs no credentials — it reads the public tape — so there is nothing
+ * for the demo environment to authenticate and nothing it can offer except a thinner,
+ * synthetic version of the same market. Reading it produced a desk that connected happily,
+ * reported `feed live`, and formed one opinion in an hour.
+ *
+ * Deciding from the real tape is also the *more* faithful choice when orders do go to demo:
+ * paper fills are simulated against this book, and demo's own prices track live anyway.
+ *
+ * @param {boolean} _demo - the demo flag, deliberately ignored.
  * @returns {string} the URL.
  */
-export function feedUrl(demo) {
-  return demo === true ? DEMO_WS_URL : PUBLIC_WS_URL
+export function feedUrl(_demo) {
+  return PUBLIC_WS_URL
 }
 
 /**

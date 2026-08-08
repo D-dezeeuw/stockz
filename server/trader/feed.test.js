@@ -11,12 +11,15 @@ import {
 } from './feed.js'
 
 describe('feedUrl', () => {
-  it('sends demo to its own host, because the header trick is REST-only', () => {
+  it('reads the live tape whatever the order routing is set to', () => {
     expect(feedUrl(false)).toBe(PUBLIC_WS_URL)
     expect(feedUrl(undefined)).toBe(PUBLIC_WS_URL)
-    // A desk that flipped the REST header and kept the live socket would authenticate its
-    // orders and then read a book from the other universe.
-    expect(feedUrl(true)).toBe(DEMO_WS_URL)
+
+    // The demo flag routes ORDERS. This feed carries no credentials, so demo has nothing to
+    // authenticate and nothing to offer but a synthetic tape — which starves the strategies
+    // while the socket still reports itself healthy.
+    expect(feedUrl(true)).toBe(PUBLIC_WS_URL)
+    expect(feedUrl(true)).not.toBe(DEMO_WS_URL)
   })
 })
 
