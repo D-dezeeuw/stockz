@@ -3,6 +3,7 @@ import {
   fetchAccountInstruments,
   alternativeQuotes,
   bestAlternative,
+  quotesFor,
   fetchAccountConfig,
   canTrade,
   fetchInstruments,
@@ -233,41 +234,55 @@ describe('fetchAccountInstruments', () => {
   })
 })
 
+describe('quotesFor', () => {
+  it('hardcodes one regime per platform', () => {
+    // EUR only on the EU platform. USDT is not MiCA-compliant so OKX Europe may not offer
+    // it at all, and the owner ruled out the dollar stablecoins alongside it.
+    expect(quotesFor(true)).toEqual(['EUR'])
+    expect(quotesFor(undefined)).toEqual(['EUR'])
+
+    // Only an explicit non-EEA platform gets the dollar regime, deepest book first.
+    expect(quotesFor(false)).toEqual(['USDT', 'USDC', 'USD'])
+  })
+})
+
 describe('alternativeQuotes', () => {
-  it('offers the same base in a currency the account can actually trade', () => {
+  it('offers the same base, in a quote the regime allows', () => {
     const tradable = ['BTC-EUR', 'BTC-USDC', 'ETH-EUR', 'SOL-EUR', 'BTC-USDT']
 
     // A desk configured for BTC-USDT on a EUR account does not need to be told the symbol
-    // is wrong; it needs to be told which symbol is right.
-    expect(alternativeQuotes('BTC-USDT', tradable)).toEqual(['BTC-EUR', 'BTC-USDC'])
-    expect(alternativeQuotes('ETH-USDT', tradable)).toEqual(['ETH-EUR'])
+    // is wrong; it needs to be told which symbol is right. USDC is filtered out on the EU
+    // platform even though the account can trade it — the regime is a filter, not a rank.
+    expect(alternativeQuotes('BTC-USDT', tradable, true)).toEqual(['BTC-EUR'])
+    expect(alternativeQuotes('ETH-USDT', tradable, true)).toEqual(['ETH-EUR'])
 
-    // Never suggests the instrument that was refused, and never a different base.
-    expect(alternativeQuotes('BTC-USDT', tradable)).not.toContain('BTC-USDT')
-    expect(alternativeQuotes('DOGE-USDT', tradable)).toEqual([])
-    expect(alternativeQuotes('', tradable)).toEqual([])
-    expect(alternativeQuotes('BTC-USDT', undefined)).toEqual([])
+    // The same account read under the global regime keeps the dollar pairs, in order.
+    expect(alternativeQuotes('BTC-EUR', tradable, false)).toEqual(['BTC-USDT', 'BTC-USDC'])
+
+    // Never the instrument that was refused, never a different base, never an unlisted
+    // quote — a base with no pair in the regime yields nothing rather than falling through.
+    expect(alternativeQuotes('BTC-USDT', tradable, true)).not.toContain('BTC-USDT')
+    expect(alternativeQuotes('BTC-EUR', ['BTC-TRY', 'BTC-BRL'], true)).toEqual([])
+    expect(alternativeQuotes('DOGE-USDT', tradable, true)).toEqual([])
+    expect(alternativeQuotes('', tradable, true)).toEqual([])
+    expect(alternativeQuotes('BTC-USDT', undefined, true)).toEqual([])
   })
 })
 
 describe('bestAlternative', () => {
-  it('picks the deepest tradable quote, deterministically', () => {
-    // Ranked quotes beat unranked ones, whatever order the venue listed them in — this
-    // decides what the loop trades with real money, so "first in the response" is not an
-    // acceptable basis for it.
-    expect(bestAlternative('BTC-USDT', ['BTC-BRL', 'BTC-EUR', 'BTC-USDC'])).toBe('BTC-USDC')
-    expect(bestAlternative('BTC-EUR', ['BTC-USDT', 'BTC-USDC'])).toBe('BTC-USDT')
+  it('picks one substitute from the regime, deterministically', () => {
+    // On the EU platform the answer is the EUR pair even when the account also holds a
+    // dollar stablecoin pair with a deeper book. That is the instruction, not an accident.
+    expect(bestAlternative('BTC-USDT', ['BTC-BRL', 'BTC-EUR', 'BTC-USDC'], true)).toBe('BTC-EUR')
 
-    // An account that only holds the EUR pair gets the EUR pair.
-    expect(bestAlternative('BTC-USDT', ['BTC-EUR', 'ETH-EUR'])).toBe('BTC-EUR')
+    // Off the EU platform the ranking decides, deepest book first.
+    expect(bestAlternative('BTC-EUR', ['BTC-USDC', 'BTC-USDT'], false)).toBe('BTC-USDT')
 
-    // Unranked quotes are eligible rather than discarded — a tradable odd pair beats no
-    // pair — and tie-break inside one rank is alphabetical so two boots agree.
-    expect(bestAlternative('BTC-USDT', ['BTC-TRY', 'BTC-BRL'])).toBe('BTC-BRL')
-
-    // Nothing to swap to is '' rather than undefined: the caller tests it as a value.
-    expect(bestAlternative('DOGE-USDT', ['BTC-EUR'])).toBe('')
-    expect(bestAlternative('BTC-USDT', [])).toBe('')
+    // Nothing in the regime is '' rather than undefined — the caller tests it as a value —
+    // and an off-regime pair is never a fallback.
+    expect(bestAlternative('BTC-EUR', ['BTC-TRY', 'BTC-BRL'], true)).toBe('')
+    expect(bestAlternative('DOGE-USDT', ['BTC-EUR'], true)).toBe('')
+    expect(bestAlternative('BTC-USDT', [], true)).toBe('')
   })
 })
 

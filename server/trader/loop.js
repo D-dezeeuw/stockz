@@ -312,7 +312,7 @@ export function createTrader(config, deps = {}) {
           // BTC-USDT on a EUR account does not need to be told the symbol is wrong; it
           // needs to be told which symbol is right.
           venue.suggest = venue.unlisted.flatMap((s) =>
-            alternativeQuotes(s, listed.tradable).slice(0, 3),
+            alternativeQuotes(s, listed.tradable, config.eea).slice(0, 3),
           )
 
           // And then it should just trade it. Telling the owner to edit .env and rebuild is
@@ -322,7 +322,7 @@ export function createTrader(config, deps = {}) {
           // the exposure cap keeps meaning what it meant.
           const swaps = venue.unlisted.map((from) => ({
             from,
-            to: bestAlternative(from, listed.tradable),
+            to: bestAlternative(from, listed.tradable, config.eea),
           }))
           // All or nothing. A partial swap would leave the desk trading a mix of what was
           // asked for and what was guessed, which is the hardest kind of configuration to

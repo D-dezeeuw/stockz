@@ -296,47 +296,63 @@ export async function fetchAccountInstruments(config, instType = 'SPOT', deps = 
  * @param {string[]} tradable - what the account may trade.
  * @returns {string[]} same base, different quote, in the order the venue listed them.
  */
-export function alternativeQuotes(instId, tradable) {
+export function alternativeQuotes(instId, tradable, eea = true) {
   const base = String(instId ?? '').split('-')[0]
   if (!base) return []
 
-  return (Array.isArray(tradable) ? tradable : []).filter(
-    (id) => id.startsWith(`${base}-`) && id !== instId,
-  )
+  const quotes = quotesFor(eea)
+  const rank = (id) => quotes.indexOf(String(id).split('-')[1] ?? '')
+
+  return (Array.isArray(tradable) ? tradable : [])
+    .filter((id) => id.startsWith(`${base}-`) && id !== instId && rank(id) !== -1)
+    .sort((a, b) => rank(a) - rank(b) || a.localeCompare(b))
 }
 
 /**
- * Quote currencies in the order this desk would rather scalp them, deepest book first.
+ * The quote currencies this desk will trade, by platform. Two regimes, both hardcoded.
  *
- * Only ever a tie-break among quotes the account *already* has — an EEA account that holds
- * no USDT pair is not going to acquire one by being asked first. Ordering matters because
- * a scalper lives on the spread, and an obscure quote with a thin book turns a 4bp edge
- * into a 20bp round trip.
+ * **EEA → EUR, and nothing else.** Not a preference — a legal fact plus an owner decision.
+ * USDT is not MiCA-compliant, so OKX Europe as a licensed CASP may not offer it for trading
+ * to EU/EEA residents at all; that is the whole reason `BTC-USDT` is refused on this
+ * account while the public instrument list still lists it. USDC *is* MiCA-compliant and is
+ * available on OKX EU, but the owner's instruction was explicit — "we are EURO based so
+ * ignore anything that is USD" — and a desk that quietly scalps a dollar stablecoin against
+ * that is not doing what it was told. Widening this is a one-line change here.
+ *
+ * **Global → USDT, USDC, USD**, deepest book first. Ordering matters because a scalper
+ * lives on the spread, and a thin book turns a 4bp edge into a 20bp round trip.
+ *
+ * Membership is a filter, not just a ranking. An unlisted quote is not "worse" — it is not
+ * traded, so a base with no pair in the regime yields no substitute at all rather than
+ * quietly falling through to whatever else the venue happened to list.
  */
-export const QUOTE_PREFERENCE = Object.freeze(['USDT', 'USDC', 'EUR', 'USD'])
+export const QUOTE_REGIMES = Object.freeze({
+  eea: Object.freeze(['EUR']),
+  global: Object.freeze(['USDT', 'USDC', 'USD']),
+})
+
+/**
+ * The quote currencies in force for a platform.
+ *
+ * @param {boolean} eea - whether this is the EU platform.
+ * @returns {readonly string[]} the allowed quotes, best first.
+ */
+export function quotesFor(eea) {
+  return eea === false ? QUOTE_REGIMES.global : QUOTE_REGIMES.eea
+}
 
 /**
  * The single best substitute for an instrument this account cannot trade.
  *
- * Deterministic on purpose: this picks what the loop will actually trade with real money,
- * and "whatever OKX happened to list first" is not a basis for that. Unranked quotes are
- * still eligible — they sort after every ranked one rather than being discarded, because a
- * tradable odd pair beats no pair at all — and ties inside a rank break alphabetically so
- * two boots of the same config never diverge.
+ * Deterministic on purpose: this picks what the loop will trade with real money, and
+ * "whatever OKX happened to list first" is not a basis for that. Ties inside a quote break
+ * alphabetically so two boots of the same config never diverge.
  *
  * @param {string} instId - the refused instrument, e.g. 'BTC-USDT'.
  * @param {string[]} tradable - what the account may trade.
- * @returns {string} the substitute, or '' when the account holds no pair for this base.
+ * @param {boolean} [eea] - which quote regime applies.
+ * @returns {string} the substitute, or '' when the regime holds no pair for this base.
  */
-export function bestAlternative(instId, tradable) {
-  const rank = (id) => {
-    const index = QUOTE_PREFERENCE.indexOf(String(id).split('-')[1] ?? '')
-    return index === -1 ? QUOTE_PREFERENCE.length : index
-  }
-
-  return (
-    alternativeQuotes(instId, tradable).sort(
-      (a, b) => rank(a) - rank(b) || a.localeCompare(b),
-    )[0] ?? ''
-  )
+export function bestAlternative(instId, tradable, eea = true) {
+  return alternativeQuotes(instId, tradable, eea)[0] ?? ''
 }
