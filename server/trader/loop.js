@@ -381,6 +381,12 @@ export function createTrader(config, deps = {}) {
         // however the config reads, and a snapshot that still said LIVE would be lying to
         // the one person who needs to know.
         live: config.live === true && !venue.blocked,
+        // What .env ASKED for, next to what is actually happening. The two differ whenever
+        // the venue blocked the loop, and without both the desk cannot tell "configured for
+        // paper" from "configured live and refused" — which are the same picture and
+        // completely different problems. This is the persistent setting: it comes from
+        // STOCKZ_TRADER_MODE and survives every restart, rebuild and closed laptop.
+        mode: config.live === true ? 'live' : 'paper',
         venue: { ...venue },
         // The environment the orders are ACTUALLY going to, read back from the config the
         // signer uses rather than from what anyone believes is set. `demo: false` here with

@@ -5,6 +5,7 @@ import {
   HOLD_MS,
   parseModeParam,
   isPaper,
+  serverTradingLive,
   setTradeMode,
   beginGoLive,
   cancelGoLive,
@@ -76,6 +77,21 @@ describe('isPaper', () => {
   })
 })
 
+describe('serverTradingLive', () => {
+  it('is true only when the host loop is both running and live', () => {
+    expect(serverTradingLive({})).toBe(false)
+
+    // Running on paper is not a conflict — two paper traders cost nothing and overlap
+    // harmlessly. Only real money on both sides is the problem.
+    expect(serverTradingLive({ trader: { view: { running: true, live: false } } })).toBe(false)
+
+    // Nor is a live *configuration* that is not actually running.
+    expect(serverTradingLive({ trader: { view: { running: false, live: true } } })).toBe(false)
+
+    expect(serverTradingLive({ trader: { view: { running: true, live: true } } })).toBe(true)
+  })
+})
+
 describe('setTradeMode', () => {
   it('clears the queue before it flips, and refuses live without keys', () => {
     setValue(PATHS.trade.queue, [{ id: 'queued' }])
@@ -107,6 +123,14 @@ describe('setTradeMode', () => {
     expect(setTradeMode(null, { mode: 'paper' })).toBe('paper')
     expect(setTradeMode(null, { mode: 'nonsense' })).toBe('paper')
     expect(MODES).toEqual(['paper', 'live'])
+
+    // And refused outright while the host loop is live: two traders on one account each
+    // size against a position only they can see, and the venue would accept both.
+    setValue(PATHS.trader.view, { running: true, live: true })
+    tick()
+    expect(setTradeMode(null, { mode: 'live' })).toBe('paper')
+    tick()
+    expect(appState.trade.mode).toBe('paper')
   })
 })
 

@@ -1220,6 +1220,15 @@
                 <span data-if="trader.view.signedOut">◇ SIGNED OUT — reload to sign in</span>
               </p>
               <p class="label">{{trader.view.symbols.join(', ')}} · feed {{trader.view.feed}}</p>
+              <!-- The persistent setting, named as such. The LIVE switch by the keys is this
+                   BROWSER's and resets to paper on every reload by design; the mode that
+                   actually decides whether the host spends money is STOCKZ_TRADER_MODE in
+                   the server's .env, which no tab can change and no reload forgets. Shown
+                   because the two controls were indistinguishable from the desk, and the
+                   owner was flipping the one that does not run the trades. -->
+              <p class="label" data-if="trader.view.running">
+                mode {{trader.view.mode}} · persistent, from the server's .env — the LIVE
+                switch by the keys is this browser only</p>
               <!-- The one failure the loop cannot fix and the owner can, in the words the
                    venue used. Orders fall back to paper while this is set, so without it
                    the desk would look like it was trading. -->
@@ -1467,13 +1476,18 @@
         <label class="field field--row keys__live">
           <input type="checkbox" data-action="change" data-fn="keys.liveTrading"
                  :checked="trade.mode === 'live'">
-          <span class="label">Trade live with real funds — the autopilot keeps trading and
-            its orders go to the venue. Off = paper: orders are simulated against the book
-            and never sent.</span>
+          <span class="label">Trade live with real funds — <strong>this browser only</strong>.
+            The server-side trader has its own mode in the host's .env and ignores this
+            switch. Off = paper: orders are simulated against the book and never sent.</span>
         </label>
         <p class="label keys__mode" :class="trade.mode === 'live' ? 'label keys__mode is-live' : 'label keys__mode'">
           {{trade.mode === 'live' ? 'LIVE — orders go to the venue' : 'PAPER — nothing leaves this browser'}}
         </p>
+        <!-- Not a hint: the switch above is refused while this is true. Two loops on one
+             account each size against a position only they can see, and OKX would fill
+             both. See `serverTradingLive`. -->
+        <p class="label keys__mode is-live" data-if="trader.view.running &amp;&amp; trader.view.live">
+          the server is trading this account live — this browser stays on paper</p>
 
         <label class="field field--row">
           <input type="checkbox" data-action="change" data-fn="keys.remember"

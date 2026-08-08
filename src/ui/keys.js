@@ -16,6 +16,7 @@ import {
 } from '../venues/vault.js'
 import { pushToast } from './toast.js'
 import { isAdmin } from '../app/session.js'
+import { serverTradingLive } from '../exec/mode.js'
 
 /**
  * The key modal and the lock.
@@ -317,6 +318,15 @@ export function toggleLiveTrading(_state, payload = {}) {
   // desk being broken. Refused, and said out loud.
   if (wantsLive && !keyPresence().okx && !keyPresence().etoro) {
     pushToast('add venue keys before trading live', 'warn')
+    setValue(PATHS.trade.mode, 'paper')
+    return 'paper'
+  }
+
+  // The other door into the same switch, and it needs the same lock: the server loop and
+  // this tab would be two traders on one account, each sizing against a position it alone
+  // can see. See `serverTradingLive`.
+  if (wantsLive && serverTradingLive()) {
+    pushToast('the server is already trading live — this tab stays on paper', 'warn')
     setValue(PATHS.trade.mode, 'paper')
     return 'paper'
   }
