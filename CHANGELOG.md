@@ -10,6 +10,30 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ## [Unreleased]
 
+## [0.28.11] - 2026-08-08 — Two quote regimes, hardcoded
+
+### Changed
+
+- **Quote currencies are now decided by platform, not ranked globally.** Two regimes:
+
+  | platform | quotes |
+  | --- | --- |
+  | OKX EU (`eea: true`) | `EUR` |
+  | OKX global | `USDT`, `USDC`, `USD` |
+
+  Membership is a **filter**, not a tie-break. A base with no pair inside the regime yields
+  no substitute at all rather than falling through to whatever else the venue listed, so the
+  desk can no longer end up scalping some pair nobody would have chosen.
+
+  This also explains the refusal that started all of this: **USDT is not MiCA-compliant**, so
+  OKX Europe as a licensed CASP may not offer it for trading to EU/EEA residents — which is
+  why `BTC-USDT` is refused on this account while the public instrument list still shows it
+  `live`. It was never a key problem.
+
+  USDC *is* MiCA-compliant and available on OKX EU, and is excluded here anyway on the
+  owner's explicit instruction ("we are EURO based so ignore anything that is USD"). It is
+  one entry in `QUOTE_REGIMES.eea` if that changes.
+
 ## [0.28.10] - 2026-08-07 — The loop fixes its own symbols
 
 ### Changed
