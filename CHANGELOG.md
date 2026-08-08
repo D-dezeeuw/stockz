@@ -10,6 +10,24 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ## [Unreleased]
 
+## [0.28.13] - 2026-08-08 — Read the real tape, and say what time it is
+
+### Fixed
+
+- **The market feed followed `STOCKZ_OKX_DEMO` onto the demo socket.** Market data and order
+  routing are separate decisions and that flag is about the second. The feed carries no
+  credentials — it reads the public tape — so demo has nothing to authenticate and nothing
+  to offer but a thinner, synthetic version of the same market. Reading it produced a desk
+  that connected happily, reported `feed live`, and formed **one opinion in eight minutes**.
+  `feedUrl` now always returns the live public socket. Deciding from the real tape is also
+  the more faithful choice when orders do go to demo: paper fills are simulated against this
+  book, and demo's prices track live anyway.
+- **The decision log was rendering UTC.** `toISOString().slice(11, 19)` put every row two
+  hours behind an Amsterdam summer clock — `06:31:24` for something that happened at
+  `08:31:24`. A decision log is scanned against a wall clock; one that disagrees with the
+  wall is worse than no timestamp. Now `toTimeString().slice(0, 8)`: the viewer's own zone,
+  fixed `HH:MM:SS`, no locale and no Intl.
+
 ## [0.28.12] - 2026-08-08 — Two switches, one of which never mattered
 
 ### Fixed

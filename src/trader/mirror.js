@@ -98,7 +98,11 @@ export function toTraderView(raw) {
       // only for a server too old to send it, which still beats a colliding key.
       seq: Number(d?.seq) || i,
       ts: Number(d?.ts) || 0,
-      time: new Date(Number(d?.ts) || 0).toISOString().slice(11, 19),
+      // LOCAL time, not UTC. `toISOString().slice(11, 19)` was rendering every row two
+      // hours behind an Amsterdam summer clock, which makes a decision log unreadable
+      // against a wall clock — the one thing it is scanned for. `toTimeString()` is the
+      // viewer's zone with a fixed `HH:MM:SS` head, so it needs no locale and no Intl.
+      time: new Date(Number(d?.ts) || 0).toTimeString().slice(0, 8),
       instrument: String(d?.instrument ?? ''),
       strategy: String(d?.strategy ?? ''),
       action: String(d?.action ?? ''),
