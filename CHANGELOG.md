@@ -10,6 +10,30 @@ Patch releases (`0.7.1`) are for fixes shipped between phase closes.
 
 ## [Unreleased]
 
+## [0.28.12] - 2026-08-08 — Two switches, one of which never mattered
+
+### Fixed
+
+- **The desk gave no way to tell the browser's LIVE switch from the server's mode.** They
+  look like one control and are not: the switch beside the keys arms *this tab*, is
+  deliberately absent from the settings schema so every reload lands on paper, and the
+  server-side loop has never read it. The persistent one is `STOCKZ_TRADER_MODE` in the
+  host's `.env` — it survives restarts, rebuilds and closed laptops, and no browser can
+  change it. The trader block now names it, and the checkbox says **this browser only**.
+- `/api/trader` reports `mode` (what `.env` asked for) alongside `live` (what is actually
+  happening). Without both, "configured for paper" and "configured live and refused by the
+  venue" render identically and are completely different problems.
+
+### Added
+
+- **A circuit breaker against trading one account from two places.** `serverTradingLive()`,
+  and both doors into the browser's live switch now refuse while the host loop is running
+  live. This is not a preference: the two loops share no state, so each one's
+  `maxPerInstrument` counts only its own fills, and a tab that went live beside a live
+  server loop would double the position with both halves believing they were inside the
+  limit. OKX would fill both without complaint. Paper-on-paper still overlaps freely — only
+  real money on both sides is refused.
+
 ## [0.28.11] - 2026-08-08 — Two quote regimes, hardcoded
 
 ### Changed

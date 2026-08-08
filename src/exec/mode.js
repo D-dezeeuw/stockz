@@ -66,6 +66,22 @@ export function isPaper(state = appState) {
 }
 
 /**
+ * Is the host already trading this account with real money?
+ *
+ * The one question this browser must ask before going live. Since the loop moved to the
+ * server there are two things capable of sending orders on one OKX account, and they share
+ * no state: each one's exposure cap counts only its own fills, so a tab that goes live
+ * beside a live server loop doubles the position with both halves believing they are within
+ * the limit. Nothing at the venue would refuse it.
+ *
+ * @param {object} [state] - engine state.
+ * @returns {boolean} true when the server-side loop is live.
+ */
+export function serverTradingLive(state = appState) {
+  return state?.trader?.view?.running === true && state?.trader?.view?.live === true
+}
+
+/**
  * Switch the desk between paper and live.
  *
  * @param {object} _state - engine state (unused).
@@ -82,6 +98,13 @@ export function setTradeMode(_state, payload = {}) {
   // desk being broken, so it is refused rather than attempted.
   if (mode === 'live' && !keyPresence().okx && !keyPresence().etoro) {
     pushToast('add venue keys before trading live', 'warn')
+    return current
+  }
+
+  // Refused rather than warned. This is not a preference — two loops on one account is a
+  // position nobody is measuring, and the desk already shows everything the server is doing.
+  if (mode === 'live' && serverTradingLive()) {
+    pushToast('the server is already trading live — this tab stays on paper', 'warn')
     return current
   }
 

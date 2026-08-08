@@ -29,6 +29,7 @@ export const POLL_MS = 2000
 export const TRADER_OFF = Object.freeze({
   running: false,
   live: false,
+  mode: 'paper',
   signedOut: false,
   feed: 'off',
   venue: { checked: false, perm: '', canTrade: false, blocked: '', unlisted: [], suggest: [],
@@ -58,6 +59,10 @@ export function toTraderView(raw) {
   return {
     running: raw.running === true,
     live: raw.live === true,
+    // The configured mode, which is the persistent one — it lives in the server's .env and
+    // no browser can change it. Kept separate from `live` (what is actually happening) so
+    // "configured for paper" and "configured live but refused" stop looking identical.
+    mode: raw.mode === 'live' ? 'live' : 'paper',
     signedOut: raw.signedOut === true,
     feed: String(raw.feed ?? 'dead'),
     // What the venue said about the key itself. The one failure the trader cannot fix and
